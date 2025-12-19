@@ -1,0 +1,36 @@
+services: 
+  # MongoDB
+  mongo:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro  # 初始启动脚本
+    networks:
+      - ape-network
+  
+  # MongoDB Web UI
+  mongo-express:
+    image: mongo-express:1.0.2-18
+    ports:
+      - "8081:8081"
+    container_name: ape-mongo-express
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: root      # webUI的登录用户名
+      ME_CONFIG_BASICAUTH_PASSWORD: root      # webUI的登录密码
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root   # 登陆数据库的用户名
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root   # 登陆数据库的口令
+      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongo:27017
+    depends_on:
+      - mongo
+    networks:
+      - ape-network
+
+
+networks:
+  ape-network:
+    driver: bridge

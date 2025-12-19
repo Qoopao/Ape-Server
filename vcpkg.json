@@ -1,0 +1,14 @@
+{
+  "name": "ape-server",
+  "version": "1.0.0",
+  "dependencies": [
+    "boost-asio",
+    "boost-beast",
+    "boost-thread",
+    "spdlog",
+    "nlohmann-json",
+    "utf8proc",
+    "mongo-cxx-driver"
+  ],
+  "builtin-baseline": "a11dd074dac3fa168aa8efb992cbb0220a3dc481"
+}
