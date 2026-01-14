@@ -1,3 +1,6 @@
 .vscode/
+.cache/
 build/
+test/
 vcpkg_installed/
+docker/kfaka/kafka-*

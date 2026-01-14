@@ -1,0 +1,24 @@
+syntax = "proto3";
+package push;
+
+import "sdkws.proto";
+
+message PushMsgReq {
+  sdkws.MsgData msgData = 1;
+  string conversationID = 2;
+  repeated string userIDs = 3;
+}
+
+message PushMsgResp {}
+
+message DelUserPushTokenReq {
+  string userID = 1;
+  int32 platformID = 2;
+}
+
+message DelUserPushTokenResp {}
+
+service PushService {
+  rpc PushMsg(PushMsgReq) returns (PushMsgResp);
+  rpc DelUserPushToken(DelUserPushTokenReq) returns (DelUserPushTokenResp);
+}

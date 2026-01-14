@@ -8,7 +8,11 @@
     "spdlog",
     "nlohmann-json",
     "utf8proc",
-    "mongo-cxx-driver"
+    "mongo-cxx-driver",
+    "librdkafka",
+    "grpc",
+    "etcd-cpp-apiv3",
+    "gtest"
   ],
   "builtin-baseline": "a11dd074dac3fa168aa8efb992cbb0220a3dc481"
 }

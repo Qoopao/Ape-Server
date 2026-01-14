@@ -6,15 +6,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(VCPKG_TRIPLET "x64-linux" CACHE STRING "vcpkg x64-linux")
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg_installed/${VCPKG_TRIPLET} ${CMAKE_PREFIX_PATH})
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 
 # 引入vcpkg依赖
-find_package(Boost REQUIRED COMPONENTS asio)
-find_package(Boost REQUIRED COMPONENTS beast)
-find_package(spdlog REQUIRED)
-find_package(nlohmann_json REQUIRED)
-find_package(utf8proc REQUIRED)
-find_package(mongocxx REQUIRED)
-find_package(bsoncxx REQUIRED)
+find_package(Boost REQUIRED COMPONENTS asio beast thread)
+find_package(spdlog CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(utf8proc CONFIG REQUIRED)
+find_package(mongocxx CONFIG REQUIRED)
+find_package(bsoncxx CONFIG REQUIRED)
+find_package(RdKafka CONFIG REQUIRED)
+find_package(gRPC CONFIG REQUIRED)
+find_package(etcd-cpp-api CONFIG REQUIRED)
 
 # 收集所有 src 下的 .cpp
 file(GLOB_RECURSE ALL_CPP_FILE "src/*.cpp")
@@ -25,11 +28,32 @@ list(REMOVE_ITEM ALL_CPP_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")  # 移
 add_library(ape-server STATIC ${ALL_CPP_FILE})
 target_include_directories(ape-server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(ape-server PUBLIC 
-Boost::asio Boost::beast 
+# Boost组件
+Boost::asio Boost::beast Boost::thread
+
+# 日志spdlog
 spdlog::spdlog 
 nlohmann_json::nlohmann_json 
-mongo::mongocxx_static mongo::bsoncxx_static utf8proc::utf8proc
+
+# MongoDB
+mongo::mongocxx_static
+mongo::bsoncxx_static
+utf8proc::utf8proc
+
+# Kafka
+RdKafka::rdkafka RdKafka::rdkafka++
+
+# gRPC
+gRPC::grpc++
+
+# etcd
+etcd-cpp-api
+
 )
+
+get_target_property(APE_SERVER_LINK_LIBS ape-server LINK_LIBRARIES)
+message(STATUS "=== ape-server 链接的库 ===")
+message(STATUS "LINK_LIBRARIES: ${APE_SERVER_LINK_LIBS}")
 
 # 网络库
 # add_library(im-network STATIC src/network/WebSocketServer.cpp src/network/Protocol.cpp)
@@ -46,9 +70,3 @@ mongo::mongocxx_static mongo::bsoncxx_static utf8proc::utf8proc
 # 主程序
 add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE ape-server)
-
-# 测试
-# enable_testing()
-# add_executable(unit-tests tests/unit/CoreTest.cpp tests/unit/NetworkTest.cpp)
-# target_link_libraries(unit-tests im-core im-network GTest::gtest_main)
-# add_test(NAME UnitTests COMMAND unit-tests)
