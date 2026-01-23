@@ -3,6 +3,7 @@ project(im-system CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(VCPKG_TRIPLET "x64-linux" CACHE STRING "vcpkg x64-linux")
 set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg_installed/${VCPKG_TRIPLET} ${CMAKE_PREFIX_PATH})
@@ -18,15 +19,22 @@ find_package(bsoncxx CONFIG REQUIRED)
 find_package(RdKafka CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(etcd-cpp-api CONFIG REQUIRED)
+find_package(brpc CONFIG REQUIRED)
 
 # 收集所有 src 下的 .cpp
-file(GLOB_RECURSE ALL_CPP_FILE "src/*.cpp")
-message(STATUS "Collected CPP files: ${ALL_CPP_FILE}")
-list(REMOVE_ITEM ALL_CPP_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")  # 移除main.cpp
+file(GLOB_RECURSE ALL_IMPL_FILE "src/*.cpp")
+
+# 收集src下protobuf生成的cc文件
+file(GLOB_RECURSE PROTO_CC_FILE "src/proto/*.cc")
+
+list(APPEND ALL_IMPL_FILE ${PROTO_CC_FILE})
+
+message(STATUS "Collected CPP files: ${ALL_IMPL_FILE}")
+list(REMOVE_ITEM ALL_IMPL_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")  # 移除main.cpp
 
 # 核心库
-add_library(ape-server STATIC ${ALL_CPP_FILE})
-target_include_directories(ape-server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_library(ape-server STATIC ${ALL_IMPL_FILE})
+target_include_directories(ape-server PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src/proto)
 target_link_libraries(ape-server PUBLIC 
 # Boost组件
 Boost::asio Boost::beast Boost::thread
@@ -49,6 +57,8 @@ gRPC::grpc++
 # etcd
 etcd-cpp-api
 
+#brpc
+brpc
 )
 
 get_target_property(APE_SERVER_LINK_LIBS ape-server LINK_LIBRARIES)

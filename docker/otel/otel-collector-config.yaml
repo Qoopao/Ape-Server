@@ -1,0 +1,57 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+exporters:
+  prometheusremotewrite:
+    endpoint: "http://victoriametrics:8428/api/v1/write"
+
+  debug: # 在 Collector 控制台打印日志，用于调试和验证
+    verbosity: detailed
+
+  otlp/jaeger:
+    endpoint: jaeger-all-in-one:4317
+    tls:
+      insecure: true
+
+  elasticsearch:
+    endpoints:
+      - "http://elasticsearch:9200"
+    mapping:
+      mode: ecs
+    logs_dynamic_index:
+      enabled: true
+    retry:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+    flush:
+      bytes: 5242880  # 5MB
+
+processors:
+  batch:
+
+extensions:
+  health_check:
+  pprof:
+    endpoint: :1888
+  zpages:
+    endpoint: :55679
+
+service:
+  extensions: [ pprof, zpages, health_check ]
+  pipelines:
+    traces:
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [otlp/jaeger ]
+    metrics:
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [prometheusremotewrite ]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [elasticsearch, debug]
