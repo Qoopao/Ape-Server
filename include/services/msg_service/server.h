@@ -1,13 +1,35 @@
 #include "msg.grpc.pb.h"
 #include "msg.pb.h"
+#include "services/register/etcd_service_register.h"
+#include <csignal>
 #include <etcd/Client.hpp>
 #include <etcd/KeepAlive.hpp>
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/support/status.h>
+#include <memory>
 #include <spdlog/spdlog.h>
-#include <string>
+
 
 class MsgServiceImpl final : public msg::MessageService::Service {
+public:
+  MsgServiceImpl() {
+    // 测试用
+    struct sigaction sa;
+    sa.sa_handler = &MsgServiceImpl::SignalHandler;
+    sa.sa_flags = SA_RESTART;
+    sigemptyset(&sa.sa_mask);
+    sigaction(SIGINT, &sa, nullptr);
+  };
+  ~MsgServiceImpl() {
+    shutdown();
+  };
+
+  void setRegistry(std::unique_ptr<EtcdServiceRegistry> registry) {
+    this->etcd_service_registry = std::move(registry);
+  }
+  void startup();
+  void shutdown();
+
   ::grpc::Status GetMaxSeq(::grpc::ServerContext *context,
                            const ::sdkws::GetMaxSeqReq *request,
                            ::sdkws::GetMaxSeqResp *response) override;
@@ -123,9 +145,19 @@ class MsgServiceImpl final : public msg::MessageService::Service {
   ::grpc::Status GetLastMessage(::grpc::ServerContext *context,
                                 const ::msg::GetLastMessageReq *request,
                                 ::msg::GetLastMessageResp *response) override;
+
+private:
+  std::unique_ptr<EtcdServiceRegistry> etcd_service_registry;
+  std::unique_ptr<grpc::Server> server;
+
+// 测试用
+
+  static std::atomic<bool> should_exit;
+  static std::condition_variable cv_quit;
+  static std::mutex mtx_quit;
+  static void SignalHandler(int sig) {
+     std::lock_guard<std::mutex> lock(mtx_quit);
+     should_exit.store(true, std::memory_order_release);
+     cv_quit.notify_one();
+  }
 };
-
-
-// 启动gRPC服务端
-void RunServer(const std::string &server_address,
-               const std::string &etcd_endpoint);

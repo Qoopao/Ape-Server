@@ -19,7 +19,6 @@ find_package(bsoncxx CONFIG REQUIRED)
 find_package(RdKafka CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(etcd-cpp-api CONFIG REQUIRED)
-find_package(brpc CONFIG REQUIRED)
 
 # 收集所有 src 下的 .cpp
 file(GLOB_RECURSE ALL_IMPL_FILE "src/*.cpp")

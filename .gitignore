@@ -5,7 +5,7 @@
 build/
 
 # 测试文件目录
-test/
+test/build/
 
 # vcpkg 安装目录
 vcpkg_installed/
