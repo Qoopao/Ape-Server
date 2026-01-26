@@ -1,6 +1,7 @@
 #include "msg.grpc.pb.h"
 #include "msg.pb.h"
 #include "services/register/etcd_service_register.h"
+#include "services/register/base_register_service.h"
 #include <csignal>
 #include <etcd/Client.hpp>
 #include <etcd/KeepAlive.hpp>
@@ -10,25 +11,32 @@
 #include <spdlog/spdlog.h>
 
 
-class MsgServiceImpl final : public msg::MessageService::Service {
+class MsgServiceImpl final : public msg::MessageService::Service, public BaseRegisterService {
 public:
   MsgServiceImpl() {
-    // 测试用
+    // 信号处理，ctrl+c退出
     struct sigaction sa;
     sa.sa_handler = &MsgServiceImpl::SignalHandler;
     sa.sa_flags = SA_RESTART;
     sigemptyset(&sa.sa_mask);
     sigaction(SIGINT, &sa, nullptr);
   };
-  ~MsgServiceImpl() {
-    shutdown();
-  };
 
   void setRegistry(std::unique_ptr<EtcdServiceRegistry> registry) {
     this->etcd_service_registry = std::move(registry);
   }
-  void startup();
-  void shutdown();
+
+
+  void registerGrpcService(grpc::ServerBuilder &builder) override {
+    builder.RegisterService(this);
+  }
+
+  void independentWait() override {
+    std::unique_lock<std::mutex> lock(this->mtx_quit);
+    this->cv_quit.wait(lock, [this]() {
+      return this->should_exit.load(std::memory_order_acquire);
+    });
+  }
 
   ::grpc::Status GetMaxSeq(::grpc::ServerContext *context,
                            const ::sdkws::GetMaxSeqReq *request,
@@ -151,7 +159,6 @@ private:
   std::unique_ptr<grpc::Server> server;
 
 // 测试用
-
   static std::atomic<bool> should_exit;
   static std::condition_variable cv_quit;
   static std::mutex mtx_quit;
@@ -161,3 +168,4 @@ private:
      cv_quit.notify_one();
   }
 };
+

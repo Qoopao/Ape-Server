@@ -5,14 +5,14 @@
 
 // 注册单个服务（创建租约+注册服务节点+自动续约）
 void EtcdServiceRegistry::RegisterService() {
-  std::string service_key = "/services/" + this->service_name + "/" +
-                            this->service_ip + ":" +
-                            std::to_string(this->service_port);
+  std::string service_key = "/services/" + this->sconfig.service_name + "/" +
+                            this->sconfig.service_ip + ":" +
+                            std::to_string(this->sconfig.service_port);
 
   std::string service_value =
-      "{\"ip\":\"" + this->service_ip +
-      "\",\"port\":" + std::to_string(this->service_port) + ",\"name\":\"" +
-      this->service_name + "\"}";
+      "{\"ip\":\"" + this->sconfig.service_ip +
+      "\",\"port\":" + std::to_string(this->sconfig.service_port) +
+      ",\"name\":\"" + this->sconfig.service_name + "\"}";
 
   etcd::Response get_resp = this->etcd_client.get(service_key).get();
   if (get_resp.is_ok()) {
@@ -28,11 +28,11 @@ void EtcdServiceRegistry::RegisterService() {
 
   // 1. 创建租约
   etcd::Response lease_resp =
-      this->etcd_client.leasegrant(this->lease_ttl).get();
+      this->etcd_client.leasegrant(this->sconfig.lease_ttl).get();
   if (!lease_resp.is_ok()) {
-    spdlog::error("创建租约失败: error_code: {}, error_message: {}",
-                  lease_resp.error_code(), lease_resp.error_message());
-    throw std::runtime_error("创建租约失败");
+    throw std::runtime_error(fmt::format(
+        "创建租约失败: error_code: {}, error_message: {}",
+        lease_resp.error_code(), lease_resp.error_message()));
   }
   int64_t lease_id = lease_resp.value().lease();
 
@@ -61,7 +61,7 @@ void EtcdServiceRegistry::RegisterService() {
         }
       };
   this->keep_alive = std::make_unique<etcd::KeepAlive>(
-      this->etcd_client, handler, this->lease_ttl, lease_id);
+      this->etcd_client, handler, this->sconfig.lease_ttl, lease_id);
   spdlog::info("服务注册成功：{}", service_key);
 }
 
@@ -69,9 +69,9 @@ void EtcdServiceRegistry::RegisterService() {
 void EtcdServiceRegistry::UnregisterService() {
 
   // 初始化关键变量
-  std::string service_key = "/services/" + this->service_name + "/" +
-                            this->service_ip + ":" +
-                            std::to_string(this->service_port);
+  std::string service_key = "/services/" + this->sconfig.service_name + "/" +
+                            this->sconfig.service_ip + ":" +
+                            std::to_string(this->sconfig.service_port);
   int64_t lease_id = 0;
 
   // 1. 查询服务对应的key和租约ID
