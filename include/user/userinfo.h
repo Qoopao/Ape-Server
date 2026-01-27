@@ -1,4 +1,7 @@
-#pragma once
+#ifndef USERINFO_H
+#define USERINFO_H
+
+
 #include <iostream>
 #include <string>
 
@@ -8,3 +11,5 @@ struct userInfo
     std::string username;
     std::string email;
 };
+
+#endif

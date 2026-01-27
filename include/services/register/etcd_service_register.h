@@ -1,4 +1,6 @@
-#pragma once
+#ifndef ETCD_SERVICE_REGISTER_H
+#define ETCD_SERVICE_REGISTER_H
+
 #include <cstdint>
 #include <etcd/Client.hpp>
 #include <etcd/KeepAlive.hpp>
@@ -37,3 +39,5 @@ private:
   ServiceConfig sconfig;                       // 服务配置
   std::unique_ptr<etcd::KeepAlive> keep_alive; // 自动续约对象
 };
+
+#endif

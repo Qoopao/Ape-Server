@@ -1,4 +1,6 @@
-#pragma once
+#ifndef BASE_REGISTER_SERVICE_H
+#define BASE_REGISTER_SERVICE_H
+
 #include "services/register/etcd_service_register.h"
 #include <atomic>
 #include <condition_variable>
@@ -32,7 +34,7 @@ public:
     this->etcd_service_registry = std::move(registry);
   }
 
-  // 通用启动函数
+  // 通用启动函数，这里后面要改成多线程来处理大量请求（写一个）
   void startup(const std::string &server_addr) {
     // 1. 检查是否设置了etcd注册中心
     if (!etcd_service_registry) {
@@ -46,6 +48,7 @@ public:
 
       // 3. 启动服务
       grpc::ServerBuilder builder;
+      // 基于这个builder.AddCompletionQueue();加上线程池来处理请求
       builder.AddListeningPort(server_addr, grpc::InsecureServerCredentials());
 
       // 调用子类的注册函数
@@ -125,3 +128,5 @@ private:
   std::unique_ptr<grpc::Server> server;
 
 };
+
+#endif

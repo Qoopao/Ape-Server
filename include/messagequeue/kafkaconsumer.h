@@ -1,4 +1,7 @@
-#pragma once
+#ifndef KAFKACONSUMER_H
+#define KAFKACONSUMER_H
+    
+
 #include <librdkafka/rdkafkacpp.h>
 #include <spdlog/spdlog.h>
 #include <string>
@@ -53,3 +56,5 @@ private:
     RdKafka::KafkaConsumer *consumerInstance;
 
 };
+
+#endif

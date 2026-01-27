@@ -1,4 +1,6 @@
-#pragma once
+#ifndef CONNMANAGER_H
+#define CONNMANAGER_H
+
 #include "gateway/session.h"
 #include <boost/asio.hpp>
 #include <unordered_map>
@@ -32,3 +34,5 @@ public:
     //获取用户-连接map
     const std::unordered_map<std::string, std::shared_ptr<Session>>& get_map();
 };
+
+#endif

@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MONGOHANDLER_H
+#define MONGOHANDLER_H
+
 #include <mongocxx/instance.hpp>
 #include <mongocxx/client.hpp>
 #include <mongocxx/uri.hpp>
@@ -32,3 +34,5 @@ public:
     //Delete
     bool delete_by_id(uint16_t userid);
 };
+
+#endif

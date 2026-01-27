@@ -1,4 +1,8 @@
-#pragma once
+#ifndef WEBSERVER_H
+#define WEBSERVER_H
+
+
+
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 
@@ -16,3 +20,5 @@ private:
     boost::asio::io_context &ioc_;            
     boost::asio::awaitable<void> do_accept();
 };
+
+#endif

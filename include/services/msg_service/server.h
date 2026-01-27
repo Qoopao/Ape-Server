@@ -1,3 +1,7 @@
+#ifndef MSG_SERVICE_SERVER_H
+#define MSG_SERVICE_SERVER_H
+
+
 #include "msg.grpc.pb.h"
 #include "msg.pb.h"
 #include "services/register/etcd_service_register.h"
@@ -169,3 +173,4 @@ private:
   }
 };
 
+#endif

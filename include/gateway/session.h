@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SESSION_H
+#define SESSION_H
+
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 #include <memory>
@@ -23,3 +25,5 @@ private:
     userInfo user;
     std::atomic<bool> is_authenticated{false};
 };
+
+#endif

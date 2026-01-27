@@ -1,4 +1,6 @@
-#pragma once
+#ifndef KAFKAPRODUCER_H
+#define KAFKAPRODUCER_H
+
 #include <librdkafka/rdkafkacpp.h>
 #include <spdlog/spdlog.h>
 #include <string>
@@ -51,3 +53,5 @@ private:
     RdKafka::Producer *producerInstance; // librdkafka生产者实例
     RdKafka::Topic *topic; // 主题实例
 };
+
+#endif

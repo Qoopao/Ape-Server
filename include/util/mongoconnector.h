@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MONGOCONNECTOR_H
+#define MONGOCONNECTOR_H
+
 #include <mongocxx/instance.hpp>
 #include <mongocxx/client.hpp>
 #include <mongocxx/uri.hpp>
@@ -27,3 +29,5 @@ public:
 
     const mongocxx::client &get_client();
 };
+
+#endif

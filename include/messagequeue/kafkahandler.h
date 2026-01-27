@@ -1,4 +1,6 @@
-#pragma once
+#ifndef KAFKAHANDLER_H
+#define KAFKAHANDLER_H
+
 #include <string>
 
 // 消息处理器基类：定义消息处理的接口，子类实现具体业务逻辑
@@ -16,3 +18,5 @@ class DefaultHandler : public KafkaHandler {
 public:
     void handle(const std::string& topic, const std::string& msg) override;
 };
+
+#endif
