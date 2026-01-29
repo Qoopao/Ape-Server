@@ -31,7 +31,9 @@ file(GLOB MQ_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/messagequeue/*.cpp)
 file(GLOB PROTO_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/proto/*.cc)
 file(GLOB_RECURSE SERVICE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/services/*.cpp)
 
-add_executable(tests ${TEST_FILES} ${MQ_FILES} ${PROTO_FILES} ${SERVICE_FILES})
+file(GLOB_RECURSE UTIL_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../src/util/*.cpp)
+
+add_executable(tests ${TEST_FILES} ${MQ_FILES} ${PROTO_FILES} ${SERVICE_FILES} ${UTIL_FILES})
 target_include_directories(tests PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../include ${CMAKE_CURRENT_SOURCE_DIR}/../src/proto)
 
 
