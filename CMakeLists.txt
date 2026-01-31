@@ -10,7 +10,7 @@ set(CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg_installed/${VCPKG_TRIPLE
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 
 # 引入vcpkg依赖
-find_package(Boost REQUIRED COMPONENTS asio beast thread)
+find_package(Boost REQUIRED COMPONENTS asio beast thread uuid)
 find_package(spdlog CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(utf8proc CONFIG REQUIRED)
