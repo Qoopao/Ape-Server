@@ -1,7 +1,7 @@
 #ifndef BASE_REGISTER_SERVICE_H
 #define BASE_REGISTER_SERVICE_H
 
-#include "services/register/etcd_service_register.h"
+#include "services/register_discovery/etcd_service_register.h"
 #include <atomic>
 #include <condition_variable>
 #include <csignal>

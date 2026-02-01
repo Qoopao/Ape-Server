@@ -1,4 +1,4 @@
-#include "services/register/etcd_service_register.h"
+#include "services/register_discovery/etcd_service_register.h"
 #include <etcd/Response.hpp>
 #include <etcd/Value.hpp>
 #include <spdlog/spdlog.h>

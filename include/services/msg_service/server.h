@@ -4,8 +4,8 @@
 
 #include "msg.grpc.pb.h"
 #include "msg.pb.h"
-#include "services/register/etcd_service_register.h"
-#include "services/register/base_register_service.h"
+#include "services/register_discovery/etcd_service_register.h"
+#include "services/register_discovery/base_register_service.h"
 #include <csignal>
 #include <etcd/Client.hpp>
 #include <etcd/KeepAlive.hpp>

@@ -43,10 +43,14 @@ void MsgClientHandler::SendMessagesClient(const ::sdkws::SendMessageReq& request
         return;
     }
 
-    ::grpc::ClientContext context;
-    ::grpc::Status status = stub->SendMessages(&context, request, &response);
-    if (!status.ok()) {
-        spdlog::error("SendMessages failed, status: {}", status.error_message());
+    bool success = CallWithRetry(request, response, 
+    [this](::grpc::ClientContext* context, const ::sdkws::SendMessageReq& request, ::sdkws::SendMessageResp* response)->::grpc::Status{
+        return stub->SendMessages(context, request, response);
+    },3
+    );
+    
+    if (!success) {
+        // 回调已经打印了错误日志
     }else{
         // 简单打印一下响应
         spdlog::info("SendMessages success, convID: {}, clientMsgID: {}", request.msgs(0).convid(), request.msgs(0).clientmsgid());

@@ -1,6 +1,6 @@
 #include "services/msg_service/server.h"
 #include "services/msg_service/client.h"
-#include "services/register/etcd_service_register.h"
+#include "services/register_discovery/etcd_service_register.h"
 #include <ctime>
 
 void testMsgServiceStartup();
@@ -23,8 +23,7 @@ void testMsgServiceServer(){
 }
 
 void testMsgServiceClient(){
-    std::shared_ptr<::grpc::Channel> channel = grpc::CreateChannel("127.0.0.1:50001", grpc::InsecureChannelCredentials());
-    MsgClientHandler client_handler(channel);
+    auto client_handler = std::make_shared<MsgClientHandler>("msg_service");
 
     // 构造一个简单的消息
     ::sdkws::SendMessageReq request;
@@ -54,5 +53,7 @@ void testMsgServiceClient(){
     msg2->set_sendtime(time(nullptr));
 
     ::sdkws::SendMessageResp response;
-    client_handler.SendMessagesClient(request, response);
+    client_handler->SendMessagesClient(request, response);
+
+    //std::this_thread::sleep_for(std::chrono::seconds(1));
 }
