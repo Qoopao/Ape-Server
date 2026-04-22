@@ -8,6 +8,7 @@
 #include <etcd/Client.hpp>
 #include <etcd/KeepAlive.hpp>
 #include <grpcpp/grpcpp.h>
+#include <grpcpp/server_builder.h>
 #include <grpcpp/support/status.h>
 #include <memory>
 #include <mutex>
@@ -48,8 +49,14 @@ public:
 
       // 3. 启动服务
       grpc::ServerBuilder builder;
+      // 同步服务器可以用SetResourceQuota限制整个GRPC的内部线程池线程数量，SetSyncServerOption设置具体操作的线程数；
+      // 异步服务器可以用自定义线程池通过CQ.hasNext()实现多线程
+      grpc::ResourceQuota rq;
+      rq.SetMaxThreads(10);
+      builder.SetResourceQuota(rq);
       // 基于这个builder.AddCompletionQueue();加上线程池来处理请求
       builder.AddListeningPort(server_addr, grpc::InsecureServerCredentials());
+      builder.SetSyncServerOption(grpc::ServerBuilder::NUM_CQS, 4);
 
       // 调用子类的注册函数
       registerGrpcService(builder);

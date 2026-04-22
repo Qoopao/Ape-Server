@@ -1,0 +1,84 @@
+syntax = "proto3";
+package backbon;
+
+
+//---------------------------------用户相关-------------------------------------
+// CheckUserOnlineReq 检查用户在线状态请求
+message CheckUserOnlineReq {
+  repeated string userIDs = 1; // 用户ID列表
+}
+
+// CheckUserOnlineResp 检查用户在线状态响应
+message CheckUserOnlineResp {
+  repeated UserOnlineStatus statuses = 1; // 用户在线状态列表
+}
+
+// UserOnlineStatus 用户在线状态
+message UserOnlineStatus {
+  string userID = 1; // 用户ID
+  bool isOnline = 2; // 是否在线
+  int32 connectionCount = 3; // 连接数量
+  repeated int32 platformIDs = 4; // 在线平台ID列表
+  int64 lastActiveTime = 5; // 最后活跃时间戳
+}
+//---------------------------------用户相关-------------------------------------
+
+
+
+//---------------------------------微服务相关-------------------------------------
+// RegisterServiceReq 注册服务请求
+// 网关转发流程：接收到客户端请求(service, method) -> 检查是否注册 -> 从注册中心获取服务实例 -> 转发数据
+// 注意：ip:port 信息在注册中心中，这里只注册 service 和 method 的映射关系
+message RegisterServiceReq {
+  string service = 1; // 服务名称
+  repeated string ipport = 2; // ip:port
+  repeated string methods = 3; // 支持的方法列表（可选，如果为空则所有method都转发到此服务）
+}
+
+// RegisterServiceResp 注册服务响应
+message RegisterServiceResp {
+  bool success = 1; // 是否成功
+  string error = 2; // 错误信息（如果失败）
+}
+
+// UnregisterServiceReq 注销服务请求
+message UnregisterServiceReq {
+  string service = 1; // 服务名称
+  repeated string methods = 2; // 要注销的方法列表（可选，如果为空则注销该服务的所有方法）
+}
+
+// UnregisterServiceResp 注销服务响应
+message UnregisterServiceResp {
+  bool success = 1; // 是否成功
+  string error = 2; // 错误信息（如果失败）
+}
+
+// GetServiceReq 获取服务请求
+// 用于查询(service, method)是否已注册，ip:port 从注册中心获取
+message GetServiceReq {
+  string service = 1; // 服务名称
+  string method = 2; // 方法名称（可选）
+}
+
+// GetServiceResp 获取服务响应
+message GetServiceResp {
+  bool registered = 1; // 是否已注册
+  string service = 2; // 服务名称（如果已注册，用于从注册中心查询实例）
+}
+//---------------------------------微服务相关-------------------------------------
+
+
+// BackbonService 后端骨干服务接口
+service BackbonService {
+  // CheckUserOnline 检查用户在线状态
+  rpc CheckUserOnline(CheckUserOnlineReq) returns (CheckUserOnlineResp);
+  
+  // RegisterService 注册服务
+  rpc RegisterService(RegisterServiceReq) returns (RegisterServiceResp);
+  
+  // UnregisterService 注销服务
+  rpc UnregisterService(UnregisterServiceReq) returns (UnregisterServiceResp);
+  
+  // GetService 获取服务信息
+  rpc GetService(GetServiceReq) returns (GetServiceResp);
+}

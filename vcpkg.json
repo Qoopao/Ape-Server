@@ -14,6 +14,19 @@
     "mongo-cxx-driver",
     "nlohmann-json",
     "spdlog",
-    "utf8proc"
+    "utf8proc",
+    "redis-plus-plus",
+    {
+      "name": "opentelemetry-cpp",
+      "version>=": "1.24.0",  
+      "features": [        
+        "otlp-file",           
+        "otlp-grpc",            
+        "otlp-http",
+        "user-events",
+        "opentracing"            
+      ]
+    },
+    "curl"
   ]
 }

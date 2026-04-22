@@ -4,6 +4,9 @@
 #include <string>
 #include "util/uuid.h"
 #include <spdlog/spdlog.h>
+#include "util/redishandler.h"
+
+
 
 // 类外定义
 std::atomic<bool> MsgServiceImpl::should_exit(false);
@@ -118,41 +121,54 @@ MsgServiceImpl::SendMessages(::grpc::ServerContext *context,
     // 生成会话的orderIndex，从数据库中找应该是多少，这里先随便设一个
     msg.set_seq(0);
 
-    // 将消息存到数据库
+    // 将消息存到DB
+    bool saveResult = RedisHandler::SaveMsgInfo(msg);
+    if(!saveResult){
+      respInfos[index]->set_errorcode("1");
+      respInfos[index]->set_errormsg("SaveMsgInfo failed"); 
+      continue;
+    }
 
-    // 如果没有会话，那么创建会话
+    // TODO: 如果没有会话，那么创建会话
 
     // 转发消息到MQ
+    bool sendResult = RedisHandler::MsgToMQ(msg.sendid(), msg.servermsgid());
+    if(!sendResult){
+      respInfos[index]->set_errorcode("1");
+      respInfos[index]->set_errormsg("MsgToMQ failed"); 
+      continue;
+    }
 
     // 设置返回消息
     respInfos[index]->mutable_msg()->CopyFrom(msg);
 
   }
-  // 测试用，打印一下request的全部字段
-  spdlog::info("Request msgs size: {}", request->msgs_size());
-  for(int i = 0; i < request->msgs_size(); i++){
-    const ::sdkws::MsgData& msg = request->msgs(i);
-    spdlog::info("Request msg[{}]: sendid={}, recvid={}, convid={}, clientmsgid={}",
-                i, msg.sendid(), msg.recvid(), msg.convid(), msg.clientmsgid());
-    spdlog::info("  Content: {}, sessiontype={}, msgfrom={}, contentType={}, sendtime={}",
-                msg.content(), msg.sessiontype(), msg.msgfrom(), msg.contenttype(), msg.sendtime());
-  }
 
-  // 测试用，打印一下response的全部字段
-  spdlog::info("Response infos size: {}", response->infos_size());
-  for(int i = 0; i < response->infos_size(); i++){
-    const ::sdkws::SendMessageRespInfo& info = response->infos(i);
-    spdlog::info("Response info[{}]: errorcode={}, errormsg={}", 
-                i, info.errorcode(), info.errormsg());
+  // // 测试用，打印一下request的全部字段
+  // spdlog::info("Request msgs size: {}", request->msgs_size());
+  // for(int i = 0; i < request->msgs_size(); i++){
+  //   const ::sdkws::MsgData& msg = request->msgs(i);
+  //   spdlog::info("Request msg[{}]: sendid={}, recvid={}, convid={}, clientmsgid={}",
+  //               i, msg.sendid(), msg.recvid(), msg.convid(), msg.clientmsgid());
+  //   spdlog::info("  Content: {}, sessiontype={}, msgfrom={}, contentType={}, sendtime={}",
+  //               msg.content(), msg.sessiontype(), msg.msgfrom(), msg.contenttype(), msg.sendtime());
+  // }
+
+  // // 测试用，打印一下response的全部字段
+  // spdlog::info("Response infos size: {}", response->infos_size());
+  // for(int i = 0; i < response->infos_size(); i++){
+  //   const ::sdkws::SendMessageRespInfo& info = response->infos(i);
+  //   spdlog::info("Response info[{}]: errorcode={}, errormsg={}", 
+  //               i, info.errorcode(), info.errormsg());
     
-    if(info.has_msg()){
-      const ::sdkws::MsgData& msg = info.msg();
-      spdlog::info("  Msg: sendid={}, recvid={}, convid={}, clientmsgid={}, servermsgid={}",
-                  msg.sendid(), msg.recvid(), msg.convid(), msg.clientmsgid(), msg.servermsgid());
-      spdlog::info("  Content: {}, sessiontype={}, msgfrom={}, contentType={}, sendtime={}",
-                  msg.content(), msg.sessiontype(), msg.msgfrom(), msg.contenttype(), msg.sendtime());
-    }
-  }
+  //   if(info.has_msg()){
+  //     const ::sdkws::MsgData& msg = info.msg();
+  //     spdlog::info("  Msg: sendid={}, recvid={}, convid={}, clientmsgid={}, servermsgid={}",
+  //                 msg.sendid(), msg.recvid(), msg.convid(), msg.clientmsgid(), msg.servermsgid());
+  //     spdlog::info("  Content: {}, sessiontype={}, msgfrom={}, contentType={}, sendtime={}",
+  //                 msg.content(), msg.sessiontype(), msg.msgfrom(), msg.contenttype(), msg.sendtime());
+  //   }
+  // }
 
   return ::grpc::Status::OK;
 }

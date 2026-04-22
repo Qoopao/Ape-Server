@@ -90,7 +90,6 @@ services:
     image: provectuslabs/kafka-ui:master
     user: root
     container_name: kafka-ui
-    # 移除host网络模式，加入Kafka集群的自定义网络，实现容器间互通
     networks:
       - kafka-mixed-network
     # 正常配置端口映射，主机9091端口 → 容器9091端口
@@ -98,25 +97,20 @@ services:
       - "9091:9091"
     restart: always
     volumes:
-      # 修复时区挂载：主机时区文件 → 容器时区文件，保证时间一致（无需自定义本地目录，直接挂载系统时区）
+      # 主机时区文件 → 容器时区文件
       - /etc/localtime:/etc/localtime:ro
-      # 可选：挂载Kafka-UI配置持久化目录（如需保存自定义配置）
+      # 挂载Kafka-UI配置持久化目录
       - ./kafka-ui/config:/app/config
     environment:
       - SERVER_PORT=9091
       - SERVER_SERVLET_CONTEXT_PATH=/
-      # 保留登录认证配置（按需调整用户名密码）
       - AUTH_TYPE=LOGIN_FORM
       - SPRING_SECURITY_USER_NAME=root
       - SPRING_SECURITY_USER_PASSWORD=root
-      # 集群名称修改为本地集群（更易识别）
       - KAFKA_CLUSTERS_0_NAME=local-kafka-mixed-cluster
-      # 核心修改：连接本地Kafka集群（同一自定义网络内，使用容器名+Broker内部端口，稳定可靠）
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-1:19092,kafka-2:19092,kafka-3:19092
-      # 移除冗余的SASL认证配置（本地集群为PLAINTEXT明文模式，无需认证）
       - DYNAMIC_CONFIG_ENABLED=true
 
-# 自定义网络，确保3个节点容器互通
 networks:
   kafka-mixed-network:
     driver: bridge

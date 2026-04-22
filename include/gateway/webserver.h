@@ -6,12 +6,19 @@
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 
+using boost::asio::ip::tcp;
+using boost::asio::awaitable;
+using boost::asio::co_spawn;
+using boost::asio::detached;
+using boost::asio::use_awaitable;
+namespace this_coro = boost::asio::this_coro;
+
 class WebServer
 {
 public:
     WebServer(boost::asio::io_context &ioc, uint16_t port);
 
-    boost::asio::awaitable<void> run();
+    boost::asio::awaitable<void> listener();
 
     void stop();
 

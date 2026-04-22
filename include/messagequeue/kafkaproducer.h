@@ -28,10 +28,10 @@ class KafkaProducer
 {
 public:
     // 初始化生产者
-    KafkaProducer(std::string& brokerList, std::string& topicName);
+    KafkaProducer(std::string topicName, std::string brokerList= "localhost:29092,localhost:39092,localhost:49092");
 
     // 投递消息
-    void Deliver(std::string& key, void* payload, size_t payloadSize);
+    bool Deliver(std::string& key, void* payload, size_t payloadSize);
 
     // 析构函数：释放资源
     ~KafkaProducer();

@@ -61,6 +61,24 @@
 },
 {
   "directory": "/root/ape-server/build",
+  "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/services/register_discovery/etcd_service_discovery.cpp.o -c /root/ape-server/src/services/register_discovery/etcd_service_discovery.cpp",
+  "file": "/root/ape-server/src/services/register_discovery/etcd_service_discovery.cpp",
+  "output": "CMakeFiles/ape-server.dir/src/services/register_discovery/etcd_service_discovery.cpp.o"
+},
+{
+  "directory": "/root/ape-server/build",
+  "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/services/register_discovery/etcd_service_register.cpp.o -c /root/ape-server/src/services/register_discovery/etcd_service_register.cpp",
+  "file": "/root/ape-server/src/services/register_discovery/etcd_service_register.cpp",
+  "output": "CMakeFiles/ape-server.dir/src/services/register_discovery/etcd_service_register.cpp.o"
+},
+{
+  "directory": "/root/ape-server/build",
+  "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/services/register_discovery/rpc_call_manager.cpp.o -c /root/ape-server/src/services/register_discovery/rpc_call_manager.cpp",
+  "file": "/root/ape-server/src/services/register_discovery/rpc_call_manager.cpp",
+  "output": "CMakeFiles/ape-server.dir/src/services/register_discovery/rpc_call_manager.cpp.o"
+},
+{
+  "directory": "/root/ape-server/build",
   "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/util/mongoconnector.cpp.o -c /root/ape-server/src/util/mongoconnector.cpp",
   "file": "/root/ape-server/src/util/mongoconnector.cpp",
   "output": "CMakeFiles/ape-server.dir/src/util/mongoconnector.cpp.o"
@@ -73,9 +91,27 @@
 },
 {
   "directory": "/root/ape-server/build",
+  "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/util/threadpool.cpp.o -c /root/ape-server/src/util/threadpool.cpp",
+  "file": "/root/ape-server/src/util/threadpool.cpp",
+  "output": "CMakeFiles/ape-server.dir/src/util/threadpool.cpp.o"
+},
+{
+  "directory": "/root/ape-server/build",
+  "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/proto/conversation.grpc.pb.cc.o -c /root/ape-server/src/proto/conversation.grpc.pb.cc",
+  "file": "/root/ape-server/src/proto/conversation.grpc.pb.cc",
+  "output": "CMakeFiles/ape-server.dir/src/proto/conversation.grpc.pb.cc.o"
+},
+{
+  "directory": "/root/ape-server/build",
   "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/proto/conversation.pb.cc.o -c /root/ape-server/src/proto/conversation.pb.cc",
   "file": "/root/ape-server/src/proto/conversation.pb.cc",
   "output": "CMakeFiles/ape-server.dir/src/proto/conversation.pb.cc.o"
+},
+{
+  "directory": "/root/ape-server/build",
+  "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/proto/msg.grpc.pb.cc.o -c /root/ape-server/src/proto/msg.grpc.pb.cc",
+  "file": "/root/ape-server/src/proto/msg.grpc.pb.cc",
+  "output": "CMakeFiles/ape-server.dir/src/proto/msg.grpc.pb.cc.o"
 },
 {
   "directory": "/root/ape-server/build",
@@ -85,9 +121,21 @@
 },
 {
   "directory": "/root/ape-server/build",
+  "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/proto/push.grpc.pb.cc.o -c /root/ape-server/src/proto/push.grpc.pb.cc",
+  "file": "/root/ape-server/src/proto/push.grpc.pb.cc",
+  "output": "CMakeFiles/ape-server.dir/src/proto/push.grpc.pb.cc.o"
+},
+{
+  "directory": "/root/ape-server/build",
   "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/proto/push.pb.cc.o -c /root/ape-server/src/proto/push.pb.cc",
   "file": "/root/ape-server/src/proto/push.pb.cc",
   "output": "CMakeFiles/ape-server.dir/src/proto/push.pb.cc.o"
+},
+{
+  "directory": "/root/ape-server/build",
+  "command": "/usr/bin/c++ -DBOOST_ATOMIC_NO_LIB -DBOOST_ATOMIC_STATIC_LINK -DBOOST_CHRONO_NO_LIB -DBOOST_CHRONO_STATIC_LINK -DBOOST_CONTAINER_NO_LIB -DBOOST_CONTAINER_STATIC_LINK -DBOOST_CONTEXT_EXPORT=\"\" -DBOOST_CONTEXT_NO_LIB=\"\" -DBOOST_CONTEXT_STATIC_LINK=\"\" -DBOOST_DATE_TIME_NO_LIB -DBOOST_DATE_TIME_STATIC_LINK -DBOOST_THREAD_NO_LIB -DBOOST_THREAD_STATIC_LINK -DBOOST_THREAD_USE_LIB -DBSONCXX_STATIC -DCPPREST_EXCLUDE_WEBSOCKETS=1 -DCPPREST_FORCE_HTTP_CLIENT_ASIO -DCPPREST_FORCE_HTTP_LISTENER_ASIO -DCPPREST_NO_SSL_LEAK_SUPPRESS -DLIBRDKAFKA_STATICLIB -DMONGOCXX_STATIC -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -DUTF8PROC_STATIC -I/root/ape-server/include -I/root/ape-server/src/proto -isystem /root/ape-server/vcpkg_installed/x64-linux/include -isystem /root/ape-server/vcpkg_installed/x64-linux/include/mongocxx/v_noabi -isystem /root/ape-server/vcpkg_installed/x64-linux/include/bsoncxx/v_noabi -std=gnu++20 -o CMakeFiles/ape-server.dir/src/proto/sdkws.grpc.pb.cc.o -c /root/ape-server/src/proto/sdkws.grpc.pb.cc",
+  "file": "/root/ape-server/src/proto/sdkws.grpc.pb.cc",
+  "output": "CMakeFiles/ape-server.dir/src/proto/sdkws.grpc.pb.cc.o"
 },
 {
   "directory": "/root/ape-server/build",

@@ -21,6 +21,8 @@ find_package(RdKafka CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(etcd-cpp-api CONFIG REQUIRED)
 find_package(GTest CONFIG REQUIRED)
+find_package(hiredis CONFIG REQUIRED)
+find_package(redis++ CONFIG REQUIRED)
 
 
 # 测试的文件
@@ -51,11 +53,15 @@ mongo::mongocxx_static
 mongo::bsoncxx_static
 utf8proc::utf8proc
 
+# Redis
+hiredis::hiredis redis++::redis++_static
+
 # Kafka
 RdKafka::rdkafka RdKafka::rdkafka++
 
 # gRPC
 gRPC::grpc++
+${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg_installed/x64-linux/lib/libgrpc++_reflection.a
 
 # etcd
 etcd-cpp-api

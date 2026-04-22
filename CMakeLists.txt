@@ -19,6 +19,8 @@ find_package(bsoncxx CONFIG REQUIRED)
 find_package(RdKafka CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(etcd-cpp-api CONFIG REQUIRED)
+find_package(hiredis CONFIG REQUIRED)
+find_package(redis++ CONFIG REQUIRED)
 
 # 收集所有 src 下的 .cpp
 file(GLOB_RECURSE ALL_IMPL_FILE "src/*.cpp")
@@ -47,17 +49,19 @@ mongo::mongocxx_static
 mongo::bsoncxx_static
 utf8proc::utf8proc
 
+# Redis
+hiredis::hiredis redis++::redis++_static
+
 # Kafka
 RdKafka::rdkafka RdKafka::rdkafka++
 
 # gRPC
 gRPC::grpc++
+${CMAKE_CURRENT_SOURCE_DIR}/vcpkg_installed/x64-linux/lib/libgrpc++_reflection.a
 
 # etcd
 etcd-cpp-api
 
-#brpc
-brpc
 )
 
 get_target_property(APE_SERVER_LINK_LIBS ape-server LINK_LIBRARIES)

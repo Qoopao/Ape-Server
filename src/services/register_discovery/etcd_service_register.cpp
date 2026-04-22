@@ -47,7 +47,6 @@ void EtcdServiceRegistry::RegisterService() {
   }
 
   // 3. 自动续约
-  // 事件触发，
   std::function<void(std::exception_ptr)> handler =
       [](std::exception_ptr eptr) {
         try {

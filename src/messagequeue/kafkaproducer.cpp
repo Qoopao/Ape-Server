@@ -41,7 +41,7 @@ int32_t ProducerPartitionStrategyCb::partitioner_cb(const RdKafka::Topic *topic,
     return hash_value % partition_cnt;
 }
 
-KafkaProducer::KafkaProducer(std::string& brokerList, std::string& topicName)
+KafkaProducer::KafkaProducer( std::string topicName, std::string brokerList)
 {
     this->brokerList = brokerList;
     this->topicName = topicName;
@@ -110,7 +110,7 @@ KafkaProducer::KafkaProducer(std::string& brokerList, std::string& topicName)
 }
 
 
-void KafkaProducer::Deliver(std::string& key, void* payload, size_t payloadSize)
+bool KafkaProducer::Deliver(std::string& key, void* payload, size_t payloadSize)
 {
     // 投递消息
     RdKafka::ErrorCode errCode = producerInstance->produce(
@@ -127,9 +127,12 @@ void KafkaProducer::Deliver(std::string& key, void* payload, size_t payloadSize)
         spdlog::error("KafkaProducer: Failed to produce message: {}", RdKafka::err2str(errCode));
         if(errCode == RdKafka::ERR__QUEUE_FULL){
             producerInstance->poll(100);
+            return false;
         }
+        return false;
     }
-    
+    return true;
+
 }
 
 

@@ -15,20 +15,21 @@ MongoConnector& MongoConnector::get_instance(){
     return instance;
 }
 
-const mongocxx::client & MongoConnector::get_client()
-{
-    return client;
-}
-
 MongoConnector::MongoConnector(){
     db_username = "root";
     db_password = "root";
+    min_pool_size = 5;
+    max_pool_size = 10;
+    mongo_instance = mongocxx::instance{};
 
-    std::string uri_string = "mongodb://" + db_username + ":" + db_password + "@localhost:27017/?authSource=admin";
+    std::string uri_string = "mongodb://" + db_username + ":" + db_password + "@localhost:27017/?authSource=admin&minPoolSize=" + std::to_string(min_pool_size) + "&maxPoolSize=" + std::to_string(max_pool_size);
     mongocxx::uri uri(uri_string);
-
+    
     try{
-        client = mongocxx::client(uri);
+        pool = std::make_shared<mongocxx::pool>(uri);
+
+        // 这里取出一个client，测试连接是否成功
+        auto client = pool->acquire();
         bsoncxx::builder::stream::document ping_cmd;
         ping_cmd << "ping" << 1;
         client["admin"].run_command(ping_cmd.view()); // 这里如果失败，也会抛出mongocxx::exception

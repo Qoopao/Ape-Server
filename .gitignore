@@ -22,3 +22,6 @@ docker/kafka/kafka-ui/
 
 # otel目录
 docker/otel/elasticsearch_data/
+
+# 同步grpc服务器测试
+grpctest/

@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/client.hpp>
 #include <mongocxx/uri.hpp>
@@ -19,11 +20,16 @@
 mongocxx::collection MongoHandler::get_collection(const std::string db_name, const std::string collection_name)
 {
     MongoConnector &mongoconnector = MongoConnector::get_instance();
-    const mongocxx::client &client = mongoconnector.get_client();
-    return client[db_name][collection_name];
+    try{
+        auto client = mongoconnector.get_pool()->acquire();
+        return (*client)[db_name][collection_name];
+    }
+    catch (...)
+    {
+        throw;
+    }
 }
 
-// Create
 std::optional<bsoncxx::oid> MongoHandler::insert_user(userInfo user)
 {
     try
@@ -57,7 +63,6 @@ std::optional<bsoncxx::oid> MongoHandler::insert_user(userInfo user)
     }
 }
 
-// Read
 std::optional<std::string> MongoHandler::find_user_by_id(uint16_t userid)
 {
     try
@@ -89,14 +94,17 @@ std::optional<std::string> MongoHandler::find_user_by_id(uint16_t userid)
     }
 }
 
-// Update
 bool MongoHandler::update_user(userInfo user)
 {
     auto collection = get_collection("IM-System", "user");
+    return true;
 }
 
-// Delete
 bool MongoHandler::delete_by_id(uint16_t userid)
 {
     auto collection = get_collection("IM-System", "user");
+    return true;
 }
+
+
+
