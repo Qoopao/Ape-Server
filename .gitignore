@@ -1,0 +1,19 @@
+# clangd缓存
+.cache/
+
+# 编译输出
+build/
+
+# vcpkg 安装目录
+vcpkg_installed/
+
+# etcd目录
+docker/etcd/etcd_data_*/
+docker/etcd/scripts/
+
+# kafka目录
+docker/kafka/kafka-*/
+docker/kafka/kafka-ui/
+
+# otel目录
+docker/otel/elasticsearch_data/

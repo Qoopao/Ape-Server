@@ -1,0 +1,34 @@
+{
+  "name": "ape-server",
+  "version": "1.0.0",
+  "builtin-baseline": "a11dd074dac3fa168aa8efb992cbb0220a3dc481",
+  "dependencies": [
+    "boost-asio",
+    "boost-beast",
+    "boost-thread",
+    "boost-uuid",
+    "boost-mysql",
+    "etcd-cpp-apiv3",
+    "grpc",
+    "gtest",
+    "librdkafka",
+    "mongo-cxx-driver",
+    "nlohmann-json",
+    "spdlog",
+    "utf8proc",
+    "redis-plus-plus",
+    "openssl",
+    {
+      "name": "opentelemetry-cpp",
+      "version>=": "1.24.0",  
+      "features": [        
+        "otlp-file",           
+        "otlp-grpc",            
+        "otlp-http",
+        "user-events",
+        "opentracing"            
+      ]
+    },
+    "curl"
+  ]
+}

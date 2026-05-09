@@ -1,0 +1,143 @@
+services:
+  # ========== Redis 主从节点 ==========
+  # 主节点（唯一可写节点）
+  redis-master:
+    image: redis:7.2-alpine
+    container_name: redis-master
+    environment:
+      - REDIS_PASSWORD=redis123
+    ports:
+      - "6379:6379"  # 对外暴露主节点端口
+    volumes:
+      - ./redis_data_master:/data  # 持久化数据
+      - ./redis-master.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: unless-stopped
+    networks:
+      - redis-sentinel-network
+    healthcheck:  # 健康检查，哨兵依赖此判断节点状态
+      test: ["CMD", "redis-cli", "-a", "redis123", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  # 从节点1（只读，同步主节点数据）
+  redis-slave-1:
+    image: redis:7.2-alpine
+    container_name: redis-slave-1
+    environment:
+      - REDIS_PASSWORD=redis123
+    ports:
+      - "6380:6379"
+    volumes:
+      - ./redis_data_slave_1:/data
+      - ./redis-slave.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: unless-stopped
+    networks:
+      - redis-sentinel-network
+    depends_on:
+      - redis-master
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis123", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  # 从节点2（只读，提高读可用性）
+  redis-slave-2:
+    image: redis:7.2-alpine
+    container_name: redis-slave-2
+    environment:
+      - REDIS_PASSWORD=redis123
+    ports:
+      - "6381:6379"
+    volumes:
+      - ./redis_data_slave_2:/data
+      - ./redis-slave.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    restart: unless-stopped
+    networks:
+      - redis-sentinel-network
+    depends_on:
+      - redis-master
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis123", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  # ========== 哨兵集群（3个节点，实现哨兵高可用） ==========
+  # 哨兵节点1
+  redis-sentinel-1:
+    image: redis:7.2-alpine
+    container_name: redis-sentinel-1
+    ports:
+      - "26379:26379"
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    restart: unless-stopped
+    networks:
+      - redis-sentinel-network
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+  # 哨兵节点2
+  redis-sentinel-2:
+    image: redis:7.2-alpine
+    container_name: redis-sentinel-2
+    ports:
+      - "26380:26379"
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    restart: unless-stopped
+    networks:
+      - redis-sentinel-network
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+  # 哨兵节点3
+  redis-sentinel-3:
+    image: redis:7.2-alpine
+    container_name: redis-sentinel-3
+    ports:
+      - "26381:26379"
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    restart: unless-stopped
+    networks:
+      - redis-sentinel-network
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+  # ========== 可视化管理工具 ==========
+  redis-commander:
+    image: ghcr.io/joeferner/redis-commander:latest
+    container_name: redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=master:redis-master:6379:0:redis123,slave1:redis-slave-1:6379:0:redis123,slave2:redis-slave-2:6379:0:redis123
+      - HTTP_USER=admin
+      - HTTP_PASSWORD=admin123
+    restart: unless-stopped
+    networks:
+      - redis-sentinel-network
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+# 自定义网络，确保所有节点在同一网络内通信
+networks:
+  redis-sentinel-network:
+    driver: bridge

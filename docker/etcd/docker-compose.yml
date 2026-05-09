@@ -1,0 +1,109 @@
+services:
+  etcd-1:
+    image: quay.io/coreos/etcd:v3.5.10
+    container_name: etcd-1
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    environment:
+      - ETCD_NAME=etcd-1
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_DATA_DIR=/etcd-data
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd-1:2379
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd-1:2380
+      - ETCD_INITIAL_CLUSTER=etcd-1=http://etcd-1:2380,etcd-2=http://etcd-2:2380,etcd-3=http://etcd-3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-1
+    volumes:
+      - ./etcd_data_1:/etcd-data
+    # command: etcd
+    restart: unless-stopped
+    networks:
+      - etcd-network
+
+  etcd-2:
+    image: quay.io/coreos/etcd:v3.5.10
+    container_name: etcd-2
+    ports:
+      - "2381:2379"
+      - "2382:2380"
+    environment:
+      - ETCD_NAME=etcd-2
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_DATA_DIR=/etcd-data
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd-2:2379
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd-2:2380
+      - ETCD_INITIAL_CLUSTER=etcd-1=http://etcd-1:2380,etcd-2=http://etcd-2:2380,etcd-3=http://etcd-3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-1
+    volumes:
+      - ./etcd_data_2:/etcd-data
+    # command: etcd
+    restart: unless-stopped
+    networks:
+      - etcd-network
+
+  etcd-3:
+    image: quay.io/coreos/etcd:v3.5.10
+    container_name: etcd-3
+    ports:
+      - "2383:2379"
+      - "2384:2380"
+    environment:
+      - ETCD_NAME=etcd-3
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_DATA_DIR=/etcd-data
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd-3:2379
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd-3:2380
+      - ETCD_INITIAL_CLUSTER=etcd-1=http://etcd-1:2380,etcd-2=http://etcd-2:2380,etcd-3=http://etcd-3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster-1
+    volumes:
+      - ./etcd_data_3:/etcd-data
+    # command: etcd
+    restart: unless-stopped
+    networks:
+      - etcd-network
+
+  # 网络工具 (可选)
+  etcd-manager:
+    image: nicolaka/netshoot:latest
+    container_name: etcd-manager
+    depends_on:
+      - etcd-1
+      - etcd-2
+      - etcd-3
+    volumes:
+      - ./scripts:/scripts
+    working_dir: /scripts
+    command: tail -f /dev/null
+    networks:
+      - etcd-network
+
+  # etcd WebUI
+  etcdv3-browser:
+    image: rustyx/etcdv3-browser:latest
+    container_name: etcdv3-browser
+    ports:
+      - "2579:8081"
+    environment:
+      - HTTP_PORT=8081
+      - ETCD=etcd-1:2379  # 只需要一个节点的地址即可
+      - EDITABLE=1
+    depends_on:
+      - etcd-1
+      - etcd-2
+      - etcd-3
+    restart: unless-stopped
+    networks:
+      - etcd-network
+
+networks:
+  etcd-network:
+    driver: bridge
