@@ -33,7 +33,7 @@ static std::string start_memory_server(grpc::ServerBuilder& builder,
 static void test_get_server_time() {
   // ── Arrange: 启动内存中的 gRPC 服务器 ──
   grpc::ServerBuilder builder;
-  MsgServiceImpl service;
+  MsgServiceImpl service("MsgService", "0.0.0.0:50053");
   std::unique_ptr<grpc::Server> server;
   std::string bound_address = start_memory_server(builder, service, server);
 
@@ -54,7 +54,7 @@ static void test_get_server_time() {
 static void test_send_messages_empty() {
   // ── Arrange ──
   grpc::ServerBuilder builder;
-  MsgServiceImpl service;
+  MsgServiceImpl service("MsgService", "0.0.0.0:50053");
   std::unique_ptr<grpc::Server> server;
   std::string bound_address = start_memory_server(builder, service, server);
 

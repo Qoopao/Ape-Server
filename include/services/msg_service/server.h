@@ -1,36 +1,20 @@
 #ifndef MSG_SERVICE_SERVER_H
 #define MSG_SERVICE_SERVER_H
 
-
 #include "msg.grpc.pb.h"
 #include "msg.pb.h"
-#include <csignal>
-#include <etcd/Client.hpp>
-#include <etcd/KeepAlive.hpp>
+#include "services/base_service.h"
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/support/status.h>
 #include <memory>
 #include <spdlog/spdlog.h>
 
-
-class MsgServiceImpl final : public msg::MessageService::Service {
+class MsgServiceImpl final : public msg::MessageService::Service,
+                             public BaseServiceServer<MsgServiceImpl> {
 public:
-  MsgServiceImpl() {
-    // 信号处理，ctrl+c退出
-    struct sigaction sa;
-    sa.sa_handler = &MsgServiceImpl::SignalHandler;
-    sa.sa_flags = SA_RESTART;
-    sigemptyset(&sa.sa_mask);
-    sigaction(SIGINT, &sa, nullptr);
-  };
-
-
-  void independentWait()  {
-    std::unique_lock<std::mutex> lock(this->mtx_quit);
-    this->cv_quit.wait(lock, [this]() {
-      return this->should_exit.load(std::memory_order_acquire);
-    });
-  }
+  MsgServiceImpl(const std::string &service_name,
+                 const std::string &listen_address);
+  ~MsgServiceImpl() override = default;
 
   ::grpc::Status GetMaxSeq(::grpc::ServerContext *context,
                            const ::sdkws::GetMaxSeqReq *request,
@@ -147,19 +131,6 @@ public:
   ::grpc::Status GetLastMessage(::grpc::ServerContext *context,
                                 const ::msg::GetLastMessageReq *request,
                                 ::msg::GetLastMessageResp *response) override;
-
-private:
-  std::unique_ptr<grpc::Server> server;
-
-// 测试用
-  static std::atomic<bool> should_exit;
-  static std::condition_variable cv_quit;
-  static std::mutex mtx_quit;
-  static void SignalHandler(int sig) {
-     std::lock_guard<std::mutex> lock(mtx_quit);
-     should_exit.store(true, std::memory_order_release);
-     cv_quit.notify_one();
-  }
 };
 
 #endif

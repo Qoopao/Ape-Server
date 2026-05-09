@@ -1,17 +1,13 @@
 #include "services/msg_service/server.h"
 #include "sdkws.pb.h"
-#include <etcd/SyncClient.hpp>
 #include <string>
 #include "util/uuid.h"
 #include <spdlog/spdlog.h>
 #include "util/redishandler.h"
 
-
-
-// 类外定义
-std::atomic<bool> MsgServiceImpl::should_exit(false);
-std::condition_variable MsgServiceImpl::cv_quit;
-std::mutex MsgServiceImpl::mtx_quit;
+MsgServiceImpl::MsgServiceImpl(const std::string &service_name,
+                               const std::string &listen_address)
+    : BaseServiceServer<MsgServiceImpl>(service_name, listen_address) {}
 
 ::grpc::Status MsgServiceImpl::GetMaxSeq(::grpc::ServerContext *context,
                                          const ::sdkws::GetMaxSeqReq *request,
