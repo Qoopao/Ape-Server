@@ -7,7 +7,6 @@
 #include "services/push_service/server.h"
 
 #include <memory>
-#include <thread>
 
 int main()
 {
@@ -17,37 +16,25 @@ int main()
         spdlog::info("=== Starting AuthService on 0.0.0.0:50051 ===");
         auto auth_server = std::make_unique<AuthServiceImpl>(
             "AuthService", "0.0.0.0:50051");
-        std::thread auth_thread([&auth_server]() {
-            auth_server->Start();
-        });
-        spdlog::info("AuthService thread created");
+        auth_server->Start();
 
         // ── 启动 BackbonService gRPC 服务器 ──
         spdlog::info("=== Starting BackbonService on 0.0.0.0:50052 ===");
         auto backbon_server = std::make_unique<BackbonServiceImpl>(
             "BackbonService", "0.0.0.0:50052");
-        std::thread backbon_thread([&backbon_server]() {
-            backbon_server->Start();
-        });
-        spdlog::info("BackbonService thread created");
+        backbon_server->Start();
 
         // ── 启动 MsgService gRPC 服务器 ──
         spdlog::info("=== Starting MsgService on 0.0.0.0:50053 ===");
         auto msg_server = std::make_unique<MsgServiceImpl>(
             "MsgService", "0.0.0.0:50053");
-        std::thread msg_thread([&msg_server]() {
-            msg_server->Start();
-        });
-        spdlog::info("MsgService thread created");
+        msg_server->Start();
 
         // ── 启动 PushService gRPC 服务器 ──
         spdlog::info("=== Starting PushService on 0.0.0.0:50054 ===");
         auto push_server = std::make_unique<PushServer>(
             "PushService", "0.0.0.0:50054");
-        std::thread push_thread([&push_server]() {
-            push_server->Start();
-        });
-        spdlog::info("PushService thread created");
+        push_server->Start();
 
         // ── 启动 WebServer 网关 (WebSocket / HTTP) ──
         spdlog::info("=== Starting WebServer Gateway on port 6666 ===");
@@ -68,35 +55,8 @@ int main()
         ioc.run();
 
         // ── 清理所有服务 ──
-        spdlog::info("WebServer stopped, shutting down all services...");
+        spdlog::info("关闭Web网关...");
 
-        spdlog::info("Stopping AuthService...");
-        auth_server->Stop();
-        if (auth_thread.joinable()) {
-            auth_thread.join();
-        }
-        spdlog::info("AuthService stopped");
-
-        spdlog::info("Stopping BackbonService...");
-        backbon_server->Stop();
-        if (backbon_thread.joinable()) {
-            backbon_thread.join();
-        }
-        spdlog::info("BackbonService stopped");
-
-        spdlog::info("Stopping MsgService...");
-        msg_server->Stop();
-        if (msg_thread.joinable()) {
-            msg_thread.join();
-        }
-        spdlog::info("MsgService stopped");
-
-        spdlog::info("Stopping PushService...");
-        push_server->Stop();
-        if (push_thread.joinable()) {
-            push_thread.join();
-        }
-        spdlog::info("PushService stopped");
     }
     catch (const std::exception &e)
     {
