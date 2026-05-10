@@ -5,11 +5,14 @@
 #include "services/backbon_service/server.h"
 #include "services/msg_service/server.h"
 #include "services/push_service/server.h"
+#include "util/redishandler.h"
 
 #include <memory>
 
 int main()
 {
+    // spdlog::set_level(spdlog::level::debug);  // 显示 debug 及以上级别的日志
+
     try
     {
         // ── 启动 AuthService gRPC 服务器 ──
@@ -34,7 +37,8 @@ int main()
         spdlog::info("=== Starting PushService on 0.0.0.0:50054 ===");
         auto push_server = std::make_unique<PushServer>(
             "PushService", "0.0.0.0:50054");
-        push_server->Start();
+        push_server->Start("push-service-group",
+                           {"msg_topic"});
 
         // ── 启动 WebServer 网关 (WebSocket / HTTP) ──
         spdlog::info("=== Starting WebServer Gateway on port 6666 ===");

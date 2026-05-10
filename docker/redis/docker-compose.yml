@@ -124,7 +124,7 @@ services:
     image: ghcr.io/joeferner/redis-commander:latest
     container_name: redis-commander
     ports:
-      - "8081:8081"
+      - "8088:8081"
     environment:
       - REDIS_HOSTS=master:redis-master:6379:0:redis123,slave1:redis-slave-1:6379:0:redis123,slave2:redis-slave-2:6379:0:redis123
       - HTTP_USER=admin

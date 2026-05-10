@@ -14,7 +14,6 @@
 
 #include "sdkws.pb.h"
 #include "util/redisconnector.h"
-#include "user/userinfo.h"
 
 using UpdateType = sw::redis::UpdateType;
 

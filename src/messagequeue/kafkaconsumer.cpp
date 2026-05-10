@@ -1,7 +1,10 @@
 #include "messagequeue/kafkaconsumer.h"
+#include "messagequeue/kafkahandler.h"
 #include <librdkafka/rdkafkacpp.h>
 
-
+void KafkaConsumer::setHandler(std::shared_ptr<KafkaHandler> handler) {
+    this->msgHandler = handler;
+}
 
 void ConsumerEventCb::event_cb(RdKafka::Event& event) {
     switch (event.type()) {
@@ -36,9 +39,9 @@ void ConsumerRebalanceCb::rebalance_cb(RdKafka::KafkaConsumer *consumer,
     }
 }
 
-KafkaConsumer::KafkaConsumer(const std::string& brokerList,
-                             const std::string& groupId, 
-                             const std::vector<std::string>& topicNames) {
+KafkaConsumer::KafkaConsumer(const std::string& groupId, 
+                             const std::vector<std::string>& topicNames,
+                             const std::string& brokerList) {
     this->brokerList = brokerList;
     this->groupId = groupId;
     this->topicNames = topicNames;
@@ -130,16 +133,18 @@ void KafkaConsumer::consumeMsg(RdKafka::Message& msg, void *opaque) {
                          msg.topic_name(), msg.partition(), msg.offset(),
                          *msg.key(),
                          payloadStr);
+            // 调用消息处理器处理业务逻辑
+            if (msgHandler) {
+                msgHandler->handle(msg.topic_name(), payloadStr);
+            }
             break;
         case RdKafka::ERR__TIMED_OUT:
-            spdlog::info("Consume message timeout: {}", RdKafka::err2str(msg.err()));
+            spdlog::debug("Consume message timeout: {}", RdKafka::err2str(msg.err()));
             break;
         default:
             spdlog::error("Consume message error: {}", RdKafka::err2str(msg.err()));
             break;
     }
-
-
 }
 
 void KafkaConsumer::start() {
@@ -150,7 +155,7 @@ void KafkaConsumer::start() {
         return;
     }
 
-    while(1){
+    while(running_){
         RdKafka::Message *msg = consumerInstance->consume(3000); 
         consumeMsg(*msg, nullptr);
         consumerInstance->commitAsync();    //异步提交，可能会重复消费，业务层需要处理
@@ -158,6 +163,19 @@ void KafkaConsumer::start() {
     }
 
     consumerInstance->commitSync();
+    spdlog::info("KafkaConsumer: consume loop exited");
+}
+
+void KafkaConsumer::shutdown() {
+    spdlog::info("KafkaConsumer: shutting down...");
+    running_ = false;
+}
+
+void KafkaConsumer::join() {
+    if (consume_thread_.joinable()) {
+        consume_thread_.join();
+        spdlog::info("KafkaConsumer: consume thread joined");
+    }
 }
 
 KafkaConsumer::~KafkaConsumer() {
