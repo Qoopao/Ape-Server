@@ -51,8 +51,41 @@ BackbonServiceImpl::CheckUserOnline(::grpc::CallbackServerContext* context,
 // 输入用户ID列表，返回这些列表的全部用户状态（包括离线与在线）。先查redis，再查持久化数据库
 // 持久化数据库查到了放redis缓存
 
-
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
+
+  auto &redis = RedisConnector::get_instance().get_redis();
+
+  for (const auto &userID : request->userids()) {
+    auto *status = response->add_statuses();
+    status->set_userid(userID);
+    status->set_isonline(false);
+    status->set_connectioncount(0);
+
+    // 1. 先查 Redis 在线状态
+    try {
+      auto onlineVal = redis.get("user:" + userID + ":online");
+      if (onlineVal && *onlineVal == "1") {
+        status->set_isonline(true);
+        status->set_connectioncount(1);
+        spdlog::debug("BackbonService::CheckUserOnline: user {} is online (from Redis)", userID);
+        continue;
+      }
+    } catch (const std::exception &e) {
+      spdlog::error("BackbonService::CheckUserOnline: Redis error for user {}: {}", userID, e.what());
+    }
+
+    // 2. Redis 未命中 -> 查持久化数据库（暂时跳过，后续接入 MySQLHandler）
+    // auto userInfo = MySQLHandler::GetUserOnlineInfo(userID);
+    // if (userInfo) {
+    //   status->set_isonline(userInfo->isOnline);
+    //   status->set_lastactivetime(userInfo->lastActiveTime);
+    //   // 缓存到 Redis
+    //   redis.setex("user:" + userID + ":online", 300, userInfo->isOnline ? "1" : "0");
+    // }
+
+    spdlog::debug("BackbonService::CheckUserOnline: user {} is offline", userID);
+  }
+
   reactor->Finish(grpc::Status::OK);
   return reactor;
 }

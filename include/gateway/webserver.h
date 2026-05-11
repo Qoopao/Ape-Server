@@ -24,7 +24,7 @@ public:
 
 private:
     boost::asio::ip::tcp::acceptor acceptor_;
-    boost::asio::io_context &ioc_;            
+    boost::asio::io_context &ioc_;
     boost::asio::awaitable<void> do_accept();
 };
 

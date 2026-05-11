@@ -1,9 +1,12 @@
 #include "services/push_service/server.h"
+#include "gateway/ws_session_manager.h"
 #include "messagequeue/kafkaconsumer.h"
 #include "services/push_service/push_msg_handler.h"
+#include "util/redisconnector.h"
 #include "util/redishandler.h"
-#include <spdlog/spdlog.h>
 #include <google/protobuf/util/json_util.h>
+#include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
 
 PushServer::PushServer(const std::string &service_name,
                        const std::string &listen_address)
@@ -85,12 +88,44 @@ void PushServer::Start(const std::string &kafka_group_id,
     if (recvOnline) {
         // 接收者在线 -> 通过WebSocket长连接直接推送
         spdlog::info("PushServer::PushMsg: receiver {} is online, pushing via WebSocket", msgData.recvid());
-        // 这里将来需要对接 Gateway 的 WebSocket 长连接推送
-        // 可以通过 Kafka 的 ws-push topic 或直接调用 Gateway gRPC 接口
-        
-        // TODO: 调用 Gateway 的 WebSocket 推送接口（待 Gateway 实现推送接收端点）
-        spdlog::info("PushServer::PushMsg: [TODO] WebSocket push to user={} for conv={}",
-                     msgData.recvid(), conversationID);
+
+        // 构建 WebSocket 推送消息（使用 sdkws::SdkWSResp 格式，与客户端协议一致）
+        nlohmann::json pushMsg;
+        pushMsg["type"] = "push";
+        pushMsg["conversationID"] = conversationID;
+
+        // 序列化 msgData 为 JSON
+        google::protobuf::util::JsonPrintOptions printOpts;
+        printOpts.preserve_proto_field_names = true;
+        std::string msgDataJson;
+        auto status = google::protobuf::util::MessageToJsonString(msgData, &msgDataJson, printOpts);
+        if (!status.ok()) {
+            spdlog::error("PushServer::PushMsg: failed to serialize msgData to JSON: {}", status.message());
+            return ::grpc::Status(::grpc::StatusCode::INTERNAL, "failed to serialize msgData");
+        }
+        pushMsg["msgData"] = nlohmann::json::parse(msgDataJson);
+
+        // 如果是群聊，需要推送给群内所有在线成员
+        bool isGroupMsg = msgData.isgroupmsg();
+        if (isGroupMsg) {
+            // 群聊消息推送给 conversationID（群ID）的所有在线成员
+            spdlog::info("PushServer::PushMsg: group message for group={}, pushing to group members",
+                         conversationID);
+            // TODO: 查询群成员列表后逐个推送
+            // 当前简化：直接推送给 recvID（群 ID 对应的会话）
+            auto payload = std::make_shared<std::string>(pushMsg.dump());
+            WSSessionManager::instance().pushToUser(msgData.recvid(), payload);
+        } else {
+            // 单聊消息直推给接收者
+            spdlog::info("PushServer::PushMsg: direct message to user={}", msgData.recvid());
+            auto payload = std::make_shared<std::string>(pushMsg.dump());
+            bool pushed = WSSessionManager::instance().pushToUser(msgData.recvid(), payload);
+            if (pushed) {
+                spdlog::info("PushServer::PushMsg: WebSocket push to user={} succeeded", msgData.recvid());
+            } else {
+                spdlog::warn("PushServer::PushMsg: WebSocket push to user={} failed (no active session)", msgData.recvid());
+            }
+        }
     } else {
         // 接收者离线 -> 走离线推送（FCM/APNs）
         if (!recvPushToken.empty()) {

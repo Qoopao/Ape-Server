@@ -30,10 +30,12 @@ std::string AuthServiceImpl::hash_password(const std::string &password,
     std::string input = salt + password;
 
     unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256_CTX sha256;
-    SHA256_Init(&sha256);
-    SHA256_Update(&sha256, input.data(), input.size());
-    SHA256_Final(hash, &sha256);
+    unsigned int hash_len = 0;
+    EVP_MD_CTX *mdctx = EVP_MD_CTX_new();
+    EVP_DigestInit_ex(mdctx, EVP_sha256(), nullptr);
+    EVP_DigestUpdate(mdctx, input.data(), input.size());
+    EVP_DigestFinal_ex(mdctx, hash, &hash_len);
+    EVP_MD_CTX_free(mdctx);
 
     std::ostringstream oss;
     for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
