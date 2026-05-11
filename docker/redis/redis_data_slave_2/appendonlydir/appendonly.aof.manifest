@@ -1,2 +1,0 @@
-file appendonly.aof.5.base.rdb seq 5 type b
-file appendonly.aof.5.incr.aof seq 5 type i

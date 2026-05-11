@@ -17,3 +17,7 @@ docker/kafka/kafka-ui/
 
 # otel目录
 docker/otel/elasticsearch_data/
+
+# redis目录
+docker/redis/redis_data_master/
+docker/redis/redis_data_slave_*/
