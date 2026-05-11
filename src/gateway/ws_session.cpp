@@ -65,11 +65,11 @@ asio::awaitable<void> WSSession::doReadAuth() {
     try {
         json authJson = json::parse(authMsg);
         if (!authJson.contains("type") || authJson["type"] != "auth" ||
-            !authJson.contains("userId")) {
-            spdlog::warn("WSSession: invalid auth message: {}", authMsg);
+            !authJson.contains("userId") || !authJson.contains("token")) {
+            spdlog::warn("WSSession: invalid auth message (missing userId or token): {}", authMsg);
 
             // 发送错误响应并关闭
-            json errResp = {{"type", "error"}, {"message", "invalid auth"}};
+            json errResp = {{"type", "error"}, {"message", "missing userId or token"}};
             std::string errStr = errResp.dump();
             co_await ws_.async_write(asio::buffer(errStr),
                 asio::redirect_error(asio::use_awaitable, ec));
@@ -78,7 +78,47 @@ asio::awaitable<void> WSSession::doReadAuth() {
             co_return;
         }
 
-        userId_ = authJson["userId"].get<std::string>();
+        std::string userId = authJson["userId"].get<std::string>();
+        std::string token = authJson["token"].get<std::string>();
+
+        // Token 验证：查询 Redis
+        bool token_valid = false;
+        try {
+            auto& redis = RedisConnector::get_instance().get_redis();
+            auto token_value = redis.get("token:" + token);
+            if (token_value) {
+                // Redis 值格式: user_id,username
+                auto comma_pos = token_value->find(',');
+                if (comma_pos != std::string::npos) {
+                    std::string cached_user_id = token_value->substr(0, comma_pos);
+                    if (cached_user_id == userId) {
+                        token_valid = true;
+                        spdlog::info("WSSession: token verified for user {}", userId);
+                    } else {
+                        spdlog::warn("WSSession: token user_id mismatch: expected={}, got={}",
+                                     userId, cached_user_id);
+                    }
+                }
+            } else {
+                spdlog::warn("WSSession: token not found in Redis for user {}", userId);
+            }
+        } catch (const std::exception& e) {
+            spdlog::error("WSSession: Redis token verification error: {}", e.what());
+        }
+
+        if (!token_valid) {
+            spdlog::warn("WSSession: auth failed for user {} - invalid or expired token", userId);
+
+            json errResp = {{"type", "auth_failed"}, {"message", "invalid or expired token"}};
+            std::string errStr = errResp.dump();
+            co_await ws_.async_write(asio::buffer(errStr),
+                asio::redirect_error(asio::use_awaitable, ec));
+            co_await ws_.async_close(websocket::close_code::policy_error,
+                asio::redirect_error(asio::use_awaitable, ec));
+            co_return;
+        }
+
+        userId_ = userId;
         spdlog::info("WSSession: user {} authenticated", userId_);
 
         // 3. 注册到 SessionManager

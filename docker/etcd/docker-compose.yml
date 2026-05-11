@@ -71,21 +71,6 @@ services:
     networks:
       - etcd-network
 
-  # 网络工具 (可选)
-  etcd-manager:
-    image: nicolaka/netshoot:latest
-    container_name: etcd-manager
-    depends_on:
-      - etcd-1
-      - etcd-2
-      - etcd-3
-    volumes:
-      - ./scripts:/scripts
-    working_dir: /scripts
-    command: tail -f /dev/null
-    networks:
-      - etcd-network
-
   # etcd WebUI
   etcdv3-browser:
     image: rustyx/etcdv3-browser:latest

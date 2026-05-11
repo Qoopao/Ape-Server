@@ -24,6 +24,7 @@ namespace auth {
 static const char* AuthService_method_names[] = {
   "/auth.AuthService/Register",
   "/auth.AuthService/Login",
+  "/auth.AuthService/ValidateToken",
 };
 
 std::unique_ptr< AuthService::Stub> AuthService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -35,6 +36,7 @@ std::unique_ptr< AuthService::Stub> AuthService::NewStub(const std::shared_ptr< 
 AuthService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_Register_(AuthService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_Login_(AuthService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ValidateToken_(AuthService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status AuthService::Stub::Register(::grpc::ClientContext* context, const ::auth::RegisterRequest& request, ::auth::AuthResponse* response) {
@@ -83,6 +85,29 @@ void AuthService::Stub::async::Login(::grpc::ClientContext* context, const ::aut
   return result;
 }
 
+::grpc::Status AuthService::Stub::ValidateToken(::grpc::ClientContext* context, const ::auth::ValidateTokenReq& request, ::auth::ValidateTokenResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::auth::ValidateTokenReq, ::auth::ValidateTokenResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_ValidateToken_, context, request, response);
+}
+
+void AuthService::Stub::async::ValidateToken(::grpc::ClientContext* context, const ::auth::ValidateTokenReq* request, ::auth::ValidateTokenResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::auth::ValidateTokenReq, ::auth::ValidateTokenResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ValidateToken_, context, request, response, std::move(f));
+}
+
+void AuthService::Stub::async::ValidateToken(::grpc::ClientContext* context, const ::auth::ValidateTokenReq* request, ::auth::ValidateTokenResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_ValidateToken_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::auth::ValidateTokenResp>* AuthService::Stub::PrepareAsyncValidateTokenRaw(::grpc::ClientContext* context, const ::auth::ValidateTokenReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::auth::ValidateTokenResp, ::auth::ValidateTokenReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_ValidateToken_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::auth::ValidateTokenResp>* AuthService::Stub::AsyncValidateTokenRaw(::grpc::ClientContext* context, const ::auth::ValidateTokenReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncValidateTokenRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 AuthService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       AuthService_method_names[0],
@@ -104,6 +129,16 @@ AuthService::Service::Service() {
              ::auth::AuthResponse* resp) {
                return service->Login(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      AuthService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< AuthService::Service, ::auth::ValidateTokenReq, ::auth::ValidateTokenResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](AuthService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::auth::ValidateTokenReq* req,
+             ::auth::ValidateTokenResp* resp) {
+               return service->ValidateToken(ctx, req, resp);
+             }, this)));
 }
 
 AuthService::Service::~Service() {
@@ -117,6 +152,13 @@ AuthService::Service::~Service() {
 }
 
 ::grpc::Status AuthService::Service::Login(::grpc::ServerContext* context, const ::auth::LoginRequest* request, ::auth::AuthResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status AuthService::Service::ValidateToken(::grpc::ServerContext* context, const ::auth::ValidateTokenReq* request, ::auth::ValidateTokenResp* response) {
   (void) context;
   (void) request;
   (void) response;

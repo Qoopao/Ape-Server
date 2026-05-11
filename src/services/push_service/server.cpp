@@ -56,8 +56,13 @@ void PushServer::Start(const std::string &kafka_group_id,
     const auto &msgData = request->msgdata();
     std::string conversationID = request->conversationid();
 
-    spdlog::info("PushServer::PushMsg: sender={}, recv={}, convID={}, content_type={}",
+    spdlog::info("[PushService] PushMsg: sender={}, recv={}, convID={}, content_type={}",
                  msgData.sendid(), msgData.recvid(), conversationID, msgData.contenttype());
+
+    // TODO: sender token 验证
+    // 当前 PushMsg 由 msg_service (Kafka 消费链路) 内部调用，msg_service 已校验 sender
+    // 后续若开放外部调用，需从此处 context metadata 提取 authorization token 并验证 sender
+    spdlog::info("[PushService] PushMsg sender={} - token validation deferred (TODO)", msgData.sendid());
 
     // 获取接收者的在线状态和推送token（从Redis读取）
     // user:${userID}:online 存储在线状态

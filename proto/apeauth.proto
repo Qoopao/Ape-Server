@@ -5,6 +5,7 @@ package auth;
 service AuthService {
   rpc Register(RegisterRequest) returns (AuthResponse);
   rpc Login(LoginRequest) returns (AuthResponse);
+  rpc ValidateToken(ValidateTokenReq) returns (ValidateTokenResp);
 }
 
 message RegisterRequest {
@@ -16,6 +17,17 @@ message RegisterRequest {
 message LoginRequest {
   string username = 1;
   string password = 2;
+}
+
+message ValidateTokenReq {
+  string token = 1;
+}
+
+message ValidateTokenResp {
+  bool valid = 1;
+  string user_id = 2;
+  string username = 3;
+  int64 expires_at = 4;
 }
 
 message AuthUser {

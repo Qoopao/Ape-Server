@@ -1,6 +1,8 @@
 #include "services/auth_service/server.h"
 #include "user/userinfo.h"
 #include "util/mysqlhandler.h"
+#include "util/redisconnector.h"
+#include "util/redishandler.h"
 #include "util/uuid.h"
 
 #include <boost/uuid/uuid.hpp>
@@ -14,6 +16,14 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+
+// ──────────────────────────────────────────
+// Token Redis key 前缀
+// ──────────────────────────────────────────
+static constexpr const char *TOKEN_KEY_PREFIX = "token:";
+
+// Token 有效期（秒）
+static constexpr int64_t TOKEN_TTL_SECONDS = 7 * 24 * 3600; // 7 天
 
 // ──────────────────────────────────────────
 // 构造
@@ -49,7 +59,6 @@ std::string AuthServiceImpl::hash_password(const std::string &password,
 // 生成随机盐值 (16 bytes -> 32 hex chars)
 // ──────────────────────────────────────────
 std::string AuthServiceImpl::generate_salt() {
-    // 使用 boost::uuid 作为 16 字节的随机盐
     return boost::uuids::to_string(boost::uuids::random_generator()()).substr(
         0, 32);
 }
@@ -73,14 +82,34 @@ int64_t AuthServiceImpl::calculate_expiry() {
 }
 
 // ──────────────────────────────────────────
+// Token 持久化到 Redis
+// Key:   token:{token}
+// Value: {user_id},{username}
+// TTL:   7 天（与 expires_at 对齐）
+// ──────────────────────────────────────────
+void AuthServiceImpl::persist_token(const std::string &user_id,
+                                    const std::string &username,
+                                    const std::string &token,
+                                    int64_t expires_at) {
+    try {
+        auto &redis = RedisConnector::get_instance().get_redis();
+        std::string key = TOKEN_KEY_PREFIX + token;
+        std::string value = user_id + "," + username;
+        redis.setex(key, TOKEN_TTL_SECONDS, value);
+        spdlog::info("[AuthService] Token persisted to Redis: user={}, token={}",
+                     user_id, token);
+    } catch (const std::exception &e) {
+        spdlog::error("[AuthService] Failed to persist token to Redis: user={}, error={}",
+                      user_id, e.what());
+    }
+}
+
+// ──────────────────────────────────────────
 // 注册接口
 // ──────────────────────────────────────────
-::grpc::ServerUnaryReactor *
-AuthServiceImpl::Register(::grpc::CallbackServerContext *context,
-                          const ::auth::RegisterRequest *request,
-                          ::auth::AuthResponse *response) {
-    auto *reactor = context->DefaultReactor();
-
+::grpc::Status AuthServiceImpl::Register(::grpc::ServerContext *context,
+                                         const ::auth::RegisterRequest *request,
+                                         ::auth::AuthResponse *response) {
     const std::string &username = request->username();
     const std::string &password = request->password();
     const std::string &nickname = request->nickname();
@@ -92,8 +121,8 @@ AuthServiceImpl::Register(::grpc::CallbackServerContext *context,
         response->set_success(false);
         response->set_error_code("INVALID_PARAM");
         response->set_error_message("Username and password are required");
-        reactor->Finish(::grpc::Status::OK);
-        return reactor;
+        spdlog::warn("[AuthService] Register failed: empty username or password");
+        return ::grpc::Status::OK;
     }
 
     // 检查用户名是否已存在
@@ -101,8 +130,8 @@ AuthServiceImpl::Register(::grpc::CallbackServerContext *context,
         response->set_success(false);
         response->set_error_code("USERNAME_EXISTS");
         response->set_error_message("Username already exists");
-        reactor->Finish(::grpc::Status::OK);
-        return reactor;
+        spdlog::warn("[AuthService] Register failed: username {} already exists", username);
+        return ::grpc::Status::OK;
     }
 
     // 创建用户
@@ -118,14 +147,19 @@ AuthServiceImpl::Register(::grpc::CallbackServerContext *context,
         response->set_success(false);
         response->set_error_code("DB_ERROR");
         response->set_error_message("Failed to create user in database");
-        reactor->Finish(::grpc::Status::OK);
-        return reactor;
+        spdlog::error("[AuthService] Register failed: DB insert error for username={}", username);
+        return ::grpc::Status::OK;
     }
+
+    // 生成 token 并持久化
+    std::string token = generate_token();
+    int64_t expires_at = calculate_expiry();
+    persist_token(user.user_id, user.username, token, expires_at);
 
     // 构造响应
     response->set_success(true);
-    response->set_token(generate_token());
-    response->set_expires_at(calculate_expiry());
+    response->set_token(token);
+    response->set_expires_at(expires_at);
 
     auto *auth_user = response->mutable_user();
     auth_user->set_user_id(user.user_id);
@@ -135,19 +169,15 @@ AuthServiceImpl::Register(::grpc::CallbackServerContext *context,
     spdlog::info("[AuthService] User registered: {} ({})", username,
                  user.user_id);
 
-    reactor->Finish(::grpc::Status::OK);
-    return reactor;
+    return ::grpc::Status::OK;
 }
 
 // ──────────────────────────────────────────
 // 登录接口
 // ──────────────────────────────────────────
-::grpc::ServerUnaryReactor *
-AuthServiceImpl::Login(::grpc::CallbackServerContext *context,
-                       const ::auth::LoginRequest *request,
-                       ::auth::AuthResponse *response) {
-    auto *reactor = context->DefaultReactor();
-
+::grpc::Status AuthServiceImpl::Login(::grpc::ServerContext *context,
+                                      const ::auth::LoginRequest *request,
+                                      ::auth::AuthResponse *response) {
     const std::string &username = request->username();
     const std::string &password = request->password();
 
@@ -158,8 +188,8 @@ AuthServiceImpl::Login(::grpc::CallbackServerContext *context,
         response->set_success(false);
         response->set_error_code("INVALID_PARAM");
         response->set_error_message("Username and password are required");
-        reactor->Finish(::grpc::Status::OK);
-        return reactor;
+        spdlog::warn("[AuthService] Login failed: empty username or password");
+        return ::grpc::Status::OK;
     }
 
     // 查询用户
@@ -168,8 +198,8 @@ AuthServiceImpl::Login(::grpc::CallbackServerContext *context,
         response->set_success(false);
         response->set_error_code("USER_NOT_FOUND");
         response->set_error_message("Invalid username or password");
-        reactor->Finish(::grpc::Status::OK);
-        return reactor;
+        spdlog::warn("[AuthService] Login failed: username {} not found", username);
+        return ::grpc::Status::OK;
     }
 
     const auto &user = user_opt.value();
@@ -180,17 +210,22 @@ AuthServiceImpl::Login(::grpc::CallbackServerContext *context,
         response->set_success(false);
         response->set_error_code("WRONG_PASSWORD");
         response->set_error_message("Invalid username or password");
-        reactor->Finish(::grpc::Status::OK);
-        return reactor;
+        spdlog::warn("[AuthService] Login failed: wrong password for username={}", username);
+        return ::grpc::Status::OK;
     }
 
     // 更新最后登录时间
     MySQLHandler::update_last_login(user.user_id);
 
+    // 生成新 token 并持久化（覆盖旧 token）
+    std::string token = generate_token();
+    int64_t expires_at = calculate_expiry();
+    persist_token(user.user_id, user.username, token, expires_at);
+
     // 构造响应
     response->set_success(true);
-    response->set_token(generate_token());
-    response->set_expires_at(calculate_expiry());
+    response->set_token(token);
+    response->set_expires_at(expires_at);
 
     auto *auth_user = response->mutable_user();
     auth_user->set_user_id(user.user_id);
@@ -200,6 +235,71 @@ AuthServiceImpl::Login(::grpc::CallbackServerContext *context,
     spdlog::info("[AuthService] User logged in: {} ({})", username,
                  user.user_id);
 
-    reactor->Finish(::grpc::Status::OK);
-    return reactor;
+    return ::grpc::Status::OK;
+}
+
+// ──────────────────────────────────────────
+// Token 验证接口
+// 1. 查询 Redis: GET token:{token}
+// 2. 命中 → 解析 user_id,username → 返回 valid=true
+// 3. 未命中 → 返回 valid=false
+// ──────────────────────────────────────────
+::grpc::Status AuthServiceImpl::ValidateToken(
+    ::grpc::ServerContext *context,
+    const ::auth::ValidateTokenReq *request,
+    ::auth::ValidateTokenResp *response) {
+
+    const std::string &token = request->token();
+
+    spdlog::info("[AuthService] ValidateToken request: token={}", token);
+
+    if (token.empty()) {
+        response->set_valid(false);
+        spdlog::warn("[AuthService] ValidateToken failed: empty token");
+        return ::grpc::Status::OK;
+    }
+
+    try {
+        auto &redis = RedisConnector::get_instance().get_redis();
+        std::string key = TOKEN_KEY_PREFIX + token;
+        auto value_opt = redis.get(key);
+
+        if (value_opt) {
+            // Redis 命中，解析 user_id,username
+            const std::string &value = *value_opt;
+            auto comma_pos = value.find(',');
+            if (comma_pos != std::string::npos) {
+                std::string user_id = value.substr(0, comma_pos);
+                std::string username = value.substr(comma_pos + 1);
+
+                // 获取 TTL 作为 expires_at
+                auto ttl = redis.ttl(key);
+
+                response->set_valid(true);
+                response->set_user_id(user_id);
+                response->set_username(username);
+                if (ttl >= 0) {
+                    // 计算绝对过期时间 = 当前时间 + TTL 秒
+                    auto now = std::chrono::system_clock::now();
+                    auto expires_at = std::chrono::duration_cast<std::chrono::seconds>(
+                        (now + std::chrono::seconds(ttl)).time_since_epoch()).count();
+                    response->set_expires_at(expires_at);
+                }
+
+                spdlog::info("[AuthService] ValidateToken success: user={}, username={}",
+                             user_id, username);
+                return ::grpc::Status::OK;
+            }
+        }
+
+        // Redis 未命中
+        response->set_valid(false);
+        spdlog::warn("[AuthService] ValidateToken failed: token not found or expired");
+        return ::grpc::Status::OK;
+
+    } catch (const std::exception &e) {
+        spdlog::error("[AuthService] ValidateToken Redis error: {}", e.what());
+        response->set_valid(false);
+        return ::grpc::Status(::grpc::StatusCode::INTERNAL, "Redis error");
+    }
 }
