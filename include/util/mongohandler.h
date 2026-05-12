@@ -38,6 +38,8 @@ public:
 
 	bool SaveConversationInfo(std::string conversationid, sdkws::ConversationInfo conversation);
 	std::optional<sdkws::ConversationInfo> GetConversationInfo(std::string conversationid);
+
+	static bool SaveMsgToMongo(const sdkws::MsgData& msg);
 };
 
 #endif

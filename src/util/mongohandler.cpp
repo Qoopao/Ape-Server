@@ -106,5 +106,57 @@ bool MongoHandler::delete_by_id(uint16_t userid)
     return true;
 }
 
+bool MongoHandler::SaveMsgToMongo(const sdkws::MsgData& msg)
+{
+    try
+    {
+        // 直接获取 pool entry 并保持其生命周期直到 insert_one 完成，
+        // 避免 get_collection() 返回后 pool entry 析构导致 client 失效
+        auto& mongoconnector = MongoConnector::get_instance();
+        auto client = mongoconnector.get_pool()->acquire();
+        auto collection = (*client)["IM-System"]["msg"];
+
+        bsoncxx::builder::stream::document doc{};
+        doc << "serverMsgID" << msg.servermsgid()
+            << "sendID" << msg.sendid()
+            << "recvID" << msg.recvid()
+            << "convID" << msg.convid()
+            << "clientMsgID" << msg.clientmsgid()
+            << "senderPlatformID" << msg.senderplatformid()
+            << "senderNickname" << msg.sendernickname()
+            << "senderFaceURL" << msg.senderfaceurl()
+            << "sessionType" << msg.sessiontype()
+            << "msgFrom" << msg.msgfrom()
+            << "contentType" << msg.contenttype()
+            << "content" << msg.content()
+            << "seq" << msg.seq()
+            << "sendTime" << msg.sendtime()
+            << "status" << msg.status()
+            << "isRead" << msg.isread()
+            << "isDeleted" << msg.isdeleted()
+            << "isRecalled" << msg.isrecalled()
+            << "isPinned" << msg.ispinned()
+            << "isGroupMsg" << msg.isgroupmsg()
+            << "ext" << msg.ext()
+            << bsoncxx::builder::stream::finalize;
+
+        auto result = collection.insert_one(doc.view());
+        if (result)
+        {
+            spdlog::info("SaveMsgToMongo success, serverMsgID={}", msg.servermsgid());
+            return true;
+        }
+        else
+        {
+            spdlog::error("SaveMsgToMongo insert_one failed, serverMsgID={}", msg.servermsgid());
+            return false;
+        }
+    }
+    catch (const mongocxx::exception& e)
+    {
+        spdlog::error("SaveMsgToMongo exception: {}, serverMsgID={}", e.what(), msg.servermsgid());
+        return false;
+    }
+}
 
 

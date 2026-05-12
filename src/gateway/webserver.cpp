@@ -3,7 +3,6 @@
 #include <boost/asio/thread_pool.hpp>
 #include <boost/beast.hpp>
 #include <spdlog/spdlog.h>
-#include <nlohmann/json.hpp>
 #include <boost/asio/this_coro.hpp> // 确保包含this_coro头文件
 
 // 简化命名空间，提升代码可读性
@@ -14,14 +13,30 @@ using boost::asio::co_spawn;
 using boost::asio::detached;
 using boost::asio::use_awaitable;
 
+#include <grpcpp/grpcpp.h>
+
 #include "gateway/webserver.h"
 #include "gateway/ws_session.h"
+#include "services/auth_service/client.h"
+#include "services/msg_service/client.h"
 
 WebServer::WebServer(asio::io_context &ioc, uint16_t port)
     : ioc_(ioc), acceptor_(ioc, tcp::endpoint(tcp::v4(), port))
 {
+    // 初始化 gRPC channel 连接 AuthService
+    auth_channel_ = grpc::CreateChannel("localhost:50051",
+                                        grpc::InsecureChannelCredentials());
+    auth_client_ = std::make_unique<AuthClient>(auth_channel_);
+
+    // 初始化 gRPC channel 连接 MsgService
+    msg_channel_ = grpc::CreateChannel("localhost:50053",
+                                       grpc::InsecureChannelCredentials());
+    msg_client_ = std::make_unique<MsgClient>(msg_channel_);
+
     spdlog::info("WebSocketServer initialized, listening on port {}", port);
 }
+
+WebServer::~WebServer() = default;
 
 // 停止服务器（优化：处理error_code，避免抛异常）
 void WebServer::stop()
@@ -30,10 +45,12 @@ void WebServer::stop()
 }
 
 // 处理单个 WebSocket 连接：接受 TCP 后升级为 WebSocket，然后交给 WSSession 管理
-awaitable<void> handle_ws_session(tcp::socket socket)
+awaitable<void> handle_ws_session(tcp::socket socket, AuthClient* auth_client,
+                                   MsgClient* msg_client)
 {
-    auto session = std::make_shared<WSSession>(std::move(socket));
-    co_await session->start();  
+    auto session = std::make_shared<WSSession>(std::move(socket), auth_client,
+                                                msg_client);
+    co_await session->start();
 }
 
 // 监听逻辑（优化：简化executor，增强可读性）
@@ -46,7 +63,8 @@ asio::awaitable<void> WebServer::listener()
             // 异步接受连接
             tcp::socket socket = co_await acceptor_.async_accept(use_awaitable);
             // 启动协程处理 WebSocket 连接（用ioc_作为executor，更直观）
-            co_spawn(ioc_, handle_ws_session(std::move(socket)), detached);
+            co_spawn(ioc_, handle_ws_session(std::move(socket), auth_client_.get(),
+                                              msg_client_.get()), detached);
         }
         catch (const std::exception& e)
         {
@@ -61,4 +79,3 @@ asio::awaitable<void> WebServer::listener()
     }
     co_return; // 显式返回，符合协程规范
 }
-

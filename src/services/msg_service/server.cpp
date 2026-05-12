@@ -117,7 +117,7 @@ MsgServiceImpl::SendMessages(::grpc::ServerContext *context,
     // 生成会话的orderIndex，从数据库中找应该是多少，这里先随便设一个
     msg.set_seq(0);
 
-    // 将消息存到DB
+    // 将消息存到redis
     bool saveResult = RedisHandler::SaveMsgInfo(msg);
     if(!saveResult){
       respInfos[index]->set_errorcode("1");

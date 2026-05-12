@@ -6,6 +6,12 @@
 #include <boost/asio.hpp>
 #include <boost/beast.hpp>
 
+#include <grpcpp/channel.h>
+#include <memory>
+
+class AuthClient;
+class MsgClient;
+
 using boost::asio::ip::tcp;
 using boost::asio::awaitable;
 using boost::asio::co_spawn;
@@ -17,15 +23,26 @@ class WebServer
 {
 public:
     WebServer(boost::asio::io_context &ioc, uint16_t port);
+    ~WebServer();
 
     boost::asio::awaitable<void> listener();
 
     void stop();
 
+    // 供 WSSession 获取 AuthClient
+    AuthClient* getAuthClient() { return auth_client_.get(); }
+
+    // 供 WSSession 获取 MsgClient
+    MsgClient* getMsgClient() { return msg_client_.get(); }
+
 private:
     boost::asio::ip::tcp::acceptor acceptor_;
     boost::asio::io_context &ioc_;
     boost::asio::awaitable<void> do_accept();
+    std::shared_ptr<grpc::Channel> auth_channel_;
+    std::unique_ptr<AuthClient> auth_client_;
+    std::shared_ptr<grpc::Channel> msg_channel_;
+    std::unique_ptr<MsgClient> msg_client_;
 };
 
 #endif

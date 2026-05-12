@@ -20,7 +20,6 @@ MongoConnector::MongoConnector(){
     db_password = "root";
     min_pool_size = 5;
     max_pool_size = 10;
-    mongo_instance = mongocxx::instance{};
 
     std::string uri_string = "mongodb://" + db_username + ":" + db_password + "@localhost:27017/?authSource=admin&minPoolSize=" + std::to_string(min_pool_size) + "&maxPoolSize=" + std::to_string(max_pool_size);
     mongocxx::uri uri(uri_string);
