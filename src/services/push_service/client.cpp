@@ -28,3 +28,31 @@
     spdlog::info("PushClient::DelUserPushToken: success, userID={}", request.userid());
     return response;
 }
+
+::push::AckMsgResp PushClient::AckMsg(const ::push::AckMsgReq& request) {
+    ::push::AckMsgResp response;
+    grpc::ClientContext context;
+
+    auto status = stub_->AckMsg(&context, request, &response);
+    if (!status.ok()) {
+        spdlog::error("PushClient::AckMsg failed: {}", status.error_message());
+        throw std::runtime_error("AckMsg gRPC failed: " + std::string(status.error_message()));
+    }
+
+    spdlog::info("PushClient::AckMsg: success, userID={}, serverMsgID={}", request.userid(), request.servermsgid());
+    return response;
+}
+
+::push::AddPendingOfflineAckResp PushClient::AddPendingOfflineAck(const ::push::AddPendingOfflineAckReq& request) {
+    ::push::AddPendingOfflineAckResp response;
+    grpc::ClientContext context;
+
+    auto status = stub_->AddPendingOfflineAck(&context, request, &response);
+    if (!status.ok()) {
+        spdlog::error("PushClient::AddPendingOfflineAck failed: {}", status.error_message());
+        throw std::runtime_error("AddPendingOfflineAck gRPC failed: " + std::string(status.error_message()));
+    }
+
+    spdlog::info("PushClient::AddPendingOfflineAck: success, userID={}, serverMsgID={}", request.userid(), request.servermsgid());
+    return response;
+}

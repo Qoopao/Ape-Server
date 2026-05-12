@@ -8,6 +8,7 @@
 #include "services/gateway_push_service/server.h"
 #include "services/push_service/server.h"
 #include "util/redishandler.h"
+#include "util/snowflake.h"
 
 #include <memory>
 
@@ -17,6 +18,12 @@ int main()
 
     try
     {
+        // ── 0. 初始化 Snowflake ID 生成器 ──
+        Snowflake::init(
+            std::getenv("SNOWFLAKE_WORKER_ID") ? std::stoll(std::getenv("SNOWFLAKE_WORKER_ID")) : 1,
+            std::getenv("SNOWFLAKE_DATACENTER_ID") ? std::stoll(std::getenv("SNOWFLAKE_DATACENTER_ID")) : 1
+        );
+
         // ── 1. 先启动 BackbonService（etcd 服务注册与发现的基础设施）──
         spdlog::info("=== Starting BackbonService on 0.0.0.0:50052 ===");
         auto backbon_server = std::make_unique<BackbonServiceImpl>(
@@ -73,7 +80,8 @@ int main()
         push_server->EnableEtcdRegistration("localhost:50052",
             {"PushMsg", "DelUserPushToken"});
         push_server->Start("push-service-group",
-                           {"msg_topic"});
+                           {"msg_topic"},
+                           {"offline_msg_topic"});
 
         // ── 启动 WebServer 网关 (WebSocket / HTTP) ──
         spdlog::info("=== Starting WebServer Gateway on port 6666 ===");

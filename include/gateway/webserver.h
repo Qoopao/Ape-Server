@@ -12,6 +12,7 @@
 class AuthClient;
 class MsgClient;
 class BackbonClient;
+class PushClient;
 
 using boost::asio::ip::tcp;
 using boost::asio::awaitable;
@@ -37,6 +38,9 @@ public:
     // 供 WSSession 获取 MsgClient
     MsgClient* getMsgClient() { return msg_client_.get(); }
 
+    // 供 WSSession 获取 PushClient
+    PushClient* getPushClient() { return push_client_.get(); }
+
 private:
     boost::asio::ip::tcp::acceptor acceptor_;
     boost::asio::io_context &ioc_;
@@ -45,6 +49,8 @@ private:
     std::unique_ptr<AuthClient> auth_client_;
     std::shared_ptr<grpc::Channel> msg_channel_;
     std::unique_ptr<MsgClient> msg_client_;
+    std::shared_ptr<grpc::Channel> push_channel_;
+    std::unique_ptr<PushClient> push_client_;
     std::unique_ptr<BackbonClient> backbon_client_;
 };
 

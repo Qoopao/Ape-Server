@@ -2,10 +2,13 @@
 #include "gateway/ws_session_manager.h"
 #include "services/auth_service/client.h"
 #include "services/msg_service/client.h"
+#include "services/push_service/client.h"
 #include "msg.pb.h"
+#include "push.pb.h"
 #include "sdkws.pb.h"
 #include "util/redisconnector.h"
 #include "util/redishandler.h"
+#include "util/mongohandler.h"
 
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/detached.hpp>
@@ -16,8 +19,9 @@
 namespace asio = boost::asio;
 
 WSSession::WSSession(tcp::socket&& socket, AuthClient* auth_client,
-                     MsgClient* msg_client)
-    : ws_(std::move(socket)), auth_client_(auth_client), msg_client_(msg_client) {}
+                     MsgClient* msg_client, PushClient* push_client)
+    : ws_(std::move(socket)), auth_client_(auth_client), msg_client_(msg_client),
+      push_client_(push_client) {}
 
 WSSession::~WSSession() = default;
 
@@ -167,8 +171,21 @@ asio::awaitable<void> WSSession::doReadAuth() {
         co_return;
     }
 
-    // 6. 进入消息循环
-    co_await doReadLoop();
+    // 6. 启动消息读循环（与离线推送并发运行，处理客户端的 ACK）
+    asio::co_spawn(
+        ws_.get_executor(),
+        [self]() -> asio::awaitable<void> {
+            co_await self->doReadLoop();
+        },
+        asio::detached);
+
+    // 7. 分段拉取并推送离线消息（每批等待 ACK 后再拉下一批）
+    try {
+        co_await pullAndPushOfflineMsgs();
+    } catch (const std::exception& e) {
+        spdlog::error("WSSession: pullAndPushOfflineMsgs error for user {}: {}", userId_, e.what());
+    }
+    // doReadLoop 已在后台运行，无需再次启动
 }
 
 asio::awaitable<void> WSSession::doReadLoop() {
@@ -285,6 +302,12 @@ asio::awaitable<void> WSSession::doReadLoop() {
             continue;
         }
 
+        // type=106: 统一消息 ACK（在线/离线消息确认，由客户端统一使用）
+        if (reqType == 106) {
+            handleAck(req);
+            continue;
+        }
+
         // 其他业务消息类型暂不做处理，仅记录日志
         spdlog::debug("WSSession: received business message from user {}: type={}, requestId={}",
                       userId_, reqType, req.requestid());
@@ -311,6 +334,160 @@ void WSSession::asyncSend(std::shared_ptr<std::string> payload) {
                 });
         });
 }
+
+asio::awaitable<void> WSSession::pullAndPushOfflineMsgs() {
+    auto self = shared_from_this();
+    boost::system::error_code ec;
+    constexpr int kBatchSize = 50;
+    spdlog::info("WSSession: pulling offline messages for user {} (batch_size={})", userId_, kBatchSize);
+
+    // 1. 获取用户上次接收的最大 seq
+    int64_t lastSeq = 0;
+    try {
+        auto& redis = RedisConnector::get_instance().get_redis();
+        auto val = redis.get("user:" + userId_ + ":last_seq");
+        if (val && !val->empty()) {
+            lastSeq = std::stoll(*val);
+        }
+    } catch (const std::exception& e) {
+        spdlog::warn("WSSession: failed to get last_seq for user {}: {}", userId_, e.what());
+    }
+
+    // 2. 循环分段拉取：每批最多 kBatchSize 条，等客户端 ACK 后再拉下一批
+    for (;;) {
+        // 从 Redis 热存储拉取当前批次
+        auto batchMsgs = RedisHandler::GetOfflineMsgs(userId_, lastSeq, kBatchSize);
+
+        // Redis 不足时从 MongoDB 冷存储补充
+        if (static_cast<int>(batchMsgs.size()) < kBatchSize) {
+            int remaining = kBatchSize - static_cast<int>(batchMsgs.size());
+            auto coldMsgs = MongoHandler::GetOfflineMsgsFromMongo(userId_, lastSeq, remaining);
+            for (auto& msg : coldMsgs) {
+                batchMsgs.push_back(std::move(msg));
+            }
+        }
+
+        // 没有更多消息，结束拉取
+        if (batchMsgs.empty()) {
+            spdlog::info("WSSession: no more offline messages for user {}", userId_);
+            break;
+        }
+
+        spdlog::info("WSSession: batch pulling {} offline messages for user {}, lastSeq={}",
+                     batchMsgs.size(), userId_, lastSeq);
+
+        // 3. 逐条推送给客户端，记录待 ACK 映射
+        int64_t batchMaxSeq = lastSeq;
+        for (const auto& msg : batchMsgs) {
+            sdkws::SdkWSResp pushResp;
+            pushResp.set_errorcode("0");
+            pushResp.set_errormsg("offline message");
+            pushResp.set_userid(userId_);
+            pushResp.set_type(200);  // type 200 = 离线消息推送
+            pushResp.set_requestid(msg.servermsgid());
+            pushResp.set_data(msg.SerializeAsString());
+            std::string pushBin = pushResp.SerializeAsString();
+
+            ws_.binary(true);
+            co_await ws_.async_write(asio::buffer(pushBin),
+                asio::redirect_error(asio::use_awaitable, ec));
+
+            if (ec) {
+                spdlog::error("WSSession: failed to push offline msg to user {}: {}, msgId={}",
+                              userId_, ec.message(), msg.servermsgid());
+                co_return;  // 连接已断，停止拉取
+            }
+
+            pendingOfflineMsgs_[msg.servermsgid()] = msg.seq();
+            if (msg.seq() > batchMaxSeq) {
+                batchMaxSeq = msg.seq();
+            }
+            spdlog::debug("WSSession: pushed offline msg to user {}, msgId={}, seq={}",
+                          userId_, msg.servermsgid(), msg.seq());
+        }
+
+        // 4. 轮询等待客户端 ACK 清空本批次（doReadLoop 会并发处理 ACK）
+        //    使用 steady_timer 每 200ms 检查一次，避免忙等
+        spdlog::info("WSSession: waiting for client ACK on {} msgs for user {}",
+                     pendingOfflineMsgs_.size(), userId_);
+
+        asio::steady_timer timer(ws_.get_executor());
+        timer.expires_after(std::chrono::milliseconds(200));
+
+        while (!pendingOfflineMsgs_.empty()) {
+            co_await timer.async_wait(asio::redirect_error(asio::use_awaitable, ec));
+            // 连接断开时 doReadLoop 会清理 pendingOfflineMsgs_，直接退出
+            if (ec) {
+                spdlog::error("WSSession: timer error while waiting ACK: {}", ec.message());
+                co_return;
+            }
+            timer.expires_after(std::chrono::milliseconds(200));
+        }
+
+        spdlog::info("WSSession: batch ACK done for user {}, batchMaxSeq={}", userId_, batchMaxSeq);
+
+        // 5. 推进 lastSeq 到本批次最大值，继续下一批
+        lastSeq = batchMaxSeq;
+    }
+
+    spdlog::info("WSSession: offline push complete for user {}", userId_);
+}
+
+void WSSession::handleAck(const sdkws::SdkWSReq& req) {
+    // 解析 ACK 请求
+    sdkws::AckReq ackReq;
+    if (!ackReq.ParseFromString(req.data())) {
+        spdlog::warn("WSSession: failed to parse AckReq from user {}", userId_);
+        return;
+    }
+
+    spdlog::info("WSSession: unified ACK from user {}, {} msgIds, ackType={}",
+                 userId_, ackReq.servermsgids_size(), ackReq.acktype());
+
+    // 遍历所有已确认的 serverMsgIDs
+    for (int i = 0; i < ackReq.servermsgids_size(); ++i) {
+        std::string serverMsgID = ackReq.servermsgids(i);
+
+        // 先检查是否是离线消息 ACK（在 pendingOfflineMsgs_ 中）
+        auto it = pendingOfflineMsgs_.find(serverMsgID);
+        if (it != pendingOfflineMsgs_.end()) {
+            int64_t seq = it->second;
+
+            // Redis ACK 清理
+            RedisHandler::AckOfflineMsg(userId_, serverMsgID);
+
+            // 更新 last_seq
+            try {
+                auto& redis = RedisConnector::get_instance().get_redis();
+                auto oldVal = redis.get("user:" + userId_ + ":last_seq");
+                int64_t oldSeq = (oldVal && !oldVal->empty()) ? std::stoll(*oldVal) : 0;
+                if (seq > oldSeq) {
+                    redis.set("user:" + userId_ + ":last_seq", std::to_string(seq));
+                }
+            } catch (const std::exception& e) {
+                spdlog::error("WSSession: failed to update last_seq on ACK for user {}: {}", userId_, e.what());
+            }
+
+            pendingOfflineMsgs_.erase(it);
+            spdlog::debug("WSSession: offline msg ACKed via type 106, msgId={}, seq={}, remaining={}",
+                          serverMsgID, seq, pendingOfflineMsgs_.size());
+        }
+
+        // 通过 gRPC 转发 ACK 给 PushService（处理在线/离线消息的最终确认）
+        try {
+            ::push::AckMsgReq ackMsgReq;
+            ackMsgReq.set_userid(userId_);
+            ackMsgReq.set_servermsgid(serverMsgID);
+            ackMsgReq.set_seq(0);          // seq 未知时填0，PushService 自行查 Redis
+            ackMsgReq.set_acktype(ackReq.acktype());
+            push_client_->AckMsg(ackMsgReq);
+        } catch (const std::exception& e) {
+            spdlog::error("WSSession: AckMsg gRPC failed for user {}, msgId={}: {}",
+                         userId_, serverMsgID, e.what());
+        }
+    }
+}
+
 
 void WSSession::onDisconnect() {
     if (userId_.empty()) return;

@@ -24,6 +24,8 @@ namespace push {
 static const char* PushService_method_names[] = {
   "/push.PushService/PushMsg",
   "/push.PushService/DelUserPushToken",
+  "/push.PushService/AckMsg",
+  "/push.PushService/AddPendingOfflineAck",
 };
 
 std::unique_ptr< PushService::Stub> PushService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -35,6 +37,8 @@ std::unique_ptr< PushService::Stub> PushService::NewStub(const std::shared_ptr< 
 PushService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_PushMsg_(PushService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   , rpcmethod_DelUserPushToken_(PushService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_AckMsg_(PushService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_AddPendingOfflineAck_(PushService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status PushService::Stub::PushMsg(::grpc::ClientContext* context, const ::push::PushMsgReq& request, ::push::PushMsgResp* response) {
@@ -83,6 +87,52 @@ void PushService::Stub::async::DelUserPushToken(::grpc::ClientContext* context, 
   return result;
 }
 
+::grpc::Status PushService::Stub::AckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::push::AckMsgResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::push::AckMsgReq, ::push::AckMsgResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_AckMsg_, context, request, response);
+}
+
+void PushService::Stub::async::AckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq* request, ::push::AckMsgResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::push::AckMsgReq, ::push::AckMsgResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AckMsg_, context, request, response, std::move(f));
+}
+
+void PushService::Stub::async::AckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq* request, ::push::AckMsgResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AckMsg_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::push::AckMsgResp>* PushService::Stub::PrepareAsyncAckMsgRaw(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::push::AckMsgResp, ::push::AckMsgReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_AckMsg_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::push::AckMsgResp>* PushService::Stub::AsyncAckMsgRaw(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncAckMsgRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status PushService::Stub::AddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::push::AddPendingOfflineAckResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::push::AddPendingOfflineAckReq, ::push::AddPendingOfflineAckResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_AddPendingOfflineAck_, context, request, response);
+}
+
+void PushService::Stub::async::AddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq* request, ::push::AddPendingOfflineAckResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::push::AddPendingOfflineAckReq, ::push::AddPendingOfflineAckResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AddPendingOfflineAck_, context, request, response, std::move(f));
+}
+
+void PushService::Stub::async::AddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq* request, ::push::AddPendingOfflineAckResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AddPendingOfflineAck_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::push::AddPendingOfflineAckResp>* PushService::Stub::PrepareAsyncAddPendingOfflineAckRaw(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::push::AddPendingOfflineAckResp, ::push::AddPendingOfflineAckReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_AddPendingOfflineAck_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::push::AddPendingOfflineAckResp>* PushService::Stub::AsyncAddPendingOfflineAckRaw(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncAddPendingOfflineAckRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 PushService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       PushService_method_names[0],
@@ -104,6 +154,26 @@ PushService::Service::Service() {
              ::push::DelUserPushTokenResp* resp) {
                return service->DelUserPushToken(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      PushService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< PushService::Service, ::push::AckMsgReq, ::push::AckMsgResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](PushService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::push::AckMsgReq* req,
+             ::push::AckMsgResp* resp) {
+               return service->AckMsg(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      PushService_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< PushService::Service, ::push::AddPendingOfflineAckReq, ::push::AddPendingOfflineAckResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](PushService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::push::AddPendingOfflineAckReq* req,
+             ::push::AddPendingOfflineAckResp* resp) {
+               return service->AddPendingOfflineAck(ctx, req, resp);
+             }, this)));
 }
 
 PushService::Service::~Service() {
@@ -117,6 +187,20 @@ PushService::Service::~Service() {
 }
 
 ::grpc::Status PushService::Service::DelUserPushToken(::grpc::ServerContext* context, const ::push::DelUserPushTokenReq* request, ::push::DelUserPushTokenResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status PushService::Service::AckMsg(::grpc::ServerContext* context, const ::push::AckMsgReq* request, ::push::AckMsgResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status PushService::Service::AddPendingOfflineAck(::grpc::ServerContext* context, const ::push::AddPendingOfflineAckReq* request, ::push::AddPendingOfflineAckResp* response) {
   (void) context;
   (void) request;
   (void) response;

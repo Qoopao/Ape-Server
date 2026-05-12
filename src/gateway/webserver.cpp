@@ -19,6 +19,7 @@ using boost::asio::use_awaitable;
 #include "gateway/ws_session.h"
 #include "services/auth_service/client.h"
 #include "services/msg_service/client.h"
+#include "services/push_service/client.h"
 #include "services/backbon_service/client.h"
 
 WebServer::WebServer(asio::io_context &ioc, uint16_t port,
@@ -60,6 +61,23 @@ WebServer::WebServer(asio::io_context &ioc, uint16_t port,
                                        grpc::InsecureChannelCredentials());
     msg_client_ = std::make_unique<MsgClient>(msg_channel_);
 
+    // 通过 BackbonService (etcd) 服务发现获取 PushService 地址
+    std::string push_addr = "localhost:50054"; // fallback
+    try {
+        auto resp = backbon_client_->GetServicesList("PushService");
+        if (resp.registered() && resp.ipport_size() > 0) {
+            push_addr = resp.ipport(0);
+            spdlog::info("WebServer: discovered PushService at {}", push_addr);
+        } else {
+            spdlog::warn("WebServer: PushService not found in etcd, using fallback {}", push_addr);
+        }
+    } catch (const std::exception& e) {
+        spdlog::error("WebServer: failed to discover PushService: {}, using fallback", e.what());
+    }
+    push_channel_ = grpc::CreateChannel(push_addr,
+                                        grpc::InsecureChannelCredentials());
+    push_client_ = std::make_unique<PushClient>(push_channel_);
+
     spdlog::info("WebSocketServer initialized, listening on port {}", port);
 }
 
@@ -73,10 +91,10 @@ void WebServer::stop()
 
 // 处理单个 WebSocket 连接：接受 TCP 后升级为 WebSocket，然后交给 WSSession 管理
 awaitable<void> handle_ws_session(tcp::socket socket, AuthClient* auth_client,
-                                   MsgClient* msg_client)
+                                   MsgClient* msg_client, PushClient* push_client)
 {
     auto session = std::make_shared<WSSession>(std::move(socket), auth_client,
-                                                msg_client);
+                                                msg_client, push_client);
     co_await session->start();
 }
 
@@ -91,7 +109,7 @@ asio::awaitable<void> WebServer::listener()
             tcp::socket socket = co_await acceptor_.async_accept(use_awaitable);
             // 启动协程处理 WebSocket 连接（用ioc_作为executor，更直观）
             co_spawn(ioc_, handle_ws_session(std::move(socket), auth_client_.get(),
-                                              msg_client_.get()), detached);
+                                              msg_client_.get(), push_client_.get()), detached);
         }
         catch (const std::exception& e)
         {

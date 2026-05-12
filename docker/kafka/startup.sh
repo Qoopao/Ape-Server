@@ -22,4 +22,11 @@ docker exec kafka-1 /opt/kafka/bin/kafka-topics.sh \
   --partitions 10 \
   --replication-factor 3
 
+docker exec kafka-1 /opt/kafka/bin/kafka-topics.sh \
+  --bootstrap-server kafka-1:19092,kafka-2:19092,kafka-3:19092 \
+  --create --if-not-exists \
+  --topic offline_msg_topic \
+  --partitions 10 \
+  --replication-factor 3
+
 echo "Kafka topics ready."

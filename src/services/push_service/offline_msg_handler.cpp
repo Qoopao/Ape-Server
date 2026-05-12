@@ -1,25 +1,25 @@
-#include "services/push_service/push_msg_handler.h"
-#include "sdkws.pb.h"
+#include "services/push_service/offline_msg_handler.h"
 #include "util/redishandler.h"
 #include "util/mongohandler.h"
+#include "sdkws.pb.h"
 #include <spdlog/spdlog.h>
 
-PushHandler::PushHandler(std::shared_ptr<grpc::Channel> pushChannel)
+OfflineMsgHandler::OfflineMsgHandler(std::shared_ptr<grpc::Channel> pushChannel)
     : pushStub_(push::PushService::NewStub(pushChannel)) {}
 
-void PushHandler::handle(const std::string& topic, const std::string& msg) {
+void OfflineMsgHandler::handle(const std::string& topic, const std::string& msg) {
     // Kafka消息体是serverMsgID（UUID字符串），从Redis取出完整消息
     std::string serverMsgID = msg;
-    spdlog::info("PushHandler: received msgid from Kafka, topic={}, serverMsgID={}", topic, serverMsgID);
+    spdlog::info("OfflinePushHandler: received msgid from Kafka, topic={}, serverMsgID={}", topic, serverMsgID);
 
     // 1. 从Redis获取完整消息数据
     auto msgDataOpt = RedisHandler::GetMsgInfo(serverMsgID);
     if (!msgDataOpt.has_value()) {
-        spdlog::error("PushHandler: GetMsgInfo from Redis failed, serverMsgID={}", serverMsgID);
+        spdlog::error("OfflinePushHandler: GetMsgInfo from Redis failed, serverMsgID={}", serverMsgID);
         return;
     }
     sdkws::MsgData msgData = msgDataOpt.value();
-    spdlog::info("PushHandler: got MsgData from Redis, serverMsgID={}, sendID={}, recvID={}",
+    spdlog::info("OfflinePushHandler: got MsgData from Redis, serverMsgID={}, sendID={}, recvID={}",
                  serverMsgID, msgData.sendid(), msgData.recvid());
 
     // 2. 构造PushMsgReq并调用PushService
@@ -36,10 +36,9 @@ void PushHandler::handle(const std::string& topic, const std::string& msg) {
     grpc::ClientContext ctx;
     auto status = pushStub_->PushMsg(&ctx, req, &resp);
     if (!status.ok()) {
-        spdlog::error("PushHandler: gRPC PushMsg failed: {}, serverMsgID={}", status.error_message(), serverMsgID);
-        // 重回消息队列，现在先不写
+        spdlog::error("OfflinePushHandler: gRPC OfflinePushMsg failed: {}, serverMsgID={}", status.error_message(), serverMsgID);
+        // 重回消息队列，目前先不写
     } else {
-        spdlog::info("PushHandler: PushMsg success, serverMsgID={}", serverMsgID);
+        spdlog::info("OfflinePushHandler: OfflinePushMsg success, serverMsgID={}", serverMsgID);
     }
-
 }

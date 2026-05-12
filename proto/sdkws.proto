@@ -345,8 +345,9 @@ message SdkWSReq {
   bytes data = 5; // 数据
   int32 type = 6; // 请求类型
   int32 trackID = 7; // 客户端追踪ID
+  int64 lastMsgSeq = 8; // 客户端最近收到的消息 seq，用于拉取离线消息的起始点
   // 101: 发送消息  102：拉取单链  103：拉取混链
-  // 104: 下推用户消息  105: 下推命令消息
+  // 104: 下推用户消息  105: 下推命令消息  106: 消息确认（ACK）
 }
 
 message SdkWSResp {
@@ -362,6 +363,15 @@ message SdkWSResp {
   string logID = 10; // 服务端 logid
 }
 // --------------------------------------------
+
+// AckReq 消息确认请求（在线/离线通用）
+// 客户端收到推送后发送 ACK，服务端据此清理 pending_ack 集合
+// type=106
+message AckReq {
+  string userID = 1;                       // 用户ID
+  repeated string serverMsgIDs = 2;        // 已确认收到消息的 serverMsgID 列表
+  int32 ackType = 3;                       // ACK 类型: 1=在线消息 2=离线消息
+}
 
 // OfflinePushInfo 离线推送信息
 // 包含离线推送的配置信息

@@ -40,6 +40,11 @@ public:
 	std::optional<sdkws::ConversationInfo> GetConversationInfo(std::string conversationid);
 
 	static bool SaveMsgToMongo(const sdkws::MsgData& msg);
+
+	// 离线消息冷存储（MongoDB：30天TTL）
+	static bool SaveOfflineMsgToMongo(const sdkws::MsgData& msg);
+	static std::vector<sdkws::MsgData> GetOfflineMsgsFromMongo(const std::string& userId, int64_t afterSeq, int limit = 100);
+	static bool MarkOfflineMsgsPushed(const std::string& userId, const std::vector<std::string>& msgIds);
 };
 
 #endif

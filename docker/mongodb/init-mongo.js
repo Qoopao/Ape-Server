@@ -19,8 +19,32 @@ db.createUser({
   roles: [{ role: "readWrite", db: "myapp" }]
 });
 
-// 5. 可选：创建集合并插入初始数据
-db.users.insertMany([
-  { name: "Alice", email: "alice@example.com" },
-  { name: "Bob", email: "bob@example.com" }
-]);
+// 5. 切换到 IM-System 数据库（应用业务库）
+db = db.getSiblingDB('IM-System');
+
+// 6. 创建 offline_msg 集合
+db.createCollection('offline_msg');
+
+// 7. 创建 TTL 索引（30 天自动过期）
+// 基于 createdAt 字段，文档将在创建 30 天（2592000 秒）后自动删除
+db.offline_msg.createIndex(
+  { "createdAt": 1 },
+  {
+    expireAfterSeconds: 2592000,  // 30 * 24 * 60 * 60 = 2592000
+    name: "idx_offline_msg_ttl"
+  }
+);
+
+// 8. 创建复合查询索引（按用户拉取离线消息）
+db.offline_msg.createIndex(
+  { "recvID": 1, "seq": 1 },
+  { name: "idx_offline_msg_recvid_seq" }
+);
+
+// 9. 创建 isPushed 过滤索引（用于查询未推送的消息）
+db.offline_msg.createIndex(
+  { "recvID": 1, "seq": 1, "isPushed": 1 },
+  { name: "idx_offline_msg_recvid_seq_ispushed" }
+);
+
+print("MongoDB: IM-System offline_msg indexes created successfully");

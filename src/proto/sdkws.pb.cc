@@ -548,6 +548,7 @@ inline constexpr SdkWSReq::Impl_::Impl_(
             ::_pbi::ConstantInitialized()),
         type_{0},
         trackid_{0},
+        lastmsgseq_{::int64_t{0}},
         _cached_size_{0} {}
 
 template <typename>
@@ -1508,6 +1509,35 @@ struct ClearConversationTipsDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ClearConversationTipsDefaultTypeInternal _ClearConversationTips_default_instance_;
+
+inline constexpr AckReq::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : servermsgids_{},
+        userid_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        acktype_{0},
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR AckReq::AckReq(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct AckReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR AckReqDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~AckReqDefaultTypeInternal() {}
+  union {
+    AckReq _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AckReqDefaultTypeInternal _AckReq_default_instance_;
 
 inline constexpr SubUserOnlineStatusTips::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -3565,6 +3595,7 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::sdkws::SdkWSReq, _impl_.data_),
         PROTOBUF_FIELD_OFFSET(::sdkws::SdkWSReq, _impl_.type_),
         PROTOBUF_FIELD_OFFSET(::sdkws::SdkWSReq, _impl_.trackid_),
+        PROTOBUF_FIELD_OFFSET(::sdkws::SdkWSReq, _impl_.lastmsgseq_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::sdkws::SdkWSResp, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -3583,6 +3614,17 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::sdkws::SdkWSResp, _impl_.type_),
         PROTOBUF_FIELD_OFFSET(::sdkws::SdkWSResp, _impl_.trackid_),
         PROTOBUF_FIELD_OFFSET(::sdkws::SdkWSResp, _impl_.logid_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::sdkws::AckReq, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::sdkws::AckReq, _impl_.userid_),
+        PROTOBUF_FIELD_OFFSET(::sdkws::AckReq, _impl_.servermsgids_),
+        PROTOBUF_FIELD_OFFSET(::sdkws::AckReq, _impl_.acktype_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::sdkws::OfflinePushInfo, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -4421,65 +4463,66 @@ static const ::_pbi::MigrationSchema
         {497, 518, -1, sizeof(::sdkws::ConversationInfo)},
         {531, -1, -1, sizeof(::sdkws::FetchUserMessageListResp)},
         {543, -1, -1, sizeof(::sdkws::SdkWSReq)},
-        {558, -1, -1, sizeof(::sdkws::SdkWSResp)},
-        {576, -1, -1, sizeof(::sdkws::OfflinePushInfo)},
-        {590, -1, -1, sizeof(::sdkws::TipsComm)},
-        {601, -1, -1, sizeof(::sdkws::PullMixListReq)},
-        {613, -1, -1, sizeof(::sdkws::PullMixListResp)},
-        {622, -1, -1, sizeof(::sdkws::PullSingleListReq)},
-        {634, -1, -1, sizeof(::sdkws::PullSingleListResp)},
-        {643, 658, -1, sizeof(::sdkws::GroupCreatedTips)},
-        {665, 678, -1, sizeof(::sdkws::GroupInfoSetTips)},
-        {683, 695, -1, sizeof(::sdkws::GroupInfoSetNameTips)},
-        {699, 711, -1, sizeof(::sdkws::GroupInfoSetAnnouncementTips)},
-        {715, 726, -1, sizeof(::sdkws::JoinGroupApplicationTips)},
-        {729, 742, -1, sizeof(::sdkws::MemberQuitTips)},
-        {747, 759, -1, sizeof(::sdkws::GroupApplicationAcceptedTips)},
-        {763, 775, -1, sizeof(::sdkws::GroupApplicationRejectedTips)},
-        {779, 795, -1, sizeof(::sdkws::GroupOwnerTransferredTips)},
-        {803, 817, -1, sizeof(::sdkws::MemberKickedTips)},
-        {823, 838, -1, sizeof(::sdkws::MemberInvitedTips)},
-        {845, 858, -1, sizeof(::sdkws::MemberEnterTips)},
-        {863, 874, -1, sizeof(::sdkws::GroupDismissedTips)},
-        {877, 892, -1, sizeof(::sdkws::GroupMemberMutedTips)},
-        {899, 913, -1, sizeof(::sdkws::GroupMemberCancelMutedTips)},
-        {919, 932, -1, sizeof(::sdkws::GroupMutedTips)},
-        {937, 950, -1, sizeof(::sdkws::GroupCancelMutedTips)},
-        {955, 970, -1, sizeof(::sdkws::GroupMemberInfoSetTips)},
-        {977, -1, -1, sizeof(::sdkws::FriendApplication)},
-        {988, -1, -1, sizeof(::sdkws::FromToUserID)},
-        {998, 1007, -1, sizeof(::sdkws::FriendApplicationTips)},
-        {1008, 1020, -1, sizeof(::sdkws::FriendApplicationApprovedTips)},
-        {1024, 1034, -1, sizeof(::sdkws::FriendApplicationRejectedTips)},
-        {1036, 1049, -1, sizeof(::sdkws::FriendAddedTips)},
-        {1054, 1065, -1, sizeof(::sdkws::FriendDeletedTips)},
-        {1068, 1077, -1, sizeof(::sdkws::BlackAddedTips)},
-        {1078, 1087, -1, sizeof(::sdkws::BlackDeletedTips)},
-        {1088, 1100, -1, sizeof(::sdkws::FriendInfoChangedTips)},
-        {1104, -1, -1, sizeof(::sdkws::UserInfoUpdatedTips)},
-        {1113, -1, -1, sizeof(::sdkws::UserStatusChangeTips)},
-        {1125, -1, -1, sizeof(::sdkws::UserCommandAddTips)},
-        {1135, -1, -1, sizeof(::sdkws::UserCommandUpdateTips)},
-        {1145, -1, -1, sizeof(::sdkws::UserCommandDeleteTips)},
-        {1155, -1, -1, sizeof(::sdkws::ConversationUpdateTips)},
-        {1165, -1, -1, sizeof(::sdkws::ConversationSetPrivateTips)},
-        {1177, -1, -1, sizeof(::sdkws::ConversationHasReadTips)},
-        {1189, -1, -1, sizeof(::sdkws::NotificationElem)},
-        {1198, -1, -1, sizeof(::sdkws::DeleteMessageTips)},
-        {1209, -1, -1, sizeof(::sdkws::RevokeMsgTips)},
-        {1224, -1, -1, sizeof(::sdkws::MessageRevokedContent)},
-        {1243, -1, -1, sizeof(::sdkws::ClearConversationTips)},
-        {1253, -1, -1, sizeof(::sdkws::DeleteMsgsTips)},
-        {1264, -1, -1, sizeof(::sdkws::MarkAsReadTips)},
-        {1276, -1, -1, sizeof(::sdkws::SetAppBackgroundStatusReq)},
-        {1286, -1, -1, sizeof(::sdkws::SetAppBackgroundStatusResp)},
-        {1294, -1, -1, sizeof(::sdkws::ProcessUserCommand)},
-        {1307, -1, -1, sizeof(::sdkws::RequestPagination)},
-        {1317, 1329, -1, sizeof(::sdkws::FriendsInfoUpdateTips)},
-        {1333, -1, -1, sizeof(::sdkws::SubUserOnlineStatusElem)},
-        {1343, -1, -1, sizeof(::sdkws::SubUserOnlineStatusTips)},
-        {1352, -1, -1, sizeof(::sdkws::SubUserOnlineStatus)},
-        {1362, -1, -1, sizeof(::sdkws::StreamMsgTips)},
+        {559, -1, -1, sizeof(::sdkws::SdkWSResp)},
+        {577, -1, -1, sizeof(::sdkws::AckReq)},
+        {588, -1, -1, sizeof(::sdkws::OfflinePushInfo)},
+        {602, -1, -1, sizeof(::sdkws::TipsComm)},
+        {613, -1, -1, sizeof(::sdkws::PullMixListReq)},
+        {625, -1, -1, sizeof(::sdkws::PullMixListResp)},
+        {634, -1, -1, sizeof(::sdkws::PullSingleListReq)},
+        {646, -1, -1, sizeof(::sdkws::PullSingleListResp)},
+        {655, 670, -1, sizeof(::sdkws::GroupCreatedTips)},
+        {677, 690, -1, sizeof(::sdkws::GroupInfoSetTips)},
+        {695, 707, -1, sizeof(::sdkws::GroupInfoSetNameTips)},
+        {711, 723, -1, sizeof(::sdkws::GroupInfoSetAnnouncementTips)},
+        {727, 738, -1, sizeof(::sdkws::JoinGroupApplicationTips)},
+        {741, 754, -1, sizeof(::sdkws::MemberQuitTips)},
+        {759, 771, -1, sizeof(::sdkws::GroupApplicationAcceptedTips)},
+        {775, 787, -1, sizeof(::sdkws::GroupApplicationRejectedTips)},
+        {791, 807, -1, sizeof(::sdkws::GroupOwnerTransferredTips)},
+        {815, 829, -1, sizeof(::sdkws::MemberKickedTips)},
+        {835, 850, -1, sizeof(::sdkws::MemberInvitedTips)},
+        {857, 870, -1, sizeof(::sdkws::MemberEnterTips)},
+        {875, 886, -1, sizeof(::sdkws::GroupDismissedTips)},
+        {889, 904, -1, sizeof(::sdkws::GroupMemberMutedTips)},
+        {911, 925, -1, sizeof(::sdkws::GroupMemberCancelMutedTips)},
+        {931, 944, -1, sizeof(::sdkws::GroupMutedTips)},
+        {949, 962, -1, sizeof(::sdkws::GroupCancelMutedTips)},
+        {967, 982, -1, sizeof(::sdkws::GroupMemberInfoSetTips)},
+        {989, -1, -1, sizeof(::sdkws::FriendApplication)},
+        {1000, -1, -1, sizeof(::sdkws::FromToUserID)},
+        {1010, 1019, -1, sizeof(::sdkws::FriendApplicationTips)},
+        {1020, 1032, -1, sizeof(::sdkws::FriendApplicationApprovedTips)},
+        {1036, 1046, -1, sizeof(::sdkws::FriendApplicationRejectedTips)},
+        {1048, 1061, -1, sizeof(::sdkws::FriendAddedTips)},
+        {1066, 1077, -1, sizeof(::sdkws::FriendDeletedTips)},
+        {1080, 1089, -1, sizeof(::sdkws::BlackAddedTips)},
+        {1090, 1099, -1, sizeof(::sdkws::BlackDeletedTips)},
+        {1100, 1112, -1, sizeof(::sdkws::FriendInfoChangedTips)},
+        {1116, -1, -1, sizeof(::sdkws::UserInfoUpdatedTips)},
+        {1125, -1, -1, sizeof(::sdkws::UserStatusChangeTips)},
+        {1137, -1, -1, sizeof(::sdkws::UserCommandAddTips)},
+        {1147, -1, -1, sizeof(::sdkws::UserCommandUpdateTips)},
+        {1157, -1, -1, sizeof(::sdkws::UserCommandDeleteTips)},
+        {1167, -1, -1, sizeof(::sdkws::ConversationUpdateTips)},
+        {1177, -1, -1, sizeof(::sdkws::ConversationSetPrivateTips)},
+        {1189, -1, -1, sizeof(::sdkws::ConversationHasReadTips)},
+        {1201, -1, -1, sizeof(::sdkws::NotificationElem)},
+        {1210, -1, -1, sizeof(::sdkws::DeleteMessageTips)},
+        {1221, -1, -1, sizeof(::sdkws::RevokeMsgTips)},
+        {1236, -1, -1, sizeof(::sdkws::MessageRevokedContent)},
+        {1255, -1, -1, sizeof(::sdkws::ClearConversationTips)},
+        {1265, -1, -1, sizeof(::sdkws::DeleteMsgsTips)},
+        {1276, -1, -1, sizeof(::sdkws::MarkAsReadTips)},
+        {1288, -1, -1, sizeof(::sdkws::SetAppBackgroundStatusReq)},
+        {1298, -1, -1, sizeof(::sdkws::SetAppBackgroundStatusResp)},
+        {1306, -1, -1, sizeof(::sdkws::ProcessUserCommand)},
+        {1319, -1, -1, sizeof(::sdkws::RequestPagination)},
+        {1329, 1341, -1, sizeof(::sdkws::FriendsInfoUpdateTips)},
+        {1345, -1, -1, sizeof(::sdkws::SubUserOnlineStatusElem)},
+        {1355, -1, -1, sizeof(::sdkws::SubUserOnlineStatusTips)},
+        {1364, -1, -1, sizeof(::sdkws::SubUserOnlineStatus)},
+        {1374, -1, -1, sizeof(::sdkws::StreamMsgTips)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::sdkws::_GroupInfo_default_instance_._instance,
@@ -4518,6 +4561,7 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::sdkws::_FetchUserMessageListResp_default_instance_._instance,
     &::sdkws::_SdkWSReq_default_instance_._instance,
     &::sdkws::_SdkWSResp_default_instance_._instance,
+    &::sdkws::_AckReq_default_instance_._instance,
     &::sdkws::_OfflinePushInfo_default_instance_._instance,
     &::sdkws::_TipsComm_default_instance_._instance,
     &::sdkws::_PullMixListReq_default_instance_._instance,
@@ -4696,209 +4740,211 @@ const char descriptor_table_protodef_sdkws_2eproto[] ABSL_ATTRIBUTE_SECTION_VARI
     "isBlocked\030\014 \001(\010\022\017\n\007syncExt\030\r \001(\t\"t\n\030Fetc"
     "hUserMessageListResp\022*\n\tconvsInfo\030\001 \003(\0132"
     "\027.sdkws.ConversationInfo\022\r\n\005start\030\002 \001(\003\022"
-    "\014\n\004stop\030\003 \001(\003\022\017\n\007hasMore\030\004 \001(\010\"{\n\010SdkWSR"
-    "eq\022\021\n\trequestId\030\001 \001(\t\022\r\n\005token\030\002 \001(\t\022\016\n\006"
-    "userID\030\003 \001(\t\022\020\n\010deviceID\030\004 \001(\t\022\014\n\004data\030\005"
-    " \001(\014\022\014\n\004type\030\006 \001(\005\022\017\n\007trackID\030\007 \001(\005\"\260\001\n\t"
-    "SdkWSResp\022\021\n\trequestId\030\001 \001(\t\022\r\n\005token\030\002 "
-    "\001(\t\022\016\n\006userID\030\003 \001(\t\022\020\n\010deviceID\030\004 \001(\t\022\021\n"
-    "\terrorCode\030\005 \001(\t\022\020\n\010errorMsg\030\006 \001(\t\022\014\n\004da"
-    "ta\030\007 \001(\014\022\014\n\004type\030\010 \001(\005\022\017\n\007trackID\030\t \001(\005\022"
-    "\r\n\005logID\030\n \001(\t\"{\n\017OfflinePushInfo\022\r\n\005tit"
-    "le\030\001 \001(\t\022\014\n\004desc\030\002 \001(\t\022\n\n\002ex\030\003 \001(\t\022\024\n\014iO"
-    "SPushSound\030\004 \001(\t\022\025\n\riOSBadgeCount\030\005 \001(\010\022"
-    "\022\n\nsignalInfo\030\006 \001(\t\"C\n\010TipsComm\022\016\n\006detai"
-    "l\030\001 \001(\014\022\023\n\013defaultTips\030\002 \001(\t\022\022\n\njsonDeta"
-    "il\030\003 \001(\t\"V\n\016PullMixListReq\022\016\n\006cursor\030\001 \001"
-    "(\003\022\021\n\tconvLimit\030\002 \001(\005\022\020\n\010msgLimit\030\003 \001(\005\022"
-    "\017\n\007forward\030\004 \001(\010\"A\n\017PullMixListResp\022.\n\rc"
-    "onversations\030\001 \003(\0132\027.sdkws.ConversationI"
-    "nfo\"^\n\021PullSingleListReq\022\026\n\016conversation"
-    "ID\030\001 \001(\t\022\020\n\010msgLimit\030\002 \001(\005\022\017\n\007forward\030\003 "
-    "\001(\010\022\016\n\006cursor\030\004 \001(\003\"2\n\022PullSingleListRes"
-    "p\022\034\n\004msgs\030\001 \003(\0132\016.sdkws.MsgData\"\224\002\n\020Grou"
-    "pCreatedTips\022\037\n\005group\030\001 \001(\0132\020.sdkws.Grou"
-    "pInfo\022*\n\006opUser\030\002 \001(\0132\032.sdkws.GroupMembe"
-    "rFullInfo\022.\n\nmemberList\030\003 \003(\0132\032.sdkws.Gr"
-    "oupMemberFullInfo\022\025\n\roperationTime\030\004 \001(\003"
-    "\0222\n\016groupOwnerUser\030\005 \001(\0132\032.sdkws.GroupMe"
-    "mberFullInfo\022\032\n\022groupMemberVersion\030\006 \001(\004"
-    "\022\034\n\024groupMemberVersionID\030\007 \001(\t\"\253\001\n\020Group"
-    "InfoSetTips\022*\n\006opUser\030\001 \001(\0132\032.sdkws.Grou"
-    "pMemberFullInfo\022\020\n\010muteTime\030\002 \001(\003\022\037\n\005gro"
-    "up\030\003 \001(\0132\020.sdkws.GroupInfo\022\032\n\022groupMembe"
-    "rVersion\030\004 \001(\004\022\034\n\024groupMemberVersionID\030\005"
-    " \001(\t\"\235\001\n\024GroupInfoSetNameTips\022*\n\006opUser\030"
-    "\001 \001(\0132\032.sdkws.GroupMemberFullInfo\022\037\n\005gro"
-    "up\030\002 \001(\0132\020.sdkws.GroupInfo\022\032\n\022groupMembe"
-    "rVersion\030\003 \001(\004\022\034\n\024groupMemberVersionID\030\004"
-    " \001(\t\"\245\001\n\034GroupInfoSetAnnouncementTips\022*\n"
-    "\006opUser\030\001 \001(\0132\032.sdkws.GroupMemberFullInf"
-    "o\022\037\n\005group\030\002 \001(\0132\020.sdkws.GroupInfo\022\032\n\022gr"
-    "oupMemberVersion\030\003 \001(\004\022\034\n\024groupMemberVer"
-    "sionID\030\004 \001(\t\"u\n\030JoinGroupApplicationTips"
-    "\022\037\n\005group\030\001 \001(\0132\020.sdkws.GroupInfo\022(\n\tapp"
-    "licant\030\002 \001(\0132\025.sdkws.PublicUserInfo\022\016\n\006r"
-    "eqMsg\030\003 \001(\t\"\260\001\n\016MemberQuitTips\022\037\n\005group\030"
-    "\001 \001(\0132\020.sdkws.GroupInfo\022,\n\010quitUser\030\002 \001("
-    "\0132\032.sdkws.GroupMemberFullInfo\022\025\n\roperati"
-    "onTime\030\003 \001(\003\022\032\n\022groupMemberVersion\030\004 \001(\004"
-    "\022\034\n\024groupMemberVersionID\030\005 \001(\t\"\222\001\n\034Group"
-    "ApplicationAcceptedTips\022\037\n\005group\030\001 \001(\0132\020"
-    ".sdkws.GroupInfo\022*\n\006opUser\030\002 \001(\0132\032.sdkws"
-    ".GroupMemberFullInfo\022\021\n\thandleMsg\030\004 \001(\t\022"
-    "\022\n\nreceiverAs\030\005 \001(\005\"\222\001\n\034GroupApplication"
-    "RejectedTips\022\037\n\005group\030\001 \001(\0132\020.sdkws.Grou"
-    "pInfo\022*\n\006opUser\030\002 \001(\0132\032.sdkws.GroupMembe"
-    "rFullInfo\022\021\n\thandleMsg\030\004 \001(\t\022\022\n\nreceiver"
-    "As\030\005 \001(\005\"\272\002\n\031GroupOwnerTransferredTips\022\037"
-    "\n\005group\030\001 \001(\0132\020.sdkws.GroupInfo\022*\n\006opUse"
-    "r\030\002 \001(\0132\032.sdkws.GroupMemberFullInfo\0221\n\rn"
-    "ewGroupOwner\030\003 \001(\0132\032.sdkws.GroupMemberFu"
-    "llInfo\022\025\n\roldGroupOwner\030\004 \001(\t\022\025\n\roperati"
-    "onTime\030\005 \001(\003\0225\n\021oldGroupOwnerInfo\030\006 \001(\0132"
-    "\032.sdkws.GroupMemberFullInfo\022\032\n\022groupMemb"
-    "erVersion\030\007 \001(\004\022\034\n\024groupMemberVersionID\030"
-    "\010 \001(\t\"\344\001\n\020MemberKickedTips\022\037\n\005group\030\001 \001("
-    "\0132\020.sdkws.GroupInfo\022*\n\006opUser\030\002 \001(\0132\032.sd"
-    "kws.GroupMemberFullInfo\0222\n\016kickedUserLis"
-    "t\030\003 \003(\0132\032.sdkws.GroupMemberFullInfo\022\025\n\ro"
-    "perationTime\030\004 \001(\003\022\032\n\022groupMemberVersion"
-    "\030\005 \001(\004\022\034\n\024groupMemberVersionID\030\006 \001(\t\"\227\002\n"
-    "\021MemberInvitedTips\022\037\n\005group\030\001 \001(\0132\020.sdkw"
+    "\014\n\004stop\030\003 \001(\003\022\017\n\007hasMore\030\004 \001(\010\"\217\001\n\010SdkWS"
+    "Req\022\021\n\trequestId\030\001 \001(\t\022\r\n\005token\030\002 \001(\t\022\016\n"
+    "\006userID\030\003 \001(\t\022\020\n\010deviceID\030\004 \001(\t\022\014\n\004data\030"
+    "\005 \001(\014\022\014\n\004type\030\006 \001(\005\022\017\n\007trackID\030\007 \001(\005\022\022\n\n"
+    "lastMsgSeq\030\010 \001(\003\"\260\001\n\tSdkWSResp\022\021\n\treques"
+    "tId\030\001 \001(\t\022\r\n\005token\030\002 \001(\t\022\016\n\006userID\030\003 \001(\t"
+    "\022\020\n\010deviceID\030\004 \001(\t\022\021\n\terrorCode\030\005 \001(\t\022\020\n"
+    "\010errorMsg\030\006 \001(\t\022\014\n\004data\030\007 \001(\014\022\014\n\004type\030\010 "
+    "\001(\005\022\017\n\007trackID\030\t \001(\005\022\r\n\005logID\030\n \001(\t\"\?\n\006A"
+    "ckReq\022\016\n\006userID\030\001 \001(\t\022\024\n\014serverMsgIDs\030\002 "
+    "\003(\t\022\017\n\007ackType\030\003 \001(\005\"{\n\017OfflinePushInfo\022"
+    "\r\n\005title\030\001 \001(\t\022\014\n\004desc\030\002 \001(\t\022\n\n\002ex\030\003 \001(\t"
+    "\022\024\n\014iOSPushSound\030\004 \001(\t\022\025\n\riOSBadgeCount\030"
+    "\005 \001(\010\022\022\n\nsignalInfo\030\006 \001(\t\"C\n\010TipsComm\022\016\n"
+    "\006detail\030\001 \001(\014\022\023\n\013defaultTips\030\002 \001(\t\022\022\n\njs"
+    "onDetail\030\003 \001(\t\"V\n\016PullMixListReq\022\016\n\006curs"
+    "or\030\001 \001(\003\022\021\n\tconvLimit\030\002 \001(\005\022\020\n\010msgLimit\030"
+    "\003 \001(\005\022\017\n\007forward\030\004 \001(\010\"A\n\017PullMixListRes"
+    "p\022.\n\rconversations\030\001 \003(\0132\027.sdkws.Convers"
+    "ationInfo\"^\n\021PullSingleListReq\022\026\n\016conver"
+    "sationID\030\001 \001(\t\022\020\n\010msgLimit\030\002 \001(\005\022\017\n\007forw"
+    "ard\030\003 \001(\010\022\016\n\006cursor\030\004 \001(\003\"2\n\022PullSingleL"
+    "istResp\022\034\n\004msgs\030\001 \003(\0132\016.sdkws.MsgData\"\224\002"
+    "\n\020GroupCreatedTips\022\037\n\005group\030\001 \001(\0132\020.sdkw"
     "s.GroupInfo\022*\n\006opUser\030\002 \001(\0132\032.sdkws.Grou"
-    "pMemberFullInfo\0223\n\017invitedUserList\030\003 \003(\013"
-    "2\032.sdkws.GroupMemberFullInfo\022\025\n\roperatio"
-    "nTime\030\004 \001(\003\022\032\n\022groupMemberVersion\030\005 \001(\004\022"
-    "\034\n\024groupMemberVersionID\030\006 \001(\t\022/\n\013inviter"
-    "User\030\007 \001(\0132\032.sdkws.GroupMemberFullInfo\"\264"
-    "\001\n\017MemberEnterTips\022\037\n\005group\030\001 \001(\0132\020.sdkw"
-    "s.GroupInfo\022/\n\013entrantUser\030\002 \001(\0132\032.sdkws"
-    ".GroupMemberFullInfo\022\025\n\roperationTime\030\003 "
-    "\001(\003\022\032\n\022groupMemberVersion\030\005 \001(\004\022\034\n\024group"
-    "MemberVersionID\030\006 \001(\t\"x\n\022GroupDismissedT"
-    "ips\022\037\n\005group\030\001 \001(\0132\020.sdkws.GroupInfo\022*\n\006"
-    "opUser\030\002 \001(\0132\032.sdkws.GroupMemberFullInfo"
-    "\022\025\n\roperationTime\030\003 \001(\003\"\371\001\n\024GroupMemberM"
-    "utedTips\022\037\n\005group\030\001 \001(\0132\020.sdkws.GroupInf"
-    "o\022*\n\006opUser\030\002 \001(\0132\032.sdkws.GroupMemberFul"
-    "lInfo\022\025\n\roperationTime\030\003 \001(\003\022-\n\tmutedUse"
-    "r\030\004 \001(\0132\032.sdkws.GroupMemberFullInfo\022\024\n\014m"
-    "utedSeconds\030\005 \001(\r\022\032\n\022groupMemberVersion\030"
-    "\006 \001(\004\022\034\n\024groupMemberVersionID\030\007 \001(\t\"\351\001\n\032"
-    "GroupMemberCancelMutedTips\022\037\n\005group\030\001 \001("
-    "\0132\020.sdkws.GroupInfo\022*\n\006opUser\030\002 \001(\0132\032.sd"
+    "pMemberFullInfo\022.\n\nmemberList\030\003 \003(\0132\032.sd"
     "kws.GroupMemberFullInfo\022\025\n\roperationTime"
-    "\030\003 \001(\003\022-\n\tmutedUser\030\004 \001(\0132\032.sdkws.GroupM"
-    "emberFullInfo\022\032\n\022groupMemberVersion\030\005 \001("
-    "\004\022\034\n\024groupMemberVersionID\030\006 \001(\t\"\256\001\n\016Grou"
-    "pMutedTips\022\037\n\005group\030\001 \001(\0132\020.sdkws.GroupI"
-    "nfo\022*\n\006opUser\030\002 \001(\0132\032.sdkws.GroupMemberF"
-    "ullInfo\022\025\n\roperationTime\030\003 \001(\003\022\032\n\022groupM"
-    "emberVersion\030\004 \001(\004\022\034\n\024groupMemberVersion"
-    "ID\030\005 \001(\t\"\264\001\n\024GroupCancelMutedTips\022\037\n\005gro"
-    "up\030\001 \001(\0132\020.sdkws.GroupInfo\022*\n\006opUser\030\002 \001"
-    "(\0132\032.sdkws.GroupMemberFullInfo\022\025\n\roperat"
-    "ionTime\030\003 \001(\003\022\032\n\022groupMemberVersion\030\004 \001("
-    "\004\022\034\n\024groupMemberVersionID\030\005 \001(\t\"\201\002\n\026Grou"
-    "pMemberInfoSetTips\022\037\n\005group\030\001 \001(\0132\020.sdkw"
+    "\030\004 \001(\003\0222\n\016groupOwnerUser\030\005 \001(\0132\032.sdkws.G"
+    "roupMemberFullInfo\022\032\n\022groupMemberVersion"
+    "\030\006 \001(\004\022\034\n\024groupMemberVersionID\030\007 \001(\t\"\253\001\n"
+    "\020GroupInfoSetTips\022*\n\006opUser\030\001 \001(\0132\032.sdkw"
+    "s.GroupMemberFullInfo\022\020\n\010muteTime\030\002 \001(\003\022"
+    "\037\n\005group\030\003 \001(\0132\020.sdkws.GroupInfo\022\032\n\022grou"
+    "pMemberVersion\030\004 \001(\004\022\034\n\024groupMemberVersi"
+    "onID\030\005 \001(\t\"\235\001\n\024GroupInfoSetNameTips\022*\n\006o"
+    "pUser\030\001 \001(\0132\032.sdkws.GroupMemberFullInfo\022"
+    "\037\n\005group\030\002 \001(\0132\020.sdkws.GroupInfo\022\032\n\022grou"
+    "pMemberVersion\030\003 \001(\004\022\034\n\024groupMemberVersi"
+    "onID\030\004 \001(\t\"\245\001\n\034GroupInfoSetAnnouncementT"
+    "ips\022*\n\006opUser\030\001 \001(\0132\032.sdkws.GroupMemberF"
+    "ullInfo\022\037\n\005group\030\002 \001(\0132\020.sdkws.GroupInfo"
+    "\022\032\n\022groupMemberVersion\030\003 \001(\004\022\034\n\024groupMem"
+    "berVersionID\030\004 \001(\t\"u\n\030JoinGroupApplicati"
+    "onTips\022\037\n\005group\030\001 \001(\0132\020.sdkws.GroupInfo\022"
+    "(\n\tapplicant\030\002 \001(\0132\025.sdkws.PublicUserInf"
+    "o\022\016\n\006reqMsg\030\003 \001(\t\"\260\001\n\016MemberQuitTips\022\037\n\005"
+    "group\030\001 \001(\0132\020.sdkws.GroupInfo\022,\n\010quitUse"
+    "r\030\002 \001(\0132\032.sdkws.GroupMemberFullInfo\022\025\n\ro"
+    "perationTime\030\003 \001(\003\022\032\n\022groupMemberVersion"
+    "\030\004 \001(\004\022\034\n\024groupMemberVersionID\030\005 \001(\t\"\222\001\n"
+    "\034GroupApplicationAcceptedTips\022\037\n\005group\030\001"
+    " \001(\0132\020.sdkws.GroupInfo\022*\n\006opUser\030\002 \001(\0132\032"
+    ".sdkws.GroupMemberFullInfo\022\021\n\thandleMsg\030"
+    "\004 \001(\t\022\022\n\nreceiverAs\030\005 \001(\005\"\222\001\n\034GroupAppli"
+    "cationRejectedTips\022\037\n\005group\030\001 \001(\0132\020.sdkw"
     "s.GroupInfo\022*\n\006opUser\030\002 \001(\0132\032.sdkws.Grou"
-    "pMemberFullInfo\022\025\n\roperationTime\030\003 \001(\003\022/"
-    "\n\013changedUser\030\004 \001(\0132\032.sdkws.GroupMemberF"
-    "ullInfo\022\032\n\022groupMemberVersion\030\005 \001(\004\022\034\n\024g"
-    "roupMemberVersionID\030\006 \001(\t\022\030\n\020groupSortVe"
-    "rsion\030\007 \001(\004\"K\n\021FriendApplication\022\017\n\007addT"
-    "ime\030\001 \001(\003\022\021\n\taddSource\030\002 \001(\t\022\022\n\naddWordi"
-    "ng\030\003 \001(\t\"4\n\014FromToUserID\022\022\n\nfromUserID\030\001"
-    " \001(\t\022\020\n\010toUserID\030\002 \001(\t\"B\n\025FriendApplicat"
-    "ionTips\022)\n\014fromToUserID\030\001 \001(\0132\023.sdkws.Fr"
-    "omToUserID\"\215\001\n\035FriendApplicationApproved"
-    "Tips\022)\n\014fromToUserID\030\001 \001(\0132\023.sdkws.FromT"
-    "oUserID\022\021\n\thandleMsg\030\002 \001(\t\022\025\n\rfriendVers"
-    "ion\030\003 \001(\004\022\027\n\017friendVersionID\030\004 \001(\t\"]\n\035Fr"
-    "iendApplicationRejectedTips\022)\n\014fromToUse"
-    "rID\030\001 \001(\0132\023.sdkws.FromToUserID\022\021\n\thandle"
-    "Msg\030\002 \001(\t\"\242\001\n\017FriendAddedTips\022!\n\006friend\030"
-    "\001 \001(\0132\021.sdkws.FriendInfo\022\025\n\roperationTim"
-    "e\030\002 \001(\003\022%\n\006opUser\030\003 \001(\0132\025.sdkws.PublicUs"
-    "erInfo\022\025\n\rfriendVersion\030\004 \001(\004\022\027\n\017friendV"
-    "ersionID\030\005 \001(\t\"n\n\021FriendDeletedTips\022)\n\014f"
-    "romToUserID\030\001 \001(\0132\023.sdkws.FromToUserID\022\025"
-    "\n\rfriendVersion\030\002 \001(\004\022\027\n\017friendVersionID"
-    "\030\003 \001(\t\";\n\016BlackAddedTips\022)\n\014fromToUserID"
-    "\030\001 \001(\0132\023.sdkws.FromToUserID\"=\n\020BlackDele"
-    "tedTips\022)\n\014fromToUserID\030\001 \001(\0132\023.sdkws.Fr"
-    "omToUserID\"\215\001\n\025FriendInfoChangedTips\022)\n\014"
-    "fromToUserID\030\001 \001(\0132\023.sdkws.FromToUserID\022"
-    "\025\n\rfriendVersion\030\002 \001(\004\022\027\n\017friendVersionI"
-    "D\030\003 \001(\t\022\031\n\021friendSortVersion\030\004 \001(\004\"%\n\023Us"
-    "erInfoUpdatedTips\022\016\n\006userID\030\001 \001(\t\"`\n\024Use"
-    "rStatusChangeTips\022\022\n\nfromUserID\030\001 \001(\t\022\020\n"
-    "\010toUserID\030\002 \001(\t\022\016\n\006status\030\003 \001(\005\022\022\n\nplatf"
-    "ormID\030\004 \001(\005\":\n\022UserCommandAddTips\022\022\n\nfro"
-    "mUserID\030\001 \001(\t\022\020\n\010toUserID\030\002 \001(\t\"=\n\025UserC"
-    "ommandUpdateTips\022\022\n\nfromUserID\030\001 \001(\t\022\020\n\010"
-    "toUserID\030\002 \001(\t\"=\n\025UserCommandDeleteTips\022"
-    "\022\n\nfromUserID\030\001 \001(\t\022\020\n\010toUserID\030\002 \001(\t\"D\n"
-    "\026ConversationUpdateTips\022\016\n\006userID\030\001 \001(\t\022"
-    "\032\n\022conversationIDList\030\002 \003(\t\"g\n\032Conversat"
-    "ionSetPrivateTips\022\016\n\006recvID\030\001 \001(\t\022\016\n\006sen"
-    "dID\030\002 \001(\t\022\021\n\tisPrivate\030\003 \001(\010\022\026\n\016conversa"
-    "tionID\030\004 \001(\t\"n\n\027ConversationHasReadTips\022"
-    "\016\n\006userID\030\001 \001(\t\022\026\n\016conversationID\030\002 \001(\t\022"
-    "\022\n\nhasReadSeq\030\003 \001(\003\022\027\n\017unreadCountTime\030\004"
-    " \001(\003\"\"\n\020NotificationElem\022\016\n\006detail\030\001 \001(\t"
-    "\"C\n\021DeleteMessageTips\022\020\n\010opUserID\030\001 \001(\t\022"
-    "\016\n\006userID\030\002 \001(\t\022\014\n\004seqs\030\003 \003(\003\"\241\001\n\rRevoke"
-    "MsgTips\022\025\n\rrevokerUserID\030\001 \001(\t\022\023\n\013client"
-    "MsgID\030\002 \001(\t\022\022\n\nrevokeTime\030\003 \001(\003\022\024\n\014sesst"
-    "ionType\030\005 \001(\005\022\013\n\003seq\030\006 \001(\003\022\026\n\016conversati"
-    "onID\030\007 \001(\t\022\025\n\risAdminRevoke\030\010 \001(\010\"\220\002\n\025Me"
-    "ssageRevokedContent\022\021\n\trevokerID\030\001 \001(\t\022\023"
-    "\n\013revokerRole\030\002 \001(\005\022\023\n\013clientMsgID\030\003 \001(\t"
-    "\022\027\n\017revokerNickname\030\004 \001(\t\022\022\n\nrevokeTime\030"
-    "\005 \001(\003\022\035\n\025sourceMessageSendTime\030\006 \001(\003\022\033\n\023"
-    "sourceMessageSendID\030\007 \001(\t\022#\n\033sourceMessa"
-    "geSenderNickname\030\010 \001(\t\022\023\n\013sessionType\030\n "
-    "\001(\005\022\013\n\003seq\030\013 \001(\003\022\n\n\002ex\030\014 \001(\t\"@\n\025ClearCon"
-    "versationTips\022\016\n\006userID\030\001 \001(\t\022\027\n\017convers"
-    "ationIDs\030\002 \003(\t\"F\n\016DeleteMsgsTips\022\016\n\006user"
-    "ID\030\001 \001(\t\022\026\n\016conversationID\030\002 \001(\t\022\014\n\004seqs"
-    "\030\003 \003(\003\"d\n\016MarkAsReadTips\022\030\n\020markAsReadUs"
-    "erID\030\001 \001(\t\022\026\n\016conversationID\030\002 \001(\t\022\014\n\004se"
-    "qs\030\003 \003(\003\022\022\n\nhasReadSeq\030\004 \001(\003\"A\n\031SetAppBa"
-    "ckgroundStatusReq\022\016\n\006userID\030\001 \001(\t\022\024\n\014isB"
-    "ackground\030\002 \001(\010\"\034\n\032SetAppBackgroundStatu"
-    "sResp\"c\n\022ProcessUserCommand\022\016\n\006userID\030\001 "
-    "\001(\t\022\014\n\004type\030\002 \001(\005\022\022\n\ncreateTime\030\003 \001(\003\022\014\n"
-    "\004uuid\030\004 \001(\t\022\r\n\005value\030\005 \001(\t\";\n\021RequestPag"
-    "ination\022\022\n\npageNumber\030\001 \001(\005\022\022\n\nshowNumbe"
-    "r\030\002 \001(\005\"\205\001\n\025FriendsInfoUpdateTips\022)\n\014fro"
+    "pMemberFullInfo\022\021\n\thandleMsg\030\004 \001(\t\022\022\n\nre"
+    "ceiverAs\030\005 \001(\005\"\272\002\n\031GroupOwnerTransferred"
+    "Tips\022\037\n\005group\030\001 \001(\0132\020.sdkws.GroupInfo\022*\n"
+    "\006opUser\030\002 \001(\0132\032.sdkws.GroupMemberFullInf"
+    "o\0221\n\rnewGroupOwner\030\003 \001(\0132\032.sdkws.GroupMe"
+    "mberFullInfo\022\025\n\roldGroupOwner\030\004 \001(\t\022\025\n\ro"
+    "perationTime\030\005 \001(\003\0225\n\021oldGroupOwnerInfo\030"
+    "\006 \001(\0132\032.sdkws.GroupMemberFullInfo\022\032\n\022gro"
+    "upMemberVersion\030\007 \001(\004\022\034\n\024groupMemberVers"
+    "ionID\030\010 \001(\t\"\344\001\n\020MemberKickedTips\022\037\n\005grou"
+    "p\030\001 \001(\0132\020.sdkws.GroupInfo\022*\n\006opUser\030\002 \001("
+    "\0132\032.sdkws.GroupMemberFullInfo\0222\n\016kickedU"
+    "serList\030\003 \003(\0132\032.sdkws.GroupMemberFullInf"
+    "o\022\025\n\roperationTime\030\004 \001(\003\022\032\n\022groupMemberV"
+    "ersion\030\005 \001(\004\022\034\n\024groupMemberVersionID\030\006 \001"
+    "(\t\"\227\002\n\021MemberInvitedTips\022\037\n\005group\030\001 \001(\0132"
+    "\020.sdkws.GroupInfo\022*\n\006opUser\030\002 \001(\0132\032.sdkw"
+    "s.GroupMemberFullInfo\0223\n\017invitedUserList"
+    "\030\003 \003(\0132\032.sdkws.GroupMemberFullInfo\022\025\n\rop"
+    "erationTime\030\004 \001(\003\022\032\n\022groupMemberVersion\030"
+    "\005 \001(\004\022\034\n\024groupMemberVersionID\030\006 \001(\t\022/\n\013i"
+    "nviterUser\030\007 \001(\0132\032.sdkws.GroupMemberFull"
+    "Info\"\264\001\n\017MemberEnterTips\022\037\n\005group\030\001 \001(\0132"
+    "\020.sdkws.GroupInfo\022/\n\013entrantUser\030\002 \001(\0132\032"
+    ".sdkws.GroupMemberFullInfo\022\025\n\roperationT"
+    "ime\030\003 \001(\003\022\032\n\022groupMemberVersion\030\005 \001(\004\022\034\n"
+    "\024groupMemberVersionID\030\006 \001(\t\"x\n\022GroupDism"
+    "issedTips\022\037\n\005group\030\001 \001(\0132\020.sdkws.GroupIn"
+    "fo\022*\n\006opUser\030\002 \001(\0132\032.sdkws.GroupMemberFu"
+    "llInfo\022\025\n\roperationTime\030\003 \001(\003\"\371\001\n\024GroupM"
+    "emberMutedTips\022\037\n\005group\030\001 \001(\0132\020.sdkws.Gr"
+    "oupInfo\022*\n\006opUser\030\002 \001(\0132\032.sdkws.GroupMem"
+    "berFullInfo\022\025\n\roperationTime\030\003 \001(\003\022-\n\tmu"
+    "tedUser\030\004 \001(\0132\032.sdkws.GroupMemberFullInf"
+    "o\022\024\n\014mutedSeconds\030\005 \001(\r\022\032\n\022groupMemberVe"
+    "rsion\030\006 \001(\004\022\034\n\024groupMemberVersionID\030\007 \001("
+    "\t\"\351\001\n\032GroupMemberCancelMutedTips\022\037\n\005grou"
+    "p\030\001 \001(\0132\020.sdkws.GroupInfo\022*\n\006opUser\030\002 \001("
+    "\0132\032.sdkws.GroupMemberFullInfo\022\025\n\roperati"
+    "onTime\030\003 \001(\003\022-\n\tmutedUser\030\004 \001(\0132\032.sdkws."
+    "GroupMemberFullInfo\022\032\n\022groupMemberVersio"
+    "n\030\005 \001(\004\022\034\n\024groupMemberVersionID\030\006 \001(\t\"\256\001"
+    "\n\016GroupMutedTips\022\037\n\005group\030\001 \001(\0132\020.sdkws."
+    "GroupInfo\022*\n\006opUser\030\002 \001(\0132\032.sdkws.GroupM"
+    "emberFullInfo\022\025\n\roperationTime\030\003 \001(\003\022\032\n\022"
+    "groupMemberVersion\030\004 \001(\004\022\034\n\024groupMemberV"
+    "ersionID\030\005 \001(\t\"\264\001\n\024GroupCancelMutedTips\022"
+    "\037\n\005group\030\001 \001(\0132\020.sdkws.GroupInfo\022*\n\006opUs"
+    "er\030\002 \001(\0132\032.sdkws.GroupMemberFullInfo\022\025\n\r"
+    "operationTime\030\003 \001(\003\022\032\n\022groupMemberVersio"
+    "n\030\004 \001(\004\022\034\n\024groupMemberVersionID\030\005 \001(\t\"\201\002"
+    "\n\026GroupMemberInfoSetTips\022\037\n\005group\030\001 \001(\0132"
+    "\020.sdkws.GroupInfo\022*\n\006opUser\030\002 \001(\0132\032.sdkw"
+    "s.GroupMemberFullInfo\022\025\n\roperationTime\030\003"
+    " \001(\003\022/\n\013changedUser\030\004 \001(\0132\032.sdkws.GroupM"
+    "emberFullInfo\022\032\n\022groupMemberVersion\030\005 \001("
+    "\004\022\034\n\024groupMemberVersionID\030\006 \001(\t\022\030\n\020group"
+    "SortVersion\030\007 \001(\004\"K\n\021FriendApplication\022\017"
+    "\n\007addTime\030\001 \001(\003\022\021\n\taddSource\030\002 \001(\t\022\022\n\nad"
+    "dWording\030\003 \001(\t\"4\n\014FromToUserID\022\022\n\nfromUs"
+    "erID\030\001 \001(\t\022\020\n\010toUserID\030\002 \001(\t\"B\n\025FriendAp"
+    "plicationTips\022)\n\014fromToUserID\030\001 \001(\0132\023.sd"
+    "kws.FromToUserID\"\215\001\n\035FriendApplicationAp"
+    "provedTips\022)\n\014fromToUserID\030\001 \001(\0132\023.sdkws"
+    ".FromToUserID\022\021\n\thandleMsg\030\002 \001(\t\022\025\n\rfrie"
+    "ndVersion\030\003 \001(\004\022\027\n\017friendVersionID\030\004 \001(\t"
+    "\"]\n\035FriendApplicationRejectedTips\022)\n\014fro"
     "mToUserID\030\001 \001(\0132\023.sdkws.FromToUserID\022\021\n\t"
-    "friendIDs\030\002 \003(\t\022\025\n\rfriendVersion\030\003 \001(\004\022\027"
-    "\n\017friendVersionID\030\004 \001(\t\"D\n\027SubUserOnline"
-    "StatusElem\022\016\n\006userID\030\001 \001(\t\022\031\n\021onlinePlat"
-    "formIDs\030\002 \003(\005\"N\n\027SubUserOnlineStatusTips"
-    "\0223\n\013subscribers\030\001 \003(\0132\036.sdkws.SubUserOnl"
-    "ineStatusElem\"I\n\023SubUserOnlineStatus\022\027\n\017"
-    "subscribeUserID\030\001 \003(\t\022\031\n\021unsubscribeUser"
-    "ID\030\002 \003(\t\"n\n\rStreamMsgTips\022\026\n\016conversatio"
-    "nID\030\001 \001(\t\022\023\n\013clientMsgID\030\002 \001(\t\022\022\n\nstartI"
-    "ndex\030\003 \001(\003\022\017\n\007packets\030\004 \003(\t\022\013\n\003end\030\005 \001(\010"
-    "*0\n\tPullOrder\022\020\n\014PullOrderAsc\020\000\022\021\n\rPullO"
-    "rderDesc\020\001b\006proto3"
+    "handleMsg\030\002 \001(\t\"\242\001\n\017FriendAddedTips\022!\n\006f"
+    "riend\030\001 \001(\0132\021.sdkws.FriendInfo\022\025\n\roperat"
+    "ionTime\030\002 \001(\003\022%\n\006opUser\030\003 \001(\0132\025.sdkws.Pu"
+    "blicUserInfo\022\025\n\rfriendVersion\030\004 \001(\004\022\027\n\017f"
+    "riendVersionID\030\005 \001(\t\"n\n\021FriendDeletedTip"
+    "s\022)\n\014fromToUserID\030\001 \001(\0132\023.sdkws.FromToUs"
+    "erID\022\025\n\rfriendVersion\030\002 \001(\004\022\027\n\017friendVer"
+    "sionID\030\003 \001(\t\";\n\016BlackAddedTips\022)\n\014fromTo"
+    "UserID\030\001 \001(\0132\023.sdkws.FromToUserID\"=\n\020Bla"
+    "ckDeletedTips\022)\n\014fromToUserID\030\001 \001(\0132\023.sd"
+    "kws.FromToUserID\"\215\001\n\025FriendInfoChangedTi"
+    "ps\022)\n\014fromToUserID\030\001 \001(\0132\023.sdkws.FromToU"
+    "serID\022\025\n\rfriendVersion\030\002 \001(\004\022\027\n\017friendVe"
+    "rsionID\030\003 \001(\t\022\031\n\021friendSortVersion\030\004 \001(\004"
+    "\"%\n\023UserInfoUpdatedTips\022\016\n\006userID\030\001 \001(\t\""
+    "`\n\024UserStatusChangeTips\022\022\n\nfromUserID\030\001 "
+    "\001(\t\022\020\n\010toUserID\030\002 \001(\t\022\016\n\006status\030\003 \001(\005\022\022\n"
+    "\nplatformID\030\004 \001(\005\":\n\022UserCommandAddTips\022"
+    "\022\n\nfromUserID\030\001 \001(\t\022\020\n\010toUserID\030\002 \001(\t\"=\n"
+    "\025UserCommandUpdateTips\022\022\n\nfromUserID\030\001 \001"
+    "(\t\022\020\n\010toUserID\030\002 \001(\t\"=\n\025UserCommandDelet"
+    "eTips\022\022\n\nfromUserID\030\001 \001(\t\022\020\n\010toUserID\030\002 "
+    "\001(\t\"D\n\026ConversationUpdateTips\022\016\n\006userID\030"
+    "\001 \001(\t\022\032\n\022conversationIDList\030\002 \003(\t\"g\n\032Con"
+    "versationSetPrivateTips\022\016\n\006recvID\030\001 \001(\t\022"
+    "\016\n\006sendID\030\002 \001(\t\022\021\n\tisPrivate\030\003 \001(\010\022\026\n\016co"
+    "nversationID\030\004 \001(\t\"n\n\027ConversationHasRea"
+    "dTips\022\016\n\006userID\030\001 \001(\t\022\026\n\016conversationID\030"
+    "\002 \001(\t\022\022\n\nhasReadSeq\030\003 \001(\003\022\027\n\017unreadCount"
+    "Time\030\004 \001(\003\"\"\n\020NotificationElem\022\016\n\006detail"
+    "\030\001 \001(\t\"C\n\021DeleteMessageTips\022\020\n\010opUserID\030"
+    "\001 \001(\t\022\016\n\006userID\030\002 \001(\t\022\014\n\004seqs\030\003 \003(\003\"\241\001\n\r"
+    "RevokeMsgTips\022\025\n\rrevokerUserID\030\001 \001(\t\022\023\n\013"
+    "clientMsgID\030\002 \001(\t\022\022\n\nrevokeTime\030\003 \001(\003\022\024\n"
+    "\014sesstionType\030\005 \001(\005\022\013\n\003seq\030\006 \001(\003\022\026\n\016conv"
+    "ersationID\030\007 \001(\t\022\025\n\risAdminRevoke\030\010 \001(\010\""
+    "\220\002\n\025MessageRevokedContent\022\021\n\trevokerID\030\001"
+    " \001(\t\022\023\n\013revokerRole\030\002 \001(\005\022\023\n\013clientMsgID"
+    "\030\003 \001(\t\022\027\n\017revokerNickname\030\004 \001(\t\022\022\n\nrevok"
+    "eTime\030\005 \001(\003\022\035\n\025sourceMessageSendTime\030\006 \001"
+    "(\003\022\033\n\023sourceMessageSendID\030\007 \001(\t\022#\n\033sourc"
+    "eMessageSenderNickname\030\010 \001(\t\022\023\n\013sessionT"
+    "ype\030\n \001(\005\022\013\n\003seq\030\013 \001(\003\022\n\n\002ex\030\014 \001(\t\"@\n\025Cl"
+    "earConversationTips\022\016\n\006userID\030\001 \001(\t\022\027\n\017c"
+    "onversationIDs\030\002 \003(\t\"F\n\016DeleteMsgsTips\022\016"
+    "\n\006userID\030\001 \001(\t\022\026\n\016conversationID\030\002 \001(\t\022\014"
+    "\n\004seqs\030\003 \003(\003\"d\n\016MarkAsReadTips\022\030\n\020markAs"
+    "ReadUserID\030\001 \001(\t\022\026\n\016conversationID\030\002 \001(\t"
+    "\022\014\n\004seqs\030\003 \003(\003\022\022\n\nhasReadSeq\030\004 \001(\003\"A\n\031Se"
+    "tAppBackgroundStatusReq\022\016\n\006userID\030\001 \001(\t\022"
+    "\024\n\014isBackground\030\002 \001(\010\"\034\n\032SetAppBackgroun"
+    "dStatusResp\"c\n\022ProcessUserCommand\022\016\n\006use"
+    "rID\030\001 \001(\t\022\014\n\004type\030\002 \001(\005\022\022\n\ncreateTime\030\003 "
+    "\001(\003\022\014\n\004uuid\030\004 \001(\t\022\r\n\005value\030\005 \001(\t\";\n\021Requ"
+    "estPagination\022\022\n\npageNumber\030\001 \001(\005\022\022\n\nsho"
+    "wNumber\030\002 \001(\005\"\205\001\n\025FriendsInfoUpdateTips\022"
+    ")\n\014fromToUserID\030\001 \001(\0132\023.sdkws.FromToUser"
+    "ID\022\021\n\tfriendIDs\030\002 \003(\t\022\025\n\rfriendVersion\030\003"
+    " \001(\004\022\027\n\017friendVersionID\030\004 \001(\t\"D\n\027SubUser"
+    "OnlineStatusElem\022\016\n\006userID\030\001 \001(\t\022\031\n\021onli"
+    "nePlatformIDs\030\002 \003(\005\"N\n\027SubUserOnlineStat"
+    "usTips\0223\n\013subscribers\030\001 \003(\0132\036.sdkws.SubU"
+    "serOnlineStatusElem\"I\n\023SubUserOnlineStat"
+    "us\022\027\n\017subscribeUserID\030\001 \003(\t\022\031\n\021unsubscri"
+    "beUserID\030\002 \003(\t\"n\n\rStreamMsgTips\022\026\n\016conve"
+    "rsationID\030\001 \001(\t\022\023\n\013clientMsgID\030\002 \001(\t\022\022\n\n"
+    "startIndex\030\003 \001(\003\022\017\n\007packets\030\004 \003(\t\022\013\n\003end"
+    "\030\005 \001(\010*0\n\tPullOrder\022\020\n\014PullOrderAsc\020\000\022\021\n"
+    "\rPullOrderDesc\020\001b\006proto3"
 };
 static ::absl::once_flag descriptor_table_sdkws_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_sdkws_2eproto = {
     false,
     false,
-    12298,
+    12384,
     descriptor_table_protodef_sdkws_2eproto,
     "sdkws.proto",
     &descriptor_table_sdkws_2eproto_once,
     nullptr,
     0,
-    94,
+    95,
     schemas,
     file_default_instances,
     TableStruct_sdkws_2eproto::offsets,
@@ -16694,9 +16740,9 @@ SdkWSReq::SdkWSReq(
                offsetof(Impl_, type_),
            reinterpret_cast<const char *>(&from._impl_) +
                offsetof(Impl_, type_),
-           offsetof(Impl_, trackid_) -
+           offsetof(Impl_, lastmsgseq_) -
                offsetof(Impl_, type_) +
-               sizeof(Impl_::trackid_));
+               sizeof(Impl_::lastmsgseq_));
 
   // @@protoc_insertion_point(copy_constructor:sdkws.SdkWSReq)
 }
@@ -16715,9 +16761,9 @@ inline void SdkWSReq::SharedCtor(::_pb::Arena* arena) {
   ::memset(reinterpret_cast<char *>(&_impl_) +
                offsetof(Impl_, type_),
            0,
-           offsetof(Impl_, trackid_) -
+           offsetof(Impl_, lastmsgseq_) -
                offsetof(Impl_, type_) +
-               sizeof(Impl_::trackid_));
+               sizeof(Impl_::lastmsgseq_));
 }
 SdkWSReq::~SdkWSReq() {
   // @@protoc_insertion_point(destructor:sdkws.SdkWSReq)
@@ -16771,15 +16817,15 @@ const ::google::protobuf::internal::ClassData* SdkWSReq::GetClassData() const {
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 7, 0, 51, 2> SdkWSReq::_table_ = {
+const ::_pbi::TcParseTable<3, 8, 0, 59, 2> SdkWSReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    7, 56,  // max_field_number, fast_idx_mask
+    8, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967168,  // skipmap
+    4294967040,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    7,  // num_field_entries
+    8,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
@@ -16789,7 +16835,9 @@ const ::_pbi::TcParseTable<3, 7, 0, 51, 2> SdkWSReq::_table_ = {
     ::_pbi::TcParser::GetTable<::sdkws::SdkWSReq>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    {::_pbi::TcParser::MiniParse, {}},
+    // int64 lastMsgSeq = 8;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(SdkWSReq, _impl_.lastmsgseq_), 63>(),
+     {64, 63, 0, PROTOBUF_FIELD_OFFSET(SdkWSReq, _impl_.lastmsgseq_)}},
     // string requestId = 1;
     {::_pbi::TcParser::FastUS1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(SdkWSReq, _impl_.requestid_)}},
@@ -16835,10 +16883,13 @@ const ::_pbi::TcParseTable<3, 7, 0, 51, 2> SdkWSReq::_table_ = {
     // int32 trackID = 7;
     {PROTOBUF_FIELD_OFFSET(SdkWSReq, _impl_.trackid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt32)},
+    // int64 lastMsgSeq = 8;
+    {PROTOBUF_FIELD_OFFSET(SdkWSReq, _impl_.lastmsgseq_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
   }},
   // no aux_entries
   {{
-    "\16\11\5\6\10\0\0\0"
+    "\16\11\5\6\10\0\0\0\0\0\0\0\0\0\0\0"
     "sdkws.SdkWSReq"
     "requestId"
     "token"
@@ -16860,8 +16911,8 @@ PROTOBUF_NOINLINE void SdkWSReq::Clear() {
   _impl_.deviceid_.ClearToEmpty();
   _impl_.data_.ClearToEmpty();
   ::memset(&_impl_.type_, 0, static_cast<::size_t>(
-      reinterpret_cast<char*>(&_impl_.trackid_) -
-      reinterpret_cast<char*>(&_impl_.type_)) + sizeof(_impl_.trackid_));
+      reinterpret_cast<char*>(&_impl_.lastmsgseq_) -
+      reinterpret_cast<char*>(&_impl_.type_)) + sizeof(_impl_.lastmsgseq_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -16932,6 +16983,13 @@ PROTOBUF_NOINLINE void SdkWSReq::Clear() {
                     stream, this_._internal_trackid(), target);
           }
 
+          // int64 lastMsgSeq = 8;
+          if (this_._internal_lastmsgseq() != 0) {
+            target = ::google::protobuf::internal::WireFormatLite::
+                WriteInt64ToArrayWithField<8>(
+                    stream, this_._internal_lastmsgseq(), target);
+          }
+
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
             target =
                 ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
@@ -16992,6 +17050,11 @@ PROTOBUF_NOINLINE void SdkWSReq::Clear() {
               total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
                   this_._internal_trackid());
             }
+            // int64 lastMsgSeq = 8;
+            if (this_._internal_lastmsgseq() != 0) {
+              total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+                  this_._internal_lastmsgseq());
+            }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
                                                      &this_._impl_._cached_size_);
@@ -17026,6 +17089,9 @@ void SdkWSReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google
   if (from._internal_trackid() != 0) {
     _this->_impl_.trackid_ = from._impl_.trackid_;
   }
+  if (from._internal_lastmsgseq() != 0) {
+    _this->_impl_.lastmsgseq_ = from._impl_.lastmsgseq_;
+  }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -17048,8 +17114,8 @@ void SdkWSReq::InternalSwap(SdkWSReq* PROTOBUF_RESTRICT other) {
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.deviceid_, &other->_impl_.deviceid_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.data_, &other->_impl_.data_, arena);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(SdkWSReq, _impl_.trackid_)
-      + sizeof(SdkWSReq::_impl_.trackid_)
+      PROTOBUF_FIELD_OFFSET(SdkWSReq, _impl_.lastmsgseq_)
+      + sizeof(SdkWSReq::_impl_.lastmsgseq_)
       - PROTOBUF_FIELD_OFFSET(SdkWSReq, _impl_.type_)>(
           reinterpret_cast<char*>(&_impl_.type_),
           reinterpret_cast<char*>(&other->_impl_.type_));
@@ -17551,6 +17617,307 @@ void SdkWSResp::InternalSwap(SdkWSResp* PROTOBUF_RESTRICT other) {
 }
 
 ::google::protobuf::Metadata SdkWSResp::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class AckReq::_Internal {
+ public:
+};
+
+AckReq::AckReq(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:sdkws.AckReq)
+}
+inline PROTOBUF_NDEBUG_INLINE AckReq::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::sdkws::AckReq& from_msg)
+      : servermsgids_{visibility, arena, from.servermsgids_},
+        userid_(arena, from.userid_),
+        _cached_size_{0} {}
+
+AckReq::AckReq(
+    ::google::protobuf::Arena* arena,
+    const AckReq& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  AckReq* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.acktype_ = from._impl_.acktype_;
+
+  // @@protoc_insertion_point(copy_constructor:sdkws.AckReq)
+}
+inline PROTOBUF_NDEBUG_INLINE AckReq::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : servermsgids_{visibility, arena},
+        userid_(arena),
+        _cached_size_{0} {}
+
+inline void AckReq::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.acktype_ = {};
+}
+AckReq::~AckReq() {
+  // @@protoc_insertion_point(destructor:sdkws.AckReq)
+  SharedDtor(*this);
+}
+inline void AckReq::SharedDtor(MessageLite& self) {
+  AckReq& this_ = static_cast<AckReq&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.userid_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* AckReq::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) AckReq(arena);
+}
+constexpr auto AckReq::InternalNewImpl_() {
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(AckReq, _impl_.servermsgids_) +
+          decltype(AckReq::_impl_.servermsgids_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::CopyInit(
+        sizeof(AckReq), alignof(AckReq), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&AckReq::PlacementNew_,
+                                 sizeof(AckReq),
+                                 alignof(AckReq));
+  }
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull AckReq::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_AckReq_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &AckReq::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<AckReq>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &AckReq::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<AckReq>(), &AckReq::ByteSizeLong,
+            &AckReq::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(AckReq, _impl_._cached_size_),
+        false,
+    },
+    &AckReq::kDescriptorMethods,
+    &descriptor_table_sdkws_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* AckReq::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 3, 0, 39, 2> AckReq::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    3, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967288,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    3,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::sdkws::AckReq>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // string userID = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(AckReq, _impl_.userid_)}},
+    // repeated string serverMsgIDs = 2;
+    {::_pbi::TcParser::FastUR1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(AckReq, _impl_.servermsgids_)}},
+    // int32 ackType = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AckReq, _impl_.acktype_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(AckReq, _impl_.acktype_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string userID = 1;
+    {PROTOBUF_FIELD_OFFSET(AckReq, _impl_.userid_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // repeated string serverMsgIDs = 2;
+    {PROTOBUF_FIELD_OFFSET(AckReq, _impl_.servermsgids_), 0, 0,
+    (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
+    // int32 ackType = 3;
+    {PROTOBUF_FIELD_OFFSET(AckReq, _impl_.acktype_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kInt32)},
+  }},
+  // no aux_entries
+  {{
+    "\14\6\14\0\0\0\0\0"
+    "sdkws.AckReq"
+    "userID"
+    "serverMsgIDs"
+  }},
+};
+
+PROTOBUF_NOINLINE void AckReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:sdkws.AckReq)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.servermsgids_.Clear();
+  _impl_.userid_.ClearToEmpty();
+  _impl_.acktype_ = 0;
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* AckReq::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const AckReq& this_ = static_cast<const AckReq&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* AckReq::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const AckReq& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:sdkws.AckReq)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // string userID = 1;
+          if (!this_._internal_userid().empty()) {
+            const std::string& _s = this_._internal_userid();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "sdkws.AckReq.userID");
+            target = stream->WriteStringMaybeAliased(1, _s, target);
+          }
+
+          // repeated string serverMsgIDs = 2;
+          for (int i = 0, n = this_._internal_servermsgids_size(); i < n; ++i) {
+            const auto& s = this_._internal_servermsgids().Get(i);
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "sdkws.AckReq.serverMsgIDs");
+            target = stream->WriteString(2, s, target);
+          }
+
+          // int32 ackType = 3;
+          if (this_._internal_acktype() != 0) {
+            target = ::google::protobuf::internal::WireFormatLite::
+                WriteInt32ToArrayWithField<3>(
+                    stream, this_._internal_acktype(), target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:sdkws.AckReq)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t AckReq::ByteSizeLong(const MessageLite& base) {
+          const AckReq& this_ = static_cast<const AckReq&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t AckReq::ByteSizeLong() const {
+          const AckReq& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:sdkws.AckReq)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // repeated string serverMsgIDs = 2;
+            {
+              total_size +=
+                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_servermsgids().size());
+              for (int i = 0, n = this_._internal_servermsgids().size(); i < n; ++i) {
+                total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+                    this_._internal_servermsgids().Get(i));
+              }
+            }
+          }
+           {
+            // string userID = 1;
+            if (!this_._internal_userid().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_userid());
+            }
+            // int32 ackType = 3;
+            if (this_._internal_acktype() != 0) {
+              total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+                  this_._internal_acktype());
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void AckReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<AckReq*>(&to_msg);
+  auto& from = static_cast<const AckReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:sdkws.AckReq)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  _this->_internal_mutable_servermsgids()->MergeFrom(from._internal_servermsgids());
+  if (!from._internal_userid().empty()) {
+    _this->_internal_set_userid(from._internal_userid());
+  }
+  if (from._internal_acktype() != 0) {
+    _this->_impl_.acktype_ = from._impl_.acktype_;
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void AckReq::CopyFrom(const AckReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:sdkws.AckReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void AckReq::InternalSwap(AckReq* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.servermsgids_.InternalSwap(&other->_impl_.servermsgids_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
+        swap(_impl_.acktype_, other->_impl_.acktype_);
+}
+
+::google::protobuf::Metadata AckReq::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================

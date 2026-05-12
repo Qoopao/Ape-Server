@@ -89,6 +89,105 @@ struct DelUserPushTokenReqDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DelUserPushTokenReqDefaultTypeInternal _DelUserPushTokenReq_default_instance_;
+              template <typename>
+PROTOBUF_CONSTEXPR AddPendingOfflineAckResp::AddPendingOfflineAckResp(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::internal::ZeroFieldsBase(_class_data_.base()){}
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::internal::ZeroFieldsBase() {
+}
+#endif  // PROTOBUF_CUSTOM_VTABLE
+struct AddPendingOfflineAckRespDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR AddPendingOfflineAckRespDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~AddPendingOfflineAckRespDefaultTypeInternal() {}
+  union {
+    AddPendingOfflineAckResp _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AddPendingOfflineAckRespDefaultTypeInternal _AddPendingOfflineAckResp_default_instance_;
+
+inline constexpr AddPendingOfflineAckReq::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : userid_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        servermsgid_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        seq_{::int64_t{0}},
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR AddPendingOfflineAckReq::AddPendingOfflineAckReq(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct AddPendingOfflineAckReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR AddPendingOfflineAckReqDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~AddPendingOfflineAckReqDefaultTypeInternal() {}
+  union {
+    AddPendingOfflineAckReq _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AddPendingOfflineAckReqDefaultTypeInternal _AddPendingOfflineAckReq_default_instance_;
+              template <typename>
+PROTOBUF_CONSTEXPR AckMsgResp::AckMsgResp(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::internal::ZeroFieldsBase(_class_data_.base()){}
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::internal::ZeroFieldsBase() {
+}
+#endif  // PROTOBUF_CUSTOM_VTABLE
+struct AckMsgRespDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR AckMsgRespDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~AckMsgRespDefaultTypeInternal() {}
+  union {
+    AckMsgResp _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AckMsgRespDefaultTypeInternal _AckMsgResp_default_instance_;
+
+inline constexpr AckMsgReq::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : userid_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        servermsgid_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        seq_{::int64_t{0}},
+        acktype_{0},
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR AckMsgReq::AckMsgReq(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct AckMsgReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR AckMsgReqDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~AckMsgReqDefaultTypeInternal() {}
+  union {
+    AckMsgReq _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AckMsgReqDefaultTypeInternal _AckMsgReq_default_instance_;
 
 inline constexpr PushMsgReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -166,6 +265,45 @@ const ::uint32_t
         ~0u,  // no _inlined_string_donated_
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::push::AckMsgReq, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::push::AckMsgReq, _impl_.userid_),
+        PROTOBUF_FIELD_OFFSET(::push::AckMsgReq, _impl_.servermsgid_),
+        PROTOBUF_FIELD_OFFSET(::push::AckMsgReq, _impl_.seq_),
+        PROTOBUF_FIELD_OFFSET(::push::AckMsgReq, _impl_.acktype_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::push::AckMsgResp, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::push::AddPendingOfflineAckReq, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::push::AddPendingOfflineAckReq, _impl_.userid_),
+        PROTOBUF_FIELD_OFFSET(::push::AddPendingOfflineAckReq, _impl_.servermsgid_),
+        PROTOBUF_FIELD_OFFSET(::push::AddPendingOfflineAckReq, _impl_.seq_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::push::AddPendingOfflineAckResp, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
 };
 
 static const ::_pbi::MigrationSchema
@@ -174,12 +312,20 @@ static const ::_pbi::MigrationSchema
         {14, -1, -1, sizeof(::push::PushMsgResp)},
         {22, -1, -1, sizeof(::push::DelUserPushTokenReq)},
         {32, -1, -1, sizeof(::push::DelUserPushTokenResp)},
+        {40, -1, -1, sizeof(::push::AckMsgReq)},
+        {52, -1, -1, sizeof(::push::AckMsgResp)},
+        {60, -1, -1, sizeof(::push::AddPendingOfflineAckReq)},
+        {71, -1, -1, sizeof(::push::AddPendingOfflineAckResp)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::push::_PushMsgReq_default_instance_._instance,
     &::push::_PushMsgResp_default_instance_._instance,
     &::push::_DelUserPushTokenReq_default_instance_._instance,
     &::push::_DelUserPushTokenResp_default_instance_._instance,
+    &::push::_AckMsgReq_default_instance_._instance,
+    &::push::_AckMsgResp_default_instance_._instance,
+    &::push::_AddPendingOfflineAckReq_default_instance_._instance,
+    &::push::_AddPendingOfflineAckResp_default_instance_._instance,
 };
 const char descriptor_table_protodef_push_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
@@ -188,11 +334,19 @@ const char descriptor_table_protodef_push_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIA
     "\n\016conversationID\030\002 \001(\t\022\017\n\007userIDs\030\003 \003(\t\""
     "\r\n\013PushMsgResp\"9\n\023DelUserPushTokenReq\022\016\n"
     "\006userID\030\001 \001(\t\022\022\n\nplatformID\030\002 \001(\005\"\026\n\024Del"
-    "UserPushTokenResp2\210\001\n\013PushService\022.\n\007Pus"
-    "hMsg\022\020.push.PushMsgReq\032\021.push.PushMsgRes"
-    "p\022I\n\020DelUserPushToken\022\031.push.DelUserPush"
-    "TokenReq\032\032.push.DelUserPushTokenRespb\006pr"
-    "oto3"
+    "UserPushTokenResp\"N\n\tAckMsgReq\022\016\n\006userID"
+    "\030\001 \001(\t\022\023\n\013serverMsgID\030\002 \001(\t\022\013\n\003seq\030\003 \001(\003"
+    "\022\017\n\007ackType\030\004 \001(\005\"\014\n\nAckMsgResp\"K\n\027AddPe"
+    "ndingOfflineAckReq\022\016\n\006userID\030\001 \001(\t\022\023\n\013se"
+    "rverMsgID\030\002 \001(\t\022\013\n\003seq\030\003 \001(\003\"\032\n\030AddPendi"
+    "ngOfflineAckResp2\214\002\n\013PushService\022.\n\007Push"
+    "Msg\022\020.push.PushMsgReq\032\021.push.PushMsgResp"
+    "\022I\n\020DelUserPushToken\022\031.push.DelUserPushT"
+    "okenReq\032\032.push.DelUserPushTokenResp\022+\n\006A"
+    "ckMsg\022\017.push.AckMsgReq\032\020.push.AckMsgResp"
+    "\022U\n\024AddPendingOfflineAck\022\035.push.AddPendi"
+    "ngOfflineAckReq\032\036.push.AddPendingOffline"
+    "AckRespb\006proto3"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_push_2eproto_deps[1] =
     {
@@ -202,13 +356,13 @@ static ::absl::once_flag descriptor_table_push_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_push_2eproto = {
     false,
     false,
-    364,
+    695,
     descriptor_table_protodef_push_2eproto,
     "push.proto",
     &descriptor_table_push_2eproto_once,
     descriptor_table_push_2eproto_deps,
     1,
-    4,
+    8,
     schemas,
     file_default_instances,
     TableStruct_push_2eproto::offsets,
@@ -1011,6 +1165,822 @@ const ::_pbi::TcParseTable<0, 0, 0, 0, 2> DelUserPushTokenResp::_table_ = {
 
 
 ::google::protobuf::Metadata DelUserPushTokenResp::GetMetadata() const {
+  return ::google::protobuf::internal::ZeroFieldsBase::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class AckMsgReq::_Internal {
+ public:
+};
+
+AckMsgReq::AckMsgReq(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:push.AckMsgReq)
+}
+inline PROTOBUF_NDEBUG_INLINE AckMsgReq::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::push::AckMsgReq& from_msg)
+      : userid_(arena, from.userid_),
+        servermsgid_(arena, from.servermsgid_),
+        _cached_size_{0} {}
+
+AckMsgReq::AckMsgReq(
+    ::google::protobuf::Arena* arena,
+    const AckMsgReq& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  AckMsgReq* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, seq_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, seq_),
+           offsetof(Impl_, acktype_) -
+               offsetof(Impl_, seq_) +
+               sizeof(Impl_::acktype_));
+
+  // @@protoc_insertion_point(copy_constructor:push.AckMsgReq)
+}
+inline PROTOBUF_NDEBUG_INLINE AckMsgReq::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : userid_(arena),
+        servermsgid_(arena),
+        _cached_size_{0} {}
+
+inline void AckMsgReq::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, seq_),
+           0,
+           offsetof(Impl_, acktype_) -
+               offsetof(Impl_, seq_) +
+               sizeof(Impl_::acktype_));
+}
+AckMsgReq::~AckMsgReq() {
+  // @@protoc_insertion_point(destructor:push.AckMsgReq)
+  SharedDtor(*this);
+}
+inline void AckMsgReq::SharedDtor(MessageLite& self) {
+  AckMsgReq& this_ = static_cast<AckMsgReq&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.userid_.Destroy();
+  this_._impl_.servermsgid_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* AckMsgReq::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) AckMsgReq(arena);
+}
+constexpr auto AckMsgReq::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(AckMsgReq),
+                                            alignof(AckMsgReq));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull AckMsgReq::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_AckMsgReq_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &AckMsgReq::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<AckMsgReq>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &AckMsgReq::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<AckMsgReq>(), &AckMsgReq::ByteSizeLong,
+            &AckMsgReq::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_._cached_size_),
+        false,
+    },
+    &AckMsgReq::kDescriptorMethods,
+    &descriptor_table_push_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* AckMsgReq::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 4, 0, 40, 2> AckMsgReq::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    4, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967280,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    4,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::push::AckMsgReq>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // int32 ackType = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AckMsgReq, _impl_.acktype_), 63>(),
+     {32, 63, 0, PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.acktype_)}},
+    // string userID = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.userid_)}},
+    // string serverMsgID = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.servermsgid_)}},
+    // int64 seq = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AckMsgReq, _impl_.seq_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.seq_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string userID = 1;
+    {PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.userid_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string serverMsgID = 2;
+    {PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.servermsgid_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // int64 seq = 3;
+    {PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.seq_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
+    // int32 ackType = 4;
+    {PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.acktype_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kInt32)},
+  }},
+  // no aux_entries
+  {{
+    "\16\6\13\0\0\0\0\0"
+    "push.AckMsgReq"
+    "userID"
+    "serverMsgID"
+  }},
+};
+
+PROTOBUF_NOINLINE void AckMsgReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:push.AckMsgReq)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.userid_.ClearToEmpty();
+  _impl_.servermsgid_.ClearToEmpty();
+  ::memset(&_impl_.seq_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.acktype_) -
+      reinterpret_cast<char*>(&_impl_.seq_)) + sizeof(_impl_.acktype_));
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* AckMsgReq::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const AckMsgReq& this_ = static_cast<const AckMsgReq&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* AckMsgReq::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const AckMsgReq& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:push.AckMsgReq)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // string userID = 1;
+          if (!this_._internal_userid().empty()) {
+            const std::string& _s = this_._internal_userid();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "push.AckMsgReq.userID");
+            target = stream->WriteStringMaybeAliased(1, _s, target);
+          }
+
+          // string serverMsgID = 2;
+          if (!this_._internal_servermsgid().empty()) {
+            const std::string& _s = this_._internal_servermsgid();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "push.AckMsgReq.serverMsgID");
+            target = stream->WriteStringMaybeAliased(2, _s, target);
+          }
+
+          // int64 seq = 3;
+          if (this_._internal_seq() != 0) {
+            target = ::google::protobuf::internal::WireFormatLite::
+                WriteInt64ToArrayWithField<3>(
+                    stream, this_._internal_seq(), target);
+          }
+
+          // int32 ackType = 4;
+          if (this_._internal_acktype() != 0) {
+            target = ::google::protobuf::internal::WireFormatLite::
+                WriteInt32ToArrayWithField<4>(
+                    stream, this_._internal_acktype(), target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:push.AckMsgReq)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t AckMsgReq::ByteSizeLong(const MessageLite& base) {
+          const AckMsgReq& this_ = static_cast<const AckMsgReq&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t AckMsgReq::ByteSizeLong() const {
+          const AckMsgReq& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:push.AckMsgReq)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // string userID = 1;
+            if (!this_._internal_userid().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_userid());
+            }
+            // string serverMsgID = 2;
+            if (!this_._internal_servermsgid().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_servermsgid());
+            }
+            // int64 seq = 3;
+            if (this_._internal_seq() != 0) {
+              total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+                  this_._internal_seq());
+            }
+            // int32 ackType = 4;
+            if (this_._internal_acktype() != 0) {
+              total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+                  this_._internal_acktype());
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void AckMsgReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<AckMsgReq*>(&to_msg);
+  auto& from = static_cast<const AckMsgReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:push.AckMsgReq)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_userid().empty()) {
+    _this->_internal_set_userid(from._internal_userid());
+  }
+  if (!from._internal_servermsgid().empty()) {
+    _this->_internal_set_servermsgid(from._internal_servermsgid());
+  }
+  if (from._internal_seq() != 0) {
+    _this->_impl_.seq_ = from._impl_.seq_;
+  }
+  if (from._internal_acktype() != 0) {
+    _this->_impl_.acktype_ = from._impl_.acktype_;
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void AckMsgReq::CopyFrom(const AckMsgReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:push.AckMsgReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void AckMsgReq::InternalSwap(AckMsgReq* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.servermsgid_, &other->_impl_.servermsgid_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.acktype_)
+      + sizeof(AckMsgReq::_impl_.acktype_)
+      - PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.seq_)>(
+          reinterpret_cast<char*>(&_impl_.seq_),
+          reinterpret_cast<char*>(&other->_impl_.seq_));
+}
+
+::google::protobuf::Metadata AckMsgReq::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class AckMsgResp::_Internal {
+ public:
+};
+
+AckMsgResp::AckMsgResp(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::internal::ZeroFieldsBase(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(arena_constructor:push.AckMsgResp)
+}
+AckMsgResp::AckMsgResp(
+    ::google::protobuf::Arena* arena,
+    const AckMsgResp& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::internal::ZeroFieldsBase(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  AckMsgResp* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+
+  // @@protoc_insertion_point(copy_constructor:push.AckMsgResp)
+}
+
+inline void* AckMsgResp::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) AckMsgResp(arena);
+}
+constexpr auto AckMsgResp::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(AckMsgResp),
+                                            alignof(AckMsgResp));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull AckMsgResp::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_AckMsgResp_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &AckMsgResp::MergeImpl,
+        ::google::protobuf::internal::ZeroFieldsBase::GetNewImpl<AckMsgResp>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &AckMsgResp::SharedDtor,
+        ::google::protobuf::internal::ZeroFieldsBase::GetClearImpl<AckMsgResp>(), &AckMsgResp::ByteSizeLong,
+            &AckMsgResp::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(AckMsgResp, _impl_._cached_size_),
+        false,
+    },
+    &AckMsgResp::kDescriptorMethods,
+    &descriptor_table_push_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* AckMsgResp::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<0, 0, 0, 0, 2> AckMsgResp::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    0, 0,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967295,  // skipmap
+    offsetof(decltype(_table_), field_names),  // no field_entries
+    0,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::push::AckMsgResp>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+  }}, {{
+    65535, 65535
+  }},
+  // no field_entries, or aux_entries
+  {{
+  }},
+};
+
+
+
+
+
+
+
+
+::google::protobuf::Metadata AckMsgResp::GetMetadata() const {
+  return ::google::protobuf::internal::ZeroFieldsBase::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class AddPendingOfflineAckReq::_Internal {
+ public:
+};
+
+AddPendingOfflineAckReq::AddPendingOfflineAckReq(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:push.AddPendingOfflineAckReq)
+}
+inline PROTOBUF_NDEBUG_INLINE AddPendingOfflineAckReq::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::push::AddPendingOfflineAckReq& from_msg)
+      : userid_(arena, from.userid_),
+        servermsgid_(arena, from.servermsgid_),
+        _cached_size_{0} {}
+
+AddPendingOfflineAckReq::AddPendingOfflineAckReq(
+    ::google::protobuf::Arena* arena,
+    const AddPendingOfflineAckReq& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  AddPendingOfflineAckReq* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.seq_ = from._impl_.seq_;
+
+  // @@protoc_insertion_point(copy_constructor:push.AddPendingOfflineAckReq)
+}
+inline PROTOBUF_NDEBUG_INLINE AddPendingOfflineAckReq::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : userid_(arena),
+        servermsgid_(arena),
+        _cached_size_{0} {}
+
+inline void AddPendingOfflineAckReq::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.seq_ = {};
+}
+AddPendingOfflineAckReq::~AddPendingOfflineAckReq() {
+  // @@protoc_insertion_point(destructor:push.AddPendingOfflineAckReq)
+  SharedDtor(*this);
+}
+inline void AddPendingOfflineAckReq::SharedDtor(MessageLite& self) {
+  AddPendingOfflineAckReq& this_ = static_cast<AddPendingOfflineAckReq&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.userid_.Destroy();
+  this_._impl_.servermsgid_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* AddPendingOfflineAckReq::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) AddPendingOfflineAckReq(arena);
+}
+constexpr auto AddPendingOfflineAckReq::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(AddPendingOfflineAckReq),
+                                            alignof(AddPendingOfflineAckReq));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull AddPendingOfflineAckReq::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_AddPendingOfflineAckReq_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &AddPendingOfflineAckReq::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<AddPendingOfflineAckReq>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &AddPendingOfflineAckReq::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<AddPendingOfflineAckReq>(), &AddPendingOfflineAckReq::ByteSizeLong,
+            &AddPendingOfflineAckReq::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_._cached_size_),
+        false,
+    },
+    &AddPendingOfflineAckReq::kDescriptorMethods,
+    &descriptor_table_push_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* AddPendingOfflineAckReq::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 3, 0, 54, 2> AddPendingOfflineAckReq::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    3, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967288,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    3,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::push::AddPendingOfflineAckReq>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+    // string userID = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.userid_)}},
+    // string serverMsgID = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.servermsgid_)}},
+    // int64 seq = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AddPendingOfflineAckReq, _impl_.seq_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.seq_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string userID = 1;
+    {PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.userid_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string serverMsgID = 2;
+    {PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.servermsgid_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // int64 seq = 3;
+    {PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.seq_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
+  }},
+  // no aux_entries
+  {{
+    "\34\6\13\0\0\0\0\0"
+    "push.AddPendingOfflineAckReq"
+    "userID"
+    "serverMsgID"
+  }},
+};
+
+PROTOBUF_NOINLINE void AddPendingOfflineAckReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:push.AddPendingOfflineAckReq)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.userid_.ClearToEmpty();
+  _impl_.servermsgid_.ClearToEmpty();
+  _impl_.seq_ = ::int64_t{0};
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* AddPendingOfflineAckReq::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const AddPendingOfflineAckReq& this_ = static_cast<const AddPendingOfflineAckReq&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* AddPendingOfflineAckReq::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const AddPendingOfflineAckReq& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:push.AddPendingOfflineAckReq)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // string userID = 1;
+          if (!this_._internal_userid().empty()) {
+            const std::string& _s = this_._internal_userid();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "push.AddPendingOfflineAckReq.userID");
+            target = stream->WriteStringMaybeAliased(1, _s, target);
+          }
+
+          // string serverMsgID = 2;
+          if (!this_._internal_servermsgid().empty()) {
+            const std::string& _s = this_._internal_servermsgid();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "push.AddPendingOfflineAckReq.serverMsgID");
+            target = stream->WriteStringMaybeAliased(2, _s, target);
+          }
+
+          // int64 seq = 3;
+          if (this_._internal_seq() != 0) {
+            target = ::google::protobuf::internal::WireFormatLite::
+                WriteInt64ToArrayWithField<3>(
+                    stream, this_._internal_seq(), target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:push.AddPendingOfflineAckReq)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t AddPendingOfflineAckReq::ByteSizeLong(const MessageLite& base) {
+          const AddPendingOfflineAckReq& this_ = static_cast<const AddPendingOfflineAckReq&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t AddPendingOfflineAckReq::ByteSizeLong() const {
+          const AddPendingOfflineAckReq& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:push.AddPendingOfflineAckReq)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // string userID = 1;
+            if (!this_._internal_userid().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_userid());
+            }
+            // string serverMsgID = 2;
+            if (!this_._internal_servermsgid().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_servermsgid());
+            }
+            // int64 seq = 3;
+            if (this_._internal_seq() != 0) {
+              total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+                  this_._internal_seq());
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void AddPendingOfflineAckReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<AddPendingOfflineAckReq*>(&to_msg);
+  auto& from = static_cast<const AddPendingOfflineAckReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:push.AddPendingOfflineAckReq)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_userid().empty()) {
+    _this->_internal_set_userid(from._internal_userid());
+  }
+  if (!from._internal_servermsgid().empty()) {
+    _this->_internal_set_servermsgid(from._internal_servermsgid());
+  }
+  if (from._internal_seq() != 0) {
+    _this->_impl_.seq_ = from._impl_.seq_;
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void AddPendingOfflineAckReq::CopyFrom(const AddPendingOfflineAckReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:push.AddPendingOfflineAckReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void AddPendingOfflineAckReq::InternalSwap(AddPendingOfflineAckReq* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.servermsgid_, &other->_impl_.servermsgid_, arena);
+        swap(_impl_.seq_, other->_impl_.seq_);
+}
+
+::google::protobuf::Metadata AddPendingOfflineAckReq::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class AddPendingOfflineAckResp::_Internal {
+ public:
+};
+
+AddPendingOfflineAckResp::AddPendingOfflineAckResp(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::internal::ZeroFieldsBase(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  // @@protoc_insertion_point(arena_constructor:push.AddPendingOfflineAckResp)
+}
+AddPendingOfflineAckResp::AddPendingOfflineAckResp(
+    ::google::protobuf::Arena* arena,
+    const AddPendingOfflineAckResp& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::internal::ZeroFieldsBase(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  AddPendingOfflineAckResp* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+
+  // @@protoc_insertion_point(copy_constructor:push.AddPendingOfflineAckResp)
+}
+
+inline void* AddPendingOfflineAckResp::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) AddPendingOfflineAckResp(arena);
+}
+constexpr auto AddPendingOfflineAckResp::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(AddPendingOfflineAckResp),
+                                            alignof(AddPendingOfflineAckResp));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull AddPendingOfflineAckResp::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_AddPendingOfflineAckResp_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &AddPendingOfflineAckResp::MergeImpl,
+        ::google::protobuf::internal::ZeroFieldsBase::GetNewImpl<AddPendingOfflineAckResp>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &AddPendingOfflineAckResp::SharedDtor,
+        ::google::protobuf::internal::ZeroFieldsBase::GetClearImpl<AddPendingOfflineAckResp>(), &AddPendingOfflineAckResp::ByteSizeLong,
+            &AddPendingOfflineAckResp::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckResp, _impl_._cached_size_),
+        false,
+    },
+    &AddPendingOfflineAckResp::kDescriptorMethods,
+    &descriptor_table_push_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* AddPendingOfflineAckResp::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<0, 0, 0, 0, 2> AddPendingOfflineAckResp::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    0, 0,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967295,  // skipmap
+    offsetof(decltype(_table_), field_names),  // no field_entries
+    0,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::push::AddPendingOfflineAckResp>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    {::_pbi::TcParser::MiniParse, {}},
+  }}, {{
+    65535, 65535
+  }},
+  // no field_entries, or aux_entries
+  {{
+  }},
+};
+
+
+
+
+
+
+
+
+::google::protobuf::Metadata AddPendingOfflineAckResp::GetMetadata() const {
   return ::google::protobuf::internal::ZeroFieldsBase::GetMetadataImpl(GetClassData()->full());
 }
 // @@protoc_insertion_point(namespace_scope)

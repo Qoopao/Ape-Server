@@ -19,15 +19,21 @@ using UpdateType = sw::redis::UpdateType;
 
 class RedisHandler{
 private:
-    Redis& get_redis() { return RedisConnector::get_instance().get_redis(); }
+    static Redis& get_redis() { return RedisConnector::get_instance().get_redis(); }
 public:
 
     static bool MsgToMQ(std::string key, std::string msgid);
+    static bool MsgToOfflineMQ(std::string key, std::string msgid);
 
     static bool SaveMsgInfo(sdkws::MsgData msg);
     static std::optional<sdkws::MsgData> GetMsgInfo(std::string msgid);
 
-
+    // 离线消息热存储（Redis Hash）
+    static bool SaveOfflineMsg(const std::string& userId, const sdkws::MsgData& msg);
+    static std::vector<sdkws::MsgData> GetOfflineMsgs(const std::string& userId, int64_t afterSeq, int limit = 100, const std::string& conversationID = "");
+    static bool DeleteOfflineMsgs(const std::string& userId, const std::vector<std::string>& msgIds);
+    static bool AckOfflineMsg(const std::string& userId, const std::string& msgId);
+    static bool AckOfflineMsgsBatch(const std::string& userId, const std::vector<std::string>& msgIds);
 
     static int64_t	AppendMsgToConvMsgList(std::string conversationid, std::string msgid);
 	static std::vector<sdkws::MsgData> GetConvMessageList(std::string conversationid, int64_t cursor, int64_t limit, bool forward);

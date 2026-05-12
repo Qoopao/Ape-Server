@@ -159,4 +159,161 @@ bool MongoHandler::SaveMsgToMongo(const sdkws::MsgData& msg)
     }
 }
 
+// ==================== 离线消息冷存储（MongoDB） ====================
+
+bool MongoHandler::SaveOfflineMsgToMongo(const sdkws::MsgData& msg)
+{
+    try
+    {
+        auto& mongoconnector = MongoConnector::get_instance();
+        auto client = mongoconnector.get_pool()->acquire();
+        auto collection = (*client)["IM-System"]["offline_msg"];
+
+        // 写入时记录 created_at，用于30天TTL自动过期
+        auto now = std::chrono::system_clock::now();
+        auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+
+        bsoncxx::builder::stream::document doc{};
+        doc << "serverMsgID" << msg.servermsgid()
+            << "sendID" << msg.sendid()
+            << "recvID" << msg.recvid()
+            << "convID" << msg.convid()
+            << "clientMsgID" << msg.clientmsgid()
+            << "senderNickname" << msg.sendernickname()
+            << "sessionType" << msg.sessiontype()
+            << "contentType" << msg.contenttype()
+            << "content" << msg.content()
+            << "seq" << static_cast<int64_t>(msg.seq())
+            << "sendTime" << msg.sendtime()
+            << "isGroupMsg" << msg.isgroupmsg()
+            << "isPushed" << false                 // 默认未推送
+            << "createdAt" << now_ms
+            << bsoncxx::builder::stream::finalize;
+
+        auto result = collection.insert_one(doc.view());
+        if (result)
+        {
+            spdlog::info("SaveOfflineMsgToMongo success, recvID={}, serverMsgID={}", msg.recvid(), msg.servermsgid());
+            return true;
+        }
+        else
+        {
+            spdlog::error("SaveOfflineMsgToMongo insert_one failed, serverMsgID={}", msg.servermsgid());
+            return false;
+        }
+    }
+    catch (const mongocxx::exception& e)
+    {
+        spdlog::error("SaveOfflineMsgToMongo exception: {}, serverMsgID={}", e.what(), msg.servermsgid());
+        return false;
+    }
+}
+
+std::vector<sdkws::MsgData> MongoHandler::GetOfflineMsgsFromMongo(const std::string& userId, int64_t afterSeq, int limit)
+{
+    std::vector<sdkws::MsgData> results;
+    try
+    {
+        auto& mongoconnector = MongoConnector::get_instance();
+        auto client = mongoconnector.get_pool()->acquire();
+        auto collection = (*client)["IM-System"]["offline_msg"];
+
+        // 查询条件：recvID == userId && seq > afterSeq && isPushed == false
+        bsoncxx::builder::stream::document filter{};
+        filter << "recvID" << userId
+               << "seq" << bsoncxx::builder::stream::open_document
+               << "$gt" << afterSeq
+               << bsoncxx::builder::stream::close_document;
+
+        // 排序：按seq升序
+        mongocxx::options::find opts{};
+        opts.sort(bsoncxx::builder::stream::document{} << "seq" << 1
+                                                        << bsoncxx::builder::stream::finalize);
+        opts.limit(limit);
+
+        auto cursor = collection.find(filter.view(), opts);
+
+        for (auto&& doc : cursor)
+        {
+            try
+            {
+                sdkws::MsgData msg;
+                // 手动从BSON字段解析到protobuf
+                if (auto e = doc["serverMsgID"])
+                    msg.set_servermsgid(std::string{e.get_string().value});
+                if (auto e = doc["sendID"])
+                    msg.set_sendid(std::string{e.get_string().value});
+                if (auto e = doc["recvID"])
+                    msg.set_recvid(std::string{e.get_string().value});
+                if (auto e = doc["convID"])
+                    msg.set_convid(std::string{e.get_string().value});
+                if (auto e = doc["clientMsgID"])
+                    msg.set_clientmsgid(std::string{e.get_string().value});
+                if (auto e = doc["senderNickname"])
+                    msg.set_sendernickname(std::string{e.get_string().value});
+                if (auto e = doc["sessionType"])
+                    msg.set_sessiontype(std::int32_t{e.get_int32().value});
+                if (auto e = doc["contentType"])
+                    msg.set_contenttype(std::int32_t{e.get_int32().value});
+                if (auto e = doc["content"])
+                    msg.set_content(std::string{e.get_string().value});
+                if (auto e = doc["seq"])
+                    msg.set_seq(e.get_int64().value);
+                if (auto e = doc["sendTime"])
+                    msg.set_sendtime(std::int64_t{e.get_int64().value});
+                if (auto e = doc["isGroupMsg"])
+                    msg.set_isgroupmsg(e.get_bool().value);
+                results.push_back(std::move(msg));
+            }
+            catch (...)
+            {
+                spdlog::error("GetOfflineMsgsFromMongo parse failed for user={}", userId);
+            }
+        }
+
+        spdlog::info("GetOfflineMsgsFromMongo success, userId={}, count={}", userId, results.size());
+        return results;
+    }
+    catch (const mongocxx::exception& e)
+    {
+        spdlog::error("GetOfflineMsgsFromMongo exception: {}, userId={}", e.what(), userId);
+        return results;
+    }
+}
+
+bool MongoHandler::MarkOfflineMsgsPushed(const std::string& userId, const std::vector<std::string>& msgIds)
+{
+    try
+    {
+        if (msgIds.empty()) return true;
+
+        auto& mongoconnector = MongoConnector::get_instance();
+        auto client = mongoconnector.get_pool()->acquire();
+        auto collection = (*client)["IM-System"]["offline_msg"];
+
+        // 批量标记 isPushed = true
+        for (const auto& msgId : msgIds)
+        {
+            bsoncxx::builder::stream::document filter{};
+            filter << "recvID" << userId
+                   << "serverMsgID" << msgId;
+
+            bsoncxx::builder::stream::document update{};
+            update << "$set"
+                   << bsoncxx::builder::stream::open_document
+                   << "isPushed" << true
+                   << bsoncxx::builder::stream::close_document;
+
+            collection.update_one(filter.view(), update.view());
+        }
+
+        spdlog::info("MarkOfflineMsgsPushed success, userId={}, count={}", userId, msgIds.size());
+        return true;
+    }
+    catch (const mongocxx::exception& e)
+    {
+        spdlog::error("MarkOfflineMsgsPushed exception: {}, userId={}", e.what(), userId);
+        return false;
+    }
+}
 

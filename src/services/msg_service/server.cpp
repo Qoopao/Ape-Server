@@ -4,6 +4,10 @@
 #include "util/uuid.h"
 #include <spdlog/spdlog.h>
 #include "util/redishandler.h"
+#include "util/redisconnector.h"
+#include "util/mongohandler.h"
+#include "util/snowflake.h"
+#include "messagequeue/kafkaproducer.h"
 
 MsgServiceImpl::MsgServiceImpl(const std::string &service_name,
                                const std::string &listen_address)
@@ -57,7 +61,62 @@ MsgServiceImpl::PullMessageBySeqs(::grpc::ServerContext *context,
                                   const ::sdkws::PullMessageBySeqsReq *request,
                                   ::sdkws::PullMessageBySeqsResp *response) {
 
-  // TO-DO
+  // PullMessageBySeqs: 拉取消息
+  // request.seqRanges: repeated SeqRange (每个包含 conversationID, begin, end, num)
+  // 对每个会话拉取 seq 在 [begin, end] 范围的消息，最多 num 条
+
+  std::string userId = request->userid();
+  const auto& seqRanges = request->seqranges();
+
+  spdlog::info("PullMessageBySeqs: userId={}, numRanges={}", userId, seqRanges.size());
+
+  for (const auto& seqRange : seqRanges) {
+    std::string convID = seqRange.conversationid();
+    int64_t beginSeq = seqRange.begin();
+    int64_t endSeq = seqRange.end();
+    int32_t maxCount = seqRange.num();
+    if (maxCount <= 0 || maxCount > 200) maxCount = 100;
+
+    spdlog::info("PullMessageBySeqs: convID={}, begin={}, end={}, num={}", convID, beginSeq, endSeq, maxCount);
+
+    std::vector<sdkws::MsgData> messages;
+
+    // 1. 优先从 Redis 热数据拉取
+    try {
+      auto redisMsgs = RedisHandler::GetOfflineMsgs(userId, beginSeq, maxCount, convID);
+      if (!redisMsgs.empty()) {
+        spdlog::info("PullMessageBySeqs: convID={} pulled {} msgs from Redis hot data", convID, redisMsgs.size());
+        messages = std::move(redisMsgs);
+      }
+    } catch (const std::exception& e) {
+      spdlog::warn("PullMessageBySeqs: Redis query failed for convID={}: {}", convID, e.what());
+    }
+
+    // 2. 热数据不足，从 MongoDB 冷数据拉取
+    if (messages.empty()) {
+      try {
+        auto mongoMsgs = MongoHandler::GetOfflineMsgsFromMongo(userId, beginSeq, maxCount);
+        spdlog::info("PullMessageBySeqs: convID={} pulled {} msgs from MongoDB cold data", convID, mongoMsgs.size());
+        messages = std::move(mongoMsgs);
+      } catch (const std::exception& e) {
+        spdlog::error("PullMessageBySeqs: MongoDB query failed for convID={}: {}", convID, e.what());
+      }
+    }
+
+    // 将该会话的消息写入响应（通过 MessageUnion 包装）
+    ::sdkws::PullMsgs pullMsgs;
+    for (auto& msgData : messages) {
+      auto* mu = pullMsgs.add_msgs();  // MessageUnion*
+      mu->set_iscmd(false);
+      *mu->mutable_msg() = std::move(msgData);
+    }
+    pullMsgs.set_isend(messages.size() < static_cast<size_t>(maxCount));
+    if (!messages.empty()) {
+      pullMsgs.set_endseq(messages.back().seq());
+    }
+    (*response->mutable_msgs())[convID] = std::move(pullMsgs);
+  }
+
   return ::grpc::Status::OK;
 }
 
@@ -114,8 +173,8 @@ MsgServiceImpl::SendMessages(::grpc::ServerContext *context,
     // 为响应生成服务器消息id
     msg.set_servermsgid(uuid::newone_str());
 
-    // 生成会话的orderIndex，从数据库中找应该是多少，这里先随便设一个
-    msg.set_seq(0);
+    // 使用 Snowflake 生成递增唯一 seq
+    msg.set_seq(Snowflake::instance().nextId());
 
     // 将消息存到redis
     bool saveResult = RedisHandler::SaveMsgInfo(msg);
@@ -127,44 +186,40 @@ MsgServiceImpl::SendMessages(::grpc::ServerContext *context,
 
     // TODO: 如果没有会话，那么创建会话
 
-    // 转发消息到MQ
-    bool sendResult = RedisHandler::MsgToMQ(msg.sendid(), msg.servermsgid());
-    if(!sendResult){
-      respInfos[index]->set_errorcode("1");
-      respInfos[index]->set_errormsg("MsgToMQ failed"); 
-      continue;
+    // 判断接收方在线状态，路由到对应的 Kafka Topic
+    bool recvOnline = false;
+    try {
+        auto &redis = RedisConnector::get_instance().get_redis();
+        auto onlineVal = redis.get("user:" + msg.recvid() + ":online");
+        recvOnline = (onlineVal && (*onlineVal == "1" || *onlineVal == "true"));
+    } catch (const std::exception &e) {
+        spdlog::error("SendMessages: Redis online check error for recvid={}: {}", msg.recvid(), e.what());
+    }
+
+    if (recvOnline) {
+        // 在线 → 发送到 msg_topic，由 PushHandler 消费后通过 GatewayPushService 推送至长连接
+        spdlog::info("SendMessages: recvid={} is online, routing to msg_topic", msg.recvid());
+        bool sendResult = RedisHandler::MsgToMQ(msg.sendid(), msg.servermsgid());
+        if (!sendResult) {
+            respInfos[index]->set_errorcode("1");
+            respInfos[index]->set_errormsg("MsgToMQ failed");
+            continue;
+        }
+    } else {
+        // 离线 → 发送到 offline_msg_topic，由 OfflineMsgHandler 消费并持久化
+        spdlog::info("SendMessages: recvid={} is offline, routing to offline_msg_topic", msg.recvid());
+        bool sendResult = RedisHandler::MsgToOfflineMQ(msg.sendid(), msg.servermsgid());
+        if (!sendResult) {
+            respInfos[index]->set_errorcode("1");
+            respInfos[index]->set_errormsg("MsgToOfflineMQ failed");
+            continue;
+        }
     }
 
     // 设置返回消息
     respInfos[index]->mutable_msg()->CopyFrom(msg);
 
   }
-
-  // // 测试用，打印一下request的全部字段
-  // spdlog::info("Request msgs size: {}", request->msgs_size());
-  // for(int i = 0; i < request->msgs_size(); i++){
-  //   const ::sdkws::MsgData& msg = request->msgs(i);
-  //   spdlog::info("Request msg[{}]: sendid={}, recvid={}, convid={}, clientmsgid={}",
-  //               i, msg.sendid(), msg.recvid(), msg.convid(), msg.clientmsgid());
-  //   spdlog::info("  Content: {}, sessiontype={}, msgfrom={}, contentType={}, sendtime={}",
-  //               msg.content(), msg.sessiontype(), msg.msgfrom(), msg.contenttype(), msg.sendtime());
-  // }
-
-  // // 测试用，打印一下response的全部字段
-  // spdlog::info("Response infos size: {}", response->infos_size());
-  // for(int i = 0; i < response->infos_size(); i++){
-  //   const ::sdkws::SendMessageRespInfo& info = response->infos(i);
-  //   spdlog::info("Response info[{}]: errorcode={}, errormsg={}", 
-  //               i, info.errorcode(), info.errormsg());
-    
-  //   if(info.has_msg()){
-  //     const ::sdkws::MsgData& msg = info.msg();
-  //     spdlog::info("  Msg: sendid={}, recvid={}, convid={}, clientmsgid={}, servermsgid={}",
-  //                 msg.sendid(), msg.recvid(), msg.convid(), msg.clientmsgid(), msg.servermsgid());
-  //     spdlog::info("  Content: {}, sessiontype={}, msgfrom={}, contentType={}, sendtime={}",
-  //                 msg.content(), msg.sessiontype(), msg.msgfrom(), msg.contenttype(), msg.sendtime());
-  //   }
-  // }
 
   return ::grpc::Status::OK;
 }
