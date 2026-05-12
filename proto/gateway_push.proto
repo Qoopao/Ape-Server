@@ -1,0 +1,19 @@
+syntax = "proto3";
+package gateway_push;
+
+// GatewayPushService - Gateway 内部推送服务
+// 由 Gateway 进程暴露 gRPC 服务,供 PushService 等独立微服务通过 gRPC 调用
+// 将在线消息通过 WebSocket 长连接推送至指定用户
+service GatewayPushService {
+  rpc PushToUser(PushToUserReq) returns (PushToUserResp);
+}
+
+message PushToUserReq {
+  string userID = 1;            // 目标用户ID (必填)
+  bytes msgDataBin = 2;         // sdkws.MsgData 序列化后的 bytes (必填)
+  string conversationID = 3;    // 会话ID (群聊时使用, 单聊可选)
+}
+
+message PushToUserResp {
+  bool success = 1;             // 推送是否成功 (找到活跃 session)
+}

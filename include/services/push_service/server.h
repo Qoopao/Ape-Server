@@ -15,6 +15,7 @@
 // 前向声明
 class KafkaConsumer;
 class RedisHandler;
+class GatewayPushClient;
 
 class PushServer final : public push::PushService::Service,
                          public BaseServiceServer<PushServer> {
@@ -35,8 +36,15 @@ public:
                                   ::push::DelUserPushTokenResp *response) override;
 
 private:
+  // 延迟初始化 GatewayPushClient（通过 etcd 服务发现 GatewayPushService 地址）
+  GatewayPushClient& getGatewayPushClient();
+
   std::unique_ptr<KafkaConsumer> kafkaConsumer_;
   std::thread kafka_thread_;  // Kafka 消费线程
+
+  // gRPC 推送到 Gateway 的客户端
+  std::shared_ptr<grpc::Channel> gateway_channel_;
+  std::unique_ptr<GatewayPushClient> gateway_push_client_;
 };
 
 #endif

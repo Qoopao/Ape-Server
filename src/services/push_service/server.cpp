@@ -1,7 +1,7 @@
 #include "services/push_service/server.h"
-#include "gateway/ws_session_manager.h"
 #include "messagequeue/kafkaconsumer.h"
-#include "sdkws.pb.h"
+#include "services/backbon_service/client.h"
+#include "services/gateway_push_service/client.h"
 #include "services/push_service/push_msg_handler.h"
 #include "util/redisconnector.h"
 #include "util/redishandler.h"
@@ -90,18 +90,11 @@ void PushServer::Start(const std::string &kafka_group_id,
     
 
     if (recvOnline) {
-        // 接收者在线 -> 通过WebSocket长连接直接推送
-        spdlog::info("PushServer::PushMsg: receiver {} is online, pushing via WebSocket", msgData.recvid());
+        // 接收者在线 -> 通过 gRPC 调用 GatewayPushService 推送至 WebSocket 长连接
+        spdlog::info("PushServer::PushMsg: receiver {} is online, pushing via GatewayPushService gRPC", msgData.recvid());
 
-        // 构建 WebSocket 推送消息（使用 sdkws::SdkWSResp Protobuf，type=104 下推用户消息）
-        sdkws::SdkWSResp pushResp;
-        pushResp.set_type(104);  // 104: 下推用户消息
-        pushResp.set_userid(msgData.recvid());
-        // 将 MsgData 序列化为 bytes 放入 data 字段
+        // 将 MsgData 序列化为 bytes（由 Gateway 负责构建 SdkWSResp）
         std::string msgDataBin = msgData.SerializeAsString();
-        pushResp.set_data(msgDataBin);
-
-        std::string pushBin = pushResp.SerializeAsString();
 
         // 如果是群聊，需要推送给群内所有在线成员
         bool isGroupMsg = msgData.isgroupmsg();
@@ -111,17 +104,17 @@ void PushServer::Start(const std::string &kafka_group_id,
                          conversationID);
             // TODO: 查询群成员列表后逐个推送
             // 当前简化：直接推送给 recvID（群 ID 对应的会话）
-            auto payload = std::make_shared<std::string>(pushBin);
-            WSSessionManager::instance().pushToUser(msgData.recvid(), payload);
+            auto& gateway = getGatewayPushClient();
+            gateway.PushToUser(msgData.recvid(), msgDataBin, conversationID);
         } else {
             // 单聊消息直推给接收者
             spdlog::info("PushServer::PushMsg: direct message to user={}", msgData.recvid());
-            auto payload = std::make_shared<std::string>(pushBin);
-            bool pushed = WSSessionManager::instance().pushToUser(msgData.recvid(), payload);
+            auto& gateway = getGatewayPushClient();
+            bool pushed = gateway.PushToUser(msgData.recvid(), msgDataBin, conversationID);
             if (pushed) {
-                spdlog::info("PushServer::PushMsg: WebSocket push to user={} succeeded", msgData.recvid());
+                spdlog::info("PushServer::PushMsg: Gateway push to user={} succeeded", msgData.recvid());
             } else {
-                spdlog::warn("PushServer::PushMsg: WebSocket push to user={} failed (no active session)", msgData.recvid());
+                spdlog::warn("PushServer::PushMsg: Gateway push to user={} failed (no active session or gRPC error)", msgData.recvid());
             }
         }
     } else {
@@ -141,6 +134,34 @@ void PushServer::Start(const std::string &kafka_group_id,
     // 记录推送日志到数据库
     spdlog::info("PushServer::PushMsg: push completed for conv={}", conversationID);
     return ::grpc::Status::OK;
+}
+
+GatewayPushClient& PushServer::getGatewayPushClient() {
+    if (gateway_push_client_) {
+        return *gateway_push_client_;
+    }
+
+    // 延迟初始化：通过 BackbonService (etcd) 服务发现获取 GatewayPushService 地址
+    std::string gateway_addr = "localhost:50055";  // fallback
+    auto* backbon = GetBackbonClient();
+    if (backbon) {
+        try {
+            auto resp = backbon->GetServicesList("GatewayPushService");
+            if (resp.registered() && resp.ipport_size() > 0) {
+                gateway_addr = resp.ipport(0);
+                spdlog::info("[PushService] discovered GatewayPushService at {}", gateway_addr);
+            } else {
+                spdlog::warn("[PushService] GatewayPushService not found in etcd, using fallback {}", gateway_addr);
+            }
+        } catch (const std::exception& e) {
+            spdlog::error("[PushService] failed to discover GatewayPushService: {}, using fallback", e.what());
+        }
+    }
+
+    gateway_channel_ = grpc::CreateChannel(gateway_addr,
+                                           grpc::InsecureChannelCredentials());
+    gateway_push_client_ = std::make_unique<GatewayPushClient>(gateway_channel_);
+    return *gateway_push_client_;
 }
 
 ::grpc::Status PushServer::DelUserPushToken(::grpc::ServerContext *context,
