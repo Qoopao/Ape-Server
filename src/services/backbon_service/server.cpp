@@ -178,17 +178,46 @@ BackbonServiceImpl::RegisterService(::grpc::CallbackServerContext* context,
   return reactor;
 }
 
-// 注销服务
+// 注销服务：从 etcd 删除服务节点，从 redis 删除方法映射
 ::grpc::ServerUnaryReactor *
 BackbonServiceImpl::UnregisterService(::grpc::CallbackServerContext* context,
                   const ::backbon::UnregisterServiceReq *request,
                   ::backbon::UnregisterServiceResp *response) {
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
+
+  EtcdConnector &etcd_connector = EtcdConnector::GetInstance();
+  std::string service_name = "/services/" + request->service();
+
+  // 1. 从 etcd 删除服务节点
+  try {
+    etcd::Client& etcd_client = etcd_connector.get_etcd_client();
+    etcd::Response del_resp = etcd_client.rm(service_name).get();
+    if (del_resp.is_ok()) {
+      spdlog::info("UnregisterService: 已从 etcd 删除 {}", service_name);
+    } else {
+      spdlog::warn("UnregisterService: etcd 删除失败 {}: {}", service_name,
+                   del_resp.error_message());
+    }
+  } catch (const std::exception &e) {
+    spdlog::error("UnregisterService: etcd 异常 {}: {}", service_name, e.what());
+  }
+
+  // 2. 从 redis 删除方法映射
+  try {
+    Redis& redis = RedisConnector::get_instance().get_redis();
+    redis.del(service_name);
+    spdlog::info("UnregisterService: 已从 redis 删除 {}", service_name);
+  } catch (const std::exception &e) {
+    spdlog::error("UnregisterService: redis 异常 {}: {}", service_name, e.what());
+  }
+
+  response->set_success(true);
+  response->set_error("");
   reactor->Finish(grpc::Status::OK);
   return reactor;
 }
 
-// 获取服务信息
+// 获取服务信息：从 etcd 查 ip:port，从 redis 查 methods
 ::grpc::ServerUnaryReactor *
 BackbonServiceImpl::GetService(::grpc::CallbackServerContext* context,
                                      const ::backbon::GetServiceReq *request,
@@ -196,21 +225,38 @@ BackbonServiceImpl::GetService(::grpc::CallbackServerContext* context,
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
   EtcdConnector &etcd_connector = EtcdConnector::GetInstance();
-
-  // 查询etcd服务信息
   std::string service_name = "/services/" + request->service();
+
+  bool registered = false;
+
+  // 1. 从 etcd 查询 ip:port 列表
   etcd::Client& etcd_client = etcd_connector.get_etcd_client();
   etcd::Response get_resp = etcd_client.get(service_name).get();
   if (get_resp.is_ok()) {
-    std::string method_str = get_resp.value().as_string();
-    std::vector<std::string> existing_methods = deserialize_vector(method_str);
-    response->set_registered(true);
-    response->set_service(method_str);
-  } else {
-    response->set_registered(false);
-    response->set_service("");
+    std::string ipport_str = get_resp.value().as_string();
+    std::vector<std::string> ipports = deserialize_vector(ipport_str);
+    for (const auto &ip : ipports) {
+      response->add_ipport(ip);
+    }
+    registered = true;
   }
 
+  // 2. 从 redis 查询 methods 列表
+  auto &redis = RedisConnector::get_instance().get_redis();
+  try {
+    auto method_val = redis.get(service_name);
+    if (method_val) {
+      std::vector<std::string> methods = deserialize_vector(*method_val);
+      for (const auto &m : methods) {
+        response->add_methods(m);
+      }
+    }
+  } catch (const std::exception &e) {
+    spdlog::warn("GetService: redis 查询失败 {}: {}", service_name, e.what());
+  }
+
+  response->set_registered(registered);
+  response->set_service(request->service());
   reactor->Finish(grpc::Status::OK);
   return reactor;
 }

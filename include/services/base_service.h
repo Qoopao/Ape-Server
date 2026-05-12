@@ -14,6 +14,9 @@
 #include <spdlog/spdlog.h>
 #include <string>
 #include <thread>
+#include <vector>
+
+#include "services/backbon_service/client.h"
 
 template <class ServiceType> class BaseServiceServer;
 
@@ -94,6 +97,9 @@ public:
     should_stop_ = true;
     g_should_stop_service<ServiceType> = true;
 
+    // 从 etcd 注销本服务
+    UnregisterFromEtcd();
+
     // 安全关闭gRPC服务器（非阻塞方式）
     if (server_) {
       spdlog::info("[{}] 正在关闭gRPC服务器...", service_name_);
@@ -118,7 +124,58 @@ public:
   std::string GetServiceName() const { return service_name_; }
   std::string GetListenAddress() const { return listen_address_; }
 
+  // 获取 BackbonClient（供子类通过服务发现查找其他服务）
+  BackbonClient* GetBackbonClient() const { return backbon_client_.get(); }
+
+  // 启用 etcd 服务注册（在 Start() 之前调用）
+  void EnableEtcdRegistration(const std::string &backbon_service_addr,
+                              const std::vector<std::string> &methods) {
+    backbon_addr_ = backbon_service_addr;
+    methods_ = methods;
+  }
+
 private:
+  // 向 BackbonService 注册本服务到 etcd
+  void RegisterToEtcd() {
+    if (backbon_addr_.empty()) return;
+
+    try {
+      backbon_channel_ = grpc::CreateChannel(backbon_addr_,
+                                             grpc::InsecureChannelCredentials());
+      backbon_client_ = std::make_unique<BackbonClient>(backbon_channel_);
+
+      ServiceInfo info;
+      info.service = service_name_;
+      info.ipports.push_back(listen_address_);
+      info.methods = methods_;
+
+      auto resp = backbon_client_->RegisterService(info);
+      if (resp.success()) {
+        spdlog::info("[{}] 已成功注册到 etcd (via BackbonService)",
+                     service_name_);
+      } else {
+        spdlog::error("[{}] etcd 注册失败: {}", service_name_, resp.error());
+      }
+    } catch (const std::exception &e) {
+      spdlog::error("[{}] etcd 注册异常: {}", service_name_, e.what());
+    }
+  }
+
+  // 从 etcd 注销本服务
+  void UnregisterFromEtcd() {
+    if (!backbon_client_) return;
+
+    try {
+      backbon_client_->UnregisterService();
+      spdlog::info("[{}] 已从 etcd 注销", service_name_);
+    } catch (const std::exception &e) {
+      spdlog::error("[{}] etcd 注销异常: {}", service_name_, e.what());
+    }
+
+    backbon_client_.reset();
+    backbon_channel_.reset();
+  }
+
   // 服务器运行的核心逻辑（在独立线程中执行）
   void RunServer() {
     spdlog::info("[{}] 正在启动服务，监听地址 {}", service_name_,
@@ -149,6 +206,9 @@ private:
         std::lock_guard<std::mutex> lock(state_mutex_);
         state_.store(ServiceState::kRunning);
       }
+
+      // 向 etcd 注册本服务
+      RegisterToEtcd();
 
       spdlog::info("[{}] 准备调用 server_->Wait()", service_name_);
       // 等待服务器关闭（同时监控停止标志）
@@ -203,6 +263,12 @@ private:
   std::unique_ptr<grpc::Server> server_;
   std::thread server_thread_;       // 服务器运行线程
   std::mutex state_mutex_;          // 状态保护锁
+
+  // etcd 服务发现相关
+  std::string backbon_addr_;
+  std::vector<std::string> methods_;
+  std::shared_ptr<grpc::Channel> backbon_channel_;
+  std::unique_ptr<BackbonClient> backbon_client_;
 };
 
 #endif

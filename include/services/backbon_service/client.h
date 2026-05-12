@@ -26,7 +26,7 @@ class BackbonClient {
   backbon::CheckUserOnlineResp CheckUserOnline();
   backbon::RegisterServiceResp RegisterService(ServiceInfo service_info);
   backbon::UnregisterServiceResp UnregisterService();
-  backbon::GetServiceResp GetServicesList();
+  backbon::GetServiceResp GetServicesList(const std::string &service_name);
 
  private:
   std::unique_ptr<backbon::BackbonService::Stub> stub_;

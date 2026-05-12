@@ -19,17 +19,44 @@ using boost::asio::use_awaitable;
 #include "gateway/ws_session.h"
 #include "services/auth_service/client.h"
 #include "services/msg_service/client.h"
+#include "services/backbon_service/client.h"
 
-WebServer::WebServer(asio::io_context &ioc, uint16_t port)
-    : ioc_(ioc), acceptor_(ioc, tcp::endpoint(tcp::v4(), port))
+WebServer::WebServer(asio::io_context &ioc, uint16_t port,
+                     std::unique_ptr<BackbonClient> backbon_client)
+    : ioc_(ioc), acceptor_(ioc, tcp::endpoint(tcp::v4(), port)),
+      backbon_client_(std::move(backbon_client))
 {
-    // 初始化 gRPC channel 连接 AuthService
-    auth_channel_ = grpc::CreateChannel("localhost:50051",
+    // 通过 BackbonService (etcd) 服务发现获取 AuthService 地址
+    std::string auth_addr = "localhost:50051"; // fallback
+    try {
+        auto resp = backbon_client_->GetServicesList("AuthService");
+        if (resp.registered() && resp.ipport_size() > 0) {
+            auth_addr = resp.ipport(0);
+            spdlog::info("WebServer: discovered AuthService at {}", auth_addr);
+        } else {
+            spdlog::warn("WebServer: AuthService not found in etcd, using fallback {}", auth_addr);
+        }
+    } catch (const std::exception& e) {
+        spdlog::error("WebServer: failed to discover AuthService: {}, using fallback", e.what());
+    }
+    auth_channel_ = grpc::CreateChannel(auth_addr,
                                         grpc::InsecureChannelCredentials());
     auth_client_ = std::make_unique<AuthClient>(auth_channel_);
 
-    // 初始化 gRPC channel 连接 MsgService
-    msg_channel_ = grpc::CreateChannel("localhost:50053",
+    // 通过 BackbonService (etcd) 服务发现获取 MsgService 地址
+    std::string msg_addr = "localhost:50053"; // fallback
+    try {
+        auto resp = backbon_client_->GetServicesList("MsgService");
+        if (resp.registered() && resp.ipport_size() > 0) {
+            msg_addr = resp.ipport(0);
+            spdlog::info("WebServer: discovered MsgService at {}", msg_addr);
+        } else {
+            spdlog::warn("WebServer: MsgService not found in etcd, using fallback {}", msg_addr);
+        }
+    } catch (const std::exception& e) {
+        spdlog::error("WebServer: failed to discover MsgService: {}, using fallback", e.what());
+    }
+    msg_channel_ = grpc::CreateChannel(msg_addr,
                                        grpc::InsecureChannelCredentials());
     msg_client_ = std::make_unique<MsgClient>(msg_channel_);
 

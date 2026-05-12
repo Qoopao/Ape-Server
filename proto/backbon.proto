@@ -63,7 +63,9 @@ message GetServiceReq {
 // GetServiceResp 获取服务响应
 message GetServiceResp {
   bool registered = 1; // 是否已注册
-  string service = 2; // 服务名称（如果已注册，用于从注册中心查询实例）
+  string service = 2; // 服务名称（如果已注册）
+  repeated string ipport = 3; // 服务的 ip:port 列表
+  repeated string methods = 4; // 服务支持的方法列表
 }
 //---------------------------------微服务相关-------------------------------------
 

@@ -129,9 +129,11 @@ backbon::UnregisterServiceResp BackbonClient::UnregisterService() {
   return reply;
 }
 
-backbon::GetServiceResp BackbonClient::GetServicesList() {
+backbon::GetServiceResp BackbonClient::GetServicesList(const std::string &service_name) {
   backbon::GetServiceReq request;
   backbon::GetServiceResp reply;
+
+  request.set_service(service_name);
 
   // Context for the client. It could be used to convey extra information to
   // the server and/or tweak certain RPC behaviors.

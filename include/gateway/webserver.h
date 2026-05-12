@@ -11,6 +11,7 @@
 
 class AuthClient;
 class MsgClient;
+class BackbonClient;
 
 using boost::asio::ip::tcp;
 using boost::asio::awaitable;
@@ -22,7 +23,8 @@ namespace this_coro = boost::asio::this_coro;
 class WebServer
 {
 public:
-    WebServer(boost::asio::io_context &ioc, uint16_t port);
+    WebServer(boost::asio::io_context &ioc, uint16_t port,
+              std::unique_ptr<BackbonClient> backbon_client);
     ~WebServer();
 
     boost::asio::awaitable<void> listener();
@@ -43,6 +45,7 @@ private:
     std::unique_ptr<AuthClient> auth_client_;
     std::shared_ptr<grpc::Channel> msg_channel_;
     std::unique_ptr<MsgClient> msg_client_;
+    std::unique_ptr<BackbonClient> backbon_client_;
 };
 
 #endif
