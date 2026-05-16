@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "services/backbon_service/client.h"
+#include "util/otel_grpc_interceptor.h"
 
 template <class ServiceType> class BaseServiceServer;
 
@@ -189,6 +190,16 @@ private:
       builder.AddListeningPort(listen_address_,
                                grpc::InsecureServerCredentials());
       builder.RegisterService(static_cast<ServiceType*>(this));
+
+      // 注册 OTel gRPC 拦截器 (自动为所有 RPC 方法创建 Trace Span)
+      auto otel_factory = ape::otel::CreateOtelServerInterceptorFactory(service_name_);
+      std::vector<std::unique_ptr<
+          grpc::experimental::ServerInterceptorFactoryInterface>>
+          interceptor_creators;
+      interceptor_creators.push_back(std::move(otel_factory));
+      builder.experimental().SetInterceptorCreators(
+          std::move(interceptor_creators));
+
       server_ = builder.BuildAndStart();
 
       if (!server_) {

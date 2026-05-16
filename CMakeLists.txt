@@ -22,6 +22,7 @@ find_package(etcd-cpp-api CONFIG REQUIRED)
 find_package(hiredis CONFIG REQUIRED)
 find_package(redis++ CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(opentelemetry-cpp CONFIG REQUIRED)
 
 # 收集所有 src 下的 .cpp
 file(GLOB_RECURSE ALL_IMPL_FILE "src/*.cpp")
@@ -65,6 +66,9 @@ etcd-cpp-api
 
 # OpenSSL
 OpenSSL::Crypto
+
+# OpenTelemetry Trace (OTLP gRPC exporter + SDK)
+opentelemetry-cpp::otlp_grpc_exporter
 
 )
 

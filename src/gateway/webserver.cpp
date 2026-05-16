@@ -27,6 +27,7 @@ WebServer::WebServer(asio::io_context &ioc, uint16_t port,
     : ioc_(ioc), acceptor_(ioc, tcp::endpoint(tcp::v4(), port)),
       backbon_client_(std::move(backbon_client))
 {
+    // backbon、gateway_push写死地址，其余服务需要远程获取
     // 通过 BackbonService (etcd) 服务发现获取 AuthService 地址
     std::string auth_addr = "localhost:50051"; // fallback
     try {

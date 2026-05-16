@@ -1,4 +1,5 @@
 #include "services/msg_service/client.h"
+#include "util/otel_trace_propagation.h"
 #include <grpcpp/support/status.h>
 #include <spdlog/spdlog.h>
 
@@ -229,6 +230,9 @@
 ::sdkws::SendMessageResp MsgClient::SendMessages(const ::sdkws::SendMessageReq& request) {
   ::sdkws::SendMessageResp reply;
   grpc::ClientContext context;
+
+  // 注入 traceparent 到 gRPC metadata，让 MsgService 的拦截器提取
+  ape::otel::InjectTraceContextToGrpcMetadata(context);
 
   std::mutex mu;
   std::condition_variable cv;

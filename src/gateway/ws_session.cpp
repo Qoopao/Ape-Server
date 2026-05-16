@@ -6,6 +6,8 @@
 #include "msg.pb.h"
 #include "push.pb.h"
 #include "sdkws.pb.h"
+#include "util/otel_tracer.h"
+#include <opentelemetry/trace/scope.h>
 #include "util/redisconnector.h"
 #include "util/redishandler.h"
 #include "util/mongohandler.h"
@@ -261,6 +263,21 @@ asio::awaitable<void> WSSession::doReadLoop() {
             bool hasResp = false;
 
             if (sendMsgReq.ParseFromString(req.data())) {
+
+                // ── OTel: 创建 Root Span,作为整条 Trace 的起点 ──
+                auto tracer = ape::otel::GetTracer();
+                opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> sendSpan;
+                std::unique_ptr<opentelemetry::trace::Scope> sendScope;
+                if (tracer) {
+                    sendSpan = tracer->StartSpan(
+                        "WS /msg/send",
+                        {{"ws.message_type", "send_msg"},
+                         {"ws.user_id", userId_},
+                         {"ws.msg_size_count", sendMsgReq.msgs_size()}});
+                    //将sendScope attach到OTel线程上下文，供其余函数GetSpan
+                    sendScope = std::make_unique<opentelemetry::trace::Scope>(sendSpan);
+                }
+
                 try {
                     auto sendResp = msg_client_->SendMessages(sendMsgReq);
 
@@ -284,6 +301,12 @@ asio::awaitable<void> WSSession::doReadLoop() {
                     errResp.set_type(101);
                     respBin = errResp.SerializeAsString();
                     hasResp = true;
+                }
+
+                // End the span
+                if (sendSpan) {
+                    sendScope.reset();
+                    sendSpan->End();
                 }
             } else {
                 spdlog::warn("WSSession: failed to parse SendMessageReq from user {}", userId_);

@@ -1,4 +1,5 @@
 #include "services/gateway_push_service/client.h"
+#include "util/otel_trace_propagation.h"
 #include <grpcpp/client_context.h>
 #include <spdlog/spdlog.h>
 
@@ -9,6 +10,8 @@ bool GatewayPushClient::PushToUser(const std::string &userID,
                                    const std::string &msgDataBin,
                                    const std::string &conversationID) {
     grpc::ClientContext ctx;
+    // 注入 traceparent 到 gRPC metadata，让 GatewayPushService 拦截器提取
+    ape::otel::InjectTraceContextToGrpcMetadata(ctx);
     // 设置超时（2秒，推消息不应等待太久）
     ctx.set_deadline(std::chrono::system_clock::now() + std::chrono::seconds(2));
 

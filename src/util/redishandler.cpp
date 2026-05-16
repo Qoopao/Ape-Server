@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <unordered_map>
 
+#include "util/otel_trace_propagation.h"
 #include "util/redisconnector.h"
 #include "util/redishandler.h"
 #include "user/userinfo.h"
@@ -18,15 +19,28 @@
 
 
 bool RedisHandler::MsgToMQ(std::string key, std::string msgid){
-    // 调用生产者生产消息 → msg_topic（在线实时推送）
+    // 将当前 traceparent 注入 Kafka 消息体: "traceparent|servermsgid"
+    std::string tp = ape::otel::EncodeCurrentTraceParent();
+    std::string payload;
+    if (!tp.empty())
+        payload = tp + "|" + msgid;
+    else
+        payload = msgid;
+
     KafkaProducer producer("msg_topic");
-    return producer.Deliver(key, msgid.data(), msgid.size());
+    return producer.Deliver(key, payload.data(), payload.size());
 }
 
 bool RedisHandler::MsgToOfflineMQ(std::string key, std::string msgid){
-    // 调用生产者生产消息 → offline_topic（离线持久化）
+    std::string tp = ape::otel::EncodeCurrentTraceParent();
+    std::string payload;
+    if (!tp.empty())
+        payload = tp + "|" + msgid;
+    else
+        payload = msgid;
+
     KafkaProducer producer("offline_msg_topic");
-    return producer.Deliver(key, msgid.data(), msgid.size());
+    return producer.Deliver(key, payload.data(), payload.size());
 }
 
 bool RedisHandler::SaveMsgInfo(sdkws::MsgData msg){
