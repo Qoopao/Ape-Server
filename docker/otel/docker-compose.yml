@@ -23,11 +23,17 @@ services:
     image: jaegertracing/all-in-one:latest
     environment:
       - COLLECTOR_OTLP_ENABLED=true
+      - SPAN_STORAGE_TYPE=elasticsearch          # 使用 ES 存储
+      - ES_SERVER_URLS=http://elasticsearch:9200 # ES 地址
     ports:
       - "16686:16686"
       - "6831:6831"
       - "4317"
       - "4318:4318"
+    depends_on:                                  
+      elasticsearch:
+        condition: service_healthy
+
 
   # Victoriametrics
   victoriametrics:

@@ -7,6 +7,7 @@
 #include "services/msg_service/server.h"
 #include "services/gateway_push_service/server.h"
 #include "services/push_service/server.h"
+#include "util/otel_logger.h"
 #include "util/otel_metrics.h"
 #include "util/otel_tracer.h"
 #include "util/redishandler.h"
@@ -20,9 +21,10 @@ int main()
 
     try
     {
-        // ── 初始化 OpenTelemetry Tracer + Meter ──
+        // ── 初始化 OpenTelemetry Tracer + Meter + Logger ──
         ape::otel::InitTracer("ape-server");
         ape::otel::InitMeter("ape-server");
+        ape::otel::InitLogger();
 
         // ── 初始化 Snowflake ID 生成器 ──
         Snowflake::init(
