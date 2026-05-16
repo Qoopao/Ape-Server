@@ -70,6 +70,9 @@ OpenSSL::Crypto
 # OpenTelemetry Trace (OTLP gRPC exporter + SDK)
 opentelemetry-cpp::otlp_grpc_exporter
 
+# OpenTelemetry Metrics (OTLP gRPC exporter + SDK)
+opentelemetry-cpp::otlp_grpc_metrics_exporter
+
 )
 
 get_target_property(APE_SERVER_LINK_LIBS ape-server LINK_LIBRARIES)

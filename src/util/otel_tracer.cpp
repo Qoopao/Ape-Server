@@ -18,6 +18,8 @@ namespace sdktrace = opentelemetry::sdk::trace;
 namespace resource = opentelemetry::sdk::resource;
 namespace otlp     = opentelemetry::exporter::otlp;
 
+// 如果不加这个，两次调用Init，旧TracerProvider被动销毁时可能不会调用Shutdown，导致
+// 资源泄露，防御编程一手
 static bool initialized = false;
 
 void InitTracer(const std::string &service_name)

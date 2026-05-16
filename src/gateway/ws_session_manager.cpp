@@ -1,4 +1,5 @@
 #include "gateway/ws_session_manager.h"
+#include "util/otel_metrics.h"
 
 #include <spdlog/spdlog.h>
 
@@ -10,14 +11,16 @@ WSSessionManager& WSSessionManager::instance() {
 void WSSessionManager::registerSession(const std::string& userId,
                                        std::shared_ptr<WSSession> session) {
     std::unique_lock lock(mutex_);
-    // 如果已有旧连接，日志警告（可能是多端登录，后续可扩展为多session管理）
     auto it = sessions_.find(userId);
     if (it != sessions_.end()) {
         spdlog::warn("WSSessionManager: replacing existing session for user={}", userId);
     }
     sessions_[userId] = session;
-    spdlog::info("WSSessionManager: registered session for user={}, total={}",
-                 userId, sessions_.size());
+    int64_t total = static_cast<int64_t>(sessions_.size());
+    lock.unlock();
+
+    ape::otel::WsConnectionsActive().Add(1);
+    spdlog::info("WSSessionManager: registered session for user={}, total={}", userId, total);
 }
 
 void WSSessionManager::unregisterSession(const std::string& userId) {
@@ -25,9 +28,12 @@ void WSSessionManager::unregisterSession(const std::string& userId) {
     auto it = sessions_.find(userId);
     if (it != sessions_.end()) {
         sessions_.erase(it);
-        spdlog::info("WSSessionManager: unregistered session for user={}, total={}",
-                     userId, sessions_.size());
     }
+    int64_t total = static_cast<int64_t>(sessions_.size());
+    lock.unlock();
+
+    ape::otel::WsConnectionsActive().Add(-1);
+    spdlog::info("WSSessionManager: unregistered session for user={}, total={}", userId, total);
 }
 
 bool WSSessionManager::pushToUser(const std::string& userId,

@@ -1,4 +1,5 @@
 #include "util/otel_grpc_interceptor.h"
+#include "util/otel_metrics.h"
 #include "util/otel_tracer.h"
 
 #include <grpcpp/support/server_interceptor.h>
@@ -10,6 +11,7 @@
 #include <opentelemetry/trace/span_metadata.h>
 #include <spdlog/spdlog.h>
 
+#include <chrono>
 #include <map>
 #include <memory>
 #include <string>
@@ -93,6 +95,9 @@ public:
                                                   {"rpc.method", method_}},
                                         opts);
 
+                // 记录开始时间（用于 Histogram 延迟统计）
+                start_time_ = std::chrono::steady_clock::now();
+
                 // 设为当前线程的 Active Span，后续 Client 调用能提取 traceparent
                 scope_ = std::make_unique<opentelemetry::trace::Scope>(span_);
             }
@@ -116,6 +121,25 @@ public:
                 span_->SetStatus(opentelemetry::trace::StatusCode::kOk, "");
                 span_->SetAttribute("rpc.grpc.status_code", 0);
             }
+            // ── Metrics: Counter + Histogram ──
+            auto duration_ms = std::chrono::duration<double, std::milli>(
+                    std::chrono::steady_clock::now() - start_time_)
+                                   .count();
+            std::string status_str = status.ok() ? "OK" : std::to_string(
+                static_cast<int>(status.error_code()));
+
+            // 使用 initializer_list + Context{} 以匹配 3-arg Record/Add 重载
+            ape::otel::RpcServerRequests().Add(1,
+                {{"rpc_service", service_name_.c_str()},
+                 {"rpc_method", method_.c_str()},
+                 {"status_code", status_str.c_str()}},
+                opentelemetry::context::Context{});
+
+            ape::otel::RpcServerDuration().Record(duration_ms,
+                {{"rpc_service", service_name_.c_str()},
+                 {"rpc_method", method_.c_str()}},
+                opentelemetry::context::Context{});
+
             // 先销毁 Scope（恢复之前的 context），再 End Span
             scope_.reset();
             span_->End();
@@ -137,6 +161,7 @@ private:
     std::string service_name_;
     opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> span_;
     std::unique_ptr<opentelemetry::trace::Scope> scope_;
+    std::chrono::steady_clock::time_point start_time_;
 };
 
 // 静态成员定义

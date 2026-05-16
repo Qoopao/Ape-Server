@@ -232,6 +232,7 @@
   grpc::ClientContext context;
 
   // 注入 traceparent 到 gRPC metadata，让 MsgService 的拦截器提取
+  // 下面的函数从OTel的线程局部上下文取到sendSpan，然后注入到
   ape::otel::InjectTraceContextToGrpcMetadata(context);
 
   std::mutex mu;

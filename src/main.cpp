@@ -7,6 +7,7 @@
 #include "services/msg_service/server.h"
 #include "services/gateway_push_service/server.h"
 #include "services/push_service/server.h"
+#include "util/otel_metrics.h"
 #include "util/otel_tracer.h"
 #include "util/redishandler.h"
 #include "util/snowflake.h"
@@ -19,10 +20,11 @@ int main()
 
     try
     {
-        // ── 0. 初始化 OpenTelemetry Tracer ──
+        // ── 初始化 OpenTelemetry Tracer + Meter ──
         ape::otel::InitTracer("ape-server");
+        ape::otel::InitMeter("ape-server");
 
-        // ── 1. 初始化 Snowflake ID 生成器 ──
+        // ── 初始化 Snowflake ID 生成器 ──
         Snowflake::init(
             std::getenv("SNOWFLAKE_WORKER_ID") ? std::stoll(std::getenv("SNOWFLAKE_WORKER_ID")) : 1,
             std::getenv("SNOWFLAKE_DATACENTER_ID") ? std::stoll(std::getenv("SNOWFLAKE_DATACENTER_ID")) : 1
@@ -113,8 +115,9 @@ int main()
         // ── 清理所有服务 ──
         spdlog::info("关闭Web网关...");
 
-        // 清理 OTel,导出未发送的 Span
+        // 清理 OTel,导出未发送的 Span + Metrics
         ape::otel::CleanupTracer();
+        ape::otel::CleanupMeter();
 
     }
     catch (const std::exception &e)
