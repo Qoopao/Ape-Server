@@ -20,8 +20,8 @@ public:
     void registerSession(const std::string& userId,
                          std::shared_ptr<WSSession> session);
 
-    // 注销一个 WebSocket 连接
-    void unregisterSession(const std::string& userId);
+    // 注销一个 WebSocket 连接，加上std::shared_ptr<WSSession> session避免误删新的session
+    bool unregisterSession(const std::string& userId, std::shared_ptr<WSSession> session);
 
     // 向指定用户推送消息
     // 返回 true 表示 session 存在并已投递发送

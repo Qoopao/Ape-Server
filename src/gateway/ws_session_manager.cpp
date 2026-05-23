@@ -11,30 +11,35 @@ WSSessionManager& WSSessionManager::instance() {
 void WSSessionManager::registerSession(const std::string& userId,
                                        std::shared_ptr<WSSession> session) {
     std::unique_lock lock(mutex_);
-    auto it = sessions_.find(userId);
-    if (it != sessions_.end()) {
-        spdlog::warn("WSSessionManager: replacing existing session for user={}", userId);
-    }
+    bool isReplacing = sessions_.find(userId) != sessions_.end();
     sessions_[userId] = session;
     int64_t total = static_cast<int64_t>(sessions_.size());
     lock.unlock();
 
-    ape::otel::WsConnectionsActive().Add(1);
+    if (!isReplacing) {
+        ape::otel::WsConnectionsActive().Add(1);
+    }
     spdlog::info("WSSessionManager: registered session for user={}, total={}", userId, total);
 }
 
-void WSSessionManager::unregisterSession(const std::string& userId) {
+
+bool WSSessionManager::unregisterSession(const std::string& userId,
+                                         std::shared_ptr<WSSession> session) {
     std::unique_lock lock(mutex_);
     auto it = sessions_.find(userId);
-    if (it != sessions_.end()) {
+    if (it != sessions_.end() && it->second == session) {
         sessions_.erase(it);
+        lock.unlock();
+        ape::otel::WsConnectionsActive().Add(-1);
+        spdlog::info("unregistered session for user={}", userId);
+        return true;
     }
-    int64_t total = static_cast<int64_t>(sessions_.size());
     lock.unlock();
-
-    ape::otel::WsConnectionsActive().Add(-1);
-    spdlog::info("WSSessionManager: unregistered session for user={}, total={}", userId, total);
+    spdlog::info("stale session for user={}, skipping", userId);
+    return false;
 }
+
+
 
 bool WSSessionManager::pushToUser(const std::string& userId,
                                   std::shared_ptr<std::string> payload) {

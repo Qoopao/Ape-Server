@@ -36,12 +36,6 @@ BaseServiceServer<ServiceType> *g_service_instance = nullptr;
 template <class ServiceType>
 std::atomic<bool> g_should_stop_service(false);
 
-template <class ServiceType> void signal_handler(int signal) {
-  spdlog::info("接收到信号 {}，准备停止服务", signal);
-  // 信号处理函数仅设置停止标志，不执行复杂操作
-  g_should_stop_service<ServiceType> = true;
-}
-
 template <class ServiceType> class BaseServiceServer {
 public:
   BaseServiceServer(const std::string &service_name,
@@ -49,7 +43,6 @@ public:
       : service_name_(service_name), listen_address_(listen_address),
         state_(ServiceState::kStopped), server_thread_(),
         should_stop_(false) {
-    setupSignalHandler();
   }
 
   ~BaseServiceServer() {
@@ -252,19 +245,6 @@ private:
     }
   }
 
-  void setupSignalHandler() {
-    g_service_instance<ServiceType> = this;
-    struct sigaction sa;
-    sa.sa_handler = signal_handler<ServiceType>;
-    sa.sa_flags = SA_RESTART;
-    sigemptyset(&sa.sa_mask);
-    // Ctrl + C
-    sigaction(SIGINT, &sa, nullptr);
-    // kill 命令默认信号
-    sigaction(SIGTERM, &sa, nullptr);
-    // 忽略SIGPIPE（避免写入关闭的socket崩溃）
-    sigaction(SIGPIPE, &sa, nullptr);
-  }
 
   std::string service_name_;
   std::string listen_address_;

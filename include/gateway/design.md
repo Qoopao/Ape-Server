@@ -1,0 +1,1 @@
+使用一个io_context来处理监听逻辑，并将业务通过least_conn负载均衡策略分发IOC_Pool以实现多线程处理业务逻辑。由于多线程run单个io_context会导致惊群以及锁竞争，所以用的是IOC_Pool模型。

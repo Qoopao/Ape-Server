@@ -29,7 +29,7 @@ public:
     // 启动 WebSocket 握手和消息循环（协程入口）
     boost::asio::awaitable<void> start();
 
-    // 异步发送文本帧到客户端（线程安全：通过 io_context::post 投递）
+    // 异步发送文本帧到客户端
     void asyncSend(std::shared_ptr<std::string> payload);
 
     // 获取用户 ID
