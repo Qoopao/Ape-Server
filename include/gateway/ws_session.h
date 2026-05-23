@@ -2,6 +2,7 @@
 #define WS_SESSION_H
 
 #include <boost/asio.hpp>
+#include <boost/asio/experimental/channel.hpp>
 #include <boost/beast.hpp>
 #include <grpcpp/channel.h>
 #include <memory>
@@ -62,6 +63,13 @@ private:
     // serverMsgId → seq 临时映射，用于收到客户端 ACK 后更新 last_seq
     // 每批50条，直到清空为止
     std::unordered_map<std::string, int64_t> pendingOfflineMsgs_;
+
+    // 协程间通知通道：handleAck 清空本批次 pendingOfflineMsgs_ 后
+    // 通过此 channel 唤醒 pullAndPushOfflineMsgs，替代定时器忙等轮询
+    // capacity=0 保证 try_send 必须等 async_receive 就绪，形成 rendezvous
+    std::unique_ptr<
+        boost::asio::experimental::channel<void(boost::system::error_code)>>
+        batch_ack_signal_;
 };
 
 #endif

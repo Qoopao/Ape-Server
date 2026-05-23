@@ -450,23 +450,29 @@ asio::awaitable<void> WSSession::pullAndPushOfflineMsgs() {
           msg.servermsgid(), msg.seq());
     }
 
-    // 4. 轮询等待客户端 ACK 清空本批次（doReadLoop 会并发处理 ACK）
-    //    使用 steady_timer 每 200ms 检查一次，避免忙等
+    // 4. 等待客户端 ACK 清空本批次（doReadLoop / handleAck 并发处理并通知）
+    //    使用 asio::experimental::channel 实现事件驱动唤醒，替代定时器轮询
+    //    capacity=0 保证 rendezvous：handleAck 的 try_send 必须等此处的
+    //    async_receive 就绪
     spdlog::info("WSSession: waiting for client ACK on {} msgs for user {}",
                  pendingOfflineMsgs_.size(), userId_);
 
-    asio::steady_timer timer(ws_.get_executor());
-    timer.expires_after(std::chrono::milliseconds(200));
+    // 因为doReadLoop / handleAck这两个是同一个io_context里面执行的，所以只需要使用普通channel就行，不需要使用并发channel
+    batch_ack_signal_ = std::make_unique<
+        asio::experimental::channel<void(boost::system::error_code)>>(
+        ws_.get_executor(), 0);
 
-    while (!pendingOfflineMsgs_.empty()) {
-      co_await timer.async_wait(asio::redirect_error(asio::use_awaitable, ec));
-      // 连接断开时 doReadLoop 会清理 pendingOfflineMsgs_，直接退出
-      if (ec) {
-        spdlog::error("WSSession: timer error while waiting ACK: {}",
-                      ec.message());
-        co_return;
-      }
-      timer.expires_after(std::chrono::milliseconds(200));
+    // 要先有人等待接收才能发送
+    co_await batch_ack_signal_->async_receive(
+        asio::redirect_error(asio::use_awaitable, ec));
+
+    batch_ack_signal_.reset();
+
+    // 连接断开时 onDisconnect 会清理 pendingOfflineMsgs_ 并 cancel channel
+    if (ec) {
+      spdlog::info("WSSession: ACK wait cancelled (disconnect), user {}",
+                   userId_);
+      co_return;
     }
 
     spdlog::info("WSSession: batch ACK done for user {}, batchMaxSeq={}",
@@ -520,6 +526,11 @@ void WSSession::handleAck(const sdkws::SdkWSReq &req) {
       spdlog::debug("WSSession: offline msg ACKed via type 106, msgId={}, "
                     "seq={}, remaining={}",
                     serverMsgID, seq, pendingOfflineMsgs_.size());
+
+      // 本批次全部 ACK 完成，通知 pullAndPushOfflineMsgs 继续拉取下一批
+      if (pendingOfflineMsgs_.empty() && batch_ack_signal_) {
+        batch_ack_signal_->try_send(boost::system::error_code{});
+      }
     }
 
     // 通过 gRPC 转发 ACK 给 PushService（处理在线/离线消息的最终确认）
@@ -540,6 +551,12 @@ void WSSession::handleAck(const sdkws::SdkWSReq &req) {
 void WSSession::onDisconnect() {
   if (userId_.empty())
     return;
+
+  // 唤醒 pullAndPushOfflineMsgs 中等待 ACK 的协程（避免泄漏悬挂协程）
+  if (batch_ack_signal_) {
+    batch_ack_signal_->cancel();
+    batch_ack_signal_.reset();
+  }
 
   bool isActive = WSSessionManager::instance().unregisterSession(
       userId_, shared_from_this());
