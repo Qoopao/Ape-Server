@@ -28,16 +28,13 @@ using boost::asio::detached;
 using boost::asio::use_awaitable;
 using boost::asio::ip::tcp;
 
-namespace this_coro = boost::asio::this_coro;
-
 class IOC_Pool {
 
   // 一个Worker对应一个ioc
   struct Worker {
 
     Worker()
-        : io_context(1),
-          work_guard(boost::asio::make_work_guard(io_context)) {};
+        : io_context(), work_guard(boost::asio::make_work_guard(io_context)) {};
 
     boost::asio::io_context io_context;
     boost::asio::executor_work_guard<boost::asio::io_context::executor_type>
@@ -53,20 +50,24 @@ public:
       _workers.emplace_back(std::make_unique<Worker>());
     }
   };
-  ~IOC_Pool(){
-    stopPool();
-  };
+  ~IOC_Pool() { stopPool(); };
 
   void startPool() {
     for (auto &w : _workers) {
-      _threads.emplace_back([this, &w] { w->io_context.run(); });
+      _threads.emplace_back([worker = w.get()] { worker->io_context.run(); });
     }
   }
 
   void stopPool() {
+    // 释放 work_guard
+    for (auto &w : _workers) {
+      w->work_guard.reset();
+    }
+    // 停止ioc
     for (auto &w : _workers) {
       w->io_context.stop();
     }
+    // 线程等待退出
     for (auto &t : _threads) {
       if (t.joinable()) {
         t.join();
@@ -74,10 +75,10 @@ public:
     }
   }
 
-  // 获取连接数最少的ioc，做负载均衡
-  Worker *get_least_conn_worker() {
+  // 提交任务到选中的ioc
+  template <typename F> void spawn(F &&f) {
+    // 获取连接数最少的ioc，做负载均衡
     std::lock_guard<std::mutex> lock{_mutex};
-
     int min_load = INT_MAX;
     Worker *selected = nullptr;
 
@@ -88,23 +89,16 @@ public:
         selected = w.get();
       }
     }
-    return selected;
-  }
 
-  // 提交任务到选中的ioc
-  template <typename F> void spawn(F &&f) {
-    auto worker = get_least_conn_worker();
-    auto &ioc = worker->io_context;
+    auto &ioc = selected->io_context;
 
     // 活跃连接+1
-    worker->active_tasks.fetch_add(1, std::memory_order_release);
+    selected->active_tasks.fetch_add(1, std::memory_order_release);
 
     boost::asio::co_spawn(
-        ioc,
-        std::forward<F>(f),
-        [worker](std::exception_ptr){
+        ioc, std::forward<F>(f), [selected](std::exception_ptr) {
           // 任务结束自动 -1
-          worker->active_tasks.fetch_sub(1, std::memory_order_release);
+          selected->active_tasks.fetch_sub(1, std::memory_order_release);
         });
   }
 
@@ -127,9 +121,10 @@ public:
   void start();
   void stop();
 
-  void discover_Service(const std::string service_name, const std::string& service_addr);
+  void discover_Service(const std::string service_name,
+                        const std::string &service_addr);
 
-  boost::asio::io_context& get_acceptor_ioc(){return _acceptor_ioc;}
+  boost::asio::io_context &get_acceptor_ioc() { return _acceptor_ioc; }
 
   // 供 WSSession 获取 AuthClient、MsgClient、PushClient
   AuthClient *getAuthClient() { return auth_client_.get(); }
