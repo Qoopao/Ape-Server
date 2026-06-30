@@ -1,58 +1,64 @@
 #include "services/push_service/client.h"
+#include "util/grpc_async_util.h"
+#include <grpcpp/support/status.h>
 #include <spdlog/spdlog.h>
 
-::push::PushMsgResp PushClient::PushMsg(const ::push::PushMsgReq& request) {
-    ::push::PushMsgResp response;
-    grpc::ClientContext context;
-
-    auto status = stub_->PushMsg(&context, request, &response);
-    if (!status.ok()) {
-        spdlog::error("PushClient::PushMsg failed: {}", status.error_message());
-        throw std::runtime_error("PushMsg gRPC failed: " + std::string(status.error_message()));
-    }
-
-    spdlog::info("PushClient::PushMsg: success, convID={}", request.conversationid());
-    return response;
+boost::asio::awaitable<::push::PushMsgResp> PushClient::PushMsg(const ::push::PushMsgReq& request) {
+  ::push::PushMsgResp reply;
+  grpc::ClientContext context;
+  auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+    stub_->async()->PushMsg(&context, &request, &reply,
+        std::forward<decltype(handler)>(handler));
+  });
+  if (!status.ok()) {
+    spdlog::error("PushMsg failed: {} {}",
+                  static_cast<int>(status.error_code()),
+                  status.error_message());
+  }
+  co_return reply;
 }
 
-::push::DelUserPushTokenResp PushClient::DelUserPushToken(const ::push::DelUserPushTokenReq& request) {
-    ::push::DelUserPushTokenResp response;
-    grpc::ClientContext context;
-
-    auto status = stub_->DelUserPushToken(&context, request, &response);
-    if (!status.ok()) {
-        spdlog::error("PushClient::DelUserPushToken failed: {}", status.error_message());
-        throw std::runtime_error("DelUserPushToken gRPC failed: " + std::string(status.error_message()));
-    }
-
-    spdlog::info("PushClient::DelUserPushToken: success, userID={}", request.userid());
-    return response;
+boost::asio::awaitable<::push::DelUserPushTokenResp> PushClient::DelUserPushToken(const ::push::DelUserPushTokenReq& request) {
+  ::push::DelUserPushTokenResp reply;
+  grpc::ClientContext context;
+  auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+    stub_->async()->DelUserPushToken(&context, &request, &reply,
+        std::forward<decltype(handler)>(handler));
+  });
+  if (!status.ok()) {
+    spdlog::error("DelUserPushToken failed: {} {}",
+                  static_cast<int>(status.error_code()),
+                  status.error_message());
+  }
+  co_return reply;
 }
 
-::push::AckMsgResp PushClient::AckMsg(const ::push::AckMsgReq& request) {
-    ::push::AckMsgResp response;
-    grpc::ClientContext context;
-
-    auto status = stub_->AckMsg(&context, request, &response);
-    if (!status.ok()) {
-        spdlog::error("PushClient::AckMsg failed: {}", status.error_message());
-        throw std::runtime_error("AckMsg gRPC failed: " + std::string(status.error_message()));
-    }
-
-    spdlog::info("PushClient::AckMsg: success, userID={}, serverMsgID={}", request.userid(), request.servermsgid());
-    return response;
+boost::asio::awaitable<::push::AckMsgResp> PushClient::AckMsg(const ::push::AckMsgReq& request) {
+  ::push::AckMsgResp reply;
+  grpc::ClientContext context;
+  auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+    stub_->async()->AckMsg(&context, &request, &reply,
+        std::forward<decltype(handler)>(handler));
+  });
+  if (!status.ok()) {
+    spdlog::error("AckMsg failed: {} {}",
+                  static_cast<int>(status.error_code()),
+                  status.error_message());
+  }
+  co_return reply;
 }
 
-::push::AddPendingOfflineAckResp PushClient::AddPendingOfflineAck(const ::push::AddPendingOfflineAckReq& request) {
-    ::push::AddPendingOfflineAckResp response;
-    grpc::ClientContext context;
-
-    auto status = stub_->AddPendingOfflineAck(&context, request, &response);
-    if (!status.ok()) {
-        spdlog::error("PushClient::AddPendingOfflineAck failed: {}", status.error_message());
-        throw std::runtime_error("AddPendingOfflineAck gRPC failed: " + std::string(status.error_message()));
-    }
-
-    spdlog::info("PushClient::AddPendingOfflineAck: success, userID={}, serverMsgID={}", request.userid(), request.servermsgid());
-    return response;
+boost::asio::awaitable<::push::AddPendingOfflineAckResp> PushClient::AddPendingOfflineAck(const ::push::AddPendingOfflineAckReq& request) {
+  ::push::AddPendingOfflineAckResp reply;
+  grpc::ClientContext context;
+  auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+    stub_->async()->AddPendingOfflineAck(&context, &request, &reply,
+        std::forward<decltype(handler)>(handler));
+  });
+  if (!status.ok()) {
+    spdlog::error("AddPendingOfflineAck failed: {} {}",
+                  static_cast<int>(status.error_code()),
+                  status.error_message());
+  }
+  co_return reply;
 }

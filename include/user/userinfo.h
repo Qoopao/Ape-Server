@@ -9,6 +9,7 @@ struct userInfo {
     std::string nickname;
     std::string password_hash;
     std::string password_salt;
+    std::string last_login_at;
 };
 
 #endif

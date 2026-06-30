@@ -1,0 +1,1 @@
+redis和mysql，mongodb的驱动本身并没有提供多线程，所以我们还是使用IOCPool以达到多线程执行的目的，redis一个线程（ioc）对应一个连接，mysql、mongodb一个线程对应多个连接（一个连接池）。

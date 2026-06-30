@@ -110,7 +110,7 @@ KafkaProducer::KafkaProducer( std::string topicName, std::string brokerList)
 }
 
 
-bool KafkaProducer::Deliver(std::string& key, void* payload, size_t payloadSize)
+bool KafkaProducer::deliver(std::string& key, void* payload, size_t payloadSize)
 {
     // 投递消息
     RdKafka::ErrorCode errCode = producerInstance->produce(

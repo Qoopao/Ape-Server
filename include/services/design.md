@@ -1,0 +1,1 @@
+grpc的unary异步写法和协程很搭，在grpc里面放一些连续业务逻辑可以使用co_await来避免回调地狱，unary异步先返回reactor，协程恢复时调用reactor的Finish就能告诉grpc client调用完成。

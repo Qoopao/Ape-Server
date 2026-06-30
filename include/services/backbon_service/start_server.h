@@ -1,9 +1,6 @@
 #ifndef START_SERVER_H
 #define START_SERVER_H
 
-#ifndef BASE_SERVICE_H
-#define BASE_SERVICE_H
-
 #include <atomic>
 #include <csignal>
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
@@ -17,18 +14,7 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
-template <class ServiceType> class BaseServiceServer;
-
-// 服务状态
-enum class ServiceState {
-  kStopped = 0,
-  kStarting = 1,
-  kRunning = 2,
-  kStopping = 3
-};
-
-template <class ServiceType>
-BaseServiceServer<ServiceType> *g_service_instance = nullptr;
+#include "services/base_service.h"
 
 template <class ServiceType> void signal_handler(int signal) {
   spdlog::info("接收到信号 {}，准备停止服务", signal);
@@ -162,7 +148,5 @@ private:
 
   std::mutex state_mutex_;
 };
-
-#endif
 
 #endif

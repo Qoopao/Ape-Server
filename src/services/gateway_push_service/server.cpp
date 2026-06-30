@@ -7,18 +7,22 @@ GatewayPushServer::GatewayPushServer(const std::string &service_name,
                                      const std::string &listen_address)
     : BaseServiceServer<GatewayPushServer>(service_name, listen_address) {}
 
-::grpc::Status GatewayPushServer::PushToUser(
-    ::grpc::ServerContext *context,
+::grpc::ServerUnaryReactor *GatewayPushServer::PushToUser(
+    ::grpc::CallbackServerContext *context,
     const ::gateway_push::PushToUserReq *request,
     ::gateway_push::PushToUserResp *response) {
+
+    grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
     const std::string &userID = request->userid();
     const std::string &msgDataBin = request->msgdatabin();
 
     if (userID.empty()) {
         spdlog::error("GatewayPushServer::PushToUser: empty userID");
-        return ::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT,
-                              "userID is required");
+        response->set_success(false);
+        reactor->Finish(::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT,
+                              "userID is required"));
+        return reactor;
     }
 
     spdlog::info("GatewayPushServer::PushToUser: userID={}, dataLen={}",
@@ -44,5 +48,6 @@ GatewayPushServer::GatewayPushServer(const std::string &service_name,
                      userID);
     }
 
-    return ::grpc::Status::OK;
+    reactor->Finish(::grpc::Status::OK);
+    return reactor;
 }

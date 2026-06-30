@@ -1,6 +1,7 @@
 #ifndef KAFKAPRODUCER_H
 #define KAFKAPRODUCER_H
 
+#include "messagequeue/message_producer.h"
 #include <librdkafka/rdkafkacpp.h>
 #include <spdlog/spdlog.h>
 #include <string>
@@ -23,15 +24,15 @@ class ProducerPartitionStrategyCb : public RdKafka::PartitionerCb{
                                  void *msg_opaque) override;
 };
 
-// Kafka生产者类
-class KafkaProducer
+// Kafka生产者类：实现 IMessageProducer 接口
+class KafkaProducer : public IMessageProducer
 {
 public:
     // 初始化生产者
     KafkaProducer(std::string topicName, std::string brokerList= "localhost:29092,localhost:39092,localhost:49092");
 
-    // 投递消息
-    bool Deliver(std::string& key, void* payload, size_t payloadSize);
+    // 投递消息（实现 IMessageProducer 接口）
+    bool deliver(std::string& key, void* payload, size_t payloadSize) override;
 
     // 析构函数：释放资源
     ~KafkaProducer();

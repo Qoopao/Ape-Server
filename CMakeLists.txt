@@ -19,8 +19,6 @@ find_package(bsoncxx CONFIG REQUIRED)
 find_package(RdKafka CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(etcd-cpp-api CONFIG REQUIRED)
-find_package(hiredis CONFIG REQUIRED)
-find_package(redis++ CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(opentelemetry-cpp CONFIG REQUIRED)
 
@@ -50,9 +48,6 @@ nlohmann_json::nlohmann_json
 mongo::mongocxx_static
 mongo::bsoncxx_static
 utf8proc::utf8proc
-
-# Redis
-hiredis::hiredis redis++::redis++_static
 
 # Kafka
 RdKafka::rdkafka RdKafka::rdkafka++
@@ -98,7 +93,7 @@ message(STATUS "LINK_LIBRARIES: ${APE_SERVER_LINK_LIBS}")
 add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE ape-server)
 
-# 测试程序
-add_executable(test_msg_service test/test_msg_service.cpp)
-target_include_directories(test_msg_service PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src/proto)
-target_link_libraries(test_msg_service PRIVATE ape-server)
+# 压测工具
+add_executable(stress_test test/stress_test.cpp)
+target_include_directories(stress_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src/proto)
+target_link_libraries(stress_test PRIVATE ape-server)

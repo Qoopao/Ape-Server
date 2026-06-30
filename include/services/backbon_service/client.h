@@ -4,11 +4,11 @@
 #include "backbon.grpc.pb.h"
 #include "backbon.pb.h"
 #include <grpcpp/channel.h>
-#include <condition_variable>
+#include <boost/asio/awaitable.hpp>
 #include <iostream>
 #include <memory>
-#include <mutex>
 #include <string>
+#include <vector>
 
 class BackbonServiceImpl;
 
@@ -23,14 +23,13 @@ class BackbonClient {
   BackbonClient(std::shared_ptr<grpc::Channel> channel)
       : stub_(backbon::BackbonService::NewStub(channel)) {}
 
-  backbon::CheckUserOnlineResp CheckUserOnline();
-  backbon::RegisterServiceResp RegisterService(ServiceInfo service_info);
-  backbon::UnregisterServiceResp UnregisterService();
-  backbon::GetServiceResp GetServicesList(const std::string &service_name);
+  boost::asio::awaitable<backbon::CheckUserOnlineResp> CheckUserOnline();
+  boost::asio::awaitable<backbon::RegisterServiceResp> RegisterService(ServiceInfo service_info);
+  boost::asio::awaitable<backbon::UnregisterServiceResp> UnregisterService();
+  boost::asio::awaitable<backbon::GetServiceResp> GetServicesList(const std::string &service_name);
 
  private:
   std::unique_ptr<backbon::BackbonService::Stub> stub_;
-
 };
 
 #endif

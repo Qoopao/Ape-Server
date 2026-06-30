@@ -1,4 +1,6 @@
 #include "gateway/webserver.h"
+#include "messagequeue/kafkaconsumer.h"
+#include "messagequeue/kafkaproducer.h"
 #include "services/auth_service/server.h"
 #include "services/backbon_service/client.h"
 #include "services/backbon_service/server.h"
@@ -8,7 +10,10 @@
 #include "util/otel_logger.h"
 #include "util/otel_metrics.h"
 #include "util/otel_tracer.h"
-#include "util/redishandler.h"
+#include "util/redisconnector.h"
+#include "util/mysqlconnector.h"
+#include "util/ioc_pool.h"
+#include "util/mongoconnector.h"
 #include "util/snowflake.h"
 #include <boost/asio.hpp>
 #include <spdlog/spdlog.h>
@@ -31,6 +36,15 @@ int main() {
                     std::getenv("SNOWFLAKE_DATACENTER_ID")
                         ? std::stoll(std::getenv("SNOWFLAKE_DATACENTER_ID"))
                         : 1);
+
+    // ── 初始化 Redis 连接池 ──
+    RedisConnector::instance().start(4);
+
+    // ── 初始化 MySQL 连接池 ──
+    MySQLConnector::instance().start(2);
+
+    // ── 初始化 MongoDB 连接池 ──
+    MongoConnector::instance().start(4);
 
     // ── 1. 先启动 BackbonService（etcd 服务注册与发现的基础设施）──
     spdlog::info("=== Starting BackbonService on 0.0.0.0:50052 ===");
@@ -111,14 +125,47 @@ int main() {
                                                 {"PushToUser"});
     gateway_push_server->Start();
 
-    // ── 5. 启动 PushService，通过 BackbonService 注册到 etcd ──
+    // ── 5. 创建消息队列生产者和消费者（依赖注入）──
+    // 创建 Kafka 生产者（由 main 持有，与进程同寿）
+    auto producer = std::make_unique<KafkaProducer>("msg_topic");
+    msg_server->SetProducer(producer.get());
+    spdlog::info("Kafka producer created and injected into MsgService");
+
+    // 创建 Kafka 消费专用的 IOC_Pool（独立于 Redis 的 io_context）
+    IOC_Pool kafka_ioc_pool(4);
+    kafka_ioc_pool.startPool();
+    spdlog::info("Kafka IOC_Pool started with 4 workers");
+
+    // ── 6. 启动 PushService，通过 BackbonService 注册到 etcd ──
     spdlog::info("=== Starting PushService on 0.0.0.0:50054 ===");
     auto push_server =
         std::make_unique<PushServer>("PushService", "0.0.0.0:50054");
     push_server->EnableEtcdRegistration("localhost:50052",
                                         {"PushMsg", "DelUserPushToken"});
-    push_server->Start("push-service-group", {"msg_topic"},
-                       {"offline_msg_topic"});
+
+    // 创建 Kafka 消费者并注入到 PushServer（通过抽象接口）
+    auto consumer = std::make_unique<KafkaConsumer>(
+        "push-service-group", std::vector<std::string>{"msg_topic"});
+    push_server->SetConsumer(std::move(consumer));
+    push_server->SetIOCPool(&kafka_ioc_pool);
+
+    push_server->Start();
+
+    // ── 等待所有需要注册的服务完成 etcd 注册后再启动网关 ──
+    spdlog::info("=== Waiting for all services to register to etcd... ===");
+    if (!auth_server->WaitForEtcdRegistration(30)) {
+      spdlog::warn("AuthService etcd registration timeout or failed, continuing anyway");
+    }
+    if (!msg_server->WaitForEtcdRegistration(30)) {
+      spdlog::warn("MsgService etcd registration timeout or failed, continuing anyway");
+    }
+    if (!gateway_push_server->WaitForEtcdRegistration(30)) {
+      spdlog::warn("GatewayPushService etcd registration timeout or failed, continuing anyway");
+    }
+    if (!push_server->WaitForEtcdRegistration(30)) {
+      spdlog::warn("PushService etcd registration timeout or failed, continuing anyway");
+    }
+    spdlog::info("=== All services registered to etcd, starting gateway ===");
 
     // ── 启动 WebServer 网关 ──
     spdlog::info("=== Starting WebServer Gateway on port 6666 ===");

@@ -46,7 +46,7 @@ private:
   etcd::Client etcd_client;
 };
 
-const int64_t EtcdConnector::DEFAULT_LEASE_TTL = 30;
+const int64_t EtcdConnector::DEFAULT_LEASE_TTL = 300000;//30
 const std::string EtcdConnector::DEFAULT_ETCD_ENDPOINT = "http://127.0.0.1:2379";
 
 #endif // ETCD_CONNECTOR_H

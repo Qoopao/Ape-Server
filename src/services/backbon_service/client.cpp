@@ -1,45 +1,28 @@
 #include "services/backbon_service/client.h"
+#include "util/grpc_async_util.h"
 #include <grpcpp/support/status.h>
 #include <spdlog/spdlog.h>
 
-backbon::CheckUserOnlineResp BackbonClient::CheckUserOnline() {
-
+boost::asio::awaitable<backbon::CheckUserOnlineResp> BackbonClient::CheckUserOnline() {
   backbon::CheckUserOnlineReq request;
   backbon::CheckUserOnlineResp reply;
-
-  // Context for the client. It could be used to convey extra information to
-  // the server and/or tweak certain RPC behaviors.
   grpc::ClientContext context;
 
-  // The actual RPC.
-  std::mutex mu;
-  std::condition_variable cv;
-  bool done = false;
-  grpc::Status status;
-  stub_->async()->CheckUserOnline(&context, &request, &reply,
-                                  [&mu, &cv, &done, &status](grpc::Status s) {
-                                    status = std::move(s);
-                                    std::lock_guard<std::mutex> lock(mu);
-                                    done = true;
-                                    cv.notify_one();
-                                  });
+  auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+    stub_->async()->CheckUserOnline(&context, &request, &reply,
+        std::forward<decltype(handler)>(handler));
+  });
 
-  std::unique_lock<std::mutex> lock(mu);
-  while (!done) {
-    cv.wait(lock);
-  }
-
-  // Act upon its status.
   if (!status.ok()) {
     spdlog::error("CheckUserOnline failed: {} {}",
                   static_cast<int>(status.error_code()),
                   status.error_message());
   }
 
-  return reply;
+  co_return reply;
 }
 
-backbon::RegisterServiceResp BackbonClient::RegisterService(ServiceInfo service_info) {
+boost::asio::awaitable<backbon::RegisterServiceResp> BackbonClient::RegisterService(ServiceInfo service_info) {
   backbon::RegisterServiceReq request;
   backbon::RegisterServiceResp reply;
 
@@ -51,118 +34,59 @@ backbon::RegisterServiceResp BackbonClient::RegisterService(ServiceInfo service_
     request.add_methods(method);
   }
 
-  // 测试用
-  // request.set_service("backbon_service");
-  // request.add_ipport("127.0.0.1:50001");
-  // request.add_ipport("127.0.0.1:50002");
-  // request.add_ipport("127.0.0.1:50003");
-  // request.add_methods("CheckUserOnline");
-  // request.add_methods("RegisterService");
-  // request.add_methods("UnregisterService");
-
-
-  // Context for the client. It could be used to convey extra information to
-  // the server and/or tweak certain RPC behaviors.
   grpc::ClientContext context;
 
-  // The actual RPC.
-  std::mutex mu;
-  std::condition_variable cv;
-  bool done = false;
-  grpc::Status status;
-  stub_->async()->RegisterService(&context, &request, &reply,
-                                  [&mu, &cv, &done, &status](grpc::Status s) {
-                                    status = std::move(s);
-                                    std::lock_guard<std::mutex> lock(mu);
-                                    done = true;
-                                    cv.notify_one();
-                                  });
+  auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+    stub_->async()->RegisterService(&context, &request, &reply,
+        std::forward<decltype(handler)>(handler));
+  });
 
-  std::unique_lock<std::mutex> lock(mu);
-  while (!done) {
-    cv.wait(lock);
-  }
-
-  // Act upon its status.
   if (!status.ok()) {
     spdlog::error("RegisterService failed: {} {}",
                   static_cast<int>(status.error_code()),
                   status.error_message());
   }
 
-  return reply;
+  co_return reply;
 }
 
-backbon::UnregisterServiceResp BackbonClient::UnregisterService() {
+boost::asio::awaitable<backbon::UnregisterServiceResp> BackbonClient::UnregisterService() {
   backbon::UnregisterServiceReq request;
   backbon::UnregisterServiceResp reply;
-
-  // Context for the client. It could be used to convey extra information to
-  // the server and/or tweak certain RPC behaviors.
   grpc::ClientContext context;
 
-  // The actual RPC.
-  std::mutex mu;
-  std::condition_variable cv;
-  bool done = false;
-  grpc::Status status;
-  stub_->async()->UnregisterService(&context, &request, &reply,
-                                  [&mu, &cv, &done, &status](grpc::Status s) {
-                                    status = std::move(s);
-                                    std::lock_guard<std::mutex> lock(mu);
-                                    done = true;
-                                    cv.notify_one();
-                                  });
+  auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+    stub_->async()->UnregisterService(&context, &request, &reply,
+        std::forward<decltype(handler)>(handler));
+  });
 
-  std::unique_lock<std::mutex> lock(mu);
-  while (!done) {
-    cv.wait(lock);
-  }
-
-  // Act upon its status.
   if (!status.ok()) {
     spdlog::error("UnregisterService failed: {} {}",
                   static_cast<int>(status.error_code()),
                   status.error_message());
   }
 
-  return reply;
+  co_return reply;
 }
 
-backbon::GetServiceResp BackbonClient::GetServicesList(const std::string &service_name) {
+boost::asio::awaitable<backbon::GetServiceResp> BackbonClient::GetServicesList(const std::string &service_name) {
   backbon::GetServiceReq request;
   backbon::GetServiceResp reply;
 
   request.set_service(service_name);
 
-  // Context for the client. It could be used to convey extra information to
-  // the server and/or tweak certain RPC behaviors.
   grpc::ClientContext context;
 
-  // The actual RPC.
-  std::mutex mu;
-  std::condition_variable cv;
-  bool done = false;
-  grpc::Status status;
-  stub_->async()->GetService(&context, &request, &reply,    
-                                  [&mu, &cv, &done, &status](grpc::Status s) {
-                                    status = std::move(s);
-                                    std::lock_guard<std::mutex> lock(mu);
-                                    done = true;
-                                    cv.notify_one();
-                                  });
+  auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+    stub_->async()->GetService(&context, &request, &reply,
+        std::forward<decltype(handler)>(handler));
+  });
 
-  std::unique_lock<std::mutex> lock(mu);
-  while (!done) {
-    cv.wait(lock);
-  }
-
-  // Act upon its status.
   if (!status.ok()) {
     spdlog::error("GetService failed: {} {}",
                   static_cast<int>(status.error_code()),
                   status.error_message());
   }
 
-  return reply;
+  co_return reply;
 }

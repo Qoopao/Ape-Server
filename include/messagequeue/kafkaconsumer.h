@@ -1,7 +1,8 @@
 #ifndef KAFKACONSUMER_H
 #define KAFKACONSUMER_H
-    
 
+#include "messagequeue/message_consumer.h"
+#include "messagequeue/message_handler.h"
 #include <atomic>
 #include <librdkafka/rdkafkacpp.h>
 #include <spdlog/spdlog.h>
@@ -10,7 +11,7 @@
 #include <vector>
 #include <memory>
 
-class KafkaHandler;
+class IOC_Pool;
 
 // 消费者系统级事件回调函数
 class ConsumerEventCb : public RdKafka::EventCb{
@@ -23,29 +24,32 @@ class ConsumerRebalanceCb : public RdKafka::RebalanceCb{
                             std::vector<RdKafka::TopicPartition *> &partitions) override;
 };
 
-// Kafka消费者类：依赖KafkaConnector和MsgHandler，实现消息消费
-class KafkaConsumer
+// Kafka消费者类：实现 IMessageConsumer 接口
+class KafkaConsumer : public IMessageConsumer
 {
 public:
     // 构造函数：初始化消费者（connector=连接配置，topic=订阅的主题，handler=消息处理器）
-    KafkaConsumer(const std::string& groupId, 
+    KafkaConsumer(const std::string& groupId,
                   const std::vector<std::string>& topicNames,
                   const std::string& brokerList="localhost:29092,localhost:39092,localhost:49092");
 
-    // 设置消息处理器
-    void setHandler(std::shared_ptr<KafkaHandler> handler);
+    // 设置消息处理器（实现 IMessageConsumer 接口）
+    void setHandler(std::shared_ptr<MessageHandler> handler) override;
+
+    // 设置 IOC_Pool，Kafka 消费使用独立的线程池
+    void setIOCPool(IOC_Pool *pool) override;
 
     // 消费消息
     void consumeMsg(RdKafka::Message& msg, void *opaque);
-                  
+
     // 启动消费（阻塞当前线程）
-    void start();
+    void start() override;
 
     // 优雅停止消费（设置标志，下次 poll 返回时退出循环）
-    void shutdown();
+    void shutdown() override;
 
     // 等待消费线程退出
-    void join();
+    void join() override;
 
     // 析构函数：释放资源
     ~KafkaConsumer();
@@ -67,10 +71,14 @@ private:
 
     RdKafka::KafkaConsumer *consumerInstance;
 
-    std::shared_ptr<KafkaHandler> msgHandler;
+    std::shared_ptr<MessageHandler> msgHandler;
+    IOC_Pool *ioc_pool_{nullptr};
 
     std::atomic<bool> running_{true};
     std::thread consume_thread_;
+
+    // 记录已提交的最新 offset，避免重复提交更小的 offset
+    std::atomic<int64_t> latest_committed_offset_{-1};
 };
 
 #endif

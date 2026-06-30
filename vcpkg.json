@@ -8,6 +8,7 @@
     "boost-thread",
     "boost-uuid",
     "boost-mysql",
+    "boost-redis",
     "etcd-cpp-apiv3",
     "grpc",
     "gtest",
@@ -16,7 +17,6 @@
     "nlohmann-json",
     "spdlog",
     "utf8proc",
-    "redis-plus-plus",
     "openssl",
     {
       "name": "opentelemetry-cpp",

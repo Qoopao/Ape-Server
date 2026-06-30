@@ -6,7 +6,7 @@
 #include "services/base_service.h"
 
 class AuthServiceImpl final
-    : public auth::AuthService::Service,
+    : public auth::AuthService::CallbackService,
       public BaseServiceServer<AuthServiceImpl> {
 public:
     AuthServiceImpl(const std::string &service_name,
@@ -14,19 +14,19 @@ public:
     ~AuthServiceImpl() override = default;
 
     // 用户注册
-    ::grpc::Status Register(::grpc::ServerContext *context,
-                            const ::auth::RegisterRequest *request,
-                            ::auth::AuthResponse *response) override;
+    ::grpc::ServerUnaryReactor *Register(::grpc::CallbackServerContext *context,
+                                         const ::auth::RegisterRequest *request,
+                                         ::auth::AuthResponse *response) override;
 
     // 用户登录
-    ::grpc::Status Login(::grpc::ServerContext *context,
-                         const ::auth::LoginRequest *request,
-                         ::auth::AuthResponse *response) override;
+    ::grpc::ServerUnaryReactor *Login(::grpc::CallbackServerContext *context,
+                                      const ::auth::LoginRequest *request,
+                                      ::auth::AuthResponse *response) override;
 
     // Token 验证
-    ::grpc::Status ValidateToken(::grpc::ServerContext *context,
-                                 const ::auth::ValidateTokenReq *request,
-                                 ::auth::ValidateTokenResp *response) override;
+    ::grpc::ServerUnaryReactor *ValidateToken(::grpc::CallbackServerContext *context,
+                                              const ::auth::ValidateTokenReq *request,
+                                              ::auth::ValidateTokenResp *response) override;
 
 private:
     // 生成密码哈希: SHA256(salt + password)

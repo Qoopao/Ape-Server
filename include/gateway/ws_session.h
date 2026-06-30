@@ -5,6 +5,7 @@
 #include <boost/asio/experimental/channel.hpp>
 #include <boost/beast.hpp>
 #include <grpcpp/channel.h>
+#include <deque>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -54,15 +55,23 @@ private:
     boost::asio::awaitable<void> pullAndPushOfflineMsgs();
 
     // 处理统一ACK（type=106）：在线/离线消息确认，转发给PushService
-    void handleAck(const sdkws::SdkWSReq& req);
+    boost::asio::awaitable<void> handleAck(const sdkws::SdkWSReq& req);
 
+    // 写队列：所有 WebSocket 写操作统一走此通道，避免 doReadLoop 的
+    // co_await async_write 挂起期间 asyncSend 再次写导致 soft_mutex assert
+    void startWriteQueue();
+    boost::asio::awaitable<void> doDrainWriteQueue();
+    boost::asio::awaitable<void> queuedWrite(std::shared_ptr<std::string> payload);
 
     // 连接断开时的清理回调
-    void onDisconnect();
+    boost::asio::awaitable<void> onDisconnect();
 
-    // serverMsgId → seq 临时映射，用于收到客户端 ACK 后更新 last_seq
-    // 每批50条，直到清空为止
-    std::unordered_map<std::string, int64_t> pendingOfflineMsgs_;
+    struct PendingMsg {
+        int64_t seq;
+        std::string convID;
+    };
+    // serverMsgId → (seq, convID) 映射，ACK 时按会话更新 last_seq
+    std::unordered_map<std::string, PendingMsg> pendingOfflineMsgs_;
 
     // 协程间通知通道：handleAck 清空本批次 pendingOfflineMsgs_ 后
     // 通过此 channel 唤醒 pullAndPushOfflineMsgs，替代定时器忙等轮询
@@ -70,6 +79,13 @@ private:
     std::unique_ptr<
         boost::asio::experimental::channel<void(boost::system::error_code)>>
         batch_ack_signal_;
+
+    // 写队列通道：所有 ws_.async_write 统一走此 channel，由
+    // doDrainWriteQueue 协程串行消费，避免并发写导致 soft_mutex assert
+    std::unique_ptr<boost::asio::experimental::channel<
+        void(boost::system::error_code, std::shared_ptr<std::string>)>>
+        write_queue_;
+    bool write_drain_running_{false};
 };
 
 #endif
