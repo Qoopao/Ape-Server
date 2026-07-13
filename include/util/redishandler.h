@@ -74,6 +74,26 @@ public:
     static boost::asio::awaitable<void>
         DeleteMsgConsumed(const std::string &serverMsgID);
 
+    // ── 群成员缓存 ──
+    static boost::asio::awaitable<void>
+        CacheGroupMembers(const std::string &groupID,
+                          const std::vector<std::string> &memberIDs);
+
+    static boost::asio::awaitable<std::vector<std::string>>
+        GetGroupMembersFromCache(const std::string &groupID);
+
+    static boost::asio::awaitable<int64_t>
+        GetGroupMemberCountFromCache(const std::string &groupID);
+
+    static boost::asio::awaitable<void>
+        InvalidateGroupCache(const std::string &groupID);
+
+    // ── 批量 ZADD（群消息 fan-out 用 Lua 脚本）──
+    // 将同一条 msg 批量写入多个 user_msgs:{userID} ZSET
+    static boost::asio::awaitable<long long>
+        BatchSaveOfflineMsg(const std::vector<std::string> &userIDs,
+                            const sdkws::MsgData &msg);
+
 private:
     // ZSET key for offline messages
     static std::string offlineMsgKey(const std::string &userId);

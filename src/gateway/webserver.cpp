@@ -21,6 +21,7 @@ using boost::asio::use_awaitable;
 #include "services/backbon_service/client.h"
 #include "services/msg_service/client.h"
 #include "services/push_service/client.h"
+#include "services/group_service/client.h"
 
 boost::asio::awaitable<std::string> WebServer::discover_Service(const std::string& service_name,
                                                                  const std::string& fallback) {
@@ -55,6 +56,7 @@ boost::asio::awaitable<void> WebServer::init_and_listen() {
   std::string auth_addr = co_await discover_Service("AuthService", "localhost:50051");
   std::string msg_addr = co_await discover_Service("MsgService", "localhost:50053");
   std::string push_addr = co_await discover_Service("PushService", "localhost:50054");
+  std::string group_addr = co_await discover_Service("GroupService", "localhost:50056");
 
   auth_channel_ = grpc::CreateChannel(auth_addr, grpc::InsecureChannelCredentials());
   auth_client_ = std::make_unique<AuthClient>(auth_channel_);
@@ -62,6 +64,8 @@ boost::asio::awaitable<void> WebServer::init_and_listen() {
   msg_client_ = std::make_unique<MsgClient>(msg_channel_);
   push_channel_ = grpc::CreateChannel(push_addr, grpc::InsecureChannelCredentials());
   push_client_ = std::make_unique<PushClient>(push_channel_);
+  group_channel_ = grpc::CreateChannel(group_addr, grpc::InsecureChannelCredentials());
+  group_client_ = std::make_unique<GroupClient>(group_channel_);
 
   spdlog::info("WebServer: all downstream services discovered, starting listener on port {}",
                acceptor_.local_endpoint().port());
@@ -92,9 +96,11 @@ void WebServer::stop() {
 // 处理单个 WebSocket 连接：接受 TCP 后升级为 WebSocket，然后交给 WSSession 管理
 awaitable<void> handle_ws_session(tcp::socket socket, AuthClient *auth_client,
                                   MsgClient *msg_client,
-                                  PushClient *push_client) {
+                                  PushClient *push_client,
+                                  GroupClient *group_client) {
   auto session = std::make_shared<WSSession>(std::move(socket), auth_client,
-                                              msg_client, push_client);
+                                              msg_client, push_client,
+                                              group_client);
   co_await session->start();
 }
 
@@ -106,7 +112,8 @@ asio::awaitable<void> WebServer::listener() {
       tcp::socket socket = co_await acceptor_.async_accept(use_awaitable);
       // 启动协程处理 WebSocket 连接（投递到 iocPool 的某个 worker ioc 上）
       _iocPool.spawn(handle_ws_session(std::move(socket), auth_client_.get(),
-                                       msg_client_.get(), push_client_.get()));
+                                       msg_client_.get(), push_client_.get(),
+                                       group_client_.get()));
     } catch (const std::exception &e) {
       spdlog::warn("Accept error: {}", e.what());
       // 仅当acceptor关闭时退出循环

@@ -76,6 +76,14 @@ public:
         srem(const std::string& key, const std::string& member);
     boost::asio::awaitable<long long>
         scard(const std::string& key);
+    boost::asio::awaitable<std::vector<std::string>>
+        smembers(const std::string& key);
+
+    // ── Lua 脚本 ──
+    boost::asio::awaitable<long long>
+        eval(const std::string& script,
+             const std::vector<std::string>& keys,
+             const std::vector<std::string>& args);
 
     // ── List 操作 ──
     boost::asio::awaitable<long long>

@@ -2,6 +2,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 #include <bsoncxx/types.hpp>
+#include <google/protobuf/util/json_util.h>
 #include <mongocxx/client.hpp>
 #include <mongocxx/collection.hpp>
 #include <mongocxx/exception/exception.hpp>
@@ -514,5 +515,135 @@ MongoHandler::CreateSingleChatConversationsAsync(std::string sendID,
       [sendID = std::move(sendID), recvID = std::move(recvID),
        convID = std::move(convID)]() {
         return CreateSingleChatConversations(sendID, recvID, convID);
+      });
+}
+
+// ── 创建群聊会话 ──
+
+bool MongoHandler::CreateGroupChatConversations(
+    const std::string &groupID,
+    const std::vector<std::string> &userIDs) {
+  try {
+    auto &mongoconnector = MongoConnector::instance();
+    auto client = mongoconnector.acquire_client();
+    auto collection = (*client)["IM-System"]["conversations"];
+
+    for (const auto &uid : userIDs) {
+      bsoncxx::builder::stream::document filter{};
+      filter << "ownerUserID" << uid << "conversationID" << groupID;
+
+      bsoncxx::builder::stream::document doc{};
+      doc << "ownerUserID" << uid
+          << "conversationID" << groupID
+          << "conversationType" << 2  // 群聊
+          << "userID" << uid
+          << "groupID" << groupID
+          << "isPinned" << false
+          << "isPrivateChat" << false
+          << "recvMsgOpt" << 0
+          << "groupAtType" << 0
+          << "burnDuration" << 0
+          << "minSeq" << int64_t{0}
+          << "maxSeq" << int64_t{0}
+          << "msgDestructTime" << int64_t{0}
+          << "latestMsgDestructTime" << int64_t{0}
+          << "isMsgDestruct" << false
+          << "ex"
+          << ""
+          << "attachedInfo"
+          << "";
+
+      bsoncxx::builder::stream::document update{};
+      update << "$setOnInsert" << doc.view();
+
+      mongocxx::options::update opts{};
+      opts.upsert(true);
+      collection.update_one(filter.view(), update.view(), opts);
+    }
+
+    spdlog::info("CreateGroupChatConversations: groupID={}, memberCount={}",
+                 groupID, userIDs.size());
+    return true;
+  } catch (const mongocxx::exception &e) {
+    spdlog::error("CreateGroupChatConversations exception: {}", e.what());
+    return false;
+  }
+}
+
+boost::asio::awaitable<bool>
+MongoHandler::CreateGroupChatConversationsAsync(std::string groupID,
+                                                 std::vector<std::string> userIDs) {
+  co_return co_await MongoConnector::instance().async_run(
+      [groupID = std::move(groupID),
+       userIDs = std::move(userIDs)]() {
+        return CreateGroupChatConversations(groupID, userIDs);
+      });
+}
+
+// ── 按群 ID 列表批量查询群消息 ──
+
+std::vector<sdkws::MsgData>
+MongoHandler::GetGroupMsgsBySeqFromMongo(const std::vector<std::string> &groupIDs,
+                                          int64_t afterSeq, int limit) {
+  std::vector<sdkws::MsgData> messages;
+  if (groupIDs.empty()) return messages;
+
+  try {
+    auto &mongoconnector = MongoConnector::instance();
+    auto client = mongoconnector.acquire_client();
+    auto collection = (*client)["IM-System"]["msg"];
+
+    using bsoncxx::builder::stream::document;
+    using bsoncxx::builder::stream::open_array;
+    using bsoncxx::builder::stream::close_array;
+    using bsoncxx::builder::stream::open_document;
+    using bsoncxx::builder::stream::close_document;
+
+    // Build $in array for groupIDs
+    bsoncxx::builder::stream::array group_array;
+    for (const auto &gid : groupIDs) {
+      group_array << gid;
+    }
+
+    document filter{};
+    filter << "isGroupMsg" << true
+           << "convID" << open_document
+           << "$in" << group_array.view()
+           << close_document
+           << "seq" << open_document
+           << "$gt" << afterSeq
+           << close_document;
+
+    mongocxx::options::find opts{};
+    opts.limit(limit);
+    opts.sort(document{} << "seq" << int32_t{1} << bsoncxx::builder::stream::finalize);
+
+    auto cursor = collection.find(filter.view(), opts);
+    for (auto &doc : cursor) {
+      try {
+        sdkws::MsgData msg;
+        auto json = bsoncxx::to_json(doc);
+        google::protobuf::util::JsonStringToMessage(json, &msg);
+        messages.push_back(std::move(msg));
+      } catch (const std::exception &e) {
+        spdlog::warn("GetGroupMsgsBySeqFromMongo: parse error: {}", e.what());
+      }
+    }
+
+    spdlog::debug("GetGroupMsgsBySeqFromMongo: groupIDs.size()={}, afterSeq={}, "
+                  "found={}",
+                  groupIDs.size(), afterSeq, messages.size());
+  } catch (const mongocxx::exception &e) {
+    spdlog::error("GetGroupMsgsBySeqFromMongo exception: {}", e.what());
+  }
+  return messages;
+}
+
+boost::asio::awaitable<std::vector<sdkws::MsgData>>
+MongoHandler::GetGroupMsgsBySeqFromMongoAsync(std::vector<std::string> groupIDs,
+                                               int64_t afterSeq, int limit) {
+  co_return co_await MongoConnector::instance().async_run(
+      [groupIDs = std::move(groupIDs), afterSeq, limit]() {
+        return GetGroupMsgsBySeqFromMongo(groupIDs, afterSeq, limit);
       });
 }

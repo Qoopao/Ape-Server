@@ -390,6 +390,22 @@ RedisConnector::scard(const std::string& key) {
     co_return std::get<0>(resp).value();
 }
 
+boost::asio::awaitable<std::vector<std::string>>
+RedisConnector::smembers(const std::string& key) {
+    int idx = next_idx();
+    auto& ioc = _iocPool->get_ioc(idx);
+    auto& conn = *_connections[idx];
+
+    co_await boost::asio::dispatch(
+        boost::asio::bind_executor(ioc.get_executor(), boost::asio::use_awaitable));
+
+    boost::redis::request req;
+    req.push("SMEMBERS", key);
+    boost::redis::response<std::vector<std::string>> resp;
+    co_await conn.async_exec(req, resp, boost::asio::use_awaitable);
+    co_return std::get<0>(resp).value();
+}
+
 // ── List 操作 ──
 
 boost::asio::awaitable<long long>
@@ -533,6 +549,32 @@ RedisConnector::publish(const std::string& channel, const std::string& msg) {
 
     boost::redis::request req;
     req.push("PUBLISH", channel, msg);
+    boost::redis::response<long long> resp;
+    co_await conn.async_exec(req, resp, boost::asio::use_awaitable);
+    co_return std::get<0>(resp).value();
+}
+
+// ── Lua 脚本 ──
+
+boost::asio::awaitable<long long>
+RedisConnector::eval(const std::string& script,
+                     const std::vector<std::string>& keys,
+                     const std::vector<std::string>& args) {
+    int idx = next_idx();
+    auto& ioc = _iocPool->get_ioc(idx);
+    auto& conn = *_connections[idx];
+
+    co_await boost::asio::dispatch(
+        boost::asio::bind_executor(ioc.get_executor(), boost::asio::use_awaitable));
+
+    boost::redis::request req;
+    req.push("EVAL", script, std::to_string(keys.size()));
+    for (const auto& k : keys) {
+        req.push(k);
+    }
+    for (const auto& a : args) {
+        req.push(a);
+    }
     boost::redis::response<long long> resp;
     co_await conn.async_exec(req, resp, boost::asio::use_awaitable);
     co_return std::get<0>(resp).value();

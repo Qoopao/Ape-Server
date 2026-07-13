@@ -6,6 +6,7 @@
 #include "services/backbon_service/server.h"
 #include "services/gateway_push_service/server.h"
 #include "services/msg_service/server.h"
+#include "services/group_service/server.h"
 #include "services/push_service/server.h"
 #include "util/otel_logger.h"
 #include "util/otel_metrics.h"
@@ -116,6 +117,24 @@ int main() {
                                         "GetLastMessage"});
     msg_server->Start();
 
+    // ── 3.5. 启动 GroupService，通过 BackbonService 注册到 etcd ──
+    spdlog::info("=== Starting GroupService on 0.0.0.0:50056 ===");
+    auto group_server =
+        std::make_unique<GroupServiceImpl>("GroupService", "0.0.0.0:50056");
+    group_server->EnableEtcdRegistration("localhost:50052",
+                                         {"CreateGroup",
+                                          "GetGroupInfo",
+                                          "GetGroupMembers",
+                                          "JoinGroup",
+                                          "LeaveGroup",
+                                          "InviteMembers",
+                                          "KickMembers",
+                                          "DismissGroup",
+                                          "UpdateGroupInfo",
+                                          "GetUserGroups",
+                                          "GetGroupMemberCount"});
+    group_server->Start();
+
     // ── 4. 启动 GatewayPushServer（供 PushService 通过 gRPC 调用推送至
     // WebSocket）──
     spdlog::info("=== Starting GatewayPushServer on 0.0.0.0:50055 ===");
@@ -164,6 +183,9 @@ int main() {
     }
     if (!push_server->WaitForEtcdRegistration(30)) {
       spdlog::warn("PushService etcd registration timeout or failed, continuing anyway");
+    }
+    if (!group_server->WaitForEtcdRegistration(30)) {
+      spdlog::warn("GroupService etcd registration timeout or failed, continuing anyway");
     }
     spdlog::info("=== All services registered to etcd, starting gateway ===");
 

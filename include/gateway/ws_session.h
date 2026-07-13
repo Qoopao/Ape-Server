@@ -15,6 +15,7 @@
 class AuthClient;
 class MsgClient;
 class PushClient;
+class GroupClient;
 
 namespace beast = boost::beast;
 namespace websocket = beast::websocket;
@@ -25,7 +26,8 @@ using tcp = boost::asio::ip::tcp;
 class WSSession : public std::enable_shared_from_this<WSSession> {
 public:
     explicit WSSession(tcp::socket&& socket, AuthClient* auth_client,
-                       MsgClient* msg_client, PushClient* push_client);
+                       MsgClient* msg_client, PushClient* push_client,
+                       GroupClient* group_client = nullptr);
     ~WSSession();
 
     // 启动 WebSocket 握手和消息循环（协程入口）
@@ -44,6 +46,7 @@ private:
     AuthClient* auth_client_;
     MsgClient* msg_client_;
     PushClient* push_client_;
+    GroupClient* group_client_;
 
     // 握手后等待认证帧
     boost::asio::awaitable<void> doReadAuth();

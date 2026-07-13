@@ -72,6 +72,18 @@ public:
 	                                           const std::string &convID);
 	static boost::asio::awaitable<bool> CreateSingleChatConversationsAsync(
 	    std::string sendID, std::string recvID, std::string convID);
+
+	// 创建群聊会话（为每个成员各创建一条 Conversation 记录，conversationType=2）
+	static bool CreateGroupChatConversations(const std::string &groupID,
+	                                          const std::vector<std::string> &userIDs);
+	static boost::asio::awaitable<bool> CreateGroupChatConversationsAsync(
+	    std::string groupID, std::vector<std::string> userIDs);
+
+	// 按群 ID 列表批量拉取群消息（用于 PullMessageBySeqs 冷存储回退）
+	static std::vector<sdkws::MsgData> GetGroupMsgsBySeqFromMongo(
+	    const std::vector<std::string> &groupIDs, int64_t afterSeq, int limit = 100);
+	static boost::asio::awaitable<std::vector<sdkws::MsgData>> GetGroupMsgsBySeqFromMongoAsync(
+	    std::vector<std::string> groupIDs, int64_t afterSeq, int limit = 100);
 };
 
 #endif

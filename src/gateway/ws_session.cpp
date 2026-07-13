@@ -1,12 +1,15 @@
 #include "gateway/ws_session.h"
 #include "gateway/ws_session_manager.h"
+#include "group.pb.h"
 #include "msg.pb.h"
 #include "push.pb.h"
 #include "sdkws.pb.h"
 #include "services/auth_service/client.h"
 #include "services/msg_service/client.h"
 #include "services/push_service/client.h"
+#include "services/group_service/client.h"
 #include "util/mongohandler.h"
+#include "util/mysqlhandler.h"
 #include "util/otel_tracer.h"
 #include "util/redisconnector.h"
 #include "util/redishandler.h"
@@ -21,9 +24,11 @@
 namespace asio = boost::asio;
 
 WSSession::WSSession(tcp::socket &&socket, AuthClient *auth_client,
-                     MsgClient *msg_client, PushClient *push_client)
+                     MsgClient *msg_client, PushClient *push_client,
+                     GroupClient *group_client)
     : ws_(std::move(socket)), auth_client_(auth_client),
-      msg_client_(msg_client), push_client_(push_client) {}
+      msg_client_(msg_client), push_client_(push_client),
+      group_client_(group_client) {}
 
 WSSession::~WSSession() = default;
 
@@ -334,6 +339,46 @@ asio::awaitable<void> WSSession::doReadLoop() {
       continue;
     }
 
+    // ── 群操作请求（type=201~208）──
+    // type=201: CreateGroup
+    if (reqType == 201 && group_client_) {
+      ::group::CreateGroupReq groupReq;
+      std::string respBin;
+      if (groupReq.ParseFromString(req.data())) {
+        auto resp = co_await group_client_->CreateGroup(groupReq);
+        sdkws::SdkWSResp wsResp;
+        wsResp.set_requestid(req.requestid());
+        wsResp.set_userid(userId_);
+        wsResp.set_type(201);
+        wsResp.set_data(resp.SerializeAsString());
+        respBin = wsResp.SerializeAsString();
+      }
+      if (!respBin.empty()) {
+        ws_.binary(true);
+        co_await queuedWrite(std::make_shared<std::string>(std::move(respBin)));
+      }
+      continue;
+    }
+    // type=202: JoinGroup
+    if (reqType == 202 && group_client_) {
+      ::group::JoinGroupReq joinReq;
+      std::string respBin;
+      if (joinReq.ParseFromString(req.data())) {
+        auto resp = co_await group_client_->JoinGroup(joinReq);
+        sdkws::SdkWSResp wsResp;
+        wsResp.set_requestid(req.requestid());
+        wsResp.set_userid(userId_);
+        wsResp.set_type(202);
+        wsResp.set_data(resp.SerializeAsString());
+        respBin = wsResp.SerializeAsString();
+      }
+      if (!respBin.empty()) {
+        ws_.binary(true);
+        co_await queuedWrite(std::make_shared<std::string>(std::move(respBin)));
+      }
+      continue;
+    }
+
     // 其他业务消息类型暂不做处理，仅记录日志
     spdlog::debug("WSSession: received business message from user {}: type={}, "
                   "requestId={}",
@@ -430,17 +475,46 @@ asio::awaitable<void> WSSession::pullAndPushOfflineMsgs() {
     // Redis 不足时从 MongoDB 冷存储补充（异步，避免阻塞协程线程）
     if (static_cast<int>(batchMsgs.size()) < kBatchSize) {
       int remaining = kBatchSize - static_cast<int>(batchMsgs.size());
+
+      // 单聊消息
       auto coldMsgs = co_await MongoHandler::GetMsgsBySeqFromMongoAsync(
           userId_, lastSeq, remaining);
-
-      // 回温 user_msgs ZSET：MongoDB 冷数据写回 Redis 缓存
       for (auto &msg : coldMsgs) {
         try {
           co_await RedisHandler::SaveOfflineMsg(userId_, msg);
-        } catch (const std::exception &e) {
-          // 回温失败不影响主流程
-        }
+        } catch (...) {}
         batchMsgs.push_back(std::move(msg));
+      }
+
+      // 群聊消息：查询此用户所在群的群消息
+      if (static_cast<int>(batchMsgs.size()) < kBatchSize) {
+        try {
+          auto groupIDs = co_await MySQLHandler::GetUserGroupIDs(userId_);
+          if (!groupIDs.empty()) {
+            int grpRemaining =
+                kBatchSize - static_cast<int>(batchMsgs.size());
+            auto groupMsgs =
+                co_await MongoHandler::GetGroupMsgsBySeqFromMongoAsync(
+                    groupIDs, lastSeq, grpRemaining);
+            for (auto &msg : groupMsgs) {
+              try {
+                co_await RedisHandler::SaveOfflineMsg(userId_, msg);
+              } catch (...) {}
+              batchMsgs.push_back(std::move(msg));
+            }
+            // 按 seq 排序
+            std::sort(batchMsgs.begin(), batchMsgs.end(),
+                      [](const auto &a, const auto &b) {
+                        return a.seq() < b.seq();
+                      });
+            if (static_cast<int>(batchMsgs.size()) > kBatchSize) {
+              batchMsgs.resize(kBatchSize);
+            }
+          }
+        } catch (const std::exception &e) {
+          spdlog::warn("WSSession: group msg fallback failed for user {}: {}",
+                       userId_, e.what());
+        }
       }
     }
 

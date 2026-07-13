@@ -1,0 +1,149 @@
+syntax = "proto3";
+package group;
+
+import "sdkws.proto";
+
+// ── CreateGroup ──
+message CreateGroupReq {
+  sdkws.GroupInfo groupInfo = 1;
+  repeated string initMemberIDs = 2;
+}
+
+message CreateGroupResp {
+  bool success = 1;
+  sdkws.GroupInfo groupInfo = 2;
+  string errMsg = 3;
+}
+
+// ── GetGroupInfo ──
+message GetGroupInfoReq {
+  string groupID = 1;
+}
+
+message GetGroupInfoResp {
+  bool success = 1;
+  sdkws.GroupInfo groupInfo = 2;
+  string errMsg = 3;
+}
+
+// ── GetGroupMembers ──
+message GetGroupMembersReq {
+  string groupID = 1;
+  int32 offset = 2;
+  int32 limit = 3;
+}
+
+message GetGroupMembersResp {
+  bool success = 1;
+  repeated sdkws.GroupMemberFullInfo members = 2;
+  int32 total = 3;
+  string errMsg = 4;
+}
+
+// ── JoinGroup ──
+message JoinGroupReq {
+  string groupID = 1;
+  string userID = 2;
+  string reqMsg = 3;
+  int32 joinSource = 4;
+}
+
+message JoinGroupResp {
+  bool success = 1;
+  string errMsg = 2;
+}
+
+// ── LeaveGroup ──
+message LeaveGroupReq {
+  string groupID = 1;
+  string userID = 2;
+}
+
+message LeaveGroupResp {
+  bool success = 1;
+  string errMsg = 2;
+}
+
+// ── InviteMembers ──
+message InviteMembersReq {
+  string groupID = 1;
+  repeated string userIDs = 2;
+  string inviterUserID = 3;
+}
+
+message InviteMembersResp {
+  bool success = 1;
+  repeated string failedUserIDs = 2;
+  string errMsg = 3;
+}
+
+// ── KickMembers ──
+message KickMembersReq {
+  string groupID = 1;
+  repeated string userIDs = 2;
+  string operatorUserID = 3;
+}
+
+message KickMembersResp {
+  bool success = 1;
+  repeated string failedUserIDs = 2;
+  string errMsg = 3;
+}
+
+// ── DismissGroup ──
+message DismissGroupReq {
+  string groupID = 1;
+  string operatorUserID = 2;
+}
+
+message DismissGroupResp {
+  bool success = 1;
+  string errMsg = 2;
+}
+
+// ── UpdateGroupInfo ──
+message UpdateGroupInfoReq {
+  string groupID = 1;
+  sdkws.GroupInfoForSet groupInfo = 2;
+}
+
+message UpdateGroupInfoResp {
+  bool success = 1;
+  string errMsg = 2;
+}
+
+// ── GetUserGroups ──
+message GetUserGroupsReq {
+  string userID = 1;
+}
+
+message GetUserGroupsResp {
+  bool success = 1;
+  repeated sdkws.GroupInfo groups = 2;
+  string errMsg = 3;
+}
+
+// ── GetGroupMemberCount ──
+message GetGroupMemberCountReq {
+  string groupID = 1;
+}
+
+message GetGroupMemberCountResp {
+  bool success = 1;
+  int64 count = 2;
+  string errMsg = 3;
+}
+
+service GroupService {
+  rpc CreateGroup(CreateGroupReq) returns (CreateGroupResp);
+  rpc GetGroupInfo(GetGroupInfoReq) returns (GetGroupInfoResp);
+  rpc GetGroupMembers(GetGroupMembersReq) returns (GetGroupMembersResp);
+  rpc JoinGroup(JoinGroupReq) returns (JoinGroupResp);
+  rpc LeaveGroup(LeaveGroupReq) returns (LeaveGroupResp);
+  rpc InviteMembers(InviteMembersReq) returns (InviteMembersResp);
+  rpc KickMembers(KickMembersReq) returns (KickMembersResp);
+  rpc DismissGroup(DismissGroupReq) returns (DismissGroupResp);
+  rpc UpdateGroupInfo(UpdateGroupInfoReq) returns (UpdateGroupInfoResp);
+  rpc GetUserGroups(GetUserGroupsReq) returns (GetUserGroupsResp);
+  rpc GetGroupMemberCount(GetGroupMemberCountReq) returns (GetGroupMemberCountResp);
+}

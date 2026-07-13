@@ -297,3 +297,110 @@ RedisHandler::DeleteMsgConsumed(const std::string &serverMsgID) {
     }
     co_return;
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 群成员缓存
+// ═══════════════════════════════════════════════════════════════════════════
+
+static std::string groupMembersKey(const std::string &groupID) {
+    return "group:members:" + groupID;
+}
+
+boost::asio::awaitable<void>
+RedisHandler::CacheGroupMembers(const std::string &groupID,
+                                const std::vector<std::string> &memberIDs) {
+    if (memberIDs.empty()) co_return;
+    try {
+        auto &redis = RedisConnector::instance();
+        std::string key = groupMembersKey(groupID);
+        co_await redis.del(key);
+        for (const auto &uid : memberIDs) {
+            co_await redis.sadd(key, uid);
+        }
+        co_await redis.expire(key, 1800);
+        spdlog::debug("CacheGroupMembers: group={}, count={}", groupID,
+                      memberIDs.size());
+    } catch (const std::exception &e) {
+        spdlog::error("RedisHandler::CacheGroupMembers failed: {}", e.what());
+    }
+}
+
+boost::asio::awaitable<std::vector<std::string>>
+RedisHandler::GetGroupMembersFromCache(const std::string &groupID) {
+    try {
+        auto &redis = RedisConnector::instance();
+        auto members = co_await redis.smembers(groupMembersKey(groupID));
+        co_return members;
+    } catch (const std::exception &e) {
+        spdlog::error("RedisHandler::GetGroupMembersFromCache failed: {}",
+                      e.what());
+        co_return std::vector<std::string>{};
+    }
+}
+
+boost::asio::awaitable<int64_t>
+RedisHandler::GetGroupMemberCountFromCache(const std::string &groupID) {
+    try {
+        auto &redis = RedisConnector::instance();
+        auto count = co_await redis.scard(groupMembersKey(groupID));
+        co_return count;
+    } catch (const std::exception &e) {
+        spdlog::error("RedisHandler::GetGroupMemberCountFromCache failed: {}",
+                      e.what());
+        co_return 0;
+    }
+}
+
+boost::asio::awaitable<void>
+RedisHandler::InvalidateGroupCache(const std::string &groupID) {
+    try {
+        auto &redis = RedisConnector::instance();
+        co_await redis.del(groupMembersKey(groupID));
+    } catch (const std::exception &e) {
+        spdlog::error("RedisHandler::InvalidateGroupCache failed: {}", e.what());
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 批量 ZADD — 群消息 fan-out（Lua 脚本，单次 EVAL 写入多个 ZSET）
+// ═══════════════════════════════════════════════════════════════════════════
+
+boost::asio::awaitable<long long>
+RedisHandler::BatchSaveOfflineMsg(const std::vector<std::string> &userIDs,
+                                   const sdkws::MsgData &msg) {
+    if (userIDs.empty()) co_return 0;
+
+    static const std::string kLuaScript = R"lua(
+for i = 1, #KEYS do
+    redis.call('ZADD', KEYS[i], ARGV[1], ARGV[2])
+    redis.call('EXPIRE', KEYS[i], ARGV[3])
+end
+return #KEYS
+)lua";
+
+    int64_t total = 0;
+    std::string score = std::to_string(msg.seq());
+    std::string member = serializeMsg(msg);
+    std::string ttl = std::to_string(7 * 24 * 3600);
+
+    try {
+        auto &redis = RedisConnector::instance();
+
+        static constexpr size_t kBatchSize = 500;
+        for (size_t offset = 0; offset < userIDs.size(); offset += kBatchSize) {
+            std::vector<std::string> batchKeys;
+            size_t end = std::min(offset + kBatchSize, userIDs.size());
+            for (size_t i = offset; i < end; ++i) {
+                batchKeys.push_back(offlineMsgKey(userIDs[i]));
+            }
+            std::vector<std::string> args{score, member, ttl};
+            auto batchResult = co_await redis.eval(kLuaScript, batchKeys, args);
+            total += batchResult;
+        }
+        spdlog::debug("BatchSaveOfflineMsg: {} users, written={}",
+                      userIDs.size(), total);
+    } catch (const std::exception &e) {
+        spdlog::error("RedisHandler::BatchSaveOfflineMsg failed: {}", e.what());
+    }
+    co_return total;
+}
