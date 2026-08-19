@@ -1,5 +1,5 @@
 #include "gateway/ws_session_manager.h"
-#include "util/otel_metrics.h"
+#include "om/otel_metrics.h"
 
 #include <spdlog/spdlog.h>
 

@@ -8,11 +8,11 @@
 #include "services/msg_service/client.h"
 #include "services/push_service/client.h"
 #include "services/group_service/client.h"
-#include "util/mongohandler.h"
-#include "util/mysqlhandler.h"
-#include "util/otel_tracer.h"
-#include "util/redisconnector.h"
-#include "util/redishandler.h"
+#include "storage/mongohandler.h"
+#include "storage/mysqlhandler.h"
+#include "om/otel_tracer.h"
+#include "storage/redisconnector.h"
+#include "storage/redishandler.h"
 #include <opentelemetry/trace/scope.h>
 
 #include <boost/asio/co_spawn.hpp>

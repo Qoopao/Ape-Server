@@ -1,8 +1,8 @@
 #include "services/auth_service/server.h"
 #include "user/userinfo.h"
-#include "util/mysqlconnector.h"
-#include "util/mysqlhandler.h"
-#include "util/redisconnector.h"
+#include "storage/mysqlconnector.h"
+#include "storage/mysqlhandler.h"
+#include "storage/redisconnector.h"
 #include "util/uuid.h"
 
 #include <boost/asio/co_spawn.hpp>

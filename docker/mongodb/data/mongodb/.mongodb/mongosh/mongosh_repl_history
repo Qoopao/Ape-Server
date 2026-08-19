@@ -1,0 +1,7 @@
+db.msg.getIndexes()
+db.msg.find({$or:[{serverMsgID: null},{serverMsgID: {$exists: false}}]},{_id:1, sendID:1, sendTime:1})
+},{_id:1, sendID:1, sendTime:1, clientMsgID:1})    ]        {serverMsgID: {$exists: false}}        {serverMsgID: null},    $or:[db.msg.find({
+const db = db.getSiblingDB("IM-System");
+use "IM-System"
+use "IM-System";
+quit

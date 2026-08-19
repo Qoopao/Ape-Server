@@ -4,10 +4,10 @@
 #include "services/backbon_service/client.h"
 #include "services/gateway_push_service/client.h"
 #include "services/push_service/push_msg_handler.h"
-#include "util/mongohandler.h"
-#include "util/mysqlhandler.h"
-#include "util/redisconnector.h"
-#include "util/redishandler.h"
+#include "storage/mongohandler.h"
+#include "storage/mysqlhandler.h"
+#include "storage/redisconnector.h"
+#include "storage/redishandler.h"
 #include <chrono>
 #include <spdlog/spdlog.h>
 

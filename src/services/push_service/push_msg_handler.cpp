@@ -1,11 +1,11 @@
 #include "services/push_service/push_msg_handler.h"
 #include "sdkws.pb.h"
 #include "util/grpc_async_util.h"
-#include "util/mongohandler.h"
-#include "util/otel_trace_propagation.h"
-#include "util/otel_tracer.h"
-#include "util/redisconnector.h"
-#include "util/redishandler.h"
+#include "storage/mongohandler.h"
+#include "om/otel_trace_propagation.h"
+#include "om/otel_tracer.h"
+#include "storage/redisconnector.h"
+#include "storage/redishandler.h"
 #include <format>
 #include <opentelemetry/common/attribute_value.h>
 #include <opentelemetry/trace/scope.h>
@@ -107,7 +107,7 @@ boost::asio::awaitable<void> PushHandler::handle(const std::string topic,
   } else {
     spdlog::info("PushHandler: PushMsg success, serverMsgID={}", serverMsgID);
     // 确保 Unavailable 路径处理后补写 key
-    RedisHandler::TryMarkMsgConsumed(serverMsgID);
+    co_await RedisHandler::TryMarkMsgConsumed(serverMsgID);
   }
 
   if (kafkaSpan) {

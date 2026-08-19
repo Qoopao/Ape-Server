@@ -1,6 +1,6 @@
 #include "services/group_service/client.h"
 #include "util/grpc_async_util.h"
-#include "util/otel_trace_propagation.h"
+#include "om/otel_trace_propagation.h"
 #include <grpcpp/client_context.h>
 #include <grpcpp/support/status.h>
 #include <spdlog/spdlog.h>

@@ -7,10 +7,10 @@
 #include <grpcpp/health_check_service_interface.h>
 #include <grpcpp/support/status.h>
 #include <spdlog/spdlog.h>
-#include <util/etcdconnector.h>
-#include <util/mysqlconnector.h>
-#include <util/mysqlhandler.h>
-#include <util/redisconnector.h>
+#include <storage/etcdconnector.h>
+#include <storage/mysqlconnector.h>
+#include <storage/mysqlhandler.h>
+#include <storage/redisconnector.h>
 
 #include <memory>
 #include <string>

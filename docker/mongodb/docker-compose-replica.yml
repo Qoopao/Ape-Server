@@ -1,0 +1,69 @@
+services: 
+  # MongoDB 副本集
+  mongodb-1:
+    image: mongo:7.0
+    container_name: mongodb-1
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./data/mongodb-1:/data/db
+      - ./replica-init.js:/docker-entrypoint-initdb.d/replica-init.js:ro
+    command: mongod --replSet rs0 --bind_ip_all         # 节点之间不验证身份，生产环境需要加上--keyFile
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+  mongodb-2:
+    image: mongo:7.0
+    container_name: mongodb-2
+    ports:
+      - "27019:27017"
+    volumes:
+      - ./data/mongodb-2:/data/db
+    command: mongod --replSet rs0 --bind_ip_all      
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+  mongodb-3:
+    image: mongo:7.0
+    container_name: mongodb-3
+    ports:
+      - "27020:27017"
+    volumes:
+      - ./data/mongodb-3:/data/db
+    command: mongod --replSet rs0 --bind_ip_all
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+  # MongoDB Web UI
+  mongo-express:
+    image: mongo-express:1.0.2-18
+    ports:
+      - "8081:8081"
+    container_name: ape-mongo-express
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: root      # webUI的登录用户名
+      ME_CONFIG_BASICAUTH_PASSWORD: root      # webUI的登录密码
+      ME_CONFIG_MONGODB_URL: mongodb://root:root@mongodb-1:27017,mongodb-2:27017,mongodb-3:27017/?replicaSet=rs0
+    depends_on:
+      - mongodb-1
+      - mongodb-2
+      - mongodb-3
+    networks:
+      - mongo-network
+
+
+networks:
+  mongo-network:
+    driver: bridge

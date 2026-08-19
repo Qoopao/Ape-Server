@@ -19,7 +19,7 @@
 #include <vector>
 
 #include "services/backbon_service/client.h"
-#include "util/otel_grpc_interceptor.h"
+#include "om/otel_grpc_interceptor.h"
 
 template <class ServiceType> class BaseServiceServer;
 

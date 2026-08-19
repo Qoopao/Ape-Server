@@ -1,0 +1,132 @@
+services:
+  # MongoDB 副本集
+  mongodb-1:
+    image: mongo:7.0
+    container_name: mongodb-1
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./data/mongodb-1:/data/db
+      - ./replica-init.js:/docker-entrypoint-initdb.d/replica-init.js:ro
+    command: mongod --replSet rs0 --bind_ip_all         # 节点之间不验证身份，生产环境需要加上--keyFile
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+  mongodb-2:
+    image: mongo:7.0
+    container_name: mongodb-2
+    ports:
+      - "27019:27017"
+    volumes:
+      - ./data/mongodb-2:/data/db
+    command: mongod --replSet rs0 --bind_ip_all      
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+  mongodb-3:
+    image: mongo:7.0
+    container_name: mongodb-3
+    ports:
+      - "27020:27017"
+    volumes:
+      - ./data/mongodb-3:/data/db
+    command: mongod --replSet rs0 --bind_ip_all
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+  # MongoDB 分片集群
+  mongos:
+    image: mongo:7.0
+    container_name: mongos
+    ports:
+      - "27021:27017"
+    volumes:
+      - ./sharded-init.js:/docker-entrypoint-initdb.d/sharded-init.js:ro
+    command: mongos --configdb configReplSet/mongodb-config-1:27017,mongodb-config-2:27017,mongodb-config-3:27017 --bind_ip_all
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    depends_on:
+      - mongodb-config-1
+      - mongodb-config-2
+      - mongodb-config-3
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+  mongodb-config-1:
+    image: mongo:7.0
+    container_name: mongodb-config-1
+    ports:
+      - "27022:27017"
+    volumes:
+      - ./data/mongodb_config_1:/data/db
+    command: mongod --configsvr --replSet configReplSet --bind_ip_all
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+  mongodb-config-2:
+    image: mongo:7.0
+    container_name: mongodb-config-2
+    ports:
+      - "27023:27017"
+    volumes:
+      - ./data/mongodb_config_2:/data/db
+    command: mongod --configsvr --replSet configReplSet --bind_ip_all
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+  mongodb-config-3:
+    image: mongo:7.0
+    container_name: mongodb-config-3
+    ports:
+      - "27024:27017"
+    volumes:
+      - ./data/mongodb_config_3:/data/db
+    command: mongod --configsvr --replSet configReplSet --bind_ip_all
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root      # 初始的管理员用户名
+      MONGO_INITDB_ROOT_PASSWORD: root      # 初始的管理员口令
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+  # MongoDB 管理工具
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    ports:
+      - "8082:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongos:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+    depends_on:
+      - mongos
+    restart: unless-stopped
+    networks:
+      - mongo-network
+
+networks:
+  mongo-network:
+    driver: bridge
