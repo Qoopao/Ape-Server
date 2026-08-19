@@ -93,7 +93,7 @@ start_standalone() {
         return 0
     fi
 
-    mkdir -p data/redis
+    mkdir -p redis_data_standalone
 
     $DOCKER_COMPOSE -f docker-compose-standalone.yml up -d
 

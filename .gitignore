@@ -9,7 +9,14 @@ vcpkg_installed/
 
 # etcd目录
 docker/etcd/etcd_data_*/
+docker/etcd/etcd_standalone-data/
 docker/etcd/scripts/
+
+# mongodb目录
+docker/mongodb/data/
+
+# mysql目录
+docker/mysql/data/
 
 # kafka目录
 docker/kafka/kafka-*/
@@ -21,3 +28,4 @@ docker/otel/elasticsearch_data/
 # redis目录
 docker/redis/redis_data_master/
 docker/redis/redis_data_slave_*/
+docker/redis/redis_data_standalone/
