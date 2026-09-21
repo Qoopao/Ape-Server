@@ -19,7 +19,7 @@ for service in "${SERVICES[@]}"; do
     echo ""
     echo "--- Starting $service ---"
     cd "$DOCKER_DIR/$service"
-    bash startup.sh
+    bash deploy.sh
 done
 
 echo ""

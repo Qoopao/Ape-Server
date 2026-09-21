@@ -47,6 +47,10 @@ WebServer::WebServer(int ioc_pool_size, uint16_t port,
       backbon_client_(std::move(backbon_client)) {
   // Clients 在 init_and_listen() 中异步初始化（需要 co_await 服务发现）
   spdlog::info("WebServer instance created, port {}", port);
+
+  // 初始化TLS
+  ssl_ctx_.use_certificate_chain_file("/root/ape-server/scripts/certs/server.crt");
+  ssl_ctx_.use_private_key_file("/root/ape-server/scripts/certs/server.key", asio::ssl::context::pem);
 }
 
 WebServer::~WebServer() = default;
@@ -94,13 +98,13 @@ void WebServer::stop() {
 }
 
 // 处理单个 WebSocket 连接：接受 TCP 后升级为 WebSocket，然后交给 WSSession 管理
-awaitable<void> handle_ws_session(tcp::socket socket, AuthClient *auth_client,
+awaitable<void> handle_ws_session(asio::ssl::stream<tcp::socket> stream, AuthClient *auth_client,
                                   MsgClient *msg_client,
                                   PushClient *push_client,
                                   GroupClient *group_client) {
-  auto session = std::make_shared<WSSession>(std::move(socket), auth_client,
+  auto session = std::make_shared<WSSession>(std::move(stream), auth_client,
                                               msg_client, push_client,
-                                              group_client);
+                                              group_client);  
   co_await session->start();
 }
 
@@ -110,8 +114,12 @@ asio::awaitable<void> WebServer::listener() {
     try {
       // 异步接受连接
       tcp::socket socket = co_await acceptor_.async_accept(use_awaitable);
+
+      // 用裸 socket 构造一个 ssl::stream
+      asio::ssl::stream<tcp::socket> ssl_stream(std::move(socket), ssl_ctx_);
+
       // 启动协程处理 WebSocket 连接（投递到 iocPool 的某个 worker ioc 上）
-      _iocPool.spawn(handle_ws_session(std::move(socket), auth_client_.get(),
+      _iocPool.spawn(handle_ws_session(std::move(ssl_stream), auth_client_.get(),
                                        msg_client_.get(), push_client_.get(),
                                        group_client_.get()));
     } catch (const std::exception &e) {

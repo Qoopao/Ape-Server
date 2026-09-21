@@ -23,10 +23,10 @@
 
 namespace asio = boost::asio;
 
-WSSession::WSSession(tcp::socket &&socket, AuthClient *auth_client,
+WSSession::WSSession(asio::ssl::stream<tcp::socket> &&stream, AuthClient *auth_client,
                      MsgClient *msg_client, PushClient *push_client,
                      GroupClient *group_client)
-    : ws_(std::move(socket)), auth_client_(auth_client),
+    : ws_(std::move(stream)), auth_client_(auth_client),
       msg_client_(msg_client), push_client_(push_client),
       group_client_(group_client) {}
 
@@ -40,7 +40,16 @@ boost::asio::awaitable<void> WSSession::start() {
       [self]() -> asio::awaitable<void> {
         boost::system::error_code ec;
 
-        // 1. WebSocket 握手
+         // 1. 先 TLS 握手
+        co_await self->ws_.next_layer().async_handshake(
+            asio::ssl::stream_base::server,
+            asio::redirect_error(asio::use_awaitable, ec));
+        if (ec) {
+          spdlog::error("WSSession: TLS handshake failed: {}", ec.message());
+          co_return;
+        }
+
+        // 2. 再WebSocket 握手
         co_await self->ws_.async_accept(
             asio::redirect_error(asio::use_awaitable, ec));
 
@@ -52,7 +61,7 @@ boost::asio::awaitable<void> WSSession::start() {
 
         spdlog::info(
             "WSSession: WebSocket connection accepted from {}",
-            self->ws_.next_layer().remote_endpoint().address().to_string());
+            self->ws_.next_layer().next_layer().remote_endpoint().address().to_string());
 
         // 2. 读取认证帧
         co_await self->doReadAuth();

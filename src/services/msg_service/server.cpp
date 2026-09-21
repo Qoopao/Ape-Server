@@ -1,9 +1,9 @@
 #include "services/msg_service/server.h"
 #include "messagequeue/message_producer.h"
+#include "om/otel_trace_propagation.h"
 #include "sdkws.pb.h"
 #include "storage/mongohandler.h"
 #include "storage/mysqlhandler.h"
-#include "om/otel_trace_propagation.h"
 #include "storage/redisconnector.h"
 #include "storage/redishandler.h"
 #include "util/snowflake.h"
@@ -152,8 +152,7 @@ MsgServiceImpl::PullMessageBySeqs(::grpc::CallbackServerContext *context,
           // 2b. 冷数据不足时，额外拉取群消息（此用户所在群的群消息）
           if (messages.empty()) {
             try {
-              auto groupIDs =
-                  co_await MySQLHandler::GetUserGroupIDs(userId);
+              auto groupIDs = co_await MySQLHandler::GetUserGroupIDs(userId);
               if (!groupIDs.empty()) {
                 auto groupMsgs =
                     co_await MongoHandler::GetGroupMsgsBySeqFromMongoAsync(
@@ -165,7 +164,8 @@ MsgServiceImpl::PullMessageBySeqs(::grpc::CallbackServerContext *context,
                   for (auto &msg : groupMsgs) {
                     try {
                       co_await RedisHandler::SaveOfflineMsg(userId, msg);
-                    } catch (...) {}
+                    } catch (...) {
+                    }
                     messages.push_back(std::move(msg));
                   }
                   // 按 seq 排序并截断
@@ -281,38 +281,21 @@ MsgServiceImpl::SendMessages(::grpc::CallbackServerContext *context,
             msg.set_seq(Snowflake::instance().nextId());
 
             // 存入 MongoDB
-            try {
-              if (!co_await MongoHandler::SaveMsgToMongoAsync(msg)) {
-                respInfos[index]->set_errorcode("1");
-                respInfos[index]->set_errormsg("SaveMsgToDB failed");
-                continue;
-              }
-            } catch (const std::exception &e) {
-              spdlog::error("SendMessages(group): SaveMsgToDB failed for {}: {}",
-                            msg.servermsgid(), e.what());
+            if (!co_await MongoHandler::SaveMsgToMongoAsync(msg)) {
               respInfos[index]->set_errorcode("1");
               respInfos[index]->set_errormsg("SaveMsgToDB failed");
               continue;
             }
 
             // 存入 Redis 消息缓存
-            try {
-              co_await RedisHandler::SaveMsg(msg);
-            } catch (const std::exception &e) {
-              spdlog::error("SendMessages(group): SaveMsg failed for {}: {}",
-                            msg.servermsgid(), e.what());
+            if (!co_await RedisHandler::SaveMsg(msg)) {
+              continue;
             }
 
             // 获取群成员列表（Redis 缓存优先，MySQL 兜底）
             std::vector<std::string> memberIDs;
-            try {
-              memberIDs =
-                  co_await RedisHandler::GetGroupMembersFromCache(groupID);
-            } catch (const std::exception &e) {
-              spdlog::warn("SendMessages(group): Redis member cache miss, "
-                            "fallback to MySQL, group={}",
-                            groupID);
-            }
+            memberIDs =
+                co_await RedisHandler::GetGroupMembersFromCache(groupID);
             if (memberIDs.empty()) {
               auto members =
                   co_await MySQLHandler::GetGroupMembers(groupID, 0, 10000);
@@ -326,27 +309,15 @@ MsgServiceImpl::SendMessages(::grpc::CallbackServerContext *context,
 
             // 批量 fan-out 到每个成员的 user_msgs ZSET（Lua EVAL）
             if (!memberIDs.empty()) {
-              try {
-                co_await RedisHandler::BatchSaveOfflineMsg(memberIDs, msg);
-              } catch (const std::exception &e) {
-                spdlog::error(
-                    "SendMessages(group): BatchSaveOfflineMsg failed for {}: {}",
-                    msg.servermsgid(), e.what());
-              }
+              co_await RedisHandler::BatchSaveOfflineMsg(memberIDs, msg);
             }
 
             // 确保群会话存在
-            try {
-              bool exists = co_await MongoHandler::DoesConversationExistAsync(
-                  groupID);
-              if (!exists) {
-                co_await MongoHandler::CreateGroupChatConversationsAsync(
-                    groupID, memberIDs);
-              }
-            } catch (const std::exception &e) {
-              spdlog::error(
-                  "SendMessages(group): conversation init failed for {}: {}",
-                  groupID, e.what());
+            bool exists =
+                co_await MongoHandler::DoesConversationExistAsync(groupID);
+            if (!exists) {
+              co_await MongoHandler::CreateGroupChatConversationsAsync(
+                  groupID, memberIDs);
             }
 
             // 大小群分流：小群投递 Kafka 走实时推送，大群纯 pull
@@ -371,106 +342,76 @@ MsgServiceImpl::SendMessages(::grpc::CallbackServerContext *context,
               }
             }
           } else {
-          // ── 单聊消息处理逻辑 ──
-          std::string normalizedConvID =
-              (msg.sendid() < msg.recvid()) ? msg.sendid() + "_" + msg.recvid()
-                                            : msg.recvid() + "_" + msg.sendid();
-          msg.set_convid(normalizedConvID);
+            // ── 单聊消息处理逻辑 ──
+            std::string normalizedConvID =
+                (msg.sendid() < msg.recvid())
+                    ? msg.sendid() + "_" + msg.recvid()
+                    : msg.recvid() + "_" + msg.sendid();
+            msg.set_convid(normalizedConvID);
 
-          // 为响应生成服务器消息id
-          msg.set_servermsgid(uuid::newone_str());
+            // 为响应生成服务器消息id
+            msg.set_servermsgid(uuid::newone_str());
 
-          // 使用 Snowflake 生成递增唯一的会话内seq
-          msg.set_seq(Snowflake::instance().nextId());
+            // 使用 Snowflake 生成递增唯一的会话内seq
+            msg.set_seq(Snowflake::instance().nextId());
 
-          // 将消息存入数据库
-          try {
+            // 将消息存入数据库
             bool saveResult = co_await MongoHandler::SaveMsgToMongoAsync(msg);
             if (!saveResult) {
               respInfos[index]->set_errorcode("1");
               respInfos[index]->set_errormsg("SaveMsgToDB failed");
               continue;
             }
-          } catch (const std::exception &e) {
-            spdlog::error("SendMessages: SaveMsgToDB failed for msg {}: {}",
-                          msg.servermsgid(), e.what());
-            respInfos[index]->set_errorcode("1");
-            respInfos[index]->set_errormsg("SaveMsgToDB failed");
-            continue;
-          }
 
-          // 将消息放入缓存
-          try {
-            bool saveResult = co_await RedisHandler::SaveMsg(msg);
-            if (!saveResult) {
+            // 将消息放入缓存
+            bool saveRedisResult = co_await RedisHandler::SaveMsg(msg);
+            if (!saveRedisResult) {
               respInfos[index]->set_errorcode("1");
               respInfos[index]->set_errormsg("SaveMsgInfo failed");
               continue;
             }
-          } catch (const std::exception &e) {
-            spdlog::error("SendMessages: SaveMsgInfo failed for msg {}: {}",
-                          msg.servermsgid(), e.what());
-            respInfos[index]->set_errorcode("1");
-            respInfos[index]->set_errormsg("SaveMsgInfo failed");
-            continue;
-          }
 
-          // 全量消息 ZADD 进 user_msgs:{recvID} ZSET（在线/离线统一）
-          // score=seq，member=base64(MsgData)，TTL 7天
-          // 后续 PullMessageBySeqs 和 pullAndPushOfflineMsgs 均可从这里拉取
-          try {
+            // 全量消息 ZADD 进 user_msgs:{recvID} ZSET（在线/离线统一）
+            // score=seq，member=base64(MsgData)，TTL 7天
+            // 后续 PullMessageBySeqs 和 pullAndPushOfflineMsgs 均可从这里拉取
             co_await RedisHandler::SaveOfflineMsg(msg.recvid(), msg);
-          } catch (const std::exception &e) {
-            spdlog::error(
-                "SendMessages: SaveOfflineMsg(ZADD) failed for msg {}: {}",
-                msg.servermsgid(), e.what());
-            // 不影响主流程，MongoDB 冷存储兜底
-          }
 
-          // 如果会话不存在就创建会话，后续这里应该要归入会话服务
-          try {
+            // 如果会话不存在就创建会话，后续这里应该要归入会话服务
             bool exists =
                 co_await MongoHandler::DoesConversationExistAsync(msg.convid());
             if (!exists) {
               co_await MongoHandler::CreateSingleChatConversationsAsync(
                   msg.sendid(), msg.recvid(), msg.convid());
             }
-          } catch (const std::exception &e) {
-            spdlog::error(
-                "SendMessages: conversation init failed for convID={}: {}",
-                msg.convid(), e.what());
-          }
 
-          
-
-          // 投递到消息队列，单聊群聊的逻辑不同
-          try {
-            std::string tp = ape::otel::EncodeCurrentTraceParent();
-            std::string payload =
-                tp.empty() ? msg.servermsgid() : tp + "|" + msg.servermsgid();
-            std::string key_copy = msg.convid();
-            bool sendResult =
-                producer->deliver(key_copy, payload.data(), payload.size());
-            if (!sendResult) {
+            // 投递到消息队列，单聊群聊的逻辑不同
+            try {
+              std::string tp = ape::otel::EncodeCurrentTraceParent();
+              std::string payload =
+                  tp.empty() ? msg.servermsgid() : tp + "|" + msg.servermsgid();
+              std::string key_copy = msg.convid();
+              bool sendResult =
+                  producer->deliver(key_copy, payload.data(), payload.size());
+              if (!sendResult) {
+                respInfos[index]->set_errorcode("1");
+                respInfos[index]->set_errormsg("MsgToMQ failed");
+                continue;
+              }
+            } catch (const std::exception &e) {
+              spdlog::error("SendMessages: MsgToMQ failed for msg {}: {}",
+                            msg.servermsgid(), e.what());
               respInfos[index]->set_errorcode("1");
               respInfos[index]->set_errormsg("MsgToMQ failed");
               continue;
             }
-          } catch (const std::exception &e) {
-            spdlog::error("SendMessages: MsgToMQ failed for msg {}: {}",
-                          msg.servermsgid(), e.what());
-            respInfos[index]->set_errorcode("1");
-            respInfos[index]->set_errormsg("MsgToMQ failed");
-            continue;
+
+            // 设置返回消息
+            respInfos[index]->mutable_msg()->CopyFrom(msg);
           }
 
-          // 设置返回消息
-          respInfos[index]->mutable_msg()->CopyFrom(msg);
+          reactor->Finish(::grpc::Status::OK);
         }
-
-        reactor->Finish(::grpc::Status::OK);
-      }
-    },
+      },
       boost::asio::detached);
 
   return reactor;

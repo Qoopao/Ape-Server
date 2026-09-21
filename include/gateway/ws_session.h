@@ -2,6 +2,7 @@
 #define WS_SESSION_H
 
 #include <boost/asio.hpp>
+#include <boost/beast/websocket/ssl.hpp>
 #include <boost/asio/experimental/channel.hpp>
 #include <boost/beast.hpp>
 #include <grpcpp/channel.h>
@@ -25,7 +26,7 @@ using tcp = boost::asio::ip::tcp;
 // 由 Gateway 创建，注册到 WSSessionManager 中
 class WSSession : public std::enable_shared_from_this<WSSession> {
 public:
-    explicit WSSession(tcp::socket&& socket, AuthClient* auth_client,
+    explicit WSSession(boost::asio::ssl::stream<tcp::socket> &&stream, AuthClient* auth_client,
                        MsgClient* msg_client, PushClient* push_client,
                        GroupClient* group_client = nullptr);
     ~WSSession();
@@ -40,7 +41,7 @@ public:
     const std::string& userId() const { return userId_; }
 
 private:
-    websocket::stream<tcp::socket> ws_;
+    websocket::stream<boost::asio::ssl::stream<tcp::socket>> ws_;       // ssl
     std::string userId_;
     beast::flat_buffer buffer_;
     AuthClient* auth_client_;

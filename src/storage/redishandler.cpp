@@ -74,7 +74,7 @@ RedisHandler::SaveMsg(const sdkws::MsgData &msg) {
         co_await redis.set(key, value);
         co_return true;
     } catch (const std::exception &e) {
-        spdlog::error("RedisHandler::SaveMsg failed: {}", e.what());
+        spdlog::error("RedisHandler::SaveMsg failed: {}, serverMsgID={}", e.what(), msg.servermsgid());
         co_return false;
     }
 }
@@ -126,7 +126,7 @@ RedisHandler::SaveOfflineMsg(const std::string &userId,
 
         co_return true;
     } catch (const std::exception &e) {
-        spdlog::error("RedisHandler::SaveOfflineMsg failed: {}", e.what());
+        spdlog::error("RedisHandler::SaveOfflineMsg failed: {}, serverMsgID={}", e.what(), msg.servermsgid());
         co_return false;
     }
 }
@@ -400,7 +400,7 @@ return #KEYS
         spdlog::debug("BatchSaveOfflineMsg: {} users, written={}",
                       userIDs.size(), total);
     } catch (const std::exception &e) {
-        spdlog::error("RedisHandler::BatchSaveOfflineMsg failed: {}", e.what());
+        spdlog::error("RedisHandler::BatchSaveOfflineMsg failed: {}, serverMsgID = {}", e.what(), msg.servermsgid());
     }
     co_return total;
 }

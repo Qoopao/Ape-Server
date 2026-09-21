@@ -7,6 +7,7 @@
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/post.hpp>
 #include <boost/beast.hpp>
+#include <boost/asio/ssl.hpp>
 
 #include <climits>
 #include <cstdint>
@@ -55,6 +56,7 @@ public:
   boost::asio::awaitable<void> init_and_listen();
 
 private:
+  boost::asio::ssl::context ssl_ctx_{boost::asio::ssl::context::tls_server};
   IOC_Pool _iocPool;
   boost::asio::io_context _acceptor_ioc;
   boost::asio::ip::tcp::acceptor acceptor_;

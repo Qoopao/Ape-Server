@@ -452,7 +452,7 @@ bool MongoHandler::DoesConversationExist(const std::string &convID) {
     int64_t count = collection.count_documents(filter.view());
     return count > 0;
   } catch (const mongocxx::exception &e) {
-    spdlog::error("DoesConversationExist exception: {}", e.what());
+    spdlog::error("DoesConversationExist exception: {}, convID = {} ", e.what(), convID);
     return false;
   }
 }
@@ -560,7 +560,7 @@ bool MongoHandler::CreateGroupChatConversations(
                  groupID, userIDs.size());
     return true;
   } catch (const mongocxx::exception &e) {
-    spdlog::error("CreateGroupChatConversations exception: {}", e.what());
+    spdlog::error("CreateGroupChatConversations exception: {}, convID = {}", e.what(), groupID);
     return false;
   }
 }
