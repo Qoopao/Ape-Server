@@ -1,4 +1,5 @@
 #include "services/auth_service/client.h"
+#include "apeauth.pb.h"
 #include "util/grpc_async_util.h"
 #include <spdlog/spdlog.h>
 
@@ -21,6 +22,29 @@ boost::asio::awaitable<::auth::ValidateTokenResp> AuthClient::ValidateToken(cons
     }
 
     spdlog::info("AuthClient::ValidateToken: token={}, valid={}, user={}",
-                 token, response.valid(), response.username());
+                 token, response.valid(), response.account());
+    co_return response;
+}
+
+
+boost::asio::awaitable<::auth::AuthResponse> AuthClient::LoginRequest(const uint64_t account, const std::string& plainPWD) {
+    ::auth::LoginRequest request;
+    request.set_account(account);
+    request.set_password(plainPWD);
+
+    ::auth::AuthResponse response;
+    grpc::ClientContext context;
+
+    auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+        stub_->async()->Login(&context, &request, &response,
+            std::forward<decltype(handler)>(handler));
+    });
+
+    if (!status.ok()) {
+        spdlog::error("AuthClient::Login gRPC failed: {}", status.error_message());
+        co_return response;
+    }
+
+    spdlog::info("AuthClient::Login: account={} {}, reason: {}",response.user().account(),response.success(),response.errormessage());
     co_return response;
 }

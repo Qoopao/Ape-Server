@@ -3,6 +3,7 @@
 
 #include "gateway_push.grpc.pb.h"
 #include "gateway_push.pb.h"
+#include <cstdint>
 #include <grpcpp/channel.h>
 #include <boost/asio/awaitable.hpp>
 #include <memory>
@@ -12,7 +13,7 @@ class GatewayPushClient {
 public:
     GatewayPushClient(std::shared_ptr<grpc::Channel> channel);
 
-    boost::asio::awaitable<bool> PushToUser(const std::string &userID,
+    boost::asio::awaitable<bool> PushToUser(const uint64_t account,
                                             const std::string &msgDataBin,
                                             const std::string &conversationID);
 

@@ -262,20 +262,14 @@ class UserOnlineStatus final : public ::google::protobuf::Message
   ::google::protobuf::RepeatedField<::int32_t>* _internal_mutable_platformids();
 
   public:
-  // string userID = 1;
+  // uint64 userID = 1;
   void clear_userid() ;
-  const std::string& userid() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_userid(Arg_&& arg, Args_... args);
-  std::string* mutable_userid();
-  PROTOBUF_NODISCARD std::string* release_userid();
-  void set_allocated_userid(std::string* value);
+  ::uint64_t userid() const;
+  void set_userid(::uint64_t value);
 
   private:
-  const std::string& _internal_userid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_userid(
-      const std::string& value);
-  std::string* _internal_mutable_userid();
+  ::uint64_t _internal_userid() const;
+  void _internal_set_userid(::uint64_t value);
 
   public:
   // bool isOnline = 2;
@@ -314,7 +308,7 @@ class UserOnlineStatus final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       3, 5, 0,
-      39, 2>
+      0, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -333,7 +327,7 @@ class UserOnlineStatus final : public ::google::protobuf::Message
                           const UserOnlineStatus& from_msg);
     ::google::protobuf::RepeatedField<::int32_t> platformids_;
     ::google::protobuf::internal::CachedSize _platformids_cached_byte_size_;
-    ::google::protobuf::internal::ArenaStringPtr userid_;
+    ::uint64_t userid_;
     bool isonline_;
     ::int32_t connectioncount_;
     ::int64_t lastactivetime_;
@@ -1843,26 +1837,22 @@ class CheckUserOnlineReq final : public ::google::protobuf::Message
   enum : int {
     kUserIDsFieldNumber = 1,
   };
-  // repeated string userIDs = 1;
+  // repeated uint64 userIDs = 1;
   int userids_size() const;
   private:
   int _internal_userids_size() const;
 
   public:
   void clear_userids() ;
-  const std::string& userids(int index) const;
-  std::string* mutable_userids(int index);
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_userids(int index, Arg_&& value, Args_... args);
-  std::string* add_userids();
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void add_userids(Arg_&& value, Args_... args);
-  const ::google::protobuf::RepeatedPtrField<std::string>& userids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* mutable_userids();
+  ::uint64_t userids(int index) const;
+  void set_userids(int index, ::uint64_t value);
+  void add_userids(::uint64_t value);
+  const ::google::protobuf::RepeatedField<::uint64_t>& userids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* mutable_userids();
 
   private:
-  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_userids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_userids();
+  const ::google::protobuf::RepeatedField<::uint64_t>& _internal_userids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* _internal_mutable_userids();
 
   public:
   // @@protoc_insertion_point(class_scope:backbon.CheckUserOnlineReq)
@@ -1871,7 +1861,7 @@ class CheckUserOnlineReq final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       0, 1, 0,
-      42, 2>
+      0, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -1888,7 +1878,8 @@ class CheckUserOnlineReq final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const CheckUserOnlineReq& from_msg);
-    ::google::protobuf::RepeatedPtrField<std::string> userids_;
+    ::google::protobuf::RepeatedField<::uint64_t> userids_;
+    ::google::protobuf::internal::CachedSize _userids_cached_byte_size_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -2109,7 +2100,7 @@ class CheckUserOnlineResp final : public ::google::protobuf::Message
 
 // CheckUserOnlineReq
 
-// repeated string userIDs = 1;
+// repeated uint64 userIDs = 1;
 inline int CheckUserOnlineReq::_internal_userids_size() const {
   return _internal_userids().size();
 }
@@ -2120,55 +2111,36 @@ inline void CheckUserOnlineReq::clear_userids() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.userids_.Clear();
 }
-inline std::string* CheckUserOnlineReq::add_userids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  std::string* _s = _internal_mutable_userids()->Add();
-  // @@protoc_insertion_point(field_add_mutable:backbon.CheckUserOnlineReq.userIDs)
-  return _s;
-}
-inline const std::string& CheckUserOnlineReq::userids(int index) const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t CheckUserOnlineReq::userids(int index) const {
   // @@protoc_insertion_point(field_get:backbon.CheckUserOnlineReq.userIDs)
   return _internal_userids().Get(index);
 }
-inline std::string* CheckUserOnlineReq::mutable_userids(int index)
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable:backbon.CheckUserOnlineReq.userIDs)
-  return _internal_mutable_userids()->Mutable(index);
-}
-template <typename Arg_, typename... Args_>
-inline void CheckUserOnlineReq::set_userids(int index, Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::AssignToString(
-      *_internal_mutable_userids()->Mutable(index),
-      std::forward<Arg_>(value), args... );
+inline void CheckUserOnlineReq::set_userids(int index, ::uint64_t value) {
+  _internal_mutable_userids()->Set(index, value);
   // @@protoc_insertion_point(field_set:backbon.CheckUserOnlineReq.userIDs)
 }
-template <typename Arg_, typename... Args_>
-inline void CheckUserOnlineReq::add_userids(Arg_&& value, Args_... args) {
+inline void CheckUserOnlineReq::add_userids(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::google::protobuf::internal::AddToRepeatedPtrField(*_internal_mutable_userids(),
-                               std::forward<Arg_>(value),
-                               args... );
+  _internal_mutable_userids()->Add(value);
   // @@protoc_insertion_point(field_add:backbon.CheckUserOnlineReq.userIDs)
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-CheckUserOnlineReq::userids() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline const ::google::protobuf::RepeatedField<::uint64_t>& CheckUserOnlineReq::userids() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_list:backbon.CheckUserOnlineReq.userIDs)
   return _internal_userids();
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-CheckUserOnlineReq::mutable_userids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::google::protobuf::RepeatedField<::uint64_t>* CheckUserOnlineReq::mutable_userids()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_mutable_list:backbon.CheckUserOnlineReq.userIDs)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _internal_mutable_userids();
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
+inline const ::google::protobuf::RepeatedField<::uint64_t>&
 CheckUserOnlineReq::_internal_userids() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.userids_;
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-CheckUserOnlineReq::_internal_mutable_userids() {
+inline ::google::protobuf::RepeatedField<::uint64_t>* CheckUserOnlineReq::_internal_mutable_userids() {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return &_impl_.userids_;
 }
@@ -2230,52 +2202,26 @@ CheckUserOnlineResp::_internal_mutable_statuses() {
 
 // UserOnlineStatus
 
-// string userID = 1;
+// uint64 userID = 1;
 inline void UserOnlineStatus::clear_userid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.ClearToEmpty();
+  _impl_.userid_ = ::uint64_t{0u};
 }
-inline const std::string& UserOnlineStatus::userid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t UserOnlineStatus::userid() const {
   // @@protoc_insertion_point(field_get:backbon.UserOnlineStatus.userID)
   return _internal_userid();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void UserOnlineStatus::set_userid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+inline void UserOnlineStatus::set_userid(::uint64_t value) {
+  _internal_set_userid(value);
   // @@protoc_insertion_point(field_set:backbon.UserOnlineStatus.userID)
 }
-inline std::string* UserOnlineStatus::mutable_userid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_userid();
-  // @@protoc_insertion_point(field_mutable:backbon.UserOnlineStatus.userID)
-  return _s;
-}
-inline const std::string& UserOnlineStatus::_internal_userid() const {
+inline ::uint64_t UserOnlineStatus::_internal_userid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.userid_.Get();
+  return _impl_.userid_;
 }
-inline void UserOnlineStatus::_internal_set_userid(const std::string& value) {
+inline void UserOnlineStatus::_internal_set_userid(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.Set(value, GetArena());
-}
-inline std::string* UserOnlineStatus::_internal_mutable_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.userid_.Mutable( GetArena());
-}
-inline std::string* UserOnlineStatus::release_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:backbon.UserOnlineStatus.userID)
-  return _impl_.userid_.Release();
-}
-inline void UserOnlineStatus::set_allocated_userid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.userid_.IsDefault()) {
-    _impl_.userid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:backbon.UserOnlineStatus.userID)
+  _impl_.userid_ = value;
 }
 
 // bool isOnline = 2;

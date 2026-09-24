@@ -8,6 +8,7 @@
 #include "storage/redishandler.h"
 #include "util/snowflake.h"
 #include "util/uuid.h"
+#include <cstdint>
 #include <spdlog/spdlog.h>
 #include <string>
 
@@ -81,7 +82,7 @@ MsgServiceImpl::PullMessageBySeqs(::grpc::CallbackServerContext *context,
   // request.seqRanges: repeated SeqRange (每个包含 conversationID, begin, end,
   // num) 对每个会话拉取 seq 在 [begin, end] 范围的消息，最多 num 条
 
-  std::string userId = request->userid();
+  uint64_t userId = request->userid();
   auto seqRanges = request->seqranges(); // 拷贝 protobuf repeated 字段
 
   spdlog::info("PullMessageBySeqs: userId={}, numRanges={}", userId,
@@ -274,7 +275,7 @@ MsgServiceImpl::SendMessages(::grpc::CallbackServerContext *context,
             // convID 就是 groupID（客户端传入）
             std::string groupID = msg.convid();
             msg.set_convid(groupID);
-            msg.set_recvid(groupID);
+            // msg.set_recvid(groupID);
 
             // 生成服务器消息 ID 和序列号
             msg.set_servermsgid(uuid::newone_str());
@@ -293,7 +294,7 @@ MsgServiceImpl::SendMessages(::grpc::CallbackServerContext *context,
             }
 
             // 获取群成员列表（Redis 缓存优先，MySQL 兜底）
-            std::vector<std::string> memberIDs;
+            std::vector<uint64_t> memberIDs;
             memberIDs =
                 co_await RedisHandler::GetGroupMembersFromCache(groupID);
             if (memberIDs.empty()) {
@@ -345,8 +346,8 @@ MsgServiceImpl::SendMessages(::grpc::CallbackServerContext *context,
             // ── 单聊消息处理逻辑 ──
             std::string normalizedConvID =
                 (msg.sendid() < msg.recvid())
-                    ? msg.sendid() + "_" + msg.recvid()
-                    : msg.recvid() + "_" + msg.sendid();
+                    ? std::to_string(msg.sendid()) + "_" + std::to_string(msg.recvid())
+                    : std::to_string(msg.recvid()) + "_" + std::to_string(msg.sendid());
             msg.set_convid(normalizedConvID);
 
             // 为响应生成服务器消息id

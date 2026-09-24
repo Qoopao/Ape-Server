@@ -94,6 +94,6 @@ add_executable(main src/main.cpp)
 target_link_libraries(main PRIVATE ape-server)
 
 # 压测工具
-add_executable(stress_test test/stress_test.cpp)
-target_include_directories(stress_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src/proto)
-target_link_libraries(stress_test PRIVATE ape-server)
+# add_executable(stress_test test/stress_test.cpp)
+# target_include_directories(stress_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src/proto)
+# target_link_libraries(stress_test PRIVATE ape-server)

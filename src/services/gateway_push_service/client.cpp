@@ -8,7 +8,7 @@
 GatewayPushClient::GatewayPushClient(std::shared_ptr<grpc::Channel> channel)
     : stub_(gateway_push::GatewayPushService::NewStub(channel)) {}
 
-boost::asio::awaitable<bool> GatewayPushClient::PushToUser(const std::string &userID,
+boost::asio::awaitable<bool> GatewayPushClient::PushToUser(const uint64_t account,
                                                            const std::string &msgDataBin,
                                                            const std::string &conversationID) {
     grpc::ClientContext ctx;
@@ -16,7 +16,7 @@ boost::asio::awaitable<bool> GatewayPushClient::PushToUser(const std::string &us
     ctx.set_deadline(std::chrono::system_clock::now() + std::chrono::seconds(2));
 
     gateway_push::PushToUserReq req;
-    req.set_userid(userID);
+    req.set_account(account);
     req.set_msgdatabin(msgDataBin);
     req.set_conversationid(conversationID);
 
@@ -29,7 +29,7 @@ boost::asio::awaitable<bool> GatewayPushClient::PushToUser(const std::string &us
 
     if (!status.ok()) {
         spdlog::error("GatewayPushClient::PushToUser: gRPC call failed for user={}, error={}",
-                      userID, status.error_message());
+                      account, status.error_message());
         co_return false;
     }
 

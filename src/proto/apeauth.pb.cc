@@ -28,13 +28,9 @@ namespace auth {
 
 inline constexpr ValidateTokenResp::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : user_id_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        username_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        expires_at_{::int64_t{0}},
+      : userid_{::uint64_t{0u}},
+        account_{::uint64_t{0u}},
+        expiresat_{::int64_t{0}},
         valid_{false},
         _cached_size_{0} {}
 
@@ -87,13 +83,13 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr RegisterRequest::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : username_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        password_(
+      : phone_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         nickname_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        password_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         _cached_size_{0} {}
@@ -120,12 +116,10 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr LoginRequest::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : username_(
+      : password_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        password_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        account_{::uint64_t{0u}},
         _cached_size_{0} {}
 
 template <typename>
@@ -150,15 +144,14 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr AuthUser::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : user_id_(
+      : nickname_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        username_(
+        phone_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        nickname_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
+        account_{::uint64_t{0u}},
         _cached_size_{0} {}
 
 template <typename>
@@ -184,17 +177,17 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr AuthResponse::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
-        error_code_(
+        errorcode_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        error_message_(
+        errormessage_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         token_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         user_{nullptr},
-        expires_at_{::int64_t{0}},
+        expiresat_{::int64_t{0}},
         success_{false} {}
 
 template <typename>
@@ -232,9 +225,9 @@ const ::uint32_t
         ~0u,  // no _inlined_string_donated_
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::auth::RegisterRequest, _impl_.username_),
-        PROTOBUF_FIELD_OFFSET(::auth::RegisterRequest, _impl_.password_),
+        PROTOBUF_FIELD_OFFSET(::auth::RegisterRequest, _impl_.phone_),
         PROTOBUF_FIELD_OFFSET(::auth::RegisterRequest, _impl_.nickname_),
+        PROTOBUF_FIELD_OFFSET(::auth::RegisterRequest, _impl_.password_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::auth::LoginRequest, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -243,7 +236,7 @@ const ::uint32_t
         ~0u,  // no _inlined_string_donated_
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::auth::LoginRequest, _impl_.username_),
+        PROTOBUF_FIELD_OFFSET(::auth::LoginRequest, _impl_.account_),
         PROTOBUF_FIELD_OFFSET(::auth::LoginRequest, _impl_.password_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenReq, _internal_metadata_),
@@ -263,9 +256,9 @@ const ::uint32_t
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.valid_),
-        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.user_id_),
-        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.username_),
-        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.expires_at_),
+        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.userid_),
+        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.account_),
+        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.expiresat_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -274,9 +267,10 @@ const ::uint32_t
         ~0u,  // no _inlined_string_donated_
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _impl_.user_id_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _impl_.username_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _impl_.userid_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _impl_.account_),
         PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _impl_.nickname_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _impl_.phone_),
         PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_._has_bits_),
         PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -286,10 +280,10 @@ const ::uint32_t
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.success_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.error_code_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.error_message_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.errorcode_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.errormessage_),
         PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.token_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.expires_at_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.expiresat_),
         PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.user_),
         ~0u,
         ~0u,
@@ -306,7 +300,7 @@ static const ::_pbi::MigrationSchema
         {21, -1, -1, sizeof(::auth::ValidateTokenReq)},
         {30, -1, -1, sizeof(::auth::ValidateTokenResp)},
         {42, -1, -1, sizeof(::auth::AuthUser)},
-        {53, 67, -1, sizeof(::auth::AuthResponse)},
+        {54, 68, -1, sizeof(::auth::AuthResponse)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::auth::_RegisterRequest_default_instance_._instance,
@@ -318,29 +312,29 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_apeauth_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
-    "\n\rapeauth.proto\022\004auth\"G\n\017RegisterRequest"
-    "\022\020\n\010username\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\022\020\n\010"
-    "nickname\030\003 \001(\t\"2\n\014LoginRequest\022\020\n\010userna"
-    "me\030\001 \001(\t\022\020\n\010password\030\002 \001(\t\"!\n\020ValidateTo"
-    "kenReq\022\r\n\005token\030\001 \001(\t\"Y\n\021ValidateTokenRe"
-    "sp\022\r\n\005valid\030\001 \001(\010\022\017\n\007user_id\030\002 \001(\t\022\020\n\010us"
-    "ername\030\003 \001(\t\022\022\n\nexpires_at\030\004 \001(\003\"\?\n\010Auth"
-    "User\022\017\n\007user_id\030\001 \001(\t\022\020\n\010username\030\002 \001(\t\022"
-    "\020\n\010nickname\030\003 \001(\t\"\213\001\n\014AuthResponse\022\017\n\007su"
-    "ccess\030\001 \001(\010\022\022\n\nerror_code\030\002 \001(\t\022\025\n\rerror"
-    "_message\030\003 \001(\t\022\r\n\005token\030\004 \001(\t\022\022\n\nexpires"
-    "_at\030\005 \001(\003\022\034\n\004user\030\006 \001(\0132\016.auth.AuthUser2"
-    "\267\001\n\013AuthService\0225\n\010Register\022\025.auth.Regis"
-    "terRequest\032\022.auth.AuthResponse\022/\n\005Login\022"
-    "\022.auth.LoginRequest\032\022.auth.AuthResponse\022"
-    "@\n\rValidateToken\022\026.auth.ValidateTokenReq"
-    "\032\027.auth.ValidateTokenRespb\006proto3"
+    "\n\rapeauth.proto\022\004auth\"D\n\017RegisterRequest"
+    "\022\r\n\005phone\030\001 \001(\t\022\020\n\010nickname\030\002 \001(\t\022\020\n\010pas"
+    "sword\030\003 \001(\t\"1\n\014LoginRequest\022\017\n\007account\030\001"
+    " \001(\004\022\020\n\010password\030\002 \001(\t\"!\n\020ValidateTokenR"
+    "eq\022\r\n\005token\030\001 \001(\t\"V\n\021ValidateTokenResp\022\r"
+    "\n\005valid\030\001 \001(\010\022\016\n\006userID\030\002 \001(\004\022\017\n\007account"
+    "\030\003 \001(\004\022\021\n\texpiresAt\030\004 \001(\003\"L\n\010AuthUser\022\016\n"
+    "\006userID\030\001 \001(\004\022\017\n\007account\030\002 \001(\004\022\020\n\010nickna"
+    "me\030\003 \001(\t\022\r\n\005phone\030\004 \001(\t\"\210\001\n\014AuthResponse"
+    "\022\017\n\007success\030\001 \001(\010\022\021\n\terrorCode\030\002 \001(\t\022\024\n\014"
+    "errorMessage\030\003 \001(\t\022\r\n\005token\030\004 \001(\t\022\021\n\texp"
+    "iresAt\030\005 \001(\003\022\034\n\004user\030\006 \001(\0132\016.auth.AuthUs"
+    "er2\267\001\n\013AuthService\0225\n\010Register\022\025.auth.Re"
+    "gisterRequest\032\022.auth.AuthResponse\022/\n\005Log"
+    "in\022\022.auth.LoginRequest\032\022.auth.AuthRespon"
+    "se\022@\n\rValidateToken\022\026.auth.ValidateToken"
+    "Req\032\027.auth.ValidateTokenRespb\006proto3"
 };
 static ::absl::once_flag descriptor_table_apeauth_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_apeauth_2eproto = {
     false,
     false,
-    673,
+    676,
     descriptor_table_protodef_apeauth_2eproto,
     "apeauth.proto",
     &descriptor_table_apeauth_2eproto_once,
@@ -372,9 +366,9 @@ RegisterRequest::RegisterRequest(::google::protobuf::Arena* arena)
 inline PROTOBUF_NDEBUG_INLINE RegisterRequest::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::auth::RegisterRequest& from_msg)
-      : username_(arena, from.username_),
-        password_(arena, from.password_),
+      : phone_(arena, from.phone_),
         nickname_(arena, from.nickname_),
+        password_(arena, from.password_),
         _cached_size_{0} {}
 
 RegisterRequest::RegisterRequest(
@@ -396,9 +390,9 @@ RegisterRequest::RegisterRequest(
 inline PROTOBUF_NDEBUG_INLINE RegisterRequest::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : username_(arena),
-        password_(arena),
+      : phone_(arena),
         nickname_(arena),
+        password_(arena),
         _cached_size_{0} {}
 
 inline void RegisterRequest::SharedCtor(::_pb::Arena* arena) {
@@ -412,9 +406,9 @@ inline void RegisterRequest::SharedDtor(MessageLite& self) {
   RegisterRequest& this_ = static_cast<RegisterRequest&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.username_.Destroy();
-  this_._impl_.password_.Destroy();
+  this_._impl_.phone_.Destroy();
   this_._impl_.nickname_.Destroy();
+  this_._impl_.password_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -454,7 +448,7 @@ const ::google::protobuf::internal::ClassData* RegisterRequest::GetClassData() c
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 53, 2> RegisterRequest::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 0, 50, 2> RegisterRequest::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -473,35 +467,35 @@ const ::_pbi::TcParseTable<2, 3, 0, 53, 2> RegisterRequest::_table_ = {
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
-    // string username = 1;
+    // string phone = 1;
     {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.username_)}},
-    // string password = 2;
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.phone_)}},
+    // string nickname = 2;
     {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.password_)}},
-    // string nickname = 3;
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.nickname_)}},
+    // string password = 3;
     {::_pbi::TcParser::FastUS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.nickname_)}},
+     {26, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.password_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // string username = 1;
-    {PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.username_), 0, 0,
+    // string phone = 1;
+    {PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.phone_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string password = 2;
-    {PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.password_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string nickname = 3;
+    // string nickname = 2;
     {PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.nickname_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string password = 3;
+    {PROTOBUF_FIELD_OFFSET(RegisterRequest, _impl_.password_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\24\10\10\10\0\0\0\0"
+    "\24\5\10\10\0\0\0\0"
     "auth.RegisterRequest"
-    "username"
-    "password"
+    "phone"
     "nickname"
+    "password"
   }},
 };
 
@@ -512,9 +506,9 @@ PROTOBUF_NOINLINE void RegisterRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.username_.ClearToEmpty();
-  _impl_.password_.ClearToEmpty();
+  _impl_.phone_.ClearToEmpty();
   _impl_.nickname_.ClearToEmpty();
+  _impl_.password_.ClearToEmpty();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -533,27 +527,27 @@ PROTOBUF_NOINLINE void RegisterRequest::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string username = 1;
-          if (!this_._internal_username().empty()) {
-            const std::string& _s = this_._internal_username();
+          // string phone = 1;
+          if (!this_._internal_phone().empty()) {
+            const std::string& _s = this_._internal_phone();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.RegisterRequest.username");
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.RegisterRequest.phone");
             target = stream->WriteStringMaybeAliased(1, _s, target);
           }
 
-          // string password = 2;
-          if (!this_._internal_password().empty()) {
-            const std::string& _s = this_._internal_password();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.RegisterRequest.password");
-            target = stream->WriteStringMaybeAliased(2, _s, target);
-          }
-
-          // string nickname = 3;
+          // string nickname = 2;
           if (!this_._internal_nickname().empty()) {
             const std::string& _s = this_._internal_nickname();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
                 _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.RegisterRequest.nickname");
+            target = stream->WriteStringMaybeAliased(2, _s, target);
+          }
+
+          // string password = 3;
+          if (!this_._internal_password().empty()) {
+            const std::string& _s = this_._internal_password();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.RegisterRequest.password");
             target = stream->WriteStringMaybeAliased(3, _s, target);
           }
 
@@ -582,20 +576,20 @@ PROTOBUF_NOINLINE void RegisterRequest::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string username = 1;
-            if (!this_._internal_username().empty()) {
+            // string phone = 1;
+            if (!this_._internal_phone().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_username());
+                                              this_._internal_phone());
             }
-            // string password = 2;
-            if (!this_._internal_password().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_password());
-            }
-            // string nickname = 3;
+            // string nickname = 2;
             if (!this_._internal_nickname().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_nickname());
+            }
+            // string password = 3;
+            if (!this_._internal_password().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_password());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -610,14 +604,14 @@ void RegisterRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, const :
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_username().empty()) {
-    _this->_internal_set_username(from._internal_username());
-  }
-  if (!from._internal_password().empty()) {
-    _this->_internal_set_password(from._internal_password());
+  if (!from._internal_phone().empty()) {
+    _this->_internal_set_phone(from._internal_phone());
   }
   if (!from._internal_nickname().empty()) {
     _this->_internal_set_nickname(from._internal_nickname());
+  }
+  if (!from._internal_password().empty()) {
+    _this->_internal_set_password(from._internal_password());
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -635,9 +629,9 @@ void RegisterRequest::InternalSwap(RegisterRequest* PROTOBUF_RESTRICT other) {
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.username_, &other->_impl_.username_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.password_, &other->_impl_.password_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.phone_, &other->_impl_.phone_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.nickname_, &other->_impl_.nickname_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.password_, &other->_impl_.password_, arena);
 }
 
 ::google::protobuf::Metadata RegisterRequest::GetMetadata() const {
@@ -661,8 +655,7 @@ LoginRequest::LoginRequest(::google::protobuf::Arena* arena)
 inline PROTOBUF_NDEBUG_INLINE LoginRequest::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::auth::LoginRequest& from_msg)
-      : username_(arena, from.username_),
-        password_(arena, from.password_),
+      : password_(arena, from.password_),
         _cached_size_{0} {}
 
 LoginRequest::LoginRequest(
@@ -678,18 +671,19 @@ LoginRequest::LoginRequest(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.account_ = from._impl_.account_;
 
   // @@protoc_insertion_point(copy_constructor:auth.LoginRequest)
 }
 inline PROTOBUF_NDEBUG_INLINE LoginRequest::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : username_(arena),
-        password_(arena),
+      : password_(arena),
         _cached_size_{0} {}
 
 inline void LoginRequest::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.account_ = {};
 }
 LoginRequest::~LoginRequest() {
   // @@protoc_insertion_point(destructor:auth.LoginRequest)
@@ -699,7 +693,6 @@ inline void LoginRequest::SharedDtor(MessageLite& self) {
   LoginRequest& this_ = static_cast<LoginRequest&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.username_.Destroy();
   this_._impl_.password_.Destroy();
   this_._impl_.~Impl_();
 }
@@ -740,7 +733,7 @@ const ::google::protobuf::internal::ClassData* LoginRequest::GetClassData() cons
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 42, 2> LoginRequest::_table_ = {
+const ::_pbi::TcParseTable<1, 2, 0, 34, 2> LoginRequest::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -761,24 +754,23 @@ const ::_pbi::TcParseTable<1, 2, 0, 42, 2> LoginRequest::_table_ = {
     // string password = 2;
     {::_pbi::TcParser::FastUS1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_.password_)}},
-    // string username = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_.username_)}},
+    // uint64 account = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(LoginRequest, _impl_.account_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_.account_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // string username = 1;
-    {PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_.username_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // uint64 account = 1;
+    {PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_.account_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // string password = 2;
     {PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_.password_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\21\10\10\0\0\0\0\0"
+    "\21\0\10\0\0\0\0\0"
     "auth.LoginRequest"
-    "username"
     "password"
   }},
 };
@@ -790,8 +782,8 @@ PROTOBUF_NOINLINE void LoginRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.username_.ClearToEmpty();
   _impl_.password_.ClearToEmpty();
+  _impl_.account_ = ::uint64_t{0u};
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -810,12 +802,11 @@ PROTOBUF_NOINLINE void LoginRequest::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string username = 1;
-          if (!this_._internal_username().empty()) {
-            const std::string& _s = this_._internal_username();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.LoginRequest.username");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 account = 1;
+          if (this_._internal_account() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_account(), target);
           }
 
           // string password = 2;
@@ -851,15 +842,15 @@ PROTOBUF_NOINLINE void LoginRequest::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string username = 1;
-            if (!this_._internal_username().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_username());
-            }
             // string password = 2;
             if (!this_._internal_password().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_password());
+            }
+            // uint64 account = 1;
+            if (this_._internal_account() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_account());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -874,11 +865,11 @@ void LoginRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::go
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_username().empty()) {
-    _this->_internal_set_username(from._internal_username());
-  }
   if (!from._internal_password().empty()) {
     _this->_internal_set_password(from._internal_password());
+  }
+  if (from._internal_account() != 0) {
+    _this->_impl_.account_ = from._impl_.account_;
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -896,8 +887,8 @@ void LoginRequest::InternalSwap(LoginRequest* PROTOBUF_RESTRICT other) {
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.username_, &other->_impl_.username_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.password_, &other->_impl_.password_, arena);
+        swap(_impl_.account_, other->_impl_.account_);
 }
 
 ::google::protobuf::Metadata LoginRequest::GetMetadata() const {
@@ -1149,50 +1140,23 @@ ValidateTokenResp::ValidateTokenResp(::google::protobuf::Arena* arena)
   SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:auth.ValidateTokenResp)
 }
-inline PROTOBUF_NDEBUG_INLINE ValidateTokenResp::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from, const ::auth::ValidateTokenResp& from_msg)
-      : user_id_(arena, from.user_id_),
-        username_(arena, from.username_),
-        _cached_size_{0} {}
-
 ValidateTokenResp::ValidateTokenResp(
-    ::google::protobuf::Arena* arena,
-    const ValidateTokenResp& from)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, _class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  ValidateTokenResp* const _this = this;
-  (void)_this;
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-  ::memcpy(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, expires_at_),
-           reinterpret_cast<const char *>(&from._impl_) +
-               offsetof(Impl_, expires_at_),
-           offsetof(Impl_, valid_) -
-               offsetof(Impl_, expires_at_) +
-               sizeof(Impl_::valid_));
-
-  // @@protoc_insertion_point(copy_constructor:auth.ValidateTokenResp)
+    ::google::protobuf::Arena* arena, const ValidateTokenResp& from)
+    : ValidateTokenResp(arena) {
+  MergeFrom(from);
 }
 inline PROTOBUF_NDEBUG_INLINE ValidateTokenResp::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : user_id_(arena),
-        username_(arena),
-        _cached_size_{0} {}
+      : _cached_size_{0} {}
 
 inline void ValidateTokenResp::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
   ::memset(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, expires_at_),
+               offsetof(Impl_, userid_),
            0,
            offsetof(Impl_, valid_) -
-               offsetof(Impl_, expires_at_) +
+               offsetof(Impl_, userid_) +
                sizeof(Impl_::valid_));
 }
 ValidateTokenResp::~ValidateTokenResp() {
@@ -1203,8 +1167,6 @@ inline void ValidateTokenResp::SharedDtor(MessageLite& self) {
   ValidateTokenResp& this_ = static_cast<ValidateTokenResp&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.user_id_.Destroy();
-  this_._impl_.username_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -1213,7 +1175,7 @@ inline void* ValidateTokenResp::PlacementNew_(const void*, void* mem,
   return ::new (mem) ValidateTokenResp(arena);
 }
 constexpr auto ValidateTokenResp::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(ValidateTokenResp),
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(ValidateTokenResp),
                                             alignof(ValidateTokenResp));
 }
 PROTOBUF_CONSTINIT
@@ -1244,7 +1206,7 @@ const ::google::protobuf::internal::ClassData* ValidateTokenResp::GetClassData()
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 0, 46, 2> ValidateTokenResp::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 0, 0, 2> ValidateTokenResp::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -1262,40 +1224,36 @@ const ::_pbi::TcParseTable<2, 4, 0, 46, 2> ValidateTokenResp::_table_ = {
     ::_pbi::TcParser::GetTable<::auth::ValidateTokenResp>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // int64 expires_at = 4;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ValidateTokenResp, _impl_.expires_at_), 63>(),
-     {32, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.expires_at_)}},
+    // int64 expiresAt = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ValidateTokenResp, _impl_.expiresat_), 63>(),
+     {32, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.expiresat_)}},
     // bool valid = 1;
     {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ValidateTokenResp, _impl_.valid_), 63>(),
      {8, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.valid_)}},
-    // string user_id = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.user_id_)}},
-    // string username = 3;
-    {::_pbi::TcParser::FastUS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.username_)}},
+    // uint64 userID = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ValidateTokenResp, _impl_.userid_), 63>(),
+     {16, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.userid_)}},
+    // uint64 account = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ValidateTokenResp, _impl_.account_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.account_)}},
   }}, {{
     65535, 65535
   }}, {{
     // bool valid = 1;
     {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.valid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kBool)},
-    // string user_id = 2;
-    {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.user_id_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string username = 3;
-    {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.username_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // int64 expires_at = 4;
-    {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.expires_at_), 0, 0,
+    // uint64 userID = 2;
+    {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.userid_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
+    // uint64 account = 3;
+    {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.account_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
+    // int64 expiresAt = 4;
+    {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.expiresat_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
   }},
   // no aux_entries
   {{
-    "\26\0\7\10\0\0\0\0"
-    "auth.ValidateTokenResp"
-    "user_id"
-    "username"
   }},
 };
 
@@ -1306,11 +1264,9 @@ PROTOBUF_NOINLINE void ValidateTokenResp::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.user_id_.ClearToEmpty();
-  _impl_.username_.ClearToEmpty();
-  ::memset(&_impl_.expires_at_, 0, static_cast<::size_t>(
+  ::memset(&_impl_.userid_, 0, static_cast<::size_t>(
       reinterpret_cast<char*>(&_impl_.valid_) -
-      reinterpret_cast<char*>(&_impl_.expires_at_)) + sizeof(_impl_.valid_));
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.valid_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -1336,27 +1292,25 @@ PROTOBUF_NOINLINE void ValidateTokenResp::Clear() {
                 1, this_._internal_valid(), target);
           }
 
-          // string user_id = 2;
-          if (!this_._internal_user_id().empty()) {
-            const std::string& _s = this_._internal_user_id();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.ValidateTokenResp.user_id");
-            target = stream->WriteStringMaybeAliased(2, _s, target);
+          // uint64 userID = 2;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                2, this_._internal_userid(), target);
           }
 
-          // string username = 3;
-          if (!this_._internal_username().empty()) {
-            const std::string& _s = this_._internal_username();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.ValidateTokenResp.username");
-            target = stream->WriteStringMaybeAliased(3, _s, target);
+          // uint64 account = 3;
+          if (this_._internal_account() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                3, this_._internal_account(), target);
           }
 
-          // int64 expires_at = 4;
-          if (this_._internal_expires_at() != 0) {
+          // int64 expiresAt = 4;
+          if (this_._internal_expiresat() != 0) {
             target = ::google::protobuf::internal::WireFormatLite::
                 WriteInt64ToArrayWithField<4>(
-                    stream, this_._internal_expires_at(), target);
+                    stream, this_._internal_expiresat(), target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -1384,20 +1338,20 @@ PROTOBUF_NOINLINE void ValidateTokenResp::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string user_id = 2;
-            if (!this_._internal_user_id().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_user_id());
+            // uint64 userID = 2;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
-            // string username = 3;
-            if (!this_._internal_username().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_username());
+            // uint64 account = 3;
+            if (this_._internal_account() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_account());
             }
-            // int64 expires_at = 4;
-            if (this_._internal_expires_at() != 0) {
+            // int64 expiresAt = 4;
+            if (this_._internal_expiresat() != 0) {
               total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
-                  this_._internal_expires_at());
+                  this_._internal_expiresat());
             }
             // bool valid = 1;
             if (this_._internal_valid() != 0) {
@@ -1416,14 +1370,14 @@ void ValidateTokenResp::MergeImpl(::google::protobuf::MessageLite& to_msg, const
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_user_id().empty()) {
-    _this->_internal_set_user_id(from._internal_user_id());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
-  if (!from._internal_username().empty()) {
-    _this->_internal_set_username(from._internal_username());
+  if (from._internal_account() != 0) {
+    _this->_impl_.account_ = from._impl_.account_;
   }
-  if (from._internal_expires_at() != 0) {
-    _this->_impl_.expires_at_ = from._impl_.expires_at_;
+  if (from._internal_expiresat() != 0) {
+    _this->_impl_.expiresat_ = from._impl_.expiresat_;
   }
   if (from._internal_valid() != 0) {
     _this->_impl_.valid_ = from._impl_.valid_;
@@ -1441,17 +1395,13 @@ void ValidateTokenResp::CopyFrom(const ValidateTokenResp& from) {
 
 void ValidateTokenResp::InternalSwap(ValidateTokenResp* PROTOBUF_RESTRICT other) {
   using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_id_, &other->_impl_.user_id_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.username_, &other->_impl_.username_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.valid_)
       + sizeof(ValidateTokenResp::_impl_.valid_)
-      - PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.expires_at_)>(
-          reinterpret_cast<char*>(&_impl_.expires_at_),
-          reinterpret_cast<char*>(&other->_impl_.expires_at_));
+      - PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
 ::google::protobuf::Metadata ValidateTokenResp::GetMetadata() const {
@@ -1475,9 +1425,8 @@ AuthUser::AuthUser(::google::protobuf::Arena* arena)
 inline PROTOBUF_NDEBUG_INLINE AuthUser::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::auth::AuthUser& from_msg)
-      : user_id_(arena, from.user_id_),
-        username_(arena, from.username_),
-        nickname_(arena, from.nickname_),
+      : nickname_(arena, from.nickname_),
+        phone_(arena, from.phone_),
         _cached_size_{0} {}
 
 AuthUser::AuthUser(
@@ -1493,19 +1442,31 @@ AuthUser::AuthUser(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, userid_),
+           offsetof(Impl_, account_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::account_));
 
   // @@protoc_insertion_point(copy_constructor:auth.AuthUser)
 }
 inline PROTOBUF_NDEBUG_INLINE AuthUser::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : user_id_(arena),
-        username_(arena),
-        nickname_(arena),
+      : nickname_(arena),
+        phone_(arena),
         _cached_size_{0} {}
 
 inline void AuthUser::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           0,
+           offsetof(Impl_, account_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::account_));
 }
 AuthUser::~AuthUser() {
   // @@protoc_insertion_point(destructor:auth.AuthUser)
@@ -1515,9 +1476,8 @@ inline void AuthUser::SharedDtor(MessageLite& self) {
   AuthUser& this_ = static_cast<AuthUser&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.user_id_.Destroy();
-  this_._impl_.username_.Destroy();
   this_._impl_.nickname_.Destroy();
+  this_._impl_.phone_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -1557,15 +1517,15 @@ const ::google::protobuf::internal::ClassData* AuthUser::GetClassData() const {
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 45, 2> AuthUser::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 0, 35, 2> AuthUser::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    3, 24,  // max_field_number, fast_idx_mask
+    4, 24,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967288,  // skipmap
+    4294967280,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    3,  // num_field_entries
+    4,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
@@ -1575,36 +1535,40 @@ const ::_pbi::TcParseTable<2, 3, 0, 45, 2> AuthUser::_table_ = {
     ::_pbi::TcParser::GetTable<::auth::AuthUser>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    {::_pbi::TcParser::MiniParse, {}},
-    // string user_id = 1;
+    // string phone = 4;
     {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.user_id_)}},
-    // string username = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.username_)}},
+     {34, 63, 0, PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.phone_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AuthUser, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.userid_)}},
+    // uint64 account = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AuthUser, _impl_.account_), 63>(),
+     {16, 63, 0, PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.account_)}},
     // string nickname = 3;
     {::_pbi::TcParser::FastUS1,
      {26, 63, 0, PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.nickname_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // string user_id = 1;
-    {PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.user_id_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string username = 2;
-    {PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.username_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // uint64 userID = 1;
+    {PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.userid_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
+    // uint64 account = 2;
+    {PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.account_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // string nickname = 3;
     {PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.nickname_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string phone = 4;
+    {PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.phone_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\15\7\10\10\0\0\0\0"
+    "\15\0\0\10\5\0\0\0"
     "auth.AuthUser"
-    "user_id"
-    "username"
     "nickname"
+    "phone"
   }},
 };
 
@@ -1615,9 +1579,11 @@ PROTOBUF_NOINLINE void AuthUser::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.user_id_.ClearToEmpty();
-  _impl_.username_.ClearToEmpty();
   _impl_.nickname_.ClearToEmpty();
+  _impl_.phone_.ClearToEmpty();
+  ::memset(&_impl_.userid_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.account_) -
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.account_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -1636,20 +1602,18 @@ PROTOBUF_NOINLINE void AuthUser::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string user_id = 1;
-          if (!this_._internal_user_id().empty()) {
-            const std::string& _s = this_._internal_user_id();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthUser.user_id");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
-          // string username = 2;
-          if (!this_._internal_username().empty()) {
-            const std::string& _s = this_._internal_username();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthUser.username");
-            target = stream->WriteStringMaybeAliased(2, _s, target);
+          // uint64 account = 2;
+          if (this_._internal_account() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                2, this_._internal_account(), target);
           }
 
           // string nickname = 3;
@@ -1658,6 +1622,14 @@ PROTOBUF_NOINLINE void AuthUser::Clear() {
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
                 _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthUser.nickname");
             target = stream->WriteStringMaybeAliased(3, _s, target);
+          }
+
+          // string phone = 4;
+          if (!this_._internal_phone().empty()) {
+            const std::string& _s = this_._internal_phone();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthUser.phone");
+            target = stream->WriteStringMaybeAliased(4, _s, target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -1685,20 +1657,25 @@ PROTOBUF_NOINLINE void AuthUser::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string user_id = 1;
-            if (!this_._internal_user_id().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_user_id());
-            }
-            // string username = 2;
-            if (!this_._internal_username().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_username());
-            }
             // string nickname = 3;
             if (!this_._internal_nickname().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_nickname());
+            }
+            // string phone = 4;
+            if (!this_._internal_phone().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_phone());
+            }
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
+            }
+            // uint64 account = 2;
+            if (this_._internal_account() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_account());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -1713,14 +1690,17 @@ void AuthUser::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_user_id().empty()) {
-    _this->_internal_set_user_id(from._internal_user_id());
-  }
-  if (!from._internal_username().empty()) {
-    _this->_internal_set_username(from._internal_username());
-  }
   if (!from._internal_nickname().empty()) {
     _this->_internal_set_nickname(from._internal_nickname());
+  }
+  if (!from._internal_phone().empty()) {
+    _this->_internal_set_phone(from._internal_phone());
+  }
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
+  }
+  if (from._internal_account() != 0) {
+    _this->_impl_.account_ = from._impl_.account_;
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1738,9 +1718,14 @@ void AuthUser::InternalSwap(AuthUser* PROTOBUF_RESTRICT other) {
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_id_, &other->_impl_.user_id_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.username_, &other->_impl_.username_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.nickname_, &other->_impl_.nickname_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.phone_, &other->_impl_.phone_, arena);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.account_)
+      + sizeof(AuthUser::_impl_.account_)
+      - PROTOBUF_FIELD_OFFSET(AuthUser, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
 ::google::protobuf::Metadata AuthUser::GetMetadata() const {
@@ -1770,8 +1755,8 @@ inline PROTOBUF_NDEBUG_INLINE AuthResponse::Impl_::Impl_(
     const Impl_& from, const ::auth::AuthResponse& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        error_code_(arena, from.error_code_),
-        error_message_(arena, from.error_message_),
+        errorcode_(arena, from.errorcode_),
+        errormessage_(arena, from.errormessage_),
         token_(arena, from.token_) {}
 
 AuthResponse::AuthResponse(
@@ -1792,11 +1777,11 @@ AuthResponse::AuthResponse(
                               arena, *from._impl_.user_)
                         : nullptr;
   ::memcpy(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, expires_at_),
+               offsetof(Impl_, expiresat_),
            reinterpret_cast<const char *>(&from._impl_) +
-               offsetof(Impl_, expires_at_),
+               offsetof(Impl_, expiresat_),
            offsetof(Impl_, success_) -
-               offsetof(Impl_, expires_at_) +
+               offsetof(Impl_, expiresat_) +
                sizeof(Impl_::success_));
 
   // @@protoc_insertion_point(copy_constructor:auth.AuthResponse)
@@ -1805,8 +1790,8 @@ inline PROTOBUF_NDEBUG_INLINE AuthResponse::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : _cached_size_{0},
-        error_code_(arena),
-        error_message_(arena),
+        errorcode_(arena),
+        errormessage_(arena),
         token_(arena) {}
 
 inline void AuthResponse::SharedCtor(::_pb::Arena* arena) {
@@ -1826,8 +1811,8 @@ inline void AuthResponse::SharedDtor(MessageLite& self) {
   AuthResponse& this_ = static_cast<AuthResponse&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.error_code_.Destroy();
-  this_._impl_.error_message_.Destroy();
+  this_._impl_.errorcode_.Destroy();
+  this_._impl_.errormessage_.Destroy();
   this_._impl_.token_.Destroy();
   delete this_._impl_.user_;
   this_._impl_.~Impl_();
@@ -1869,7 +1854,7 @@ const ::google::protobuf::internal::ClassData* AuthResponse::GetClassData() cons
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 6, 1, 54, 2> AuthResponse::_table_ = {
+const ::_pbi::TcParseTable<3, 6, 1, 52, 2> AuthResponse::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_._has_bits_),
     0, // no _extensions_
@@ -1891,18 +1876,18 @@ const ::_pbi::TcParseTable<3, 6, 1, 54, 2> AuthResponse::_table_ = {
     // bool success = 1;
     {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AuthResponse, _impl_.success_), 63>(),
      {8, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.success_)}},
-    // string error_code = 2;
+    // string errorCode = 2;
     {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.error_code_)}},
-    // string error_message = 3;
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.errorcode_)}},
+    // string errorMessage = 3;
     {::_pbi::TcParser::FastUS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.error_message_)}},
+     {26, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.errormessage_)}},
     // string token = 4;
     {::_pbi::TcParser::FastUS1,
      {34, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.token_)}},
-    // int64 expires_at = 5;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AuthResponse, _impl_.expires_at_), 63>(),
-     {40, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.expires_at_)}},
+    // int64 expiresAt = 5;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AuthResponse, _impl_.expiresat_), 63>(),
+     {40, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.expiresat_)}},
     // .auth.AuthUser user = 6;
     {::_pbi::TcParser::FastMtS1,
      {50, 0, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.user_)}},
@@ -1913,17 +1898,17 @@ const ::_pbi::TcParseTable<3, 6, 1, 54, 2> AuthResponse::_table_ = {
     // bool success = 1;
     {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.success_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kBool)},
-    // string error_code = 2;
-    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.error_code_), -1, 0,
+    // string errorCode = 2;
+    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.errorcode_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string error_message = 3;
-    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.error_message_), -1, 0,
+    // string errorMessage = 3;
+    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.errormessage_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string token = 4;
     {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.token_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // int64 expires_at = 5;
-    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.expires_at_), -1, 0,
+    // int64 expiresAt = 5;
+    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.expiresat_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
     // .auth.AuthUser user = 6;
     {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.user_), _Internal::kHasBitsOffset + 0, 0,
@@ -1931,10 +1916,10 @@ const ::_pbi::TcParseTable<3, 6, 1, 54, 2> AuthResponse::_table_ = {
   }}, {{
     {::_pbi::TcParser::GetTable<::auth::AuthUser>()},
   }}, {{
-    "\21\0\12\15\5\0\0\0"
+    "\21\0\11\14\5\0\0\0"
     "auth.AuthResponse"
-    "error_code"
-    "error_message"
+    "errorCode"
+    "errorMessage"
     "token"
   }},
 };
@@ -1946,17 +1931,17 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.error_code_.ClearToEmpty();
-  _impl_.error_message_.ClearToEmpty();
+  _impl_.errorcode_.ClearToEmpty();
+  _impl_.errormessage_.ClearToEmpty();
   _impl_.token_.ClearToEmpty();
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     ABSL_DCHECK(_impl_.user_ != nullptr);
     _impl_.user_->Clear();
   }
-  ::memset(&_impl_.expires_at_, 0, static_cast<::size_t>(
+  ::memset(&_impl_.expiresat_, 0, static_cast<::size_t>(
       reinterpret_cast<char*>(&_impl_.success_) -
-      reinterpret_cast<char*>(&_impl_.expires_at_)) + sizeof(_impl_.success_));
+      reinterpret_cast<char*>(&_impl_.expiresat_)) + sizeof(_impl_.success_));
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -1983,19 +1968,19 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
                 1, this_._internal_success(), target);
           }
 
-          // string error_code = 2;
-          if (!this_._internal_error_code().empty()) {
-            const std::string& _s = this_._internal_error_code();
+          // string errorCode = 2;
+          if (!this_._internal_errorcode().empty()) {
+            const std::string& _s = this_._internal_errorcode();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthResponse.error_code");
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthResponse.errorCode");
             target = stream->WriteStringMaybeAliased(2, _s, target);
           }
 
-          // string error_message = 3;
-          if (!this_._internal_error_message().empty()) {
-            const std::string& _s = this_._internal_error_message();
+          // string errorMessage = 3;
+          if (!this_._internal_errormessage().empty()) {
+            const std::string& _s = this_._internal_errormessage();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthResponse.error_message");
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthResponse.errorMessage");
             target = stream->WriteStringMaybeAliased(3, _s, target);
           }
 
@@ -2007,11 +1992,11 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
             target = stream->WriteStringMaybeAliased(4, _s, target);
           }
 
-          // int64 expires_at = 5;
-          if (this_._internal_expires_at() != 0) {
+          // int64 expiresAt = 5;
+          if (this_._internal_expiresat() != 0) {
             target = ::google::protobuf::internal::WireFormatLite::
                 WriteInt64ToArrayWithField<5>(
-                    stream, this_._internal_expires_at(), target);
+                    stream, this_._internal_expiresat(), target);
           }
 
           cached_has_bits = this_._impl_._has_bits_[0];
@@ -2047,15 +2032,15 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string error_code = 2;
-            if (!this_._internal_error_code().empty()) {
+            // string errorCode = 2;
+            if (!this_._internal_errorcode().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_error_code());
+                                              this_._internal_errorcode());
             }
-            // string error_message = 3;
-            if (!this_._internal_error_message().empty()) {
+            // string errorMessage = 3;
+            if (!this_._internal_errormessage().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_error_message());
+                                              this_._internal_errormessage());
             }
             // string token = 4;
             if (!this_._internal_token().empty()) {
@@ -2072,10 +2057,10 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
             }
           }
            {
-            // int64 expires_at = 5;
-            if (this_._internal_expires_at() != 0) {
+            // int64 expiresAt = 5;
+            if (this_._internal_expiresat() != 0) {
               total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
-                  this_._internal_expires_at());
+                  this_._internal_expiresat());
             }
             // bool success = 1;
             if (this_._internal_success() != 0) {
@@ -2095,11 +2080,11 @@ void AuthResponse::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::go
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_error_code().empty()) {
-    _this->_internal_set_error_code(from._internal_error_code());
+  if (!from._internal_errorcode().empty()) {
+    _this->_internal_set_errorcode(from._internal_errorcode());
   }
-  if (!from._internal_error_message().empty()) {
-    _this->_internal_set_error_message(from._internal_error_message());
+  if (!from._internal_errormessage().empty()) {
+    _this->_internal_set_errormessage(from._internal_errormessage());
   }
   if (!from._internal_token().empty()) {
     _this->_internal_set_token(from._internal_token());
@@ -2114,8 +2099,8 @@ void AuthResponse::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::go
       _this->_impl_.user_->MergeFrom(*from._impl_.user_);
     }
   }
-  if (from._internal_expires_at() != 0) {
-    _this->_impl_.expires_at_ = from._impl_.expires_at_;
+  if (from._internal_expiresat() != 0) {
+    _this->_impl_.expiresat_ = from._impl_.expiresat_;
   }
   if (from._internal_success() != 0) {
     _this->_impl_.success_ = from._impl_.success_;
@@ -2138,8 +2123,8 @@ void AuthResponse::InternalSwap(AuthResponse* PROTOBUF_RESTRICT other) {
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.error_code_, &other->_impl_.error_code_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.error_message_, &other->_impl_.error_message_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.errorcode_, &other->_impl_.errorcode_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.errormessage_, &other->_impl_.errormessage_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.token_, &other->_impl_.token_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.success_)

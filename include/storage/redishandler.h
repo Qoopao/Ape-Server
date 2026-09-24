@@ -1,6 +1,7 @@
 #ifndef REDISHANDLER_H
 #define REDISHANDLER_H
 
+#include <cstdint>
 #include <sdkws.pb.h>
 #include <storage/redisconnector.h>
 
@@ -38,25 +39,25 @@ public:
     // ── 全量消息缓存（user_msgs ZSET，在线/离线统一）──
     // 消息出生即入 ZSET（SendMessages 调用），score = seq
     static boost::asio::awaitable<bool>
-        SaveOfflineMsg(const std::string &userId, const sdkws::MsgData &msg);
+        SaveOfflineMsg(const uint64_t userId, const sdkws::MsgData &msg);
 
     // 从 Redis user_msgs ZSET 按 seq 范围拉取消息
     static boost::asio::awaitable<std::vector<sdkws::MsgData>>
-        GetOfflineMsgs(const std::string &userId, int64_t afterSeq, int limit,
+        GetOfflineMsgs(const uint64_t userId, int64_t afterSeq, int limit,
                        const std::string &conversationID = {});
 
     // 从 ZSET 删除消息
     static boost::asio::awaitable<bool>
-        DeleteOfflineMsgs(const std::string &userId,
+        DeleteOfflineMsgs(const uint64_t userId,
                           const std::vector<std::string> &msgIds);
 
     // ACK 单个消息（从 user_msgs ZSET 删除）
     static boost::asio::awaitable<bool>
-        AckOfflineMsg(const std::string &userId, const std::string &msgId);
+        AckOfflineMsg(const uint64_t userId, const std::string &msgId);
 
     // 批量 ACK 消息（从 user_msgs ZSET 删除）
     static boost::asio::awaitable<bool>
-        AckOfflineMsgsBatch(const std::string &userId,
+        AckOfflineMsgsBatch(const uint64_t userId,
                             const std::vector<std::string> &msgIds);
 
     // 幂等标记结果
@@ -77,9 +78,9 @@ public:
     // ── 群成员缓存 ──
     static boost::asio::awaitable<void>
         CacheGroupMembers(const std::string &groupID,
-                          const std::vector<std::string> &memberIDs);
+                          const std::vector<uint64_t> &memberIDs);
 
-    static boost::asio::awaitable<std::vector<std::string>>
+    static boost::asio::awaitable<std::vector<uint64_t>>
         GetGroupMembersFromCache(const std::string &groupID);
 
     static boost::asio::awaitable<int64_t>
@@ -91,12 +92,12 @@ public:
     // ── 批量 ZADD（群消息 fan-out 用 Lua 脚本）──
     // 将同一条 msg 批量写入多个 user_msgs:{userID} ZSET
     static boost::asio::awaitable<long long>
-        BatchSaveOfflineMsg(const std::vector<std::string> &userIDs,
+        BatchSaveOfflineMsg(const std::vector<uint64_t> &userIDs,
                             const sdkws::MsgData &msg);
 
 private:
     // ZSET key for offline messages
-    static std::string offlineMsgKey(const std::string &userId);
+    static std::string offlineMsgKey(const uint64_t userId);
 
     // Serialize MsgData to base64 string for ZSET member
     static std::string serializeMsg(const sdkws::MsgData &msg);

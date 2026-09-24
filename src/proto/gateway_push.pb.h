@@ -407,26 +407,10 @@ class PushToUserReq final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
-    kUserIDFieldNumber = 1,
     kMsgDataBinFieldNumber = 2,
     kConversationIDFieldNumber = 3,
+    kAccountFieldNumber = 1,
   };
-  // string userID = 1;
-  void clear_userid() ;
-  const std::string& userid() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_userid(Arg_&& arg, Args_... args);
-  std::string* mutable_userid();
-  PROTOBUF_NODISCARD std::string* release_userid();
-  void set_allocated_userid(std::string* value);
-
-  private:
-  const std::string& _internal_userid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_userid(
-      const std::string& value);
-  std::string* _internal_mutable_userid();
-
-  public:
   // bytes msgDataBin = 2;
   void clear_msgdatabin() ;
   const std::string& msgdatabin() const;
@@ -459,13 +443,23 @@ class PushToUserReq final : public ::google::protobuf::Message
   std::string* _internal_mutable_conversationid();
 
   public:
+  // uint64 account = 1;
+  void clear_account() ;
+  ::uint64_t account() const;
+  void set_account(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_account() const;
+  void _internal_set_account(::uint64_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:gateway_push.PushToUserReq)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       2, 3, 0,
-      55, 2>
+      49, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -482,9 +476,9 @@ class PushToUserReq final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const PushToUserReq& from_msg);
-    ::google::protobuf::internal::ArenaStringPtr userid_;
     ::google::protobuf::internal::ArenaStringPtr msgdatabin_;
     ::google::protobuf::internal::ArenaStringPtr conversationid_;
+    ::uint64_t account_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -508,52 +502,26 @@ class PushToUserReq final : public ::google::protobuf::Message
 
 // PushToUserReq
 
-// string userID = 1;
-inline void PushToUserReq::clear_userid() {
+// uint64 account = 1;
+inline void PushToUserReq::clear_account() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.ClearToEmpty();
+  _impl_.account_ = ::uint64_t{0u};
 }
-inline const std::string& PushToUserReq::userid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:gateway_push.PushToUserReq.userID)
-  return _internal_userid();
+inline ::uint64_t PushToUserReq::account() const {
+  // @@protoc_insertion_point(field_get:gateway_push.PushToUserReq.account)
+  return _internal_account();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void PushToUserReq::set_userid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:gateway_push.PushToUserReq.userID)
+inline void PushToUserReq::set_account(::uint64_t value) {
+  _internal_set_account(value);
+  // @@protoc_insertion_point(field_set:gateway_push.PushToUserReq.account)
 }
-inline std::string* PushToUserReq::mutable_userid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_userid();
-  // @@protoc_insertion_point(field_mutable:gateway_push.PushToUserReq.userID)
-  return _s;
-}
-inline const std::string& PushToUserReq::_internal_userid() const {
+inline ::uint64_t PushToUserReq::_internal_account() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.userid_.Get();
+  return _impl_.account_;
 }
-inline void PushToUserReq::_internal_set_userid(const std::string& value) {
+inline void PushToUserReq::_internal_set_account(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.Set(value, GetArena());
-}
-inline std::string* PushToUserReq::_internal_mutable_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.userid_.Mutable( GetArena());
-}
-inline std::string* PushToUserReq::release_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:gateway_push.PushToUserReq.userID)
-  return _impl_.userid_.Release();
-}
-inline void PushToUserReq::set_allocated_userid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.userid_.IsDefault()) {
-    _impl_.userid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:gateway_push.PushToUserReq.userID)
+  _impl_.account_ = value;
 }
 
 // bytes msgDataBin = 2;

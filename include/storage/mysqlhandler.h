@@ -4,6 +4,7 @@
 #include "user/userinfo.h"
 
 #include <boost/asio/awaitable.hpp>
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <vector>
@@ -26,25 +27,27 @@ class MySQLHandler
 {
 public:
     // ── 用户相关 ──
-    static boost::asio::awaitable<std::optional<userInfo>>
+    static boost::asio::awaitable<std::optional<uint64_t>>
         insert_user(const userInfo &user);
 
     static boost::asio::awaitable<std::optional<userInfo>>
-        find_user_by_username(const std::string &username);
+        find_user_by_account(const uint64_t account);
 
     static boost::asio::awaitable<std::optional<userInfo>>
-        find_user_by_id(const std::string &user_id);
+        find_user_by_id(const uint64_t user_id);
 
     static boost::asio::awaitable<bool>
-        update_last_login(const std::string &user_id);
+        update_last_login(const uint64_t user_id);
+
+    // 把 account 写回 users 表，返回是否成功
+    static boost::asio::awaitable<bool>
+        update_account(uint64_t user_id, uint64_t account);
 
     static boost::asio::awaitable<bool>
-        username_exists(const std::string &username);
+        account_exists(const uint64_t account);
 
-    static boost::asio::awaitable<std::optional<userInfo>>
-        get_user_online_info(const std::string &user_id);
 
-    // ── 群组 CRUD ──
+    // ── 群组 CRUD  ，当前有些参数是错的 ──
     static boost::asio::awaitable<bool>
         CreateGroup(const sdkws::GroupInfo &group);
 
@@ -64,7 +67,7 @@ public:
 
     static boost::asio::awaitable<bool>
         RemoveGroupMembers(const std::string &group_id,
-                           const std::vector<std::string> &user_ids);
+                           const std::vector<uint64_t> &user_ids);
 
     static boost::asio::awaitable<bool>
         UpdateGroupMemberCount(const std::string &group_id, int32_t delta);
@@ -77,10 +80,10 @@ public:
         GetGroupMemberCount(const std::string &group_id);
 
     static boost::asio::awaitable<std::vector<std::string>>
-        GetUserGroupIDs(const std::string &user_id);
+        GetUserGroupIDs(const uint64_t user_id);
 
     static boost::asio::awaitable<bool>
-        IsUserInGroup(const std::string &group_id, const std::string &user_id);
+        IsUserInGroup(const std::string &group_id, const uint64_t user_id);
 };
 
 #endif

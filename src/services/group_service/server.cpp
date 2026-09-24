@@ -6,6 +6,7 @@
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/detached.hpp>
 #include <chrono>
+#include <cstdint>
 
 GroupServiceImpl::GroupServiceImpl(const std::string &service_name,
                                    const std::string &listen_address)
@@ -20,7 +21,7 @@ GroupServiceImpl::GroupServiceImpl(const std::string &service_name,
 
   auto reactor = context->DefaultReactor();
   auto groupInfo = request->groupinfo();
-  auto initMemberIDs = std::vector<std::string>(
+  auto initMemberIDs = std::vector<uint64_t>(
       request->initmemberids().begin(), request->initmemberids().end());
 
   auto &redis = RedisConnector::instance();
@@ -87,7 +88,7 @@ GroupServiceImpl::GroupServiceImpl(const std::string &service_name,
         }
 
         // 构建 Redis 缓存
-        std::vector<std::string> memberIDs;
+        std::vector<uint64_t> memberIDs;
         for (const auto &m : members) {
           memberIDs.push_back(m.userid());
         }
@@ -175,7 +176,7 @@ GroupServiceImpl::GroupServiceImpl(const std::string &service_name,
 
   auto reactor = context->DefaultReactor();
   std::string groupID = request->groupid();
-  std::string userID = request->userid();
+  uint64_t userID = request->userid();
 
   auto &redis = RedisConnector::instance();
   boost::asio::co_spawn(
@@ -241,7 +242,7 @@ GroupServiceImpl::GroupServiceImpl(const std::string &service_name,
 
   auto reactor = context->DefaultReactor();
   std::string groupID = request->groupid();
-  std::string userID = request->userid();
+  uint64_t userID = request->userid();
 
   auto &redis = RedisConnector::instance();
   boost::asio::co_spawn(
@@ -257,7 +258,7 @@ GroupServiceImpl::GroupServiceImpl(const std::string &service_name,
         }
 
         bool ok = co_await MySQLHandler::RemoveGroupMembers(
-            groupID, std::vector<std::string>{userID});
+            groupID, std::vector<uint64_t>{userID});
         if (!ok) {
           response->set_success(false);
           response->set_errmsg("failed to remove member");
@@ -284,9 +285,9 @@ GroupServiceImpl::GroupServiceImpl(const std::string &service_name,
 
   auto reactor = context->DefaultReactor();
   std::string groupID = request->groupid();
-  auto userIDs = std::vector<std::string>(request->userids().begin(),
+  auto userIDs = std::vector<uint64_t>(request->userids().begin(),
                                            request->userids().end());
-  std::string inviterUserID = request->inviteruserid();
+  uint64_t inviterUserID = request->inviteruserid();
 
   auto &redis = RedisConnector::instance();
   boost::asio::co_spawn(
@@ -299,7 +300,7 @@ GroupServiceImpl::GroupServiceImpl(const std::string &service_name,
                           .count();
 
         int added = 0;
-        std::vector<std::string> failedIDs;
+        std::vector<uint64_t> failedIDs;
         for (const auto &uid : userIDs) {
           bool inGroup =
               co_await MySQLHandler::IsUserInGroup(groupID, uid);
@@ -353,7 +354,7 @@ GroupServiceImpl::GroupServiceImpl(const std::string &service_name,
 
   auto reactor = context->DefaultReactor();
   std::string groupID = request->groupid();
-  auto userIDs = std::vector<std::string>(request->userids().begin(),
+  auto userIDs = std::vector<uint64_t>(request->userids().begin(),
                                            request->userids().end());
 
   auto &redis = RedisConnector::instance();
@@ -447,7 +448,7 @@ GroupServiceImpl::GroupServiceImpl(const std::string &service_name,
     ::group::GetUserGroupsResp *response) {
 
   auto reactor = context->DefaultReactor();
-  std::string userID = request->userid();
+  uint64_t userID = request->userid();
 
   auto &redis = RedisConnector::instance();
   boost::asio::co_spawn(

@@ -2,6 +2,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/json.hpp>
 #include <bsoncxx/types.hpp>
+#include <cstdint>
 #include <google/protobuf/util/json_util.h>
 #include <mongocxx/client.hpp>
 #include <mongocxx/collection.hpp>
@@ -42,8 +43,8 @@ bool MongoHandler::SaveMsgToMongo(const sdkws::MsgData &msg) {
 
     auto doc = bsoncxx::builder::basic::make_document(
         bsoncxx::builder::basic::kvp("serverMsgID", msg.servermsgid()),
-        bsoncxx::builder::basic::kvp("sendID", msg.sendid()),
-        bsoncxx::builder::basic::kvp("recvID", msg.recvid()),
+        bsoncxx::builder::basic::kvp("sendID", static_cast<int64_t>(msg.sendid())),
+        bsoncxx::builder::basic::kvp("recvID", static_cast<int64_t>(msg.recvid())),
         bsoncxx::builder::basic::kvp("convID", msg.convid()),
         bsoncxx::builder::basic::kvp("clientMsgID", msg.clientmsgid()),
         bsoncxx::builder::basic::kvp("senderPlatformID",
@@ -114,9 +115,9 @@ bool MongoHandler::GetMsgByServerMsgID(const std::string &serverMsgID,
     if (auto e = doc["serverMsgID"])
       outMsg.set_servermsgid(std::string{e.get_string().value});
     if (auto e = doc["sendID"])
-      outMsg.set_sendid(std::string{e.get_string().value});
+      outMsg.set_sendid(e.get_int64().value);
     if (auto e = doc["recvID"])
-      outMsg.set_recvid(std::string{e.get_string().value});
+      outMsg.set_recvid(e.get_int64().value);
     if (auto e = doc["convID"])
       outMsg.set_convid(std::string{e.get_string().value});
     if (auto e = doc["clientMsgID"])
@@ -164,7 +165,7 @@ bool MongoHandler::GetMsgByServerMsgID(const std::string &serverMsgID,
 }
 
 std::vector<sdkws::MsgData>
-MongoHandler::GetMsgsBySeqFromMongo(const std::string &userId, int64_t afterSeq,
+MongoHandler::GetMsgsBySeqFromMongo(const uint64_t userId, int64_t afterSeq,
                                     int limit) {
   std::vector<sdkws::MsgData> results;
   try {
@@ -173,7 +174,7 @@ MongoHandler::GetMsgsBySeqFromMongo(const std::string &userId, int64_t afterSeq,
     auto collection = (*client)["IM-System"]["msg"];
 
     bsoncxx::builder::stream::document filter{};
-    filter << "recvID" << userId << "seq"
+    filter << "recvID" << static_cast<int64_t>(userId) << "seq"
            << bsoncxx::builder::stream::open_document << "$gt" << afterSeq
            << bsoncxx::builder::stream::close_document;
 
@@ -190,9 +191,9 @@ MongoHandler::GetMsgsBySeqFromMongo(const std::string &userId, int64_t afterSeq,
         if (auto e = doc["serverMsgID"])
           msg.set_servermsgid(std::string{e.get_string().value});
         if (auto e = doc["sendID"])
-          msg.set_sendid(std::string{e.get_string().value});
+          msg.set_sendid(e.get_int64().value);
         if (auto e = doc["recvID"])
-          msg.set_recvid(std::string{e.get_string().value});
+          msg.set_recvid(e.get_int64().value);
         if (auto e = doc["convID"])
           msg.set_convid(std::string{e.get_string().value});
         if (auto e = doc["clientMsgID"])
@@ -227,7 +228,7 @@ MongoHandler::GetMsgsBySeqFromMongo(const std::string &userId, int64_t afterSeq,
   }
 }
 
-bool MongoHandler::MarkMsgsAsDelivered(const std::string &userId,
+bool MongoHandler::MarkMsgsAsDelivered(const uint64_t userId,
                                        const std::vector<std::string> &msgIds) {
   try {
     if (msgIds.empty())
@@ -239,7 +240,7 @@ bool MongoHandler::MarkMsgsAsDelivered(const std::string &userId,
 
     for (const auto &msgId : msgIds) {
       bsoncxx::builder::stream::document filter{};
-      filter << "recvID" << userId << "serverMsgID" << msgId;
+      filter << "recvID" << static_cast<int64_t>(userId) << "serverMsgID" << msgId;
 
       bsoncxx::builder::stream::document update{};
       update << "$set" << bsoncxx::builder::stream::open_document << "status"
@@ -279,7 +280,7 @@ MongoHandler::GetMsgByServerMsgIDAsync(std::string serverMsgID) {
 }
 
 boost::asio::awaitable<std::vector<sdkws::MsgData>>
-MongoHandler::GetMsgsBySeqFromMongoAsync(std::string userId, int64_t afterSeq,
+MongoHandler::GetMsgsBySeqFromMongoAsync(uint64_t userId, int64_t afterSeq,
                                          int limit) {
   co_return co_await MongoConnector::instance().async_run(
       [userId = std::move(userId), afterSeq, limit]() {
@@ -288,7 +289,7 @@ MongoHandler::GetMsgsBySeqFromMongoAsync(std::string userId, int64_t afterSeq,
 }
 
 boost::asio::awaitable<bool>
-MongoHandler::MarkMsgsAsDeliveredAsync(std::string userId,
+MongoHandler::MarkMsgsAsDeliveredAsync(uint64_t userId,
                                        std::vector<std::string> msgIds) {
   co_return co_await MongoConnector::instance().async_run(
       [userId = std::move(userId), msgIds = std::move(msgIds)]() {
@@ -463,8 +464,8 @@ MongoHandler::DoesConversationExistAsync(std::string convID) {
       [convID = std::move(convID)]() { return DoesConversationExist(convID); });
 }
 
-bool MongoHandler::CreateSingleChatConversations(const std::string &sendID,
-                                                 const std::string &recvID,
+bool MongoHandler::CreateSingleChatConversations(const uint64_t sendID,
+                                                 const uint64_t recvID,
                                                  const std::string &convID) {
   try {
     auto &mongoconnector = MongoConnector::instance();
@@ -473,18 +474,18 @@ bool MongoHandler::CreateSingleChatConversations(const std::string &sendID,
 
     // 为双方各创建一条 Conversation 记录（同一 convID，不同 ownerUserID）
     struct {
-      std::string owner;
-      std::string user;
+      uint64_t owner;
+      uint64_t user;
     } records[2] = {{sendID, recvID}, {recvID, sendID}};
 
     for (const auto &r : records) {
       bsoncxx::builder::stream::document filter{};
-      filter << "ownerUserID" << r.owner << "conversationID" << convID;
+      filter << "ownerUserID" << static_cast<int64_t>(r.owner) << "conversationID" << convID;
 
       bsoncxx::builder::stream::document doc{};
-      doc << "ownerUserID" << r.owner << "conversationID" << convID
+      doc << "ownerUserID" << static_cast<int64_t>(r.owner) << "conversationID" << convID
           << "conversationType" << 1 // 单聊
-          << "userID" << r.user << "groupID"
+          << "userID" << static_cast<int64_t>(r.user) << "groupID"
           << ""
           << "isPinned" << false << "isPrivateChat" << false << "recvMsgOpt"
           << 0 << "groupAtType" << 0 << "burnDuration" << 0 << "minSeq"
@@ -514,7 +515,7 @@ bool MongoHandler::CreateSingleChatConversations(const std::string &sendID,
 }
 
 boost::asio::awaitable<bool> MongoHandler::CreateSingleChatConversationsAsync(
-    std::string sendID, std::string recvID, std::string convID) {
+    uint64_t sendID, uint64_t recvID, std::string convID) {
   co_return co_await MongoConnector::instance().async_run(
       [sendID = std::move(sendID), recvID = std::move(recvID),
        convID = std::move(convID)]() {
@@ -525,7 +526,7 @@ boost::asio::awaitable<bool> MongoHandler::CreateSingleChatConversationsAsync(
 // ── 创建群聊会话 ──
 
 bool MongoHandler::CreateGroupChatConversations(
-    const std::string &groupID, const std::vector<std::string> &userIDs) {
+    const std::string &groupID, const std::vector<uint64_t> &userIDs) {
   try {
     auto &mongoconnector = MongoConnector::instance();
     auto client = mongoconnector.acquire_client();
@@ -533,12 +534,12 @@ bool MongoHandler::CreateGroupChatConversations(
 
     for (const auto &uid : userIDs) {
       bsoncxx::builder::stream::document filter{};
-      filter << "ownerUserID" << uid << "conversationID" << groupID;
+      filter << "ownerUserID" << static_cast<int64_t>(uid) << "conversationID" << groupID;
 
       bsoncxx::builder::stream::document doc{};
-      doc << "ownerUserID" << uid << "conversationID" << groupID
+      doc << "ownerUserID" << static_cast<int64_t>(uid) << "conversationID" << groupID
           << "conversationType" << 2 // 群聊
-          << "userID" << uid << "groupID" << groupID << "isPinned" << false
+          << "userID" << static_cast<int64_t>(uid) << "groupID" << groupID << "isPinned" << false
           << "isPrivateChat" << false << "recvMsgOpt" << 0 << "groupAtType" << 0
           << "burnDuration" << 0 << "minSeq" << int64_t{0} << "maxSeq"
           << int64_t{0} << "msgDestructTime" << int64_t{0}
@@ -566,7 +567,7 @@ bool MongoHandler::CreateGroupChatConversations(
 }
 
 boost::asio::awaitable<bool> MongoHandler::CreateGroupChatConversationsAsync(
-    std::string groupID, std::vector<std::string> userIDs) {
+    std::string groupID, std::vector<uint64_t> userIDs) {
   co_return co_await MongoConnector::instance().async_run(
       [groupID = std::move(groupID), userIDs = std::move(userIDs)]() {
         return CreateGroupChatConversations(groupID, userIDs);

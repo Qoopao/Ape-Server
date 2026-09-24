@@ -83,6 +83,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr SetUserConversationsMinSeqReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : userids_{},
+        _userids_cached_byte_size_{0},
         conversationid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
@@ -130,6 +131,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr SetUserConversationMinSeqReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : owneruserid_{},
+        _owneruserid_cached_byte_size_{0},
         conversationid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
@@ -177,6 +179,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr SetUserConversationMaxSeqReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : owneruserid_{},
+        _owneruserid_cached_byte_size_{0},
         conversationid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
@@ -269,9 +272,7 @@ inline constexpr SetConversationHasReadSeqReq::Impl_::Impl_(
       : conversationid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
         hasreadseq_{::int64_t{0}},
         nonotification_{false},
         _cached_size_{0} {}
@@ -364,10 +365,8 @@ inline constexpr RevokeMsgReq::Impl_::Impl_(
       : conversationid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
         seq_{::int64_t{0}},
+        userid_{::uint64_t{0u}},
         _cached_size_{0} {}
 
 template <typename>
@@ -415,9 +414,7 @@ inline constexpr MarkMsgsAsReadReq::Impl_::Impl_(
         conversationid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
         _cached_size_{0} {}
 
 template <typename>
@@ -465,9 +462,7 @@ inline constexpr MarkConversationAsReadReq::Impl_::Impl_(
         conversationid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
         hasreadseq_{::int64_t{0}},
         _cached_size_{0} {}
 
@@ -648,9 +643,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr GetMaxAndMinSeqReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+      : userid_{::uint64_t{0u}},
         _cached_size_{0} {}
 
 template <typename>
@@ -729,9 +722,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr GetLastMessageReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : conversationids_{},
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
         _cached_size_{0} {}
 
 template <typename>
@@ -757,9 +748,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr GetHasReadSeqsReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : conversationids_{},
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
         _cached_size_{0} {}
 
 template <typename>
@@ -785,9 +774,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr GetConversationsHasReadAndMaxSeqReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : conversationids_{},
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
         returnpinned_{false},
         _cached_size_{0} {}
 
@@ -1245,12 +1232,6 @@ inline constexpr ChatLog::Impl_::Impl_(
         clientmsgid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        sendid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        recvid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
         groupid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
@@ -1278,6 +1259,8 @@ inline constexpr ChatLog::Impl_::Impl_(
         groupowner_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
+        sendid_{::uint64_t{0u}},
+        recvid_{::uint64_t{0u}},
         senderplatformid_{0},
         sessiontype_{0},
         msgfrom_{0},
@@ -1342,10 +1325,8 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr UserClearAllMsgReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        deletesyncopt_{nullptr} {}
+        deletesyncopt_{nullptr},
+        userid_{::uint64_t{0u}} {}
 
 template <typename>
 PROTOBUF_CONSTEXPR UserClearAllMsgReq::UserClearAllMsgReq(::_pbi::ConstantInitialized)
@@ -1395,16 +1376,12 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr SearchMessageReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
-        sendid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        recvid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
         sendtime_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         pagination_{nullptr},
+        sendid_{::uint64_t{0u}},
+        recvid_{::uint64_t{0u}},
         contenttype_{0},
         sessiontype_{0} {}
 
@@ -1457,9 +1434,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr GetSeqMessageReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : conversations_{},
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
         order_{static_cast< ::sdkws::PullOrder >(0)},
         _cached_size_{0} {}
 
@@ -1617,10 +1592,8 @@ inline constexpr DeleteMsgsReq::Impl_::Impl_(
         conversationid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        deletesyncopt_{nullptr} {}
+        deletesyncopt_{nullptr},
+        userid_{::uint64_t{0u}} {}
 
 template <typename>
 PROTOBUF_CONSTEXPR DeleteMsgsReq::DeleteMsgsReq(::_pbi::ConstantInitialized)
@@ -1646,10 +1619,8 @@ inline constexpr ClearConversationsMsgReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
         conversationids_{},
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        deletesyncopt_{nullptr} {}
+        deletesyncopt_{nullptr},
+        userid_{::uint64_t{0u}} {}
 
 template <typename>
 PROTOBUF_CONSTEXPR ClearConversationsMsgReq::ClearConversationsMsgReq(::_pbi::ConstantInitialized)
@@ -1727,6 +1698,7 @@ inline constexpr batchSendMessageReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
         recvidlist_{},
+        _recvidlist_cached_byte_size_{0},
         msgdata_{nullptr} {}
 
 template <typename>
@@ -3454,8 +3426,8 @@ const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "dkws.MsgData\022\026\n\016conversationID\030\002 \001(\t\"^\n\022"
     "MsgDataToMongoByMQ\022\017\n\007lastSeq\030\001 \001(\003\022\026\n\016c"
     "onversationID\030\002 \001(\t\022\037\n\007msgData\030\003 \003(\0132\016.s"
-    "dkws.MsgData\"$\n\022GetMaxAndMinSeqReq\022\016\n\006Us"
-    "erID\030\001 \001(\t\"5\n\023GetMaxAndMinSeqResp\022\016\n\006Max"
+    "dkws.MsgData\"$\n\022GetMaxAndMinSeqReq\022\016\n\006us"
+    "erID\030\001 \001(\004\"5\n\023GetMaxAndMinSeqResp\022\016\n\006Max"
     "Seq\030\001 \001(\003\022\016\n\006MinSeq\030\002 \001(\003\"-\n\nSendMsgReq\022"
     "\037\n\007msgData\030\003 \001(\0132\016.sdkws.MsgData\"i\n\013Send"
     "MsgResp\022\023\n\013serverMsgID\030\001 \001(\t\022\023\n\013clientMs"
@@ -3472,26 +3444,26 @@ const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     ".MsgData\022\026\n\016conversationID\030\002 \001(\t\"\014\n\nDelM"
     "sgsReq\"\r\n\013DelMsgsResp\"C\n\014RevokeMsgReq\022\026\n"
     "\016conversationID\030\001 \001(\t\022\013\n\003seq\030\002 \001(\003\022\016\n\006us"
-    "erID\030\003 \001(\t\"\017\n\rRevokeMsgResp\"I\n\021MarkMsgsA"
+    "erID\030\003 \001(\004\"\017\n\rRevokeMsgResp\"I\n\021MarkMsgsA"
     "sReadReq\022\026\n\016conversationID\030\001 \001(\t\022\014\n\004seqs"
-    "\030\002 \003(\003\022\016\n\006userID\030\003 \001(\t\"\024\n\022MarkMsgsAsRead"
+    "\030\002 \003(\003\022\016\n\006userID\030\003 \001(\004\"\024\n\022MarkMsgsAsRead"
     "Resp\"e\n\031MarkConversationAsReadReq\022\026\n\016con"
-    "versationID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\t\022\022\n\nhas"
+    "versationID\030\001 \001(\t\022\016\n\006userID\030\002 \001(\004\022\022\n\nhas"
     "ReadSeq\030\003 \001(\003\022\014\n\004seqs\030\004 \003(\003\"\034\n\032MarkConve"
     "rsationAsReadResp\"r\n\034SetConversationHasR"
     "eadSeqReq\022\026\n\016conversationID\030\001 \001(\t\022\016\n\006use"
-    "rID\030\002 \001(\t\022\022\n\nhasReadSeq\030\003 \001(\003\022\026\n\016noNotif"
+    "rID\030\002 \001(\004\022\022\n\nhasReadSeq\030\003 \001(\003\022\026\n\016noNotif"
     "ication\030\004 \001(\010\"\037\n\035SetConversationHasReadS"
     "eqResp\"8\n\rDeleteSyncOpt\022\022\n\nIsSyncSelf\030\003 "
     "\001(\010\022\023\n\013IsSyncOther\030\004 \001(\010\"n\n\030ClearConvers"
     "ationsMsgReq\022\027\n\017conversationIDs\030\001 \003(\t\022\016\n"
-    "\006userID\030\002 \001(\t\022)\n\rdeleteSyncOpt\030\003 \001(\0132\022.m"
+    "\006userID\030\002 \001(\004\022)\n\rdeleteSyncOpt\030\003 \001(\0132\022.m"
     "sg.DeleteSyncOpt\"\033\n\031ClearConversationsMs"
     "gResp\"O\n\022UserClearAllMsgReq\022\016\n\006userID\030\001 "
-    "\001(\t\022)\n\rdeleteSyncOpt\030\003 \001(\0132\022.msg.DeleteS"
+    "\001(\004\022)\n\rdeleteSyncOpt\030\003 \001(\0132\022.msg.DeleteS"
     "yncOpt\"\025\n\023UserClearAllMsgResp\"p\n\rDeleteM"
     "sgsReq\022\026\n\016conversationID\030\001 \001(\t\022\014\n\004seqs\030\002"
-    " \003(\003\022\016\n\006userID\030\003 \001(\t\022)\n\rdeleteSyncOpt\030\004 "
+    " \003(\003\022\016\n\006userID\030\003 \001(\004\022)\n\rdeleteSyncOpt\030\004 "
     "\001(\0132\022.msg.DeleteSyncOpt\"\020\n\016DeleteMsgsRes"
     "p\"B\n\024DeleteMsgPhysicalReq\022\027\n\017conversatio"
     "nIDs\030\001 \003(\t\022\021\n\ttimestamp\030\002 \001(\003\"\027\n\025DeleteM"
@@ -3499,7 +3471,7 @@ const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "Req\022\026\n\016conversationID\030\001 \001(\t\022\014\n\004seqs\030\002 \003("
     "\003\"\034\n\032DeleteMsgPhysicalBySeqResp\"(\n\rGetMa"
     "xSeqsReq\022\027\n\017conversationIDs\030\001 \003(\t\"<\n\021Get"
-    "HasReadSeqsReq\022\016\n\006userID\030\001 \001(\t\022\027\n\017conver"
+    "HasReadSeqsReq\022\016\n\006userID\030\001 \001(\004\022\027\n\017conver"
     "sationIDs\030\002 \003(\t\"o\n\014SeqsInfoResp\022/\n\007maxSe"
     "qs\030\001 \003(\0132\036.msg.SeqsInfoResp.MaxSeqsEntry"
     "\032.\n\014MaxSeqsEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002"
@@ -3515,7 +3487,7 @@ const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "SeqReq\022\026\n\016conversationID\030\001 \001(\t\"+\n\031GetCon"
     "versationMaxSeqResp\022\016\n\006maxSeq\030\001 \001(\003\"d\n#G"
     "etConversationsHasReadAndMaxSeqReq\022\016\n\006us"
-    "erID\030\001 \001(\t\022\027\n\017conversationIDs\030\002 \003(\t\022\024\n\014r"
+    "erID\030\001 \001(\004\022\027\n\017conversationIDs\030\002 \003(\t\022\024\n\014r"
     "eturnPinned\030\003 \001(\010\">\n\004Seqs\022\016\n\006maxSeq\030\001 \001("
     "\003\022\022\n\nhasReadSeq\030\002 \001(\003\022\022\n\nmaxSeqTime\030\003 \001("
     "\003\"\300\001\n$GetConversationsHasReadAndMaxSeqRe"
@@ -3542,8 +3514,8 @@ const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "tiveGroupResp.DateCountEntry\022 \n\006groups\030\004"
     " \003(\0132\020.msg.ActiveGroup\0320\n\016DateCountEntry"
     "\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\003:\0028\001\"\234\001\n\020Sea"
-    "rchMessageReq\022\016\n\006sendID\030\001 \001(\t\022\016\n\006recvID\030"
-    "\002 \001(\t\022\023\n\013contentType\030\003 \001(\005\022\020\n\010sendTime\030\004"
+    "rchMessageReq\022\016\n\006sendID\030\001 \001(\004\022\016\n\006recvID\030"
+    "\002 \001(\004\022\023\n\013contentType\030\003 \001(\005\022\020\n\010sendTime\030\004"
     " \001(\t\022\023\n\013sessionType\030\005 \001(\005\022,\n\npagination\030"
     "\006 \001(\0132\030.sdkws.RequestPagination\"A\n\rSearc"
     "hChatLog\022\035\n\007chatLog\030\001 \001(\0132\014.msg.ChatLog\022"
@@ -3552,8 +3524,8 @@ const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "ked\030\002 \001(\010\"N\n\021SearchMessageResp\022$\n\010chatLo"
     "gs\030\001 \003(\0132\022.msg.SearchChatLog\022\023\n\013chatLogs"
     "Num\030\002 \001(\005\"\310\003\n\007ChatLog\022\023\n\013serverMsgID\030\001 \001"
-    "(\t\022\023\n\013clientMsgID\030\002 \001(\t\022\016\n\006sendID\030\003 \001(\t\022"
-    "\016\n\006recvID\030\004 \001(\t\022\017\n\007groupID\030\005 \001(\t\022\024\n\014recv"
+    "(\t\022\023\n\013clientMsgID\030\002 \001(\t\022\016\n\006sendID\030\003 \001(\004\022"
+    "\016\n\006recvID\030\004 \001(\004\022\017\n\007groupID\030\005 \001(\t\022\024\n\014recv"
     "Nickname\030\006 \001(\t\022\030\n\020senderPlatformID\030\007 \001(\005"
     "\022\026\n\016senderNickname\030\010 \001(\t\022\025\n\rsenderFaceUR"
     "L\030\t \001(\t\022\021\n\tgroupName\030\n \001(\t\022\023\n\013sessionTyp"
@@ -3563,7 +3535,7 @@ const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "ex\030\022 \001(\t\022\024\n\014groupFaceURL\030\023 \001(\t\022\030\n\020groupM"
     "emberCount\030\024 \001(\r\022\013\n\003seq\030\025 \001(\003\022\022\n\ngroupOw"
     "ner\030\026 \001(\t\022\021\n\tgroupType\030\027 \001(\005\"J\n\023batchSen"
-    "dMessageReq\022\022\n\nrecvIDList\030\001 \003(\t\022\037\n\007msgDa"
+    "dMessageReq\022\022\n\nrecvIDList\030\001 \003(\004\022\037\n\007msgDa"
     "ta\030\002 \001(\0132\016.sdkws.MsgData\"\026\n\024batchSendMes"
     "sageResp\"\022\n\020GetServerTimeReq\"\'\n\021GetServe"
     "rTimeResp\022\022\n\nserverTime\030\001 \001(\003\"$\n\013ClearMs"
@@ -3571,11 +3543,11 @@ const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "esp\"3\n\017DestructMsgsReq\022\021\n\ttimestamp\030\001 \001("
     "\003\022\r\n\005limit\030\002 \001(\005\"!\n\020DestructMsgsResp\022\r\n\005"
     "count\030\001 \001(\005\"U\n\035SetUserConversationsMinSe"
-    "qReq\022\017\n\007userIDs\030\001 \003(\t\022\026\n\016conversationID\030"
+    "qReq\022\017\n\007userIDs\030\001 \003(\004\022\026\n\016conversationID\030"
     "\002 \001(\t\022\013\n\003seq\030\003 \001(\003\" \n\036SetUserConversatio"
     "nsMinSeqResp\"8\n\020ConversationSeqs\022\026\n\016conv"
     "ersationID\030\002 \001(\t\022\014\n\004seqs\030\003 \003(\003\"q\n\020GetSeq"
-    "MessageReq\022\016\n\006userID\030\001 \001(\t\022,\n\rconversati"
+    "MessageReq\022\016\n\006userID\030\001 \001(\004\022,\n\rconversati"
     "ons\030\002 \003(\0132\025.msg.ConversationSeqs\022\037\n\005orde"
     "r\030\003 \001(\0162\020.sdkws.PullOrder\"\223\002\n\021GetSeqMess"
     "ageResp\022.\n\004msgs\030\001 \003(\0132 .msg.GetSeqMessag"
@@ -3592,15 +3564,15 @@ const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "\022.\n\rconversations\030\001 \003(\0132\027.msg.ActiveConv"
     "ersation\"[\n\034SetUserConversationMaxSeqReq"
     "\022\026\n\016conversationID\030\001 \001(\t\022\023\n\013ownerUserID\030"
-    "\002 \003(\t\022\016\n\006maxSeq\030\003 \001(\003\"\037\n\035SetUserConversa"
+    "\002 \003(\004\022\016\n\006maxSeq\030\003 \001(\003\"\037\n\035SetUserConversa"
     "tionMaxSeqResp\"[\n\034SetUserConversationMin"
     "SeqReq\022\026\n\016conversationID\030\001 \001(\t\022\023\n\013ownerU"
-    "serID\030\002 \003(\t\022\016\n\006minSeq\030\003 \001(\003\"\037\n\035SetUserCo"
+    "serID\030\002 \003(\004\022\016\n\006minSeq\030\003 \001(\003\"\037\n\035SetUserCo"
     "nversationMinSeqResp\"B\n\032GetLastMessageSe"
     "qByTimeReq\022\026\n\016conversationID\030\001 \001(\t\022\014\n\004ti"
     "me\030\002 \001(\003\"*\n\033GetLastMessageSeqByTimeResp\022"
     "\013\n\003seq\030\001 \001(\003\"<\n\021GetLastMessageReq\022\016\n\006use"
-    "rID\030\001 \001(\t\022\027\n\017conversationIDs\030\002 \003(\t\"\202\001\n\022G"
+    "rID\030\001 \001(\004\022\027\n\017conversationIDs\030\002 \003(\t\"\202\001\n\022G"
     "etLastMessageResp\022/\n\004msgs\030\001 \003(\0132!.msg.Ge"
     "tLastMessageResp.MsgsEntry\032;\n\tMsgsEntry\022"
     "\013\n\003key\030\001 \001(\t\022\035\n\005value\030\002 \001(\0132\016.sdkws.MsgD"
@@ -4848,36 +4820,19 @@ GetMaxAndMinSeqReq::GetMaxAndMinSeqReq(::google::protobuf::Arena* arena)
   SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:msg.GetMaxAndMinSeqReq)
 }
-inline PROTOBUF_NDEBUG_INLINE GetMaxAndMinSeqReq::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from, const ::msg::GetMaxAndMinSeqReq& from_msg)
-      : userid_(arena, from.userid_),
-        _cached_size_{0} {}
-
 GetMaxAndMinSeqReq::GetMaxAndMinSeqReq(
-    ::google::protobuf::Arena* arena,
-    const GetMaxAndMinSeqReq& from)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, _class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  GetMaxAndMinSeqReq* const _this = this;
-  (void)_this;
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-
-  // @@protoc_insertion_point(copy_constructor:msg.GetMaxAndMinSeqReq)
+    ::google::protobuf::Arena* arena, const GetMaxAndMinSeqReq& from)
+    : GetMaxAndMinSeqReq(arena) {
+  MergeFrom(from);
 }
 inline PROTOBUF_NDEBUG_INLINE GetMaxAndMinSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : userid_(arena),
-        _cached_size_{0} {}
+      : _cached_size_{0} {}
 
 inline void GetMaxAndMinSeqReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.userid_ = {};
 }
 GetMaxAndMinSeqReq::~GetMaxAndMinSeqReq() {
   // @@protoc_insertion_point(destructor:msg.GetMaxAndMinSeqReq)
@@ -4887,7 +4842,6 @@ inline void GetMaxAndMinSeqReq::SharedDtor(MessageLite& self) {
   GetMaxAndMinSeqReq& this_ = static_cast<GetMaxAndMinSeqReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -4896,7 +4850,7 @@ inline void* GetMaxAndMinSeqReq::PlacementNew_(const void*, void* mem,
   return ::new (mem) GetMaxAndMinSeqReq(arena);
 }
 constexpr auto GetMaxAndMinSeqReq::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(GetMaxAndMinSeqReq),
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(GetMaxAndMinSeqReq),
                                             alignof(GetMaxAndMinSeqReq));
 }
 PROTOBUF_CONSTINIT
@@ -4927,7 +4881,7 @@ const ::google::protobuf::internal::ClassData* GetMaxAndMinSeqReq::GetClassData(
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 1, 0, 37, 2> GetMaxAndMinSeqReq::_table_ = {
+const ::_pbi::TcParseTable<0, 1, 0, 0, 2> GetMaxAndMinSeqReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -4945,21 +4899,18 @@ const ::_pbi::TcParseTable<0, 1, 0, 37, 2> GetMaxAndMinSeqReq::_table_ = {
     ::_pbi::TcParser::GetTable<::msg::GetMaxAndMinSeqReq>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // string UserID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(GetMaxAndMinSeqReq, _impl_.userid_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(GetMaxAndMinSeqReq, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(GetMaxAndMinSeqReq, _impl_.userid_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // string UserID = 1;
+    // uint64 userID = 1;
     {PROTOBUF_FIELD_OFFSET(GetMaxAndMinSeqReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
   }},
   // no aux_entries
   {{
-    "\26\6\0\0\0\0\0\0"
-    "msg.GetMaxAndMinSeqReq"
-    "UserID"
   }},
 };
 
@@ -4970,7 +4921,7 @@ PROTOBUF_NOINLINE void GetMaxAndMinSeqReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.userid_.ClearToEmpty();
+  _impl_.userid_ = ::uint64_t{0u};
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -4989,12 +4940,11 @@ PROTOBUF_NOINLINE void GetMaxAndMinSeqReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string UserID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.GetMaxAndMinSeqReq.UserID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -5021,10 +4971,10 @@ PROTOBUF_NOINLINE void GetMaxAndMinSeqReq::Clear() {
           (void)cached_has_bits;
 
            {
-            // string UserID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -5039,8 +4989,8 @@ void GetMaxAndMinSeqReq::MergeImpl(::google::protobuf::MessageLite& to_msg, cons
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -5055,10 +5005,8 @@ void GetMaxAndMinSeqReq::CopyFrom(const GetMaxAndMinSeqReq& from) {
 
 void GetMaxAndMinSeqReq::InternalSwap(GetMaxAndMinSeqReq* PROTOBUF_RESTRICT other) {
   using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
+        swap(_impl_.userid_, other->_impl_.userid_);
 }
 
 ::google::protobuf::Metadata GetMaxAndMinSeqReq::GetMetadata() const {
@@ -7646,7 +7594,6 @@ inline PROTOBUF_NDEBUG_INLINE RevokeMsgReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::msg::RevokeMsgReq& from_msg)
       : conversationid_(arena, from.conversationid_),
-        userid_(arena, from.userid_),
         _cached_size_{0} {}
 
 RevokeMsgReq::RevokeMsgReq(
@@ -7662,7 +7609,13 @@ RevokeMsgReq::RevokeMsgReq(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-  _impl_.seq_ = from._impl_.seq_;
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, seq_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, seq_),
+           offsetof(Impl_, userid_) -
+               offsetof(Impl_, seq_) +
+               sizeof(Impl_::userid_));
 
   // @@protoc_insertion_point(copy_constructor:msg.RevokeMsgReq)
 }
@@ -7670,12 +7623,16 @@ inline PROTOBUF_NDEBUG_INLINE RevokeMsgReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : conversationid_(arena),
-        userid_(arena),
         _cached_size_{0} {}
 
 inline void RevokeMsgReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.seq_ = {};
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, seq_),
+           0,
+           offsetof(Impl_, userid_) -
+               offsetof(Impl_, seq_) +
+               sizeof(Impl_::userid_));
 }
 RevokeMsgReq::~RevokeMsgReq() {
   // @@protoc_insertion_point(destructor:msg.RevokeMsgReq)
@@ -7686,7 +7643,6 @@ inline void RevokeMsgReq::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.conversationid_.Destroy();
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -7726,7 +7682,7 @@ const ::google::protobuf::internal::ClassData* RevokeMsgReq::GetClassData() cons
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 45, 2> RevokeMsgReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 0, 39, 2> RevokeMsgReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -7751,9 +7707,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 45, 2> RevokeMsgReq::_table_ = {
     // int64 seq = 2;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(RevokeMsgReq, _impl_.seq_), 63>(),
      {16, 63, 0, PROTOBUF_FIELD_OFFSET(RevokeMsgReq, _impl_.seq_)}},
-    // string userID = 3;
-    {::_pbi::TcParser::FastUS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(RevokeMsgReq, _impl_.userid_)}},
+    // uint64 userID = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(RevokeMsgReq, _impl_.userid_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(RevokeMsgReq, _impl_.userid_)}},
   }}, {{
     65535, 65535
   }}, {{
@@ -7763,16 +7719,15 @@ const ::_pbi::TcParseTable<2, 3, 0, 45, 2> RevokeMsgReq::_table_ = {
     // int64 seq = 2;
     {PROTOBUF_FIELD_OFFSET(RevokeMsgReq, _impl_.seq_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
-    // string userID = 3;
+    // uint64 userID = 3;
     {PROTOBUF_FIELD_OFFSET(RevokeMsgReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
   }},
   // no aux_entries
   {{
-    "\20\16\0\6\0\0\0\0"
+    "\20\16\0\0\0\0\0\0"
     "msg.RevokeMsgReq"
     "conversationID"
-    "userID"
   }},
 };
 
@@ -7784,8 +7739,9 @@ PROTOBUF_NOINLINE void RevokeMsgReq::Clear() {
   (void) cached_has_bits;
 
   _impl_.conversationid_.ClearToEmpty();
-  _impl_.userid_.ClearToEmpty();
-  _impl_.seq_ = ::int64_t{0};
+  ::memset(&_impl_.seq_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.userid_) -
+      reinterpret_cast<char*>(&_impl_.seq_)) + sizeof(_impl_.userid_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -7819,12 +7775,11 @@ PROTOBUF_NOINLINE void RevokeMsgReq::Clear() {
                     stream, this_._internal_seq(), target);
           }
 
-          // string userID = 3;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.RevokeMsgReq.userID");
-            target = stream->WriteStringMaybeAliased(3, _s, target);
+          // uint64 userID = 3;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                3, this_._internal_userid(), target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -7857,15 +7812,15 @@ PROTOBUF_NOINLINE void RevokeMsgReq::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_conversationid());
             }
-            // string userID = 3;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
-            }
             // int64 seq = 2;
             if (this_._internal_seq() != 0) {
               total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
                   this_._internal_seq());
+            }
+            // uint64 userID = 3;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -7883,11 +7838,11 @@ void RevokeMsgReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::go
   if (!from._internal_conversationid().empty()) {
     _this->_internal_set_conversationid(from._internal_conversationid());
   }
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
-  }
   if (from._internal_seq() != 0) {
     _this->_impl_.seq_ = from._impl_.seq_;
+  }
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -7906,8 +7861,12 @@ void RevokeMsgReq::InternalSwap(RevokeMsgReq* PROTOBUF_RESTRICT other) {
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.conversationid_, &other->_impl_.conversationid_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
-        swap(_impl_.seq_, other->_impl_.seq_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(RevokeMsgReq, _impl_.userid_)
+      + sizeof(RevokeMsgReq::_impl_.userid_)
+      - PROTOBUF_FIELD_OFFSET(RevokeMsgReq, _impl_.seq_)>(
+          reinterpret_cast<char*>(&_impl_.seq_),
+          reinterpret_cast<char*>(&other->_impl_.seq_));
 }
 
 ::google::protobuf::Metadata RevokeMsgReq::GetMetadata() const {
@@ -8037,7 +7996,6 @@ inline PROTOBUF_NDEBUG_INLINE MarkMsgsAsReadReq::Impl_::Impl_(
       : seqs_{visibility, arena, from.seqs_},
         _seqs_cached_byte_size_{0},
         conversationid_(arena, from.conversationid_),
-        userid_(arena, from.userid_),
         _cached_size_{0} {}
 
 MarkMsgsAsReadReq::MarkMsgsAsReadReq(
@@ -8053,6 +8011,7 @@ MarkMsgsAsReadReq::MarkMsgsAsReadReq(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.userid_ = from._impl_.userid_;
 
   // @@protoc_insertion_point(copy_constructor:msg.MarkMsgsAsReadReq)
 }
@@ -8062,11 +8021,11 @@ inline PROTOBUF_NDEBUG_INLINE MarkMsgsAsReadReq::Impl_::Impl_(
       : seqs_{visibility, arena},
         _seqs_cached_byte_size_{0},
         conversationid_(arena),
-        userid_(arena),
         _cached_size_{0} {}
 
 inline void MarkMsgsAsReadReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.userid_ = {};
 }
 MarkMsgsAsReadReq::~MarkMsgsAsReadReq() {
   // @@protoc_insertion_point(destructor:msg.MarkMsgsAsReadReq)
@@ -8077,7 +8036,6 @@ inline void MarkMsgsAsReadReq::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.conversationid_.Destroy();
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -8129,7 +8087,7 @@ const ::google::protobuf::internal::ClassData* MarkMsgsAsReadReq::GetClassData()
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 50, 2> MarkMsgsAsReadReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 0, 44, 2> MarkMsgsAsReadReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -8154,9 +8112,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 50, 2> MarkMsgsAsReadReq::_table_ = {
     // repeated int64 seqs = 2;
     {::_pbi::TcParser::FastV64P1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(MarkMsgsAsReadReq, _impl_.seqs_)}},
-    // string userID = 3;
-    {::_pbi::TcParser::FastUS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(MarkMsgsAsReadReq, _impl_.userid_)}},
+    // uint64 userID = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(MarkMsgsAsReadReq, _impl_.userid_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(MarkMsgsAsReadReq, _impl_.userid_)}},
   }}, {{
     65535, 65535
   }}, {{
@@ -8166,16 +8124,15 @@ const ::_pbi::TcParseTable<2, 3, 0, 50, 2> MarkMsgsAsReadReq::_table_ = {
     // repeated int64 seqs = 2;
     {PROTOBUF_FIELD_OFFSET(MarkMsgsAsReadReq, _impl_.seqs_), 0, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kPackedInt64)},
-    // string userID = 3;
+    // uint64 userID = 3;
     {PROTOBUF_FIELD_OFFSET(MarkMsgsAsReadReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
   }},
   // no aux_entries
   {{
-    "\25\16\0\6\0\0\0\0"
+    "\25\16\0\0\0\0\0\0"
     "msg.MarkMsgsAsReadReq"
     "conversationID"
-    "userID"
   }},
 };
 
@@ -8188,7 +8145,7 @@ PROTOBUF_NOINLINE void MarkMsgsAsReadReq::Clear() {
 
   _impl_.seqs_.Clear();
   _impl_.conversationid_.ClearToEmpty();
-  _impl_.userid_.ClearToEmpty();
+  _impl_.userid_ = ::uint64_t{0u};
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -8224,12 +8181,11 @@ PROTOBUF_NOINLINE void MarkMsgsAsReadReq::Clear() {
             }
           }
 
-          // string userID = 3;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.MarkMsgsAsReadReq.userID");
-            target = stream->WriteStringMaybeAliased(3, _s, target);
+          // uint64 userID = 3;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                3, this_._internal_userid(), target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -8271,10 +8227,10 @@ PROTOBUF_NOINLINE void MarkMsgsAsReadReq::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_conversationid());
             }
-            // string userID = 3;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
+            // uint64 userID = 3;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -8293,8 +8249,8 @@ void MarkMsgsAsReadReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const
   if (!from._internal_conversationid().empty()) {
     _this->_internal_set_conversationid(from._internal_conversationid());
   }
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -8314,7 +8270,7 @@ void MarkMsgsAsReadReq::InternalSwap(MarkMsgsAsReadReq* PROTOBUF_RESTRICT other)
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.seqs_.InternalSwap(&other->_impl_.seqs_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.conversationid_, &other->_impl_.conversationid_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
+        swap(_impl_.userid_, other->_impl_.userid_);
 }
 
 ::google::protobuf::Metadata MarkMsgsAsReadReq::GetMetadata() const {
@@ -8444,7 +8400,6 @@ inline PROTOBUF_NDEBUG_INLINE MarkConversationAsReadReq::Impl_::Impl_(
       : seqs_{visibility, arena, from.seqs_},
         _seqs_cached_byte_size_{0},
         conversationid_(arena, from.conversationid_),
-        userid_(arena, from.userid_),
         _cached_size_{0} {}
 
 MarkConversationAsReadReq::MarkConversationAsReadReq(
@@ -8460,7 +8415,13 @@ MarkConversationAsReadReq::MarkConversationAsReadReq(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-  _impl_.hasreadseq_ = from._impl_.hasreadseq_;
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, userid_),
+           offsetof(Impl_, hasreadseq_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::hasreadseq_));
 
   // @@protoc_insertion_point(copy_constructor:msg.MarkConversationAsReadReq)
 }
@@ -8470,12 +8431,16 @@ inline PROTOBUF_NDEBUG_INLINE MarkConversationAsReadReq::Impl_::Impl_(
       : seqs_{visibility, arena},
         _seqs_cached_byte_size_{0},
         conversationid_(arena),
-        userid_(arena),
         _cached_size_{0} {}
 
 inline void MarkConversationAsReadReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.hasreadseq_ = {};
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           0,
+           offsetof(Impl_, hasreadseq_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::hasreadseq_));
 }
 MarkConversationAsReadReq::~MarkConversationAsReadReq() {
   // @@protoc_insertion_point(destructor:msg.MarkConversationAsReadReq)
@@ -8486,7 +8451,6 @@ inline void MarkConversationAsReadReq::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.conversationid_.Destroy();
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -8538,7 +8502,7 @@ const ::google::protobuf::internal::ClassData* MarkConversationAsReadReq::GetCla
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 0, 58, 2> MarkConversationAsReadReq::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 0, 52, 2> MarkConversationAsReadReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -8562,9 +8526,9 @@ const ::_pbi::TcParseTable<2, 4, 0, 58, 2> MarkConversationAsReadReq::_table_ = 
     // string conversationID = 1;
     {::_pbi::TcParser::FastUS1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(MarkConversationAsReadReq, _impl_.conversationid_)}},
-    // string userID = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(MarkConversationAsReadReq, _impl_.userid_)}},
+    // uint64 userID = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(MarkConversationAsReadReq, _impl_.userid_), 63>(),
+     {16, 63, 0, PROTOBUF_FIELD_OFFSET(MarkConversationAsReadReq, _impl_.userid_)}},
     // int64 hasReadSeq = 3;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(MarkConversationAsReadReq, _impl_.hasreadseq_), 63>(),
      {24, 63, 0, PROTOBUF_FIELD_OFFSET(MarkConversationAsReadReq, _impl_.hasreadseq_)}},
@@ -8574,9 +8538,9 @@ const ::_pbi::TcParseTable<2, 4, 0, 58, 2> MarkConversationAsReadReq::_table_ = 
     // string conversationID = 1;
     {PROTOBUF_FIELD_OFFSET(MarkConversationAsReadReq, _impl_.conversationid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string userID = 2;
+    // uint64 userID = 2;
     {PROTOBUF_FIELD_OFFSET(MarkConversationAsReadReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // int64 hasReadSeq = 3;
     {PROTOBUF_FIELD_OFFSET(MarkConversationAsReadReq, _impl_.hasreadseq_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
@@ -8586,10 +8550,9 @@ const ::_pbi::TcParseTable<2, 4, 0, 58, 2> MarkConversationAsReadReq::_table_ = 
   }},
   // no aux_entries
   {{
-    "\35\16\6\0\0\0\0\0"
+    "\35\16\0\0\0\0\0\0"
     "msg.MarkConversationAsReadReq"
     "conversationID"
-    "userID"
   }},
 };
 
@@ -8602,8 +8565,9 @@ PROTOBUF_NOINLINE void MarkConversationAsReadReq::Clear() {
 
   _impl_.seqs_.Clear();
   _impl_.conversationid_.ClearToEmpty();
-  _impl_.userid_.ClearToEmpty();
-  _impl_.hasreadseq_ = ::int64_t{0};
+  ::memset(&_impl_.userid_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.hasreadseq_) -
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.hasreadseq_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -8630,12 +8594,11 @@ PROTOBUF_NOINLINE void MarkConversationAsReadReq::Clear() {
             target = stream->WriteStringMaybeAliased(1, _s, target);
           }
 
-          // string userID = 2;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.MarkConversationAsReadReq.userID");
-            target = stream->WriteStringMaybeAliased(2, _s, target);
+          // uint64 userID = 2;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                2, this_._internal_userid(), target);
           }
 
           // int64 hasReadSeq = 3;
@@ -8693,10 +8656,10 @@ PROTOBUF_NOINLINE void MarkConversationAsReadReq::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_conversationid());
             }
-            // string userID = 2;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
+            // uint64 userID = 2;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
             // int64 hasReadSeq = 3;
             if (this_._internal_hasreadseq() != 0) {
@@ -8720,8 +8683,8 @@ void MarkConversationAsReadReq::MergeImpl(::google::protobuf::MessageLite& to_ms
   if (!from._internal_conversationid().empty()) {
     _this->_internal_set_conversationid(from._internal_conversationid());
   }
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   if (from._internal_hasreadseq() != 0) {
     _this->_impl_.hasreadseq_ = from._impl_.hasreadseq_;
@@ -8744,8 +8707,12 @@ void MarkConversationAsReadReq::InternalSwap(MarkConversationAsReadReq* PROTOBUF
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.seqs_.InternalSwap(&other->_impl_.seqs_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.conversationid_, &other->_impl_.conversationid_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
-        swap(_impl_.hasreadseq_, other->_impl_.hasreadseq_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(MarkConversationAsReadReq, _impl_.hasreadseq_)
+      + sizeof(MarkConversationAsReadReq::_impl_.hasreadseq_)
+      - PROTOBUF_FIELD_OFFSET(MarkConversationAsReadReq, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
 ::google::protobuf::Metadata MarkConversationAsReadReq::GetMetadata() const {
@@ -8873,7 +8840,6 @@ inline PROTOBUF_NDEBUG_INLINE SetConversationHasReadSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::msg::SetConversationHasReadSeqReq& from_msg)
       : conversationid_(arena, from.conversationid_),
-        userid_(arena, from.userid_),
         _cached_size_{0} {}
 
 SetConversationHasReadSeqReq::SetConversationHasReadSeqReq(
@@ -8890,11 +8856,11 @@ SetConversationHasReadSeqReq::SetConversationHasReadSeqReq(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
   ::memcpy(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, hasreadseq_),
+               offsetof(Impl_, userid_),
            reinterpret_cast<const char *>(&from._impl_) +
-               offsetof(Impl_, hasreadseq_),
+               offsetof(Impl_, userid_),
            offsetof(Impl_, nonotification_) -
-               offsetof(Impl_, hasreadseq_) +
+               offsetof(Impl_, userid_) +
                sizeof(Impl_::nonotification_));
 
   // @@protoc_insertion_point(copy_constructor:msg.SetConversationHasReadSeqReq)
@@ -8903,16 +8869,15 @@ inline PROTOBUF_NDEBUG_INLINE SetConversationHasReadSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : conversationid_(arena),
-        userid_(arena),
         _cached_size_{0} {}
 
 inline void SetConversationHasReadSeqReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
   ::memset(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, hasreadseq_),
+               offsetof(Impl_, userid_),
            0,
            offsetof(Impl_, nonotification_) -
-               offsetof(Impl_, hasreadseq_) +
+               offsetof(Impl_, userid_) +
                sizeof(Impl_::nonotification_));
 }
 SetConversationHasReadSeqReq::~SetConversationHasReadSeqReq() {
@@ -8924,7 +8889,6 @@ inline void SetConversationHasReadSeqReq::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.conversationid_.Destroy();
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -8964,7 +8928,7 @@ const ::google::protobuf::internal::ClassData* SetConversationHasReadSeqReq::Get
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 0, 61, 2> SetConversationHasReadSeqReq::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 0, 55, 2> SetConversationHasReadSeqReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -8988,9 +8952,9 @@ const ::_pbi::TcParseTable<2, 4, 0, 61, 2> SetConversationHasReadSeqReq::_table_
     // string conversationID = 1;
     {::_pbi::TcParser::FastUS1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(SetConversationHasReadSeqReq, _impl_.conversationid_)}},
-    // string userID = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(SetConversationHasReadSeqReq, _impl_.userid_)}},
+    // uint64 userID = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(SetConversationHasReadSeqReq, _impl_.userid_), 63>(),
+     {16, 63, 0, PROTOBUF_FIELD_OFFSET(SetConversationHasReadSeqReq, _impl_.userid_)}},
     // int64 hasReadSeq = 3;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(SetConversationHasReadSeqReq, _impl_.hasreadseq_), 63>(),
      {24, 63, 0, PROTOBUF_FIELD_OFFSET(SetConversationHasReadSeqReq, _impl_.hasreadseq_)}},
@@ -9000,9 +8964,9 @@ const ::_pbi::TcParseTable<2, 4, 0, 61, 2> SetConversationHasReadSeqReq::_table_
     // string conversationID = 1;
     {PROTOBUF_FIELD_OFFSET(SetConversationHasReadSeqReq, _impl_.conversationid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string userID = 2;
+    // uint64 userID = 2;
     {PROTOBUF_FIELD_OFFSET(SetConversationHasReadSeqReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // int64 hasReadSeq = 3;
     {PROTOBUF_FIELD_OFFSET(SetConversationHasReadSeqReq, _impl_.hasreadseq_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
@@ -9012,10 +8976,9 @@ const ::_pbi::TcParseTable<2, 4, 0, 61, 2> SetConversationHasReadSeqReq::_table_
   }},
   // no aux_entries
   {{
-    "\40\16\6\0\0\0\0\0"
+    "\40\16\0\0\0\0\0\0"
     "msg.SetConversationHasReadSeqReq"
     "conversationID"
-    "userID"
   }},
 };
 
@@ -9027,10 +8990,9 @@ PROTOBUF_NOINLINE void SetConversationHasReadSeqReq::Clear() {
   (void) cached_has_bits;
 
   _impl_.conversationid_.ClearToEmpty();
-  _impl_.userid_.ClearToEmpty();
-  ::memset(&_impl_.hasreadseq_, 0, static_cast<::size_t>(
+  ::memset(&_impl_.userid_, 0, static_cast<::size_t>(
       reinterpret_cast<char*>(&_impl_.nonotification_) -
-      reinterpret_cast<char*>(&_impl_.hasreadseq_)) + sizeof(_impl_.nonotification_));
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.nonotification_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -9057,12 +9019,11 @@ PROTOBUF_NOINLINE void SetConversationHasReadSeqReq::Clear() {
             target = stream->WriteStringMaybeAliased(1, _s, target);
           }
 
-          // string userID = 2;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.SetConversationHasReadSeqReq.userID");
-            target = stream->WriteStringMaybeAliased(2, _s, target);
+          // uint64 userID = 2;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                2, this_._internal_userid(), target);
           }
 
           // int64 hasReadSeq = 3;
@@ -9109,10 +9070,10 @@ PROTOBUF_NOINLINE void SetConversationHasReadSeqReq::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_conversationid());
             }
-            // string userID = 2;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
+            // uint64 userID = 2;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
             // int64 hasReadSeq = 3;
             if (this_._internal_hasreadseq() != 0) {
@@ -9139,8 +9100,8 @@ void SetConversationHasReadSeqReq::MergeImpl(::google::protobuf::MessageLite& to
   if (!from._internal_conversationid().empty()) {
     _this->_internal_set_conversationid(from._internal_conversationid());
   }
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   if (from._internal_hasreadseq() != 0) {
     _this->_impl_.hasreadseq_ = from._impl_.hasreadseq_;
@@ -9165,13 +9126,12 @@ void SetConversationHasReadSeqReq::InternalSwap(SetConversationHasReadSeqReq* PR
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.conversationid_, &other->_impl_.conversationid_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(SetConversationHasReadSeqReq, _impl_.nonotification_)
       + sizeof(SetConversationHasReadSeqReq::_impl_.nonotification_)
-      - PROTOBUF_FIELD_OFFSET(SetConversationHasReadSeqReq, _impl_.hasreadseq_)>(
-          reinterpret_cast<char*>(&_impl_.hasreadseq_),
-          reinterpret_cast<char*>(&other->_impl_.hasreadseq_));
+      - PROTOBUF_FIELD_OFFSET(SetConversationHasReadSeqReq, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
 ::google::protobuf::Metadata SetConversationHasReadSeqReq::GetMetadata() const {
@@ -9543,8 +9503,7 @@ inline PROTOBUF_NDEBUG_INLINE ClearConversationsMsgReq::Impl_::Impl_(
     const Impl_& from, const ::msg::ClearConversationsMsgReq& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        conversationids_{visibility, arena, from.conversationids_},
-        userid_(arena, from.userid_) {}
+        conversationids_{visibility, arena, from.conversationids_} {}
 
 ClearConversationsMsgReq::ClearConversationsMsgReq(
     ::google::protobuf::Arena* arena,
@@ -9563,6 +9522,7 @@ ClearConversationsMsgReq::ClearConversationsMsgReq(
   _impl_.deletesyncopt_ = (cached_has_bits & 0x00000001u) ? ::google::protobuf::Message::CopyConstruct<::msg::DeleteSyncOpt>(
                               arena, *from._impl_.deletesyncopt_)
                         : nullptr;
+  _impl_.userid_ = from._impl_.userid_;
 
   // @@protoc_insertion_point(copy_constructor:msg.ClearConversationsMsgReq)
 }
@@ -9570,12 +9530,16 @@ inline PROTOBUF_NDEBUG_INLINE ClearConversationsMsgReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : _cached_size_{0},
-        conversationids_{visibility, arena},
-        userid_(arena) {}
+        conversationids_{visibility, arena} {}
 
 inline void ClearConversationsMsgReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.deletesyncopt_ = {};
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, deletesyncopt_),
+           0,
+           offsetof(Impl_, userid_) -
+               offsetof(Impl_, deletesyncopt_) +
+               sizeof(Impl_::userid_));
 }
 ClearConversationsMsgReq::~ClearConversationsMsgReq() {
   // @@protoc_insertion_point(destructor:msg.ClearConversationsMsgReq)
@@ -9585,7 +9549,6 @@ inline void ClearConversationsMsgReq::SharedDtor(MessageLite& self) {
   ClearConversationsMsgReq& this_ = static_cast<ClearConversationsMsgReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   delete this_._impl_.deletesyncopt_;
   this_._impl_.~Impl_();
 }
@@ -9602,7 +9565,7 @@ constexpr auto ClearConversationsMsgReq::InternalNewImpl_() {
                   ::google::protobuf::Message::internal_visibility()),
   });
   if (arena_bits.has_value()) {
-    return ::google::protobuf::internal::MessageCreator::CopyInit(
+    return ::google::protobuf::internal::MessageCreator::ZeroInit(
         sizeof(ClearConversationsMsgReq), alignof(ClearConversationsMsgReq), *arena_bits);
   } else {
     return ::google::protobuf::internal::MessageCreator(&ClearConversationsMsgReq::PlacementNew_,
@@ -9638,7 +9601,7 @@ const ::google::protobuf::internal::ClassData* ClearConversationsMsgReq::GetClas
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 1, 58, 2> ClearConversationsMsgReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 1, 52, 2> ClearConversationsMsgReq::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(ClearConversationsMsgReq, _impl_._has_bits_),
     0, // no _extensions_
@@ -9660,9 +9623,9 @@ const ::_pbi::TcParseTable<2, 3, 1, 58, 2> ClearConversationsMsgReq::_table_ = {
     // repeated string conversationIDs = 1;
     {::_pbi::TcParser::FastUR1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(ClearConversationsMsgReq, _impl_.conversationids_)}},
-    // string userID = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(ClearConversationsMsgReq, _impl_.userid_)}},
+    // uint64 userID = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ClearConversationsMsgReq, _impl_.userid_), 63>(),
+     {16, 63, 0, PROTOBUF_FIELD_OFFSET(ClearConversationsMsgReq, _impl_.userid_)}},
     // .msg.DeleteSyncOpt deleteSyncOpt = 3;
     {::_pbi::TcParser::FastMtS1,
      {26, 0, 0, PROTOBUF_FIELD_OFFSET(ClearConversationsMsgReq, _impl_.deletesyncopt_)}},
@@ -9672,19 +9635,18 @@ const ::_pbi::TcParseTable<2, 3, 1, 58, 2> ClearConversationsMsgReq::_table_ = {
     // repeated string conversationIDs = 1;
     {PROTOBUF_FIELD_OFFSET(ClearConversationsMsgReq, _impl_.conversationids_), -1, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
-    // string userID = 2;
+    // uint64 userID = 2;
     {PROTOBUF_FIELD_OFFSET(ClearConversationsMsgReq, _impl_.userid_), -1, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // .msg.DeleteSyncOpt deleteSyncOpt = 3;
     {PROTOBUF_FIELD_OFFSET(ClearConversationsMsgReq, _impl_.deletesyncopt_), _Internal::kHasBitsOffset + 0, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
   }}, {{
     {::_pbi::TcParser::GetTable<::msg::DeleteSyncOpt>()},
   }}, {{
-    "\34\17\6\0\0\0\0\0"
+    "\34\17\0\0\0\0\0\0"
     "msg.ClearConversationsMsgReq"
     "conversationIDs"
-    "userID"
   }},
 };
 
@@ -9696,12 +9658,12 @@ PROTOBUF_NOINLINE void ClearConversationsMsgReq::Clear() {
   (void) cached_has_bits;
 
   _impl_.conversationids_.Clear();
-  _impl_.userid_.ClearToEmpty();
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     ABSL_DCHECK(_impl_.deletesyncopt_ != nullptr);
     _impl_.deletesyncopt_->Clear();
   }
+  _impl_.userid_ = ::uint64_t{0u};
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -9729,12 +9691,11 @@ PROTOBUF_NOINLINE void ClearConversationsMsgReq::Clear() {
             target = stream->WriteString(1, s, target);
           }
 
-          // string userID = 2;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.ClearConversationsMsgReq.userID");
-            target = stream->WriteStringMaybeAliased(2, _s, target);
+          // uint64 userID = 2;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                2, this_._internal_userid(), target);
           }
 
           cached_has_bits = this_._impl_._has_bits_[0];
@@ -9781,18 +9742,18 @@ PROTOBUF_NOINLINE void ClearConversationsMsgReq::Clear() {
             }
           }
            {
-            // string userID = 2;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
-            }
-          }
-           {
             // .msg.DeleteSyncOpt deleteSyncOpt = 3;
             cached_has_bits = this_._impl_._has_bits_[0];
             if (cached_has_bits & 0x00000001u) {
               total_size += 1 +
                             ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.deletesyncopt_);
+            }
+          }
+           {
+            // uint64 userID = 2;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -9809,9 +9770,6 @@ void ClearConversationsMsgReq::MergeImpl(::google::protobuf::MessageLite& to_msg
   (void) cached_has_bits;
 
   _this->_internal_mutable_conversationids()->MergeFrom(from._internal_conversationids());
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
-  }
   cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     ABSL_DCHECK(from._impl_.deletesyncopt_ != nullptr);
@@ -9821,6 +9779,9 @@ void ClearConversationsMsgReq::MergeImpl(::google::protobuf::MessageLite& to_msg
     } else {
       _this->_impl_.deletesyncopt_->MergeFrom(*from._impl_.deletesyncopt_);
     }
+  }
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
@@ -9836,13 +9797,15 @@ void ClearConversationsMsgReq::CopyFrom(const ClearConversationsMsgReq& from) {
 
 void ClearConversationsMsgReq::InternalSwap(ClearConversationsMsgReq* PROTOBUF_RESTRICT other) {
   using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   _impl_.conversationids_.InternalSwap(&other->_impl_.conversationids_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
-  swap(_impl_.deletesyncopt_, other->_impl_.deletesyncopt_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ClearConversationsMsgReq, _impl_.userid_)
+      + sizeof(ClearConversationsMsgReq::_impl_.userid_)
+      - PROTOBUF_FIELD_OFFSET(ClearConversationsMsgReq, _impl_.deletesyncopt_)>(
+          reinterpret_cast<char*>(&_impl_.deletesyncopt_),
+          reinterpret_cast<char*>(&other->_impl_.deletesyncopt_));
 }
 
 ::google::protobuf::Metadata ClearConversationsMsgReq::GetMetadata() const {
@@ -9974,8 +9937,7 @@ inline PROTOBUF_NDEBUG_INLINE UserClearAllMsgReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::msg::UserClearAllMsgReq& from_msg)
       : _has_bits_{from._has_bits_},
-        _cached_size_{0},
-        userid_(arena, from.userid_) {}
+        _cached_size_{0} {}
 
 UserClearAllMsgReq::UserClearAllMsgReq(
     ::google::protobuf::Arena* arena,
@@ -9994,18 +9956,23 @@ UserClearAllMsgReq::UserClearAllMsgReq(
   _impl_.deletesyncopt_ = (cached_has_bits & 0x00000001u) ? ::google::protobuf::Message::CopyConstruct<::msg::DeleteSyncOpt>(
                               arena, *from._impl_.deletesyncopt_)
                         : nullptr;
+  _impl_.userid_ = from._impl_.userid_;
 
   // @@protoc_insertion_point(copy_constructor:msg.UserClearAllMsgReq)
 }
 inline PROTOBUF_NDEBUG_INLINE UserClearAllMsgReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : _cached_size_{0},
-        userid_(arena) {}
+      : _cached_size_{0} {}
 
 inline void UserClearAllMsgReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.deletesyncopt_ = {};
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, deletesyncopt_),
+           0,
+           offsetof(Impl_, userid_) -
+               offsetof(Impl_, deletesyncopt_) +
+               sizeof(Impl_::userid_));
 }
 UserClearAllMsgReq::~UserClearAllMsgReq() {
   // @@protoc_insertion_point(destructor:msg.UserClearAllMsgReq)
@@ -10015,7 +9982,6 @@ inline void UserClearAllMsgReq::SharedDtor(MessageLite& self) {
   UserClearAllMsgReq& this_ = static_cast<UserClearAllMsgReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   delete this_._impl_.deletesyncopt_;
   this_._impl_.~Impl_();
 }
@@ -10025,7 +9991,7 @@ inline void* UserClearAllMsgReq::PlacementNew_(const void*, void* mem,
   return ::new (mem) UserClearAllMsgReq(arena);
 }
 constexpr auto UserClearAllMsgReq::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(UserClearAllMsgReq),
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(UserClearAllMsgReq),
                                             alignof(UserClearAllMsgReq));
 }
 PROTOBUF_CONSTINIT
@@ -10056,7 +10022,7 @@ const ::google::protobuf::internal::ClassData* UserClearAllMsgReq::GetClassData(
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 2, 1, 37, 2> UserClearAllMsgReq::_table_ = {
+const ::_pbi::TcParseTable<2, 2, 1, 0, 2> UserClearAllMsgReq::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(UserClearAllMsgReq, _impl_._has_bits_),
     0, // no _extensions_
@@ -10075,9 +10041,9 @@ const ::_pbi::TcParseTable<2, 2, 1, 37, 2> UserClearAllMsgReq::_table_ = {
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
-    // string userID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(UserClearAllMsgReq, _impl_.userid_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(UserClearAllMsgReq, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(UserClearAllMsgReq, _impl_.userid_)}},
     {::_pbi::TcParser::MiniParse, {}},
     // .msg.DeleteSyncOpt deleteSyncOpt = 3;
     {::_pbi::TcParser::FastMtS1,
@@ -10085,18 +10051,15 @@ const ::_pbi::TcParseTable<2, 2, 1, 37, 2> UserClearAllMsgReq::_table_ = {
   }}, {{
     65535, 65535
   }}, {{
-    // string userID = 1;
+    // uint64 userID = 1;
     {PROTOBUF_FIELD_OFFSET(UserClearAllMsgReq, _impl_.userid_), -1, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // .msg.DeleteSyncOpt deleteSyncOpt = 3;
     {PROTOBUF_FIELD_OFFSET(UserClearAllMsgReq, _impl_.deletesyncopt_), _Internal::kHasBitsOffset + 0, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
   }}, {{
     {::_pbi::TcParser::GetTable<::msg::DeleteSyncOpt>()},
   }}, {{
-    "\26\6\0\0\0\0\0\0"
-    "msg.UserClearAllMsgReq"
-    "userID"
   }},
 };
 
@@ -10107,12 +10070,12 @@ PROTOBUF_NOINLINE void UserClearAllMsgReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.userid_.ClearToEmpty();
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     ABSL_DCHECK(_impl_.deletesyncopt_ != nullptr);
     _impl_.deletesyncopt_->Clear();
   }
+  _impl_.userid_ = ::uint64_t{0u};
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -10132,12 +10095,11 @@ PROTOBUF_NOINLINE void UserClearAllMsgReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string userID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.UserClearAllMsgReq.userID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
           cached_has_bits = this_._impl_._has_bits_[0];
@@ -10173,18 +10135,18 @@ PROTOBUF_NOINLINE void UserClearAllMsgReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string userID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
-            }
-          }
-           {
             // .msg.DeleteSyncOpt deleteSyncOpt = 3;
             cached_has_bits = this_._impl_._has_bits_[0];
             if (cached_has_bits & 0x00000001u) {
               total_size += 1 +
                             ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.deletesyncopt_);
+            }
+          }
+           {
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -10200,9 +10162,6 @@ void UserClearAllMsgReq::MergeImpl(::google::protobuf::MessageLite& to_msg, cons
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
-  }
   cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     ABSL_DCHECK(from._impl_.deletesyncopt_ != nullptr);
@@ -10212,6 +10171,9 @@ void UserClearAllMsgReq::MergeImpl(::google::protobuf::MessageLite& to_msg, cons
     } else {
       _this->_impl_.deletesyncopt_->MergeFrom(*from._impl_.deletesyncopt_);
     }
+  }
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
@@ -10227,12 +10189,14 @@ void UserClearAllMsgReq::CopyFrom(const UserClearAllMsgReq& from) {
 
 void UserClearAllMsgReq::InternalSwap(UserClearAllMsgReq* PROTOBUF_RESTRICT other) {
   using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
-  swap(_impl_.deletesyncopt_, other->_impl_.deletesyncopt_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(UserClearAllMsgReq, _impl_.userid_)
+      + sizeof(UserClearAllMsgReq::_impl_.userid_)
+      - PROTOBUF_FIELD_OFFSET(UserClearAllMsgReq, _impl_.deletesyncopt_)>(
+          reinterpret_cast<char*>(&_impl_.deletesyncopt_),
+          reinterpret_cast<char*>(&other->_impl_.deletesyncopt_));
 }
 
 ::google::protobuf::Metadata UserClearAllMsgReq::GetMetadata() const {
@@ -10367,8 +10331,7 @@ inline PROTOBUF_NDEBUG_INLINE DeleteMsgsReq::Impl_::Impl_(
         _cached_size_{0},
         seqs_{visibility, arena, from.seqs_},
         _seqs_cached_byte_size_{0},
-        conversationid_(arena, from.conversationid_),
-        userid_(arena, from.userid_) {}
+        conversationid_(arena, from.conversationid_) {}
 
 DeleteMsgsReq::DeleteMsgsReq(
     ::google::protobuf::Arena* arena,
@@ -10387,6 +10350,7 @@ DeleteMsgsReq::DeleteMsgsReq(
   _impl_.deletesyncopt_ = (cached_has_bits & 0x00000001u) ? ::google::protobuf::Message::CopyConstruct<::msg::DeleteSyncOpt>(
                               arena, *from._impl_.deletesyncopt_)
                         : nullptr;
+  _impl_.userid_ = from._impl_.userid_;
 
   // @@protoc_insertion_point(copy_constructor:msg.DeleteMsgsReq)
 }
@@ -10396,12 +10360,16 @@ inline PROTOBUF_NDEBUG_INLINE DeleteMsgsReq::Impl_::Impl_(
       : _cached_size_{0},
         seqs_{visibility, arena},
         _seqs_cached_byte_size_{0},
-        conversationid_(arena),
-        userid_(arena) {}
+        conversationid_(arena) {}
 
 inline void DeleteMsgsReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.deletesyncopt_ = {};
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, deletesyncopt_),
+           0,
+           offsetof(Impl_, userid_) -
+               offsetof(Impl_, deletesyncopt_) +
+               sizeof(Impl_::userid_));
 }
 DeleteMsgsReq::~DeleteMsgsReq() {
   // @@protoc_insertion_point(destructor:msg.DeleteMsgsReq)
@@ -10412,7 +10380,6 @@ inline void DeleteMsgsReq::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.conversationid_.Destroy();
-  this_._impl_.userid_.Destroy();
   delete this_._impl_.deletesyncopt_;
   this_._impl_.~Impl_();
 }
@@ -10465,7 +10432,7 @@ const ::google::protobuf::internal::ClassData* DeleteMsgsReq::GetClassData() con
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 1, 46, 2> DeleteMsgsReq::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 1, 40, 2> DeleteMsgsReq::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(DeleteMsgsReq, _impl_._has_bits_),
     0, // no _extensions_
@@ -10492,9 +10459,9 @@ const ::_pbi::TcParseTable<2, 4, 1, 46, 2> DeleteMsgsReq::_table_ = {
     // repeated int64 seqs = 2;
     {::_pbi::TcParser::FastV64P1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(DeleteMsgsReq, _impl_.seqs_)}},
-    // string userID = 3;
-    {::_pbi::TcParser::FastUS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(DeleteMsgsReq, _impl_.userid_)}},
+    // uint64 userID = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(DeleteMsgsReq, _impl_.userid_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(DeleteMsgsReq, _impl_.userid_)}},
   }}, {{
     65535, 65535
   }}, {{
@@ -10504,19 +10471,18 @@ const ::_pbi::TcParseTable<2, 4, 1, 46, 2> DeleteMsgsReq::_table_ = {
     // repeated int64 seqs = 2;
     {PROTOBUF_FIELD_OFFSET(DeleteMsgsReq, _impl_.seqs_), -1, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kPackedInt64)},
-    // string userID = 3;
+    // uint64 userID = 3;
     {PROTOBUF_FIELD_OFFSET(DeleteMsgsReq, _impl_.userid_), -1, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // .msg.DeleteSyncOpt deleteSyncOpt = 4;
     {PROTOBUF_FIELD_OFFSET(DeleteMsgsReq, _impl_.deletesyncopt_), _Internal::kHasBitsOffset + 0, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
   }}, {{
     {::_pbi::TcParser::GetTable<::msg::DeleteSyncOpt>()},
   }}, {{
-    "\21\16\0\6\0\0\0\0"
+    "\21\16\0\0\0\0\0\0"
     "msg.DeleteMsgsReq"
     "conversationID"
-    "userID"
   }},
 };
 
@@ -10529,12 +10495,12 @@ PROTOBUF_NOINLINE void DeleteMsgsReq::Clear() {
 
   _impl_.seqs_.Clear();
   _impl_.conversationid_.ClearToEmpty();
-  _impl_.userid_.ClearToEmpty();
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     ABSL_DCHECK(_impl_.deletesyncopt_ != nullptr);
     _impl_.deletesyncopt_->Clear();
   }
+  _impl_.userid_ = ::uint64_t{0u};
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -10571,12 +10537,11 @@ PROTOBUF_NOINLINE void DeleteMsgsReq::Clear() {
             }
           }
 
-          // string userID = 3;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.DeleteMsgsReq.userID");
-            target = stream->WriteStringMaybeAliased(3, _s, target);
+          // uint64 userID = 3;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                3, this_._internal_userid(), target);
           }
 
           cached_has_bits = this_._impl_._has_bits_[0];
@@ -10626,11 +10591,6 @@ PROTOBUF_NOINLINE void DeleteMsgsReq::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_conversationid());
             }
-            // string userID = 3;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
-            }
           }
            {
             // .msg.DeleteSyncOpt deleteSyncOpt = 4;
@@ -10638,6 +10598,13 @@ PROTOBUF_NOINLINE void DeleteMsgsReq::Clear() {
             if (cached_has_bits & 0x00000001u) {
               total_size += 1 +
                             ::google::protobuf::internal::WireFormatLite::MessageSize(*this_._impl_.deletesyncopt_);
+            }
+          }
+           {
+            // uint64 userID = 3;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -10657,9 +10624,6 @@ void DeleteMsgsReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::g
   if (!from._internal_conversationid().empty()) {
     _this->_internal_set_conversationid(from._internal_conversationid());
   }
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
-  }
   cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     ABSL_DCHECK(from._impl_.deletesyncopt_ != nullptr);
@@ -10669,6 +10633,9 @@ void DeleteMsgsReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::g
     } else {
       _this->_impl_.deletesyncopt_->MergeFrom(*from._impl_.deletesyncopt_);
     }
+  }
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   _this->_impl_._has_bits_[0] |= cached_has_bits;
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
@@ -10690,8 +10657,12 @@ void DeleteMsgsReq::InternalSwap(DeleteMsgsReq* PROTOBUF_RESTRICT other) {
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   _impl_.seqs_.InternalSwap(&other->_impl_.seqs_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.conversationid_, &other->_impl_.conversationid_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
-  swap(_impl_.deletesyncopt_, other->_impl_.deletesyncopt_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(DeleteMsgsReq, _impl_.userid_)
+      + sizeof(DeleteMsgsReq::_impl_.userid_)
+      - PROTOBUF_FIELD_OFFSET(DeleteMsgsReq, _impl_.deletesyncopt_)>(
+          reinterpret_cast<char*>(&_impl_.deletesyncopt_),
+          reinterpret_cast<char*>(&other->_impl_.deletesyncopt_));
 }
 
 ::google::protobuf::Metadata DeleteMsgsReq::GetMetadata() const {
@@ -11813,7 +11784,6 @@ inline PROTOBUF_NDEBUG_INLINE GetHasReadSeqsReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::msg::GetHasReadSeqsReq& from_msg)
       : conversationids_{visibility, arena, from.conversationids_},
-        userid_(arena, from.userid_),
         _cached_size_{0} {}
 
 GetHasReadSeqsReq::GetHasReadSeqsReq(
@@ -11829,6 +11799,7 @@ GetHasReadSeqsReq::GetHasReadSeqsReq(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.userid_ = from._impl_.userid_;
 
   // @@protoc_insertion_point(copy_constructor:msg.GetHasReadSeqsReq)
 }
@@ -11836,11 +11807,11 @@ inline PROTOBUF_NDEBUG_INLINE GetHasReadSeqsReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : conversationids_{visibility, arena},
-        userid_(arena),
         _cached_size_{0} {}
 
 inline void GetHasReadSeqsReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.userid_ = {};
 }
 GetHasReadSeqsReq::~GetHasReadSeqsReq() {
   // @@protoc_insertion_point(destructor:msg.GetHasReadSeqsReq)
@@ -11850,7 +11821,6 @@ inline void GetHasReadSeqsReq::SharedDtor(MessageLite& self) {
   GetHasReadSeqsReq& this_ = static_cast<GetHasReadSeqsReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -11866,7 +11836,7 @@ constexpr auto GetHasReadSeqsReq::InternalNewImpl_() {
                   ::google::protobuf::Message::internal_visibility()),
   });
   if (arena_bits.has_value()) {
-    return ::google::protobuf::internal::MessageCreator::CopyInit(
+    return ::google::protobuf::internal::MessageCreator::ZeroInit(
         sizeof(GetHasReadSeqsReq), alignof(GetHasReadSeqsReq), *arena_bits);
   } else {
     return ::google::protobuf::internal::MessageCreator(&GetHasReadSeqsReq::PlacementNew_,
@@ -11902,7 +11872,7 @@ const ::google::protobuf::internal::ClassData* GetHasReadSeqsReq::GetClassData()
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 51, 2> GetHasReadSeqsReq::_table_ = {
+const ::_pbi::TcParseTable<1, 2, 0, 45, 2> GetHasReadSeqsReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -11923,24 +11893,23 @@ const ::_pbi::TcParseTable<1, 2, 0, 51, 2> GetHasReadSeqsReq::_table_ = {
     // repeated string conversationIDs = 2;
     {::_pbi::TcParser::FastUR1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(GetHasReadSeqsReq, _impl_.conversationids_)}},
-    // string userID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(GetHasReadSeqsReq, _impl_.userid_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(GetHasReadSeqsReq, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(GetHasReadSeqsReq, _impl_.userid_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // string userID = 1;
+    // uint64 userID = 1;
     {PROTOBUF_FIELD_OFFSET(GetHasReadSeqsReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // repeated string conversationIDs = 2;
     {PROTOBUF_FIELD_OFFSET(GetHasReadSeqsReq, _impl_.conversationids_), 0, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
   }},
   // no aux_entries
   {{
-    "\25\6\17\0\0\0\0\0"
+    "\25\0\17\0\0\0\0\0"
     "msg.GetHasReadSeqsReq"
-    "userID"
     "conversationIDs"
   }},
 };
@@ -11953,7 +11922,7 @@ PROTOBUF_NOINLINE void GetHasReadSeqsReq::Clear() {
   (void) cached_has_bits;
 
   _impl_.conversationids_.Clear();
-  _impl_.userid_.ClearToEmpty();
+  _impl_.userid_ = ::uint64_t{0u};
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -11972,12 +11941,11 @@ PROTOBUF_NOINLINE void GetHasReadSeqsReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string userID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.GetHasReadSeqsReq.userID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
           // repeated string conversationIDs = 2;
@@ -12024,10 +11992,10 @@ PROTOBUF_NOINLINE void GetHasReadSeqsReq::Clear() {
             }
           }
            {
-            // string userID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -12043,8 +12011,8 @@ void GetHasReadSeqsReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const
   (void) cached_has_bits;
 
   _this->_internal_mutable_conversationids()->MergeFrom(from._internal_conversationids());
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -12059,11 +12027,9 @@ void GetHasReadSeqsReq::CopyFrom(const GetHasReadSeqsReq& from) {
 
 void GetHasReadSeqsReq::InternalSwap(GetHasReadSeqsReq* PROTOBUF_RESTRICT other) {
   using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.conversationids_.InternalSwap(&other->_impl_.conversationids_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
+        swap(_impl_.userid_, other->_impl_.userid_);
 }
 
 ::google::protobuf::Metadata GetHasReadSeqsReq::GetMetadata() const {
@@ -13637,7 +13603,6 @@ inline PROTOBUF_NDEBUG_INLINE GetConversationsHasReadAndMaxSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::msg::GetConversationsHasReadAndMaxSeqReq& from_msg)
       : conversationids_{visibility, arena, from.conversationids_},
-        userid_(arena, from.userid_),
         _cached_size_{0} {}
 
 GetConversationsHasReadAndMaxSeqReq::GetConversationsHasReadAndMaxSeqReq(
@@ -13653,7 +13618,13 @@ GetConversationsHasReadAndMaxSeqReq::GetConversationsHasReadAndMaxSeqReq(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-  _impl_.returnpinned_ = from._impl_.returnpinned_;
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, userid_),
+           offsetof(Impl_, returnpinned_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::returnpinned_));
 
   // @@protoc_insertion_point(copy_constructor:msg.GetConversationsHasReadAndMaxSeqReq)
 }
@@ -13661,12 +13632,16 @@ inline PROTOBUF_NDEBUG_INLINE GetConversationsHasReadAndMaxSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : conversationids_{visibility, arena},
-        userid_(arena),
         _cached_size_{0} {}
 
 inline void GetConversationsHasReadAndMaxSeqReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.returnpinned_ = {};
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           0,
+           offsetof(Impl_, returnpinned_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::returnpinned_));
 }
 GetConversationsHasReadAndMaxSeqReq::~GetConversationsHasReadAndMaxSeqReq() {
   // @@protoc_insertion_point(destructor:msg.GetConversationsHasReadAndMaxSeqReq)
@@ -13676,7 +13651,6 @@ inline void GetConversationsHasReadAndMaxSeqReq::SharedDtor(MessageLite& self) {
   GetConversationsHasReadAndMaxSeqReq& this_ = static_cast<GetConversationsHasReadAndMaxSeqReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -13692,7 +13666,7 @@ constexpr auto GetConversationsHasReadAndMaxSeqReq::InternalNewImpl_() {
                   ::google::protobuf::Message::internal_visibility()),
   });
   if (arena_bits.has_value()) {
-    return ::google::protobuf::internal::MessageCreator::CopyInit(
+    return ::google::protobuf::internal::MessageCreator::ZeroInit(
         sizeof(GetConversationsHasReadAndMaxSeqReq), alignof(GetConversationsHasReadAndMaxSeqReq), *arena_bits);
   } else {
     return ::google::protobuf::internal::MessageCreator(&GetConversationsHasReadAndMaxSeqReq::PlacementNew_,
@@ -13728,7 +13702,7 @@ const ::google::protobuf::internal::ClassData* GetConversationsHasReadAndMaxSeqR
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 69, 2> GetConversationsHasReadAndMaxSeqReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 0, 63, 2> GetConversationsHasReadAndMaxSeqReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -13747,9 +13721,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 69, 2> GetConversationsHasReadAndMaxSeqReq::
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
-    // string userID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(GetConversationsHasReadAndMaxSeqReq, _impl_.userid_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(GetConversationsHasReadAndMaxSeqReq, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(GetConversationsHasReadAndMaxSeqReq, _impl_.userid_)}},
     // repeated string conversationIDs = 2;
     {::_pbi::TcParser::FastUR1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(GetConversationsHasReadAndMaxSeqReq, _impl_.conversationids_)}},
@@ -13759,9 +13733,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 69, 2> GetConversationsHasReadAndMaxSeqReq::
   }}, {{
     65535, 65535
   }}, {{
-    // string userID = 1;
+    // uint64 userID = 1;
     {PROTOBUF_FIELD_OFFSET(GetConversationsHasReadAndMaxSeqReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // repeated string conversationIDs = 2;
     {PROTOBUF_FIELD_OFFSET(GetConversationsHasReadAndMaxSeqReq, _impl_.conversationids_), 0, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
@@ -13771,9 +13745,8 @@ const ::_pbi::TcParseTable<2, 3, 0, 69, 2> GetConversationsHasReadAndMaxSeqReq::
   }},
   // no aux_entries
   {{
-    "\47\6\17\0\0\0\0\0"
+    "\47\0\17\0\0\0\0\0"
     "msg.GetConversationsHasReadAndMaxSeqReq"
-    "userID"
     "conversationIDs"
   }},
 };
@@ -13786,8 +13759,9 @@ PROTOBUF_NOINLINE void GetConversationsHasReadAndMaxSeqReq::Clear() {
   (void) cached_has_bits;
 
   _impl_.conversationids_.Clear();
-  _impl_.userid_.ClearToEmpty();
-  _impl_.returnpinned_ = false;
+  ::memset(&_impl_.userid_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.returnpinned_) -
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.returnpinned_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -13806,12 +13780,11 @@ PROTOBUF_NOINLINE void GetConversationsHasReadAndMaxSeqReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string userID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.GetConversationsHasReadAndMaxSeqReq.userID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
           // repeated string conversationIDs = 2;
@@ -13865,10 +13838,10 @@ PROTOBUF_NOINLINE void GetConversationsHasReadAndMaxSeqReq::Clear() {
             }
           }
            {
-            // string userID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
             // bool returnPinned = 3;
             if (this_._internal_returnpinned() != 0) {
@@ -13888,8 +13861,8 @@ void GetConversationsHasReadAndMaxSeqReq::MergeImpl(::google::protobuf::MessageL
   (void) cached_has_bits;
 
   _this->_internal_mutable_conversationids()->MergeFrom(from._internal_conversationids());
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   if (from._internal_returnpinned() != 0) {
     _this->_impl_.returnpinned_ = from._impl_.returnpinned_;
@@ -13907,12 +13880,14 @@ void GetConversationsHasReadAndMaxSeqReq::CopyFrom(const GetConversationsHasRead
 
 void GetConversationsHasReadAndMaxSeqReq::InternalSwap(GetConversationsHasReadAndMaxSeqReq* PROTOBUF_RESTRICT other) {
   using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.conversationids_.InternalSwap(&other->_impl_.conversationids_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
-        swap(_impl_.returnpinned_, other->_impl_.returnpinned_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(GetConversationsHasReadAndMaxSeqReq, _impl_.returnpinned_)
+      + sizeof(GetConversationsHasReadAndMaxSeqReq::_impl_.returnpinned_)
+      - PROTOBUF_FIELD_OFFSET(GetConversationsHasReadAndMaxSeqReq, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
 ::google::protobuf::Metadata GetConversationsHasReadAndMaxSeqReq::GetMetadata() const {
@@ -16804,8 +16779,6 @@ inline PROTOBUF_NDEBUG_INLINE SearchMessageReq::Impl_::Impl_(
     const Impl_& from, const ::msg::SearchMessageReq& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        sendid_(arena, from.sendid_),
-        recvid_(arena, from.recvid_),
         sendtime_(arena, from.sendtime_) {}
 
 SearchMessageReq::SearchMessageReq(
@@ -16826,11 +16799,11 @@ SearchMessageReq::SearchMessageReq(
                               arena, *from._impl_.pagination_)
                         : nullptr;
   ::memcpy(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, contenttype_),
+               offsetof(Impl_, sendid_),
            reinterpret_cast<const char *>(&from._impl_) +
-               offsetof(Impl_, contenttype_),
+               offsetof(Impl_, sendid_),
            offsetof(Impl_, sessiontype_) -
-               offsetof(Impl_, contenttype_) +
+               offsetof(Impl_, sendid_) +
                sizeof(Impl_::sessiontype_));
 
   // @@protoc_insertion_point(copy_constructor:msg.SearchMessageReq)
@@ -16839,8 +16812,6 @@ inline PROTOBUF_NDEBUG_INLINE SearchMessageReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : _cached_size_{0},
-        sendid_(arena),
-        recvid_(arena),
         sendtime_(arena) {}
 
 inline void SearchMessageReq::SharedCtor(::_pb::Arena* arena) {
@@ -16860,8 +16831,6 @@ inline void SearchMessageReq::SharedDtor(MessageLite& self) {
   SearchMessageReq& this_ = static_cast<SearchMessageReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.sendid_.Destroy();
-  this_._impl_.recvid_.Destroy();
   this_._impl_.sendtime_.Destroy();
   delete this_._impl_.pagination_;
   this_._impl_.~Impl_();
@@ -16903,7 +16872,7 @@ const ::google::protobuf::internal::ClassData* SearchMessageReq::GetClassData() 
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 6, 1, 49, 2> SearchMessageReq::_table_ = {
+const ::_pbi::TcParseTable<3, 6, 1, 37, 2> SearchMessageReq::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(SearchMessageReq, _impl_._has_bits_),
     0, // no _extensions_
@@ -16922,12 +16891,12 @@ const ::_pbi::TcParseTable<3, 6, 1, 49, 2> SearchMessageReq::_table_ = {
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
-    // string sendID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(SearchMessageReq, _impl_.sendid_)}},
-    // string recvID = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(SearchMessageReq, _impl_.recvid_)}},
+    // uint64 sendID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(SearchMessageReq, _impl_.sendid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(SearchMessageReq, _impl_.sendid_)}},
+    // uint64 recvID = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(SearchMessageReq, _impl_.recvid_), 63>(),
+     {16, 63, 0, PROTOBUF_FIELD_OFFSET(SearchMessageReq, _impl_.recvid_)}},
     // int32 contentType = 3;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(SearchMessageReq, _impl_.contenttype_), 63>(),
      {24, 63, 0, PROTOBUF_FIELD_OFFSET(SearchMessageReq, _impl_.contenttype_)}},
@@ -16944,12 +16913,12 @@ const ::_pbi::TcParseTable<3, 6, 1, 49, 2> SearchMessageReq::_table_ = {
   }}, {{
     65535, 65535
   }}, {{
-    // string sendID = 1;
+    // uint64 sendID = 1;
     {PROTOBUF_FIELD_OFFSET(SearchMessageReq, _impl_.sendid_), -1, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string recvID = 2;
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
+    // uint64 recvID = 2;
     {PROTOBUF_FIELD_OFFSET(SearchMessageReq, _impl_.recvid_), -1, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // int32 contentType = 3;
     {PROTOBUF_FIELD_OFFSET(SearchMessageReq, _impl_.contenttype_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt32)},
@@ -16965,10 +16934,8 @@ const ::_pbi::TcParseTable<3, 6, 1, 49, 2> SearchMessageReq::_table_ = {
   }}, {{
     {::_pbi::TcParser::GetTable<::sdkws::RequestPagination>()},
   }}, {{
-    "\24\6\6\0\10\0\0\0"
+    "\24\0\0\0\10\0\0\0"
     "msg.SearchMessageReq"
-    "sendID"
-    "recvID"
     "sendTime"
   }},
 };
@@ -16980,17 +16947,15 @@ PROTOBUF_NOINLINE void SearchMessageReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.sendid_.ClearToEmpty();
-  _impl_.recvid_.ClearToEmpty();
   _impl_.sendtime_.ClearToEmpty();
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     ABSL_DCHECK(_impl_.pagination_ != nullptr);
     _impl_.pagination_->Clear();
   }
-  ::memset(&_impl_.contenttype_, 0, static_cast<::size_t>(
+  ::memset(&_impl_.sendid_, 0, static_cast<::size_t>(
       reinterpret_cast<char*>(&_impl_.sessiontype_) -
-      reinterpret_cast<char*>(&_impl_.contenttype_)) + sizeof(_impl_.sessiontype_));
+      reinterpret_cast<char*>(&_impl_.sendid_)) + sizeof(_impl_.sessiontype_));
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
@@ -17010,20 +16975,18 @@ PROTOBUF_NOINLINE void SearchMessageReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string sendID = 1;
-          if (!this_._internal_sendid().empty()) {
-            const std::string& _s = this_._internal_sendid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.SearchMessageReq.sendID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 sendID = 1;
+          if (this_._internal_sendid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_sendid(), target);
           }
 
-          // string recvID = 2;
-          if (!this_._internal_recvid().empty()) {
-            const std::string& _s = this_._internal_recvid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.SearchMessageReq.recvID");
-            target = stream->WriteStringMaybeAliased(2, _s, target);
+          // uint64 recvID = 2;
+          if (this_._internal_recvid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                2, this_._internal_recvid(), target);
           }
 
           // int32 contentType = 3;
@@ -17081,16 +17044,6 @@ PROTOBUF_NOINLINE void SearchMessageReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string sendID = 1;
-            if (!this_._internal_sendid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_sendid());
-            }
-            // string recvID = 2;
-            if (!this_._internal_recvid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_recvid());
-            }
             // string sendTime = 4;
             if (!this_._internal_sendtime().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -17106,6 +17059,16 @@ PROTOBUF_NOINLINE void SearchMessageReq::Clear() {
             }
           }
            {
+            // uint64 sendID = 1;
+            if (this_._internal_sendid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_sendid());
+            }
+            // uint64 recvID = 2;
+            if (this_._internal_recvid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_recvid());
+            }
             // int32 contentType = 3;
             if (this_._internal_contenttype() != 0) {
               total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
@@ -17130,12 +17093,6 @@ void SearchMessageReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const 
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_sendid().empty()) {
-    _this->_internal_set_sendid(from._internal_sendid());
-  }
-  if (!from._internal_recvid().empty()) {
-    _this->_internal_set_recvid(from._internal_recvid());
-  }
   if (!from._internal_sendtime().empty()) {
     _this->_internal_set_sendtime(from._internal_sendtime());
   }
@@ -17148,6 +17105,12 @@ void SearchMessageReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const 
     } else {
       _this->_impl_.pagination_->MergeFrom(*from._impl_.pagination_);
     }
+  }
+  if (from._internal_sendid() != 0) {
+    _this->_impl_.sendid_ = from._impl_.sendid_;
+  }
+  if (from._internal_recvid() != 0) {
+    _this->_impl_.recvid_ = from._impl_.recvid_;
   }
   if (from._internal_contenttype() != 0) {
     _this->_impl_.contenttype_ = from._impl_.contenttype_;
@@ -17173,8 +17136,6 @@ void SearchMessageReq::InternalSwap(SearchMessageReq* PROTOBUF_RESTRICT other) {
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.sendid_, &other->_impl_.sendid_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.recvid_, &other->_impl_.recvid_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.sendtime_, &other->_impl_.sendtime_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(SearchMessageReq, _impl_.sessiontype_)
@@ -18051,8 +18012,6 @@ inline PROTOBUF_NDEBUG_INLINE ChatLog::Impl_::Impl_(
     const Impl_& from, const ::msg::ChatLog& from_msg)
       : servermsgid_(arena, from.servermsgid_),
         clientmsgid_(arena, from.clientmsgid_),
-        sendid_(arena, from.sendid_),
-        recvid_(arena, from.recvid_),
         groupid_(arena, from.groupid_),
         recvnickname_(arena, from.recvnickname_),
         sendernickname_(arena, from.sendernickname_),
@@ -18078,11 +18037,11 @@ ChatLog::ChatLog(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
   ::memcpy(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, senderplatformid_),
+               offsetof(Impl_, sendid_),
            reinterpret_cast<const char *>(&from._impl_) +
-               offsetof(Impl_, senderplatformid_),
+               offsetof(Impl_, sendid_),
            offsetof(Impl_, grouptype_) -
-               offsetof(Impl_, senderplatformid_) +
+               offsetof(Impl_, sendid_) +
                sizeof(Impl_::grouptype_));
 
   // @@protoc_insertion_point(copy_constructor:msg.ChatLog)
@@ -18092,8 +18051,6 @@ inline PROTOBUF_NDEBUG_INLINE ChatLog::Impl_::Impl_(
     ::google::protobuf::Arena* arena)
       : servermsgid_(arena),
         clientmsgid_(arena),
-        sendid_(arena),
-        recvid_(arena),
         groupid_(arena),
         recvnickname_(arena),
         sendernickname_(arena),
@@ -18108,10 +18065,10 @@ inline PROTOBUF_NDEBUG_INLINE ChatLog::Impl_::Impl_(
 inline void ChatLog::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
   ::memset(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, senderplatformid_),
+               offsetof(Impl_, sendid_),
            0,
            offsetof(Impl_, grouptype_) -
-               offsetof(Impl_, senderplatformid_) +
+               offsetof(Impl_, sendid_) +
                sizeof(Impl_::grouptype_));
 }
 ChatLog::~ChatLog() {
@@ -18124,8 +18081,6 @@ inline void ChatLog::SharedDtor(MessageLite& self) {
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.servermsgid_.Destroy();
   this_._impl_.clientmsgid_.Destroy();
-  this_._impl_.sendid_.Destroy();
-  this_._impl_.recvid_.Destroy();
   this_._impl_.groupid_.Destroy();
   this_._impl_.recvnickname_.Destroy();
   this_._impl_.sendernickname_.Destroy();
@@ -18174,7 +18129,7 @@ const ::google::protobuf::internal::ClassData* ChatLog::GetClassData() const {
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<5, 23, 0, 156, 2> ChatLog::_table_ = {
+const ::_pbi::TcParseTable<5, 23, 0, 144, 2> ChatLog::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -18199,12 +18154,12 @@ const ::_pbi::TcParseTable<5, 23, 0, 156, 2> ChatLog::_table_ = {
     // string clientMsgID = 2;
     {::_pbi::TcParser::FastUS1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.clientmsgid_)}},
-    // string sendID = 3;
-    {::_pbi::TcParser::FastUS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.sendid_)}},
-    // string recvID = 4;
-    {::_pbi::TcParser::FastUS1,
-     {34, 63, 0, PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.recvid_)}},
+    // uint64 sendID = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ChatLog, _impl_.sendid_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.sendid_)}},
+    // uint64 recvID = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ChatLog, _impl_.recvid_), 63>(),
+     {32, 63, 0, PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.recvid_)}},
     // string groupID = 5;
     {::_pbi::TcParser::FastUS1,
      {42, 63, 0, PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.groupid_)}},
@@ -18279,12 +18234,12 @@ const ::_pbi::TcParseTable<5, 23, 0, 156, 2> ChatLog::_table_ = {
     // string clientMsgID = 2;
     {PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.clientmsgid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string sendID = 3;
+    // uint64 sendID = 3;
     {PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.sendid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string recvID = 4;
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
+    // uint64 recvID = 4;
     {PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.recvid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // string groupID = 5;
     {PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.groupid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
@@ -18345,12 +18300,10 @@ const ::_pbi::TcParseTable<5, 23, 0, 156, 2> ChatLog::_table_ = {
   }},
   // no aux_entries
   {{
-    "\13\13\13\6\6\7\14\0\16\15\11\0\0\0\7\0\0\0\2\14\0\0\12\0"
+    "\13\13\13\0\0\7\14\0\16\15\11\0\0\0\7\0\0\0\2\14\0\0\12\0"
     "msg.ChatLog"
     "serverMsgID"
     "clientMsgID"
-    "sendID"
-    "recvID"
     "groupID"
     "recvNickname"
     "senderNickname"
@@ -18372,8 +18325,6 @@ PROTOBUF_NOINLINE void ChatLog::Clear() {
 
   _impl_.servermsgid_.ClearToEmpty();
   _impl_.clientmsgid_.ClearToEmpty();
-  _impl_.sendid_.ClearToEmpty();
-  _impl_.recvid_.ClearToEmpty();
   _impl_.groupid_.ClearToEmpty();
   _impl_.recvnickname_.ClearToEmpty();
   _impl_.sendernickname_.ClearToEmpty();
@@ -18383,9 +18334,9 @@ PROTOBUF_NOINLINE void ChatLog::Clear() {
   _impl_.ex_.ClearToEmpty();
   _impl_.groupfaceurl_.ClearToEmpty();
   _impl_.groupowner_.ClearToEmpty();
-  ::memset(&_impl_.senderplatformid_, 0, static_cast<::size_t>(
+  ::memset(&_impl_.sendid_, 0, static_cast<::size_t>(
       reinterpret_cast<char*>(&_impl_.grouptype_) -
-      reinterpret_cast<char*>(&_impl_.senderplatformid_)) + sizeof(_impl_.grouptype_));
+      reinterpret_cast<char*>(&_impl_.sendid_)) + sizeof(_impl_.grouptype_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -18420,20 +18371,18 @@ PROTOBUF_NOINLINE void ChatLog::Clear() {
             target = stream->WriteStringMaybeAliased(2, _s, target);
           }
 
-          // string sendID = 3;
-          if (!this_._internal_sendid().empty()) {
-            const std::string& _s = this_._internal_sendid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.ChatLog.sendID");
-            target = stream->WriteStringMaybeAliased(3, _s, target);
+          // uint64 sendID = 3;
+          if (this_._internal_sendid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                3, this_._internal_sendid(), target);
           }
 
-          // string recvID = 4;
-          if (!this_._internal_recvid().empty()) {
-            const std::string& _s = this_._internal_recvid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.ChatLog.recvID");
-            target = stream->WriteStringMaybeAliased(4, _s, target);
+          // uint64 recvID = 4;
+          if (this_._internal_recvid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                4, this_._internal_recvid(), target);
           }
 
           // string groupID = 5;
@@ -18613,16 +18562,6 @@ PROTOBUF_NOINLINE void ChatLog::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_clientmsgid());
             }
-            // string sendID = 3;
-            if (!this_._internal_sendid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_sendid());
-            }
-            // string recvID = 4;
-            if (!this_._internal_recvid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_recvid());
-            }
             // string groupID = 5;
             if (!this_._internal_groupid().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -18667,6 +18606,16 @@ PROTOBUF_NOINLINE void ChatLog::Clear() {
             if (!this_._internal_groupowner().empty()) {
               total_size += 2 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_groupowner());
+            }
+            // uint64 sendID = 3;
+            if (this_._internal_sendid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_sendid());
+            }
+            // uint64 recvID = 4;
+            if (this_._internal_recvid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_recvid());
             }
             // int32 senderPlatformID = 7;
             if (this_._internal_senderplatformid() != 0) {
@@ -18737,12 +18686,6 @@ void ChatLog::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google:
   if (!from._internal_clientmsgid().empty()) {
     _this->_internal_set_clientmsgid(from._internal_clientmsgid());
   }
-  if (!from._internal_sendid().empty()) {
-    _this->_internal_set_sendid(from._internal_sendid());
-  }
-  if (!from._internal_recvid().empty()) {
-    _this->_internal_set_recvid(from._internal_recvid());
-  }
   if (!from._internal_groupid().empty()) {
     _this->_internal_set_groupid(from._internal_groupid());
   }
@@ -18769,6 +18712,12 @@ void ChatLog::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google:
   }
   if (!from._internal_groupowner().empty()) {
     _this->_internal_set_groupowner(from._internal_groupowner());
+  }
+  if (from._internal_sendid() != 0) {
+    _this->_impl_.sendid_ = from._impl_.sendid_;
+  }
+  if (from._internal_recvid() != 0) {
+    _this->_impl_.recvid_ = from._impl_.recvid_;
   }
   if (from._internal_senderplatformid() != 0) {
     _this->_impl_.senderplatformid_ = from._impl_.senderplatformid_;
@@ -18818,8 +18767,6 @@ void ChatLog::InternalSwap(ChatLog* PROTOBUF_RESTRICT other) {
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.servermsgid_, &other->_impl_.servermsgid_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.clientmsgid_, &other->_impl_.clientmsgid_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.sendid_, &other->_impl_.sendid_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.recvid_, &other->_impl_.recvid_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.groupid_, &other->_impl_.groupid_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.recvnickname_, &other->_impl_.recvnickname_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.sendernickname_, &other->_impl_.sendernickname_, arena);
@@ -18832,9 +18779,9 @@ void ChatLog::InternalSwap(ChatLog* PROTOBUF_RESTRICT other) {
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.grouptype_)
       + sizeof(ChatLog::_impl_.grouptype_)
-      - PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.senderplatformid_)>(
-          reinterpret_cast<char*>(&_impl_.senderplatformid_),
-          reinterpret_cast<char*>(&other->_impl_.senderplatformid_));
+      - PROTOBUF_FIELD_OFFSET(ChatLog, _impl_.sendid_)>(
+          reinterpret_cast<char*>(&_impl_.sendid_),
+          reinterpret_cast<char*>(&other->_impl_.sendid_));
 }
 
 ::google::protobuf::Metadata ChatLog::GetMetadata() const {
@@ -18869,7 +18816,8 @@ inline PROTOBUF_NDEBUG_INLINE batchSendMessageReq::Impl_::Impl_(
     const Impl_& from, const ::msg::batchSendMessageReq& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
-        recvidlist_{visibility, arena, from.recvidlist_} {}
+        recvidlist_{visibility, arena, from.recvidlist_},
+        _recvidlist_cached_byte_size_{0} {}
 
 batchSendMessageReq::batchSendMessageReq(
     ::google::protobuf::Arena* arena,
@@ -18895,7 +18843,8 @@ inline PROTOBUF_NDEBUG_INLINE batchSendMessageReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : _cached_size_{0},
-        recvidlist_{visibility, arena} {}
+        recvidlist_{visibility, arena},
+        _recvidlist_cached_byte_size_{0} {}
 
 inline void batchSendMessageReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
@@ -18961,7 +18910,7 @@ const ::google::protobuf::internal::ClassData* batchSendMessageReq::GetClassData
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 1, 42, 2> batchSendMessageReq::_table_ = {
+const ::_pbi::TcParseTable<1, 2, 1, 0, 2> batchSendMessageReq::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(batchSendMessageReq, _impl_._has_bits_),
     0, // no _extensions_
@@ -18982,24 +18931,21 @@ const ::_pbi::TcParseTable<1, 2, 1, 42, 2> batchSendMessageReq::_table_ = {
     // .sdkws.MsgData msgData = 2;
     {::_pbi::TcParser::FastMtS1,
      {18, 0, 0, PROTOBUF_FIELD_OFFSET(batchSendMessageReq, _impl_.msgdata_)}},
-    // repeated string recvIDList = 1;
-    {::_pbi::TcParser::FastUR1,
+    // repeated uint64 recvIDList = 1;
+    {::_pbi::TcParser::FastV64P1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(batchSendMessageReq, _impl_.recvidlist_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // repeated string recvIDList = 1;
+    // repeated uint64 recvIDList = 1;
     {PROTOBUF_FIELD_OFFSET(batchSendMessageReq, _impl_.recvidlist_), -1, 0,
-    (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
+    (0 | ::_fl::kFcRepeated | ::_fl::kPackedUInt64)},
     // .sdkws.MsgData msgData = 2;
     {PROTOBUF_FIELD_OFFSET(batchSendMessageReq, _impl_.msgdata_), _Internal::kHasBitsOffset + 0, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
   }}, {{
     {::_pbi::TcParser::GetTable<::sdkws::MsgData>()},
   }}, {{
-    "\27\12\0\0\0\0\0\0"
-    "msg.batchSendMessageReq"
-    "recvIDList"
   }},
 };
 
@@ -19035,12 +18981,13 @@ PROTOBUF_NOINLINE void batchSendMessageReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // repeated string recvIDList = 1;
-          for (int i = 0, n = this_._internal_recvidlist_size(); i < n; ++i) {
-            const auto& s = this_._internal_recvidlist().Get(i);
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.batchSendMessageReq.recvIDList");
-            target = stream->WriteString(1, s, target);
+          // repeated uint64 recvIDList = 1;
+          {
+            int byte_size = this_._impl_._recvidlist_cached_byte_size_.Get();
+            if (byte_size > 0) {
+              target = stream->WriteUInt64Packed(
+                  1, this_._internal_recvidlist(), byte_size, target);
+            }
           }
 
           cached_has_bits = this_._impl_._has_bits_[0];
@@ -19076,14 +19023,12 @@ PROTOBUF_NOINLINE void batchSendMessageReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // repeated string recvIDList = 1;
+            // repeated uint64 recvIDList = 1;
             {
               total_size +=
-                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_recvidlist().size());
-              for (int i = 0, n = this_._internal_recvidlist().size(); i < n; ++i) {
-                total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-                    this_._internal_recvidlist().Get(i));
-              }
+                  ::_pbi::WireFormatLite::UInt64SizeWithPackedTagSize(
+                      this_._internal_recvidlist(), 1,
+                      this_._impl_._recvidlist_cached_byte_size_);
             }
           }
            {
@@ -20367,6 +20312,7 @@ inline PROTOBUF_NDEBUG_INLINE SetUserConversationsMinSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::msg::SetUserConversationsMinSeqReq& from_msg)
       : userids_{visibility, arena, from.userids_},
+        _userids_cached_byte_size_{0},
         conversationid_(arena, from.conversationid_),
         _cached_size_{0} {}
 
@@ -20391,6 +20337,7 @@ inline PROTOBUF_NDEBUG_INLINE SetUserConversationsMinSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : userids_{visibility, arena},
+        _userids_cached_byte_size_{0},
         conversationid_(arena),
         _cached_size_{0} {}
 
@@ -20458,7 +20405,7 @@ const ::google::protobuf::internal::ClassData* SetUserConversationsMinSeqReq::Ge
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 63, 2> SetUserConversationsMinSeqReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 0, 56, 2> SetUserConversationsMinSeqReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -20477,8 +20424,8 @@ const ::_pbi::TcParseTable<2, 3, 0, 63, 2> SetUserConversationsMinSeqReq::_table
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
-    // repeated string userIDs = 1;
-    {::_pbi::TcParser::FastUR1,
+    // repeated uint64 userIDs = 1;
+    {::_pbi::TcParser::FastV64P1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(SetUserConversationsMinSeqReq, _impl_.userids_)}},
     // string conversationID = 2;
     {::_pbi::TcParser::FastUS1,
@@ -20489,9 +20436,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 63, 2> SetUserConversationsMinSeqReq::_table
   }}, {{
     65535, 65535
   }}, {{
-    // repeated string userIDs = 1;
+    // repeated uint64 userIDs = 1;
     {PROTOBUF_FIELD_OFFSET(SetUserConversationsMinSeqReq, _impl_.userids_), 0, 0,
-    (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
+    (0 | ::_fl::kFcRepeated | ::_fl::kPackedUInt64)},
     // string conversationID = 2;
     {PROTOBUF_FIELD_OFFSET(SetUserConversationsMinSeqReq, _impl_.conversationid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
@@ -20501,9 +20448,8 @@ const ::_pbi::TcParseTable<2, 3, 0, 63, 2> SetUserConversationsMinSeqReq::_table
   }},
   // no aux_entries
   {{
-    "\41\7\16\0\0\0\0\0"
+    "\41\0\16\0\0\0\0\0"
     "msg.SetUserConversationsMinSeqReq"
-    "userIDs"
     "conversationID"
   }},
 };
@@ -20536,12 +20482,13 @@ PROTOBUF_NOINLINE void SetUserConversationsMinSeqReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // repeated string userIDs = 1;
-          for (int i = 0, n = this_._internal_userids_size(); i < n; ++i) {
-            const auto& s = this_._internal_userids().Get(i);
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.SetUserConversationsMinSeqReq.userIDs");
-            target = stream->WriteString(1, s, target);
+          // repeated uint64 userIDs = 1;
+          {
+            int byte_size = this_._impl_._userids_cached_byte_size_.Get();
+            if (byte_size > 0) {
+              target = stream->WriteUInt64Packed(
+                  1, this_._internal_userids(), byte_size, target);
+            }
           }
 
           // string conversationID = 2;
@@ -20584,14 +20531,12 @@ PROTOBUF_NOINLINE void SetUserConversationsMinSeqReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // repeated string userIDs = 1;
+            // repeated uint64 userIDs = 1;
             {
               total_size +=
-                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_userids().size());
-              for (int i = 0, n = this_._internal_userids().size(); i < n; ++i) {
-                total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-                    this_._internal_userids().Get(i));
-              }
+                  ::_pbi::WireFormatLite::UInt64SizeWithPackedTagSize(
+                      this_._internal_userids(), 1,
+                      this_._impl_._userids_cached_byte_size_);
             }
           }
            {
@@ -21046,7 +20991,6 @@ inline PROTOBUF_NDEBUG_INLINE GetSeqMessageReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::msg::GetSeqMessageReq& from_msg)
       : conversations_{visibility, arena, from.conversations_},
-        userid_(arena, from.userid_),
         _cached_size_{0} {}
 
 GetSeqMessageReq::GetSeqMessageReq(
@@ -21062,7 +21006,13 @@ GetSeqMessageReq::GetSeqMessageReq(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-  _impl_.order_ = from._impl_.order_;
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, userid_),
+           offsetof(Impl_, order_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::order_));
 
   // @@protoc_insertion_point(copy_constructor:msg.GetSeqMessageReq)
 }
@@ -21070,12 +21020,16 @@ inline PROTOBUF_NDEBUG_INLINE GetSeqMessageReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : conversations_{visibility, arena},
-        userid_(arena),
         _cached_size_{0} {}
 
 inline void GetSeqMessageReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.order_ = {};
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           0,
+           offsetof(Impl_, order_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::order_));
 }
 GetSeqMessageReq::~GetSeqMessageReq() {
   // @@protoc_insertion_point(destructor:msg.GetSeqMessageReq)
@@ -21085,7 +21039,6 @@ inline void GetSeqMessageReq::SharedDtor(MessageLite& self) {
   GetSeqMessageReq& this_ = static_cast<GetSeqMessageReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -21101,7 +21054,7 @@ constexpr auto GetSeqMessageReq::InternalNewImpl_() {
                   ::google::protobuf::Message::internal_visibility()),
   });
   if (arena_bits.has_value()) {
-    return ::google::protobuf::internal::MessageCreator::CopyInit(
+    return ::google::protobuf::internal::MessageCreator::ZeroInit(
         sizeof(GetSeqMessageReq), alignof(GetSeqMessageReq), *arena_bits);
   } else {
     return ::google::protobuf::internal::MessageCreator(&GetSeqMessageReq::PlacementNew_,
@@ -21137,7 +21090,7 @@ const ::google::protobuf::internal::ClassData* GetSeqMessageReq::GetClassData() 
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 1, 35, 2> GetSeqMessageReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 1, 0, 2> GetSeqMessageReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -21156,9 +21109,9 @@ const ::_pbi::TcParseTable<2, 3, 1, 35, 2> GetSeqMessageReq::_table_ = {
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
-    // string userID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(GetSeqMessageReq, _impl_.userid_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(GetSeqMessageReq, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(GetSeqMessageReq, _impl_.userid_)}},
     // repeated .msg.ConversationSeqs conversations = 2;
     {::_pbi::TcParser::FastMtR1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(GetSeqMessageReq, _impl_.conversations_)}},
@@ -21168,9 +21121,9 @@ const ::_pbi::TcParseTable<2, 3, 1, 35, 2> GetSeqMessageReq::_table_ = {
   }}, {{
     65535, 65535
   }}, {{
-    // string userID = 1;
+    // uint64 userID = 1;
     {PROTOBUF_FIELD_OFFSET(GetSeqMessageReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // repeated .msg.ConversationSeqs conversations = 2;
     {PROTOBUF_FIELD_OFFSET(GetSeqMessageReq, _impl_.conversations_), 0, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
@@ -21180,9 +21133,6 @@ const ::_pbi::TcParseTable<2, 3, 1, 35, 2> GetSeqMessageReq::_table_ = {
   }}, {{
     {::_pbi::TcParser::GetTable<::msg::ConversationSeqs>()},
   }}, {{
-    "\24\6\0\0\0\0\0\0"
-    "msg.GetSeqMessageReq"
-    "userID"
   }},
 };
 
@@ -21194,8 +21144,9 @@ PROTOBUF_NOINLINE void GetSeqMessageReq::Clear() {
   (void) cached_has_bits;
 
   _impl_.conversations_.Clear();
-  _impl_.userid_.ClearToEmpty();
-  _impl_.order_ = 0;
+  ::memset(&_impl_.userid_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.order_) -
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.order_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -21214,12 +21165,11 @@ PROTOBUF_NOINLINE void GetSeqMessageReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string userID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.GetSeqMessageReq.userID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
           // repeated .msg.ConversationSeqs conversations = 2;
@@ -21274,10 +21224,10 @@ PROTOBUF_NOINLINE void GetSeqMessageReq::Clear() {
             }
           }
            {
-            // string userID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
             // .sdkws.PullOrder order = 3;
             if (this_._internal_order() != 0) {
@@ -21299,8 +21249,8 @@ void GetSeqMessageReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const 
 
   _this->_internal_mutable_conversations()->MergeFrom(
       from._internal_conversations());
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   if (from._internal_order() != 0) {
     _this->_impl_.order_ = from._impl_.order_;
@@ -21318,12 +21268,14 @@ void GetSeqMessageReq::CopyFrom(const GetSeqMessageReq& from) {
 
 void GetSeqMessageReq::InternalSwap(GetSeqMessageReq* PROTOBUF_RESTRICT other) {
   using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.conversations_.InternalSwap(&other->_impl_.conversations_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
-  swap(_impl_.order_, other->_impl_.order_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(GetSeqMessageReq, _impl_.order_)
+      + sizeof(GetSeqMessageReq::_impl_.order_)
+      - PROTOBUF_FIELD_OFFSET(GetSeqMessageReq, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
 ::google::protobuf::Metadata GetSeqMessageReq::GetMetadata() const {
@@ -22673,6 +22625,7 @@ inline PROTOBUF_NDEBUG_INLINE SetUserConversationMaxSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::msg::SetUserConversationMaxSeqReq& from_msg)
       : owneruserid_{visibility, arena, from.owneruserid_},
+        _owneruserid_cached_byte_size_{0},
         conversationid_(arena, from.conversationid_),
         _cached_size_{0} {}
 
@@ -22697,6 +22650,7 @@ inline PROTOBUF_NDEBUG_INLINE SetUserConversationMaxSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : owneruserid_{visibility, arena},
+        _owneruserid_cached_byte_size_{0},
         conversationid_(arena),
         _cached_size_{0} {}
 
@@ -22764,7 +22718,7 @@ const ::google::protobuf::internal::ClassData* SetUserConversationMaxSeqReq::Get
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 66, 2> SetUserConversationMaxSeqReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 0, 55, 2> SetUserConversationMaxSeqReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -22786,8 +22740,8 @@ const ::_pbi::TcParseTable<2, 3, 0, 66, 2> SetUserConversationMaxSeqReq::_table_
     // string conversationID = 1;
     {::_pbi::TcParser::FastUS1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(SetUserConversationMaxSeqReq, _impl_.conversationid_)}},
-    // repeated string ownerUserID = 2;
-    {::_pbi::TcParser::FastUR1,
+    // repeated uint64 ownerUserID = 2;
+    {::_pbi::TcParser::FastV64P1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(SetUserConversationMaxSeqReq, _impl_.owneruserid_)}},
     // int64 maxSeq = 3;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(SetUserConversationMaxSeqReq, _impl_.maxseq_), 63>(),
@@ -22798,19 +22752,18 @@ const ::_pbi::TcParseTable<2, 3, 0, 66, 2> SetUserConversationMaxSeqReq::_table_
     // string conversationID = 1;
     {PROTOBUF_FIELD_OFFSET(SetUserConversationMaxSeqReq, _impl_.conversationid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // repeated string ownerUserID = 2;
+    // repeated uint64 ownerUserID = 2;
     {PROTOBUF_FIELD_OFFSET(SetUserConversationMaxSeqReq, _impl_.owneruserid_), 0, 0,
-    (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
+    (0 | ::_fl::kFcRepeated | ::_fl::kPackedUInt64)},
     // int64 maxSeq = 3;
     {PROTOBUF_FIELD_OFFSET(SetUserConversationMaxSeqReq, _impl_.maxseq_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
   }},
   // no aux_entries
   {{
-    "\40\16\13\0\0\0\0\0"
+    "\40\16\0\0\0\0\0\0"
     "msg.SetUserConversationMaxSeqReq"
     "conversationID"
-    "ownerUserID"
   }},
 };
 
@@ -22850,12 +22803,13 @@ PROTOBUF_NOINLINE void SetUserConversationMaxSeqReq::Clear() {
             target = stream->WriteStringMaybeAliased(1, _s, target);
           }
 
-          // repeated string ownerUserID = 2;
-          for (int i = 0, n = this_._internal_owneruserid_size(); i < n; ++i) {
-            const auto& s = this_._internal_owneruserid().Get(i);
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.SetUserConversationMaxSeqReq.ownerUserID");
-            target = stream->WriteString(2, s, target);
+          // repeated uint64 ownerUserID = 2;
+          {
+            int byte_size = this_._impl_._owneruserid_cached_byte_size_.Get();
+            if (byte_size > 0) {
+              target = stream->WriteUInt64Packed(
+                  2, this_._internal_owneruserid(), byte_size, target);
+            }
           }
 
           // int64 maxSeq = 3;
@@ -22890,14 +22844,12 @@ PROTOBUF_NOINLINE void SetUserConversationMaxSeqReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // repeated string ownerUserID = 2;
+            // repeated uint64 ownerUserID = 2;
             {
               total_size +=
-                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_owneruserid().size());
-              for (int i = 0, n = this_._internal_owneruserid().size(); i < n; ++i) {
-                total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-                    this_._internal_owneruserid().Get(i));
-              }
+                  ::_pbi::WireFormatLite::UInt64SizeWithPackedTagSize(
+                      this_._internal_owneruserid(), 1,
+                      this_._impl_._owneruserid_cached_byte_size_);
             }
           }
            {
@@ -23077,6 +23029,7 @@ inline PROTOBUF_NDEBUG_INLINE SetUserConversationMinSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::msg::SetUserConversationMinSeqReq& from_msg)
       : owneruserid_{visibility, arena, from.owneruserid_},
+        _owneruserid_cached_byte_size_{0},
         conversationid_(arena, from.conversationid_),
         _cached_size_{0} {}
 
@@ -23101,6 +23054,7 @@ inline PROTOBUF_NDEBUG_INLINE SetUserConversationMinSeqReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : owneruserid_{visibility, arena},
+        _owneruserid_cached_byte_size_{0},
         conversationid_(arena),
         _cached_size_{0} {}
 
@@ -23168,7 +23122,7 @@ const ::google::protobuf::internal::ClassData* SetUserConversationMinSeqReq::Get
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 66, 2> SetUserConversationMinSeqReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 0, 55, 2> SetUserConversationMinSeqReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -23190,8 +23144,8 @@ const ::_pbi::TcParseTable<2, 3, 0, 66, 2> SetUserConversationMinSeqReq::_table_
     // string conversationID = 1;
     {::_pbi::TcParser::FastUS1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(SetUserConversationMinSeqReq, _impl_.conversationid_)}},
-    // repeated string ownerUserID = 2;
-    {::_pbi::TcParser::FastUR1,
+    // repeated uint64 ownerUserID = 2;
+    {::_pbi::TcParser::FastV64P1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(SetUserConversationMinSeqReq, _impl_.owneruserid_)}},
     // int64 minSeq = 3;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(SetUserConversationMinSeqReq, _impl_.minseq_), 63>(),
@@ -23202,19 +23156,18 @@ const ::_pbi::TcParseTable<2, 3, 0, 66, 2> SetUserConversationMinSeqReq::_table_
     // string conversationID = 1;
     {PROTOBUF_FIELD_OFFSET(SetUserConversationMinSeqReq, _impl_.conversationid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // repeated string ownerUserID = 2;
+    // repeated uint64 ownerUserID = 2;
     {PROTOBUF_FIELD_OFFSET(SetUserConversationMinSeqReq, _impl_.owneruserid_), 0, 0,
-    (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
+    (0 | ::_fl::kFcRepeated | ::_fl::kPackedUInt64)},
     // int64 minSeq = 3;
     {PROTOBUF_FIELD_OFFSET(SetUserConversationMinSeqReq, _impl_.minseq_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
   }},
   // no aux_entries
   {{
-    "\40\16\13\0\0\0\0\0"
+    "\40\16\0\0\0\0\0\0"
     "msg.SetUserConversationMinSeqReq"
     "conversationID"
-    "ownerUserID"
   }},
 };
 
@@ -23254,12 +23207,13 @@ PROTOBUF_NOINLINE void SetUserConversationMinSeqReq::Clear() {
             target = stream->WriteStringMaybeAliased(1, _s, target);
           }
 
-          // repeated string ownerUserID = 2;
-          for (int i = 0, n = this_._internal_owneruserid_size(); i < n; ++i) {
-            const auto& s = this_._internal_owneruserid().Get(i);
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.SetUserConversationMinSeqReq.ownerUserID");
-            target = stream->WriteString(2, s, target);
+          // repeated uint64 ownerUserID = 2;
+          {
+            int byte_size = this_._impl_._owneruserid_cached_byte_size_.Get();
+            if (byte_size > 0) {
+              target = stream->WriteUInt64Packed(
+                  2, this_._internal_owneruserid(), byte_size, target);
+            }
           }
 
           // int64 minSeq = 3;
@@ -23294,14 +23248,12 @@ PROTOBUF_NOINLINE void SetUserConversationMinSeqReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // repeated string ownerUserID = 2;
+            // repeated uint64 ownerUserID = 2;
             {
               total_size +=
-                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_owneruserid().size());
-              for (int i = 0, n = this_._internal_owneruserid().size(); i < n; ++i) {
-                total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-                    this_._internal_owneruserid().Get(i));
-              }
+                  ::_pbi::WireFormatLite::UInt64SizeWithPackedTagSize(
+                      this_._internal_owneruserid(), 1,
+                      this_._impl_._owneruserid_cached_byte_size_);
             }
           }
            {
@@ -23945,7 +23897,6 @@ inline PROTOBUF_NDEBUG_INLINE GetLastMessageReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::msg::GetLastMessageReq& from_msg)
       : conversationids_{visibility, arena, from.conversationids_},
-        userid_(arena, from.userid_),
         _cached_size_{0} {}
 
 GetLastMessageReq::GetLastMessageReq(
@@ -23961,6 +23912,7 @@ GetLastMessageReq::GetLastMessageReq(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.userid_ = from._impl_.userid_;
 
   // @@protoc_insertion_point(copy_constructor:msg.GetLastMessageReq)
 }
@@ -23968,11 +23920,11 @@ inline PROTOBUF_NDEBUG_INLINE GetLastMessageReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : conversationids_{visibility, arena},
-        userid_(arena),
         _cached_size_{0} {}
 
 inline void GetLastMessageReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.userid_ = {};
 }
 GetLastMessageReq::~GetLastMessageReq() {
   // @@protoc_insertion_point(destructor:msg.GetLastMessageReq)
@@ -23982,7 +23934,6 @@ inline void GetLastMessageReq::SharedDtor(MessageLite& self) {
   GetLastMessageReq& this_ = static_cast<GetLastMessageReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -23998,7 +23949,7 @@ constexpr auto GetLastMessageReq::InternalNewImpl_() {
                   ::google::protobuf::Message::internal_visibility()),
   });
   if (arena_bits.has_value()) {
-    return ::google::protobuf::internal::MessageCreator::CopyInit(
+    return ::google::protobuf::internal::MessageCreator::ZeroInit(
         sizeof(GetLastMessageReq), alignof(GetLastMessageReq), *arena_bits);
   } else {
     return ::google::protobuf::internal::MessageCreator(&GetLastMessageReq::PlacementNew_,
@@ -24034,7 +23985,7 @@ const ::google::protobuf::internal::ClassData* GetLastMessageReq::GetClassData()
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 51, 2> GetLastMessageReq::_table_ = {
+const ::_pbi::TcParseTable<1, 2, 0, 45, 2> GetLastMessageReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -24055,24 +24006,23 @@ const ::_pbi::TcParseTable<1, 2, 0, 51, 2> GetLastMessageReq::_table_ = {
     // repeated string conversationIDs = 2;
     {::_pbi::TcParser::FastUR1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(GetLastMessageReq, _impl_.conversationids_)}},
-    // string userID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(GetLastMessageReq, _impl_.userid_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(GetLastMessageReq, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(GetLastMessageReq, _impl_.userid_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // string userID = 1;
+    // uint64 userID = 1;
     {PROTOBUF_FIELD_OFFSET(GetLastMessageReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // repeated string conversationIDs = 2;
     {PROTOBUF_FIELD_OFFSET(GetLastMessageReq, _impl_.conversationids_), 0, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
   }},
   // no aux_entries
   {{
-    "\25\6\17\0\0\0\0\0"
+    "\25\0\17\0\0\0\0\0"
     "msg.GetLastMessageReq"
-    "userID"
     "conversationIDs"
   }},
 };
@@ -24085,7 +24035,7 @@ PROTOBUF_NOINLINE void GetLastMessageReq::Clear() {
   (void) cached_has_bits;
 
   _impl_.conversationids_.Clear();
-  _impl_.userid_.ClearToEmpty();
+  _impl_.userid_ = ::uint64_t{0u};
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -24104,12 +24054,11 @@ PROTOBUF_NOINLINE void GetLastMessageReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string userID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "msg.GetLastMessageReq.userID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
           // repeated string conversationIDs = 2;
@@ -24156,10 +24105,10 @@ PROTOBUF_NOINLINE void GetLastMessageReq::Clear() {
             }
           }
            {
-            // string userID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -24175,8 +24124,8 @@ void GetLastMessageReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const
   (void) cached_has_bits;
 
   _this->_internal_mutable_conversationids()->MergeFrom(from._internal_conversationids());
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -24191,11 +24140,9 @@ void GetLastMessageReq::CopyFrom(const GetLastMessageReq& from) {
 
 void GetLastMessageReq::InternalSwap(GetLastMessageReq* PROTOBUF_RESTRICT other) {
   using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.conversationids_.InternalSwap(&other->_impl_.conversationids_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
+        swap(_impl_.userid_, other->_impl_.userid_);
 }
 
 ::google::protobuf::Metadata GetLastMessageReq::GetMetadata() const {

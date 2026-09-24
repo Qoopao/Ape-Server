@@ -713,20 +713,14 @@ class LeaveGroupReq final : public ::google::protobuf::Message
   std::string* _internal_mutable_groupid();
 
   public:
-  // string userID = 2;
+  // uint64 userID = 2;
   void clear_userid() ;
-  const std::string& userid() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_userid(Arg_&& arg, Args_... args);
-  std::string* mutable_userid();
-  PROTOBUF_NODISCARD std::string* release_userid();
-  void set_allocated_userid(std::string* value);
+  ::uint64_t userid() const;
+  void set_userid(::uint64_t value);
 
   private:
-  const std::string& _internal_userid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_userid(
-      const std::string& value);
-  std::string* _internal_mutable_userid();
+  ::uint64_t _internal_userid() const;
+  void _internal_set_userid(::uint64_t value);
 
   public:
   // @@protoc_insertion_point(class_scope:group.LeaveGroupReq)
@@ -735,7 +729,7 @@ class LeaveGroupReq final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       1, 2, 0,
-      41, 2>
+      35, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -753,7 +747,7 @@ class LeaveGroupReq final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const LeaveGroupReq& from_msg);
     ::google::protobuf::internal::ArenaStringPtr groupid_;
-    ::google::protobuf::internal::ArenaStringPtr userid_;
+    ::uint64_t userid_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -912,26 +906,22 @@ class KickMembersResp final : public ::google::protobuf::Message
     kErrMsgFieldNumber = 3,
     kSuccessFieldNumber = 1,
   };
-  // repeated string failedUserIDs = 2;
+  // repeated uint64 failedUserIDs = 2;
   int faileduserids_size() const;
   private:
   int _internal_faileduserids_size() const;
 
   public:
   void clear_faileduserids() ;
-  const std::string& faileduserids(int index) const;
-  std::string* mutable_faileduserids(int index);
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_faileduserids(int index, Arg_&& value, Args_... args);
-  std::string* add_faileduserids();
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void add_faileduserids(Arg_&& value, Args_... args);
-  const ::google::protobuf::RepeatedPtrField<std::string>& faileduserids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* mutable_faileduserids();
+  ::uint64_t faileduserids(int index) const;
+  void set_faileduserids(int index, ::uint64_t value);
+  void add_faileduserids(::uint64_t value);
+  const ::google::protobuf::RepeatedField<::uint64_t>& faileduserids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* mutable_faileduserids();
 
   private:
-  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_faileduserids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_faileduserids();
+  const ::google::protobuf::RepeatedField<::uint64_t>& _internal_faileduserids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* _internal_mutable_faileduserids();
 
   public:
   // string errMsg = 3;
@@ -966,7 +956,7 @@ class KickMembersResp final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       2, 3, 0,
-      49, 2>
+      36, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -983,7 +973,8 @@ class KickMembersResp final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const KickMembersResp& from_msg);
-    ::google::protobuf::RepeatedPtrField<std::string> faileduserids_;
+    ::google::protobuf::RepeatedField<::uint64_t> faileduserids_;
+    ::google::protobuf::internal::CachedSize _faileduserids_cached_byte_size_;
     ::google::protobuf::internal::ArenaStringPtr errmsg_;
     bool success_;
     ::google::protobuf::internal::CachedSize _cached_size_;
@@ -1144,26 +1135,22 @@ class KickMembersReq final : public ::google::protobuf::Message
     kGroupIDFieldNumber = 1,
     kOperatorUserIDFieldNumber = 3,
   };
-  // repeated string userIDs = 2;
+  // repeated uint64 userIDs = 2;
   int userids_size() const;
   private:
   int _internal_userids_size() const;
 
   public:
   void clear_userids() ;
-  const std::string& userids(int index) const;
-  std::string* mutable_userids(int index);
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_userids(int index, Arg_&& value, Args_... args);
-  std::string* add_userids();
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void add_userids(Arg_&& value, Args_... args);
-  const ::google::protobuf::RepeatedPtrField<std::string>& userids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* mutable_userids();
+  ::uint64_t userids(int index) const;
+  void set_userids(int index, ::uint64_t value);
+  void add_userids(::uint64_t value);
+  const ::google::protobuf::RepeatedField<::uint64_t>& userids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* mutable_userids();
 
   private:
-  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_userids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_userids();
+  const ::google::protobuf::RepeatedField<::uint64_t>& _internal_userids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* _internal_mutable_userids();
 
   public:
   // string groupID = 1;
@@ -1182,20 +1169,14 @@ class KickMembersReq final : public ::google::protobuf::Message
   std::string* _internal_mutable_groupid();
 
   public:
-  // string operatorUserID = 3;
+  // uint64 operatorUserID = 3;
   void clear_operatoruserid() ;
-  const std::string& operatoruserid() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_operatoruserid(Arg_&& arg, Args_... args);
-  std::string* mutable_operatoruserid();
-  PROTOBUF_NODISCARD std::string* release_operatoruserid();
-  void set_allocated_operatoruserid(std::string* value);
+  ::uint64_t operatoruserid() const;
+  void set_operatoruserid(::uint64_t value);
 
   private:
-  const std::string& _internal_operatoruserid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_operatoruserid(
-      const std::string& value);
-  std::string* _internal_mutable_operatoruserid();
+  ::uint64_t _internal_operatoruserid() const;
+  void _internal_set_operatoruserid(::uint64_t value);
 
   public:
   // @@protoc_insertion_point(class_scope:group.KickMembersReq)
@@ -1204,7 +1185,7 @@ class KickMembersReq final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       2, 3, 0,
-      57, 2>
+      36, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -1221,9 +1202,10 @@ class KickMembersReq final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const KickMembersReq& from_msg);
-    ::google::protobuf::RepeatedPtrField<std::string> userids_;
+    ::google::protobuf::RepeatedField<::uint64_t> userids_;
+    ::google::protobuf::internal::CachedSize _userids_cached_byte_size_;
     ::google::protobuf::internal::ArenaStringPtr groupid_;
-    ::google::protobuf::internal::ArenaStringPtr operatoruserid_;
+    ::uint64_t operatoruserid_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -1587,8 +1569,8 @@ class JoinGroupReq final : public ::google::protobuf::Message
   // accessors -------------------------------------------------------
   enum : int {
     kGroupIDFieldNumber = 1,
-    kUserIDFieldNumber = 2,
     kReqMsgFieldNumber = 3,
+    kUserIDFieldNumber = 2,
     kJoinSourceFieldNumber = 4,
   };
   // string groupID = 1;
@@ -1607,22 +1589,6 @@ class JoinGroupReq final : public ::google::protobuf::Message
   std::string* _internal_mutable_groupid();
 
   public:
-  // string userID = 2;
-  void clear_userid() ;
-  const std::string& userid() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_userid(Arg_&& arg, Args_... args);
-  std::string* mutable_userid();
-  PROTOBUF_NODISCARD std::string* release_userid();
-  void set_allocated_userid(std::string* value);
-
-  private:
-  const std::string& _internal_userid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_userid(
-      const std::string& value);
-  std::string* _internal_mutable_userid();
-
-  public:
   // string reqMsg = 3;
   void clear_reqmsg() ;
   const std::string& reqmsg() const;
@@ -1637,6 +1603,16 @@ class JoinGroupReq final : public ::google::protobuf::Message
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_reqmsg(
       const std::string& value);
   std::string* _internal_mutable_reqmsg();
+
+  public:
+  // uint64 userID = 2;
+  void clear_userid() ;
+  ::uint64_t userid() const;
+  void set_userid(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_userid() const;
+  void _internal_set_userid(::uint64_t value);
 
   public:
   // int32 joinSource = 4;
@@ -1655,7 +1631,7 @@ class JoinGroupReq final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       2, 4, 0,
-      46, 2>
+      40, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -1673,8 +1649,8 @@ class JoinGroupReq final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const JoinGroupReq& from_msg);
     ::google::protobuf::internal::ArenaStringPtr groupid_;
-    ::google::protobuf::internal::ArenaStringPtr userid_;
     ::google::protobuf::internal::ArenaStringPtr reqmsg_;
+    ::uint64_t userid_;
     ::int32_t joinsource_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
@@ -1834,26 +1810,22 @@ class InviteMembersResp final : public ::google::protobuf::Message
     kErrMsgFieldNumber = 3,
     kSuccessFieldNumber = 1,
   };
-  // repeated string failedUserIDs = 2;
+  // repeated uint64 failedUserIDs = 2;
   int faileduserids_size() const;
   private:
   int _internal_faileduserids_size() const;
 
   public:
   void clear_faileduserids() ;
-  const std::string& faileduserids(int index) const;
-  std::string* mutable_faileduserids(int index);
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_faileduserids(int index, Arg_&& value, Args_... args);
-  std::string* add_faileduserids();
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void add_faileduserids(Arg_&& value, Args_... args);
-  const ::google::protobuf::RepeatedPtrField<std::string>& faileduserids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* mutable_faileduserids();
+  ::uint64_t faileduserids(int index) const;
+  void set_faileduserids(int index, ::uint64_t value);
+  void add_faileduserids(::uint64_t value);
+  const ::google::protobuf::RepeatedField<::uint64_t>& faileduserids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* mutable_faileduserids();
 
   private:
-  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_faileduserids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_faileduserids();
+  const ::google::protobuf::RepeatedField<::uint64_t>& _internal_faileduserids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* _internal_mutable_faileduserids();
 
   public:
   // string errMsg = 3;
@@ -1888,7 +1860,7 @@ class InviteMembersResp final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       2, 3, 0,
-      51, 2>
+      38, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -1905,7 +1877,8 @@ class InviteMembersResp final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const InviteMembersResp& from_msg);
-    ::google::protobuf::RepeatedPtrField<std::string> faileduserids_;
+    ::google::protobuf::RepeatedField<::uint64_t> faileduserids_;
+    ::google::protobuf::internal::CachedSize _faileduserids_cached_byte_size_;
     ::google::protobuf::internal::ArenaStringPtr errmsg_;
     bool success_;
     ::google::protobuf::internal::CachedSize _cached_size_;
@@ -2066,26 +2039,22 @@ class InviteMembersReq final : public ::google::protobuf::Message
     kGroupIDFieldNumber = 1,
     kInviterUserIDFieldNumber = 3,
   };
-  // repeated string userIDs = 2;
+  // repeated uint64 userIDs = 2;
   int userids_size() const;
   private:
   int _internal_userids_size() const;
 
   public:
   void clear_userids() ;
-  const std::string& userids(int index) const;
-  std::string* mutable_userids(int index);
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_userids(int index, Arg_&& value, Args_... args);
-  std::string* add_userids();
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void add_userids(Arg_&& value, Args_... args);
-  const ::google::protobuf::RepeatedPtrField<std::string>& userids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* mutable_userids();
+  ::uint64_t userids(int index) const;
+  void set_userids(int index, ::uint64_t value);
+  void add_userids(::uint64_t value);
+  const ::google::protobuf::RepeatedField<::uint64_t>& userids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* mutable_userids();
 
   private:
-  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_userids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_userids();
+  const ::google::protobuf::RepeatedField<::uint64_t>& _internal_userids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* _internal_mutable_userids();
 
   public:
   // string groupID = 1;
@@ -2104,20 +2073,14 @@ class InviteMembersReq final : public ::google::protobuf::Message
   std::string* _internal_mutable_groupid();
 
   public:
-  // string inviterUserID = 3;
+  // uint64 inviterUserID = 3;
   void clear_inviteruserid() ;
-  const std::string& inviteruserid() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_inviteruserid(Arg_&& arg, Args_... args);
-  std::string* mutable_inviteruserid();
-  PROTOBUF_NODISCARD std::string* release_inviteruserid();
-  void set_allocated_inviteruserid(std::string* value);
+  ::uint64_t inviteruserid() const;
+  void set_inviteruserid(::uint64_t value);
 
   private:
-  const std::string& _internal_inviteruserid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_inviteruserid(
-      const std::string& value);
-  std::string* _internal_mutable_inviteruserid();
+  ::uint64_t _internal_inviteruserid() const;
+  void _internal_set_inviteruserid(::uint64_t value);
 
   public:
   // @@protoc_insertion_point(class_scope:group.InviteMembersReq)
@@ -2126,7 +2089,7 @@ class InviteMembersReq final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       2, 3, 0,
-      58, 2>
+      38, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -2143,9 +2106,10 @@ class InviteMembersReq final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const InviteMembersReq& from_msg);
-    ::google::protobuf::RepeatedPtrField<std::string> userids_;
+    ::google::protobuf::RepeatedField<::uint64_t> userids_;
+    ::google::protobuf::internal::CachedSize _userids_cached_byte_size_;
     ::google::protobuf::internal::ArenaStringPtr groupid_;
-    ::google::protobuf::internal::ArenaStringPtr inviteruserid_;
+    ::uint64_t inviteruserid_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -2302,20 +2266,14 @@ class GetUserGroupsReq final : public ::google::protobuf::Message
   enum : int {
     kUserIDFieldNumber = 1,
   };
-  // string userID = 1;
+  // uint64 userID = 1;
   void clear_userid() ;
-  const std::string& userid() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_userid(Arg_&& arg, Args_... args);
-  std::string* mutable_userid();
-  PROTOBUF_NODISCARD std::string* release_userid();
-  void set_allocated_userid(std::string* value);
+  ::uint64_t userid() const;
+  void set_userid(::uint64_t value);
 
   private:
-  const std::string& _internal_userid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_userid(
-      const std::string& value);
-  std::string* _internal_mutable_userid();
+  ::uint64_t _internal_userid() const;
+  void _internal_set_userid(::uint64_t value);
 
   public:
   // @@protoc_insertion_point(class_scope:group.GetUserGroupsReq)
@@ -2324,7 +2282,7 @@ class GetUserGroupsReq final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       0, 1, 0,
-      37, 2>
+      0, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -2341,7 +2299,7 @@ class GetUserGroupsReq final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const GetUserGroupsReq& from_msg);
-    ::google::protobuf::internal::ArenaStringPtr userid_;
+    ::uint64_t userid_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -3555,20 +3513,14 @@ class DismissGroupReq final : public ::google::protobuf::Message
   std::string* _internal_mutable_groupid();
 
   public:
-  // string operatorUserID = 2;
+  // uint64 operatorUserID = 2;
   void clear_operatoruserid() ;
-  const std::string& operatoruserid() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_operatoruserid(Arg_&& arg, Args_... args);
-  std::string* mutable_operatoruserid();
-  PROTOBUF_NODISCARD std::string* release_operatoruserid();
-  void set_allocated_operatoruserid(std::string* value);
+  ::uint64_t operatoruserid() const;
+  void set_operatoruserid(::uint64_t value);
 
   private:
-  const std::string& _internal_operatoruserid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_operatoruserid(
-      const std::string& value);
-  std::string* _internal_mutable_operatoruserid();
+  ::uint64_t _internal_operatoruserid() const;
+  void _internal_set_operatoruserid(::uint64_t value);
 
   public:
   // @@protoc_insertion_point(class_scope:group.DismissGroupReq)
@@ -3577,7 +3529,7 @@ class DismissGroupReq final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       1, 2, 0,
-      51, 2>
+      37, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -3595,7 +3547,7 @@ class DismissGroupReq final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const DismissGroupReq& from_msg);
     ::google::protobuf::internal::ArenaStringPtr groupid_;
-    ::google::protobuf::internal::ArenaStringPtr operatoruserid_;
+    ::uint64_t operatoruserid_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -4885,26 +4837,22 @@ class CreateGroupReq final : public ::google::protobuf::Message
     kInitMemberIDsFieldNumber = 2,
     kGroupInfoFieldNumber = 1,
   };
-  // repeated string initMemberIDs = 2;
+  // repeated uint64 initMemberIDs = 2;
   int initmemberids_size() const;
   private:
   int _internal_initmemberids_size() const;
 
   public:
   void clear_initmemberids() ;
-  const std::string& initmemberids(int index) const;
-  std::string* mutable_initmemberids(int index);
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_initmemberids(int index, Arg_&& value, Args_... args);
-  std::string* add_initmemberids();
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void add_initmemberids(Arg_&& value, Args_... args);
-  const ::google::protobuf::RepeatedPtrField<std::string>& initmemberids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* mutable_initmemberids();
+  ::uint64_t initmemberids(int index) const;
+  void set_initmemberids(int index, ::uint64_t value);
+  void add_initmemberids(::uint64_t value);
+  const ::google::protobuf::RepeatedField<::uint64_t>& initmemberids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* mutable_initmemberids();
 
   private:
-  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_initmemberids() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_initmemberids();
+  const ::google::protobuf::RepeatedField<::uint64_t>& _internal_initmemberids() const;
+  ::google::protobuf::RepeatedField<::uint64_t>* _internal_mutable_initmemberids();
 
   public:
   // .sdkws.GroupInfo groupInfo = 1;
@@ -4928,7 +4876,7 @@ class CreateGroupReq final : public ::google::protobuf::Message
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       1, 2, 1,
-      42, 2>
+      0, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -4947,7 +4895,8 @@ class CreateGroupReq final : public ::google::protobuf::Message
                           const CreateGroupReq& from_msg);
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::RepeatedPtrField<std::string> initmemberids_;
+    ::google::protobuf::RepeatedField<::uint64_t> initmemberids_;
+    ::google::protobuf::internal::CachedSize _initmemberids_cached_byte_size_;
     ::sdkws::GroupInfo* groupinfo_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -5062,7 +5011,7 @@ inline void CreateGroupReq::set_allocated_groupinfo(::sdkws::GroupInfo* value) {
   // @@protoc_insertion_point(field_set_allocated:group.CreateGroupReq.groupInfo)
 }
 
-// repeated string initMemberIDs = 2;
+// repeated uint64 initMemberIDs = 2;
 inline int CreateGroupReq::_internal_initmemberids_size() const {
   return _internal_initmemberids().size();
 }
@@ -5073,55 +5022,36 @@ inline void CreateGroupReq::clear_initmemberids() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.initmemberids_.Clear();
 }
-inline std::string* CreateGroupReq::add_initmemberids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  std::string* _s = _internal_mutable_initmemberids()->Add();
-  // @@protoc_insertion_point(field_add_mutable:group.CreateGroupReq.initMemberIDs)
-  return _s;
-}
-inline const std::string& CreateGroupReq::initmemberids(int index) const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t CreateGroupReq::initmemberids(int index) const {
   // @@protoc_insertion_point(field_get:group.CreateGroupReq.initMemberIDs)
   return _internal_initmemberids().Get(index);
 }
-inline std::string* CreateGroupReq::mutable_initmemberids(int index)
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable:group.CreateGroupReq.initMemberIDs)
-  return _internal_mutable_initmemberids()->Mutable(index);
-}
-template <typename Arg_, typename... Args_>
-inline void CreateGroupReq::set_initmemberids(int index, Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::AssignToString(
-      *_internal_mutable_initmemberids()->Mutable(index),
-      std::forward<Arg_>(value), args... );
+inline void CreateGroupReq::set_initmemberids(int index, ::uint64_t value) {
+  _internal_mutable_initmemberids()->Set(index, value);
   // @@protoc_insertion_point(field_set:group.CreateGroupReq.initMemberIDs)
 }
-template <typename Arg_, typename... Args_>
-inline void CreateGroupReq::add_initmemberids(Arg_&& value, Args_... args) {
+inline void CreateGroupReq::add_initmemberids(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::google::protobuf::internal::AddToRepeatedPtrField(*_internal_mutable_initmemberids(),
-                               std::forward<Arg_>(value),
-                               args... );
+  _internal_mutable_initmemberids()->Add(value);
   // @@protoc_insertion_point(field_add:group.CreateGroupReq.initMemberIDs)
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-CreateGroupReq::initmemberids() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline const ::google::protobuf::RepeatedField<::uint64_t>& CreateGroupReq::initmemberids() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_list:group.CreateGroupReq.initMemberIDs)
   return _internal_initmemberids();
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-CreateGroupReq::mutable_initmemberids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::google::protobuf::RepeatedField<::uint64_t>* CreateGroupReq::mutable_initmemberids()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_mutable_list:group.CreateGroupReq.initMemberIDs)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _internal_mutable_initmemberids();
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
+inline const ::google::protobuf::RepeatedField<::uint64_t>&
 CreateGroupReq::_internal_initmemberids() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.initmemberids_;
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-CreateGroupReq::_internal_mutable_initmemberids() {
+inline ::google::protobuf::RepeatedField<::uint64_t>* CreateGroupReq::_internal_mutable_initmemberids() {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return &_impl_.initmemberids_;
 }
@@ -5797,52 +5727,26 @@ inline void JoinGroupReq::set_allocated_groupid(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:group.JoinGroupReq.groupID)
 }
 
-// string userID = 2;
+// uint64 userID = 2;
 inline void JoinGroupReq::clear_userid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.ClearToEmpty();
+  _impl_.userid_ = ::uint64_t{0u};
 }
-inline const std::string& JoinGroupReq::userid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t JoinGroupReq::userid() const {
   // @@protoc_insertion_point(field_get:group.JoinGroupReq.userID)
   return _internal_userid();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void JoinGroupReq::set_userid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+inline void JoinGroupReq::set_userid(::uint64_t value) {
+  _internal_set_userid(value);
   // @@protoc_insertion_point(field_set:group.JoinGroupReq.userID)
 }
-inline std::string* JoinGroupReq::mutable_userid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_userid();
-  // @@protoc_insertion_point(field_mutable:group.JoinGroupReq.userID)
-  return _s;
-}
-inline const std::string& JoinGroupReq::_internal_userid() const {
+inline ::uint64_t JoinGroupReq::_internal_userid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.userid_.Get();
+  return _impl_.userid_;
 }
-inline void JoinGroupReq::_internal_set_userid(const std::string& value) {
+inline void JoinGroupReq::_internal_set_userid(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.Set(value, GetArena());
-}
-inline std::string* JoinGroupReq::_internal_mutable_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.userid_.Mutable( GetArena());
-}
-inline std::string* JoinGroupReq::release_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:group.JoinGroupReq.userID)
-  return _impl_.userid_.Release();
-}
-inline void JoinGroupReq::set_allocated_userid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.userid_.IsDefault()) {
-    _impl_.userid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:group.JoinGroupReq.userID)
+  _impl_.userid_ = value;
 }
 
 // string reqMsg = 3;
@@ -6041,52 +5945,26 @@ inline void LeaveGroupReq::set_allocated_groupid(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:group.LeaveGroupReq.groupID)
 }
 
-// string userID = 2;
+// uint64 userID = 2;
 inline void LeaveGroupReq::clear_userid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.ClearToEmpty();
+  _impl_.userid_ = ::uint64_t{0u};
 }
-inline const std::string& LeaveGroupReq::userid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t LeaveGroupReq::userid() const {
   // @@protoc_insertion_point(field_get:group.LeaveGroupReq.userID)
   return _internal_userid();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void LeaveGroupReq::set_userid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+inline void LeaveGroupReq::set_userid(::uint64_t value) {
+  _internal_set_userid(value);
   // @@protoc_insertion_point(field_set:group.LeaveGroupReq.userID)
 }
-inline std::string* LeaveGroupReq::mutable_userid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_userid();
-  // @@protoc_insertion_point(field_mutable:group.LeaveGroupReq.userID)
-  return _s;
-}
-inline const std::string& LeaveGroupReq::_internal_userid() const {
+inline ::uint64_t LeaveGroupReq::_internal_userid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.userid_.Get();
+  return _impl_.userid_;
 }
-inline void LeaveGroupReq::_internal_set_userid(const std::string& value) {
+inline void LeaveGroupReq::_internal_set_userid(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.Set(value, GetArena());
-}
-inline std::string* LeaveGroupReq::_internal_mutable_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.userid_.Mutable( GetArena());
-}
-inline std::string* LeaveGroupReq::release_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:group.LeaveGroupReq.userID)
-  return _impl_.userid_.Release();
-}
-inline void LeaveGroupReq::set_allocated_userid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.userid_.IsDefault()) {
-    _impl_.userid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:group.LeaveGroupReq.userID)
+  _impl_.userid_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -6215,7 +6093,7 @@ inline void InviteMembersReq::set_allocated_groupid(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:group.InviteMembersReq.groupID)
 }
 
-// repeated string userIDs = 2;
+// repeated uint64 userIDs = 2;
 inline int InviteMembersReq::_internal_userids_size() const {
   return _internal_userids().size();
 }
@@ -6226,105 +6104,60 @@ inline void InviteMembersReq::clear_userids() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.userids_.Clear();
 }
-inline std::string* InviteMembersReq::add_userids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  std::string* _s = _internal_mutable_userids()->Add();
-  // @@protoc_insertion_point(field_add_mutable:group.InviteMembersReq.userIDs)
-  return _s;
-}
-inline const std::string& InviteMembersReq::userids(int index) const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t InviteMembersReq::userids(int index) const {
   // @@protoc_insertion_point(field_get:group.InviteMembersReq.userIDs)
   return _internal_userids().Get(index);
 }
-inline std::string* InviteMembersReq::mutable_userids(int index)
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable:group.InviteMembersReq.userIDs)
-  return _internal_mutable_userids()->Mutable(index);
-}
-template <typename Arg_, typename... Args_>
-inline void InviteMembersReq::set_userids(int index, Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::AssignToString(
-      *_internal_mutable_userids()->Mutable(index),
-      std::forward<Arg_>(value), args... );
+inline void InviteMembersReq::set_userids(int index, ::uint64_t value) {
+  _internal_mutable_userids()->Set(index, value);
   // @@protoc_insertion_point(field_set:group.InviteMembersReq.userIDs)
 }
-template <typename Arg_, typename... Args_>
-inline void InviteMembersReq::add_userids(Arg_&& value, Args_... args) {
+inline void InviteMembersReq::add_userids(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::google::protobuf::internal::AddToRepeatedPtrField(*_internal_mutable_userids(),
-                               std::forward<Arg_>(value),
-                               args... );
+  _internal_mutable_userids()->Add(value);
   // @@protoc_insertion_point(field_add:group.InviteMembersReq.userIDs)
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-InviteMembersReq::userids() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline const ::google::protobuf::RepeatedField<::uint64_t>& InviteMembersReq::userids() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_list:group.InviteMembersReq.userIDs)
   return _internal_userids();
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-InviteMembersReq::mutable_userids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::google::protobuf::RepeatedField<::uint64_t>* InviteMembersReq::mutable_userids()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_mutable_list:group.InviteMembersReq.userIDs)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _internal_mutable_userids();
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
+inline const ::google::protobuf::RepeatedField<::uint64_t>&
 InviteMembersReq::_internal_userids() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.userids_;
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-InviteMembersReq::_internal_mutable_userids() {
+inline ::google::protobuf::RepeatedField<::uint64_t>* InviteMembersReq::_internal_mutable_userids() {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return &_impl_.userids_;
 }
 
-// string inviterUserID = 3;
+// uint64 inviterUserID = 3;
 inline void InviteMembersReq::clear_inviteruserid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.inviteruserid_.ClearToEmpty();
+  _impl_.inviteruserid_ = ::uint64_t{0u};
 }
-inline const std::string& InviteMembersReq::inviteruserid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t InviteMembersReq::inviteruserid() const {
   // @@protoc_insertion_point(field_get:group.InviteMembersReq.inviterUserID)
   return _internal_inviteruserid();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void InviteMembersReq::set_inviteruserid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.inviteruserid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+inline void InviteMembersReq::set_inviteruserid(::uint64_t value) {
+  _internal_set_inviteruserid(value);
   // @@protoc_insertion_point(field_set:group.InviteMembersReq.inviterUserID)
 }
-inline std::string* InviteMembersReq::mutable_inviteruserid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_inviteruserid();
-  // @@protoc_insertion_point(field_mutable:group.InviteMembersReq.inviterUserID)
-  return _s;
-}
-inline const std::string& InviteMembersReq::_internal_inviteruserid() const {
+inline ::uint64_t InviteMembersReq::_internal_inviteruserid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.inviteruserid_.Get();
+  return _impl_.inviteruserid_;
 }
-inline void InviteMembersReq::_internal_set_inviteruserid(const std::string& value) {
+inline void InviteMembersReq::_internal_set_inviteruserid(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.inviteruserid_.Set(value, GetArena());
-}
-inline std::string* InviteMembersReq::_internal_mutable_inviteruserid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.inviteruserid_.Mutable( GetArena());
-}
-inline std::string* InviteMembersReq::release_inviteruserid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:group.InviteMembersReq.inviterUserID)
-  return _impl_.inviteruserid_.Release();
-}
-inline void InviteMembersReq::set_allocated_inviteruserid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.inviteruserid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.inviteruserid_.IsDefault()) {
-    _impl_.inviteruserid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:group.InviteMembersReq.inviterUserID)
+  _impl_.inviteruserid_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -6353,7 +6186,7 @@ inline void InviteMembersResp::_internal_set_success(bool value) {
   _impl_.success_ = value;
 }
 
-// repeated string failedUserIDs = 2;
+// repeated uint64 failedUserIDs = 2;
 inline int InviteMembersResp::_internal_faileduserids_size() const {
   return _internal_faileduserids().size();
 }
@@ -6364,55 +6197,36 @@ inline void InviteMembersResp::clear_faileduserids() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.faileduserids_.Clear();
 }
-inline std::string* InviteMembersResp::add_faileduserids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  std::string* _s = _internal_mutable_faileduserids()->Add();
-  // @@protoc_insertion_point(field_add_mutable:group.InviteMembersResp.failedUserIDs)
-  return _s;
-}
-inline const std::string& InviteMembersResp::faileduserids(int index) const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t InviteMembersResp::faileduserids(int index) const {
   // @@protoc_insertion_point(field_get:group.InviteMembersResp.failedUserIDs)
   return _internal_faileduserids().Get(index);
 }
-inline std::string* InviteMembersResp::mutable_faileduserids(int index)
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable:group.InviteMembersResp.failedUserIDs)
-  return _internal_mutable_faileduserids()->Mutable(index);
-}
-template <typename Arg_, typename... Args_>
-inline void InviteMembersResp::set_faileduserids(int index, Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::AssignToString(
-      *_internal_mutable_faileduserids()->Mutable(index),
-      std::forward<Arg_>(value), args... );
+inline void InviteMembersResp::set_faileduserids(int index, ::uint64_t value) {
+  _internal_mutable_faileduserids()->Set(index, value);
   // @@protoc_insertion_point(field_set:group.InviteMembersResp.failedUserIDs)
 }
-template <typename Arg_, typename... Args_>
-inline void InviteMembersResp::add_faileduserids(Arg_&& value, Args_... args) {
+inline void InviteMembersResp::add_faileduserids(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::google::protobuf::internal::AddToRepeatedPtrField(*_internal_mutable_faileduserids(),
-                               std::forward<Arg_>(value),
-                               args... );
+  _internal_mutable_faileduserids()->Add(value);
   // @@protoc_insertion_point(field_add:group.InviteMembersResp.failedUserIDs)
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-InviteMembersResp::faileduserids() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline const ::google::protobuf::RepeatedField<::uint64_t>& InviteMembersResp::faileduserids() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_list:group.InviteMembersResp.failedUserIDs)
   return _internal_faileduserids();
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-InviteMembersResp::mutable_faileduserids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::google::protobuf::RepeatedField<::uint64_t>* InviteMembersResp::mutable_faileduserids()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_mutable_list:group.InviteMembersResp.failedUserIDs)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _internal_mutable_faileduserids();
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
+inline const ::google::protobuf::RepeatedField<::uint64_t>&
 InviteMembersResp::_internal_faileduserids() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.faileduserids_;
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-InviteMembersResp::_internal_mutable_faileduserids() {
+inline ::google::protobuf::RepeatedField<::uint64_t>* InviteMembersResp::_internal_mutable_faileduserids() {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return &_impl_.faileduserids_;
 }
@@ -6517,7 +6331,7 @@ inline void KickMembersReq::set_allocated_groupid(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:group.KickMembersReq.groupID)
 }
 
-// repeated string userIDs = 2;
+// repeated uint64 userIDs = 2;
 inline int KickMembersReq::_internal_userids_size() const {
   return _internal_userids().size();
 }
@@ -6528,105 +6342,60 @@ inline void KickMembersReq::clear_userids() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.userids_.Clear();
 }
-inline std::string* KickMembersReq::add_userids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  std::string* _s = _internal_mutable_userids()->Add();
-  // @@protoc_insertion_point(field_add_mutable:group.KickMembersReq.userIDs)
-  return _s;
-}
-inline const std::string& KickMembersReq::userids(int index) const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t KickMembersReq::userids(int index) const {
   // @@protoc_insertion_point(field_get:group.KickMembersReq.userIDs)
   return _internal_userids().Get(index);
 }
-inline std::string* KickMembersReq::mutable_userids(int index)
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable:group.KickMembersReq.userIDs)
-  return _internal_mutable_userids()->Mutable(index);
-}
-template <typename Arg_, typename... Args_>
-inline void KickMembersReq::set_userids(int index, Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::AssignToString(
-      *_internal_mutable_userids()->Mutable(index),
-      std::forward<Arg_>(value), args... );
+inline void KickMembersReq::set_userids(int index, ::uint64_t value) {
+  _internal_mutable_userids()->Set(index, value);
   // @@protoc_insertion_point(field_set:group.KickMembersReq.userIDs)
 }
-template <typename Arg_, typename... Args_>
-inline void KickMembersReq::add_userids(Arg_&& value, Args_... args) {
+inline void KickMembersReq::add_userids(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::google::protobuf::internal::AddToRepeatedPtrField(*_internal_mutable_userids(),
-                               std::forward<Arg_>(value),
-                               args... );
+  _internal_mutable_userids()->Add(value);
   // @@protoc_insertion_point(field_add:group.KickMembersReq.userIDs)
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-KickMembersReq::userids() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline const ::google::protobuf::RepeatedField<::uint64_t>& KickMembersReq::userids() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_list:group.KickMembersReq.userIDs)
   return _internal_userids();
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-KickMembersReq::mutable_userids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::google::protobuf::RepeatedField<::uint64_t>* KickMembersReq::mutable_userids()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_mutable_list:group.KickMembersReq.userIDs)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _internal_mutable_userids();
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
+inline const ::google::protobuf::RepeatedField<::uint64_t>&
 KickMembersReq::_internal_userids() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.userids_;
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-KickMembersReq::_internal_mutable_userids() {
+inline ::google::protobuf::RepeatedField<::uint64_t>* KickMembersReq::_internal_mutable_userids() {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return &_impl_.userids_;
 }
 
-// string operatorUserID = 3;
+// uint64 operatorUserID = 3;
 inline void KickMembersReq::clear_operatoruserid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.operatoruserid_.ClearToEmpty();
+  _impl_.operatoruserid_ = ::uint64_t{0u};
 }
-inline const std::string& KickMembersReq::operatoruserid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t KickMembersReq::operatoruserid() const {
   // @@protoc_insertion_point(field_get:group.KickMembersReq.operatorUserID)
   return _internal_operatoruserid();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void KickMembersReq::set_operatoruserid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.operatoruserid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+inline void KickMembersReq::set_operatoruserid(::uint64_t value) {
+  _internal_set_operatoruserid(value);
   // @@protoc_insertion_point(field_set:group.KickMembersReq.operatorUserID)
 }
-inline std::string* KickMembersReq::mutable_operatoruserid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_operatoruserid();
-  // @@protoc_insertion_point(field_mutable:group.KickMembersReq.operatorUserID)
-  return _s;
-}
-inline const std::string& KickMembersReq::_internal_operatoruserid() const {
+inline ::uint64_t KickMembersReq::_internal_operatoruserid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.operatoruserid_.Get();
+  return _impl_.operatoruserid_;
 }
-inline void KickMembersReq::_internal_set_operatoruserid(const std::string& value) {
+inline void KickMembersReq::_internal_set_operatoruserid(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.operatoruserid_.Set(value, GetArena());
-}
-inline std::string* KickMembersReq::_internal_mutable_operatoruserid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.operatoruserid_.Mutable( GetArena());
-}
-inline std::string* KickMembersReq::release_operatoruserid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:group.KickMembersReq.operatorUserID)
-  return _impl_.operatoruserid_.Release();
-}
-inline void KickMembersReq::set_allocated_operatoruserid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.operatoruserid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.operatoruserid_.IsDefault()) {
-    _impl_.operatoruserid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:group.KickMembersReq.operatorUserID)
+  _impl_.operatoruserid_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -6655,7 +6424,7 @@ inline void KickMembersResp::_internal_set_success(bool value) {
   _impl_.success_ = value;
 }
 
-// repeated string failedUserIDs = 2;
+// repeated uint64 failedUserIDs = 2;
 inline int KickMembersResp::_internal_faileduserids_size() const {
   return _internal_faileduserids().size();
 }
@@ -6666,55 +6435,36 @@ inline void KickMembersResp::clear_faileduserids() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.faileduserids_.Clear();
 }
-inline std::string* KickMembersResp::add_faileduserids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  std::string* _s = _internal_mutable_faileduserids()->Add();
-  // @@protoc_insertion_point(field_add_mutable:group.KickMembersResp.failedUserIDs)
-  return _s;
-}
-inline const std::string& KickMembersResp::faileduserids(int index) const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t KickMembersResp::faileduserids(int index) const {
   // @@protoc_insertion_point(field_get:group.KickMembersResp.failedUserIDs)
   return _internal_faileduserids().Get(index);
 }
-inline std::string* KickMembersResp::mutable_faileduserids(int index)
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable:group.KickMembersResp.failedUserIDs)
-  return _internal_mutable_faileduserids()->Mutable(index);
-}
-template <typename Arg_, typename... Args_>
-inline void KickMembersResp::set_faileduserids(int index, Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::AssignToString(
-      *_internal_mutable_faileduserids()->Mutable(index),
-      std::forward<Arg_>(value), args... );
+inline void KickMembersResp::set_faileduserids(int index, ::uint64_t value) {
+  _internal_mutable_faileduserids()->Set(index, value);
   // @@protoc_insertion_point(field_set:group.KickMembersResp.failedUserIDs)
 }
-template <typename Arg_, typename... Args_>
-inline void KickMembersResp::add_faileduserids(Arg_&& value, Args_... args) {
+inline void KickMembersResp::add_faileduserids(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::google::protobuf::internal::AddToRepeatedPtrField(*_internal_mutable_faileduserids(),
-                               std::forward<Arg_>(value),
-                               args... );
+  _internal_mutable_faileduserids()->Add(value);
   // @@protoc_insertion_point(field_add:group.KickMembersResp.failedUserIDs)
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-KickMembersResp::faileduserids() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline const ::google::protobuf::RepeatedField<::uint64_t>& KickMembersResp::faileduserids() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_list:group.KickMembersResp.failedUserIDs)
   return _internal_faileduserids();
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-KickMembersResp::mutable_faileduserids() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::google::protobuf::RepeatedField<::uint64_t>* KickMembersResp::mutable_faileduserids()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_mutable_list:group.KickMembersResp.failedUserIDs)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _internal_mutable_faileduserids();
 }
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
+inline const ::google::protobuf::RepeatedField<::uint64_t>&
 KickMembersResp::_internal_faileduserids() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.faileduserids_;
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-KickMembersResp::_internal_mutable_faileduserids() {
+inline ::google::protobuf::RepeatedField<::uint64_t>* KickMembersResp::_internal_mutable_faileduserids() {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return &_impl_.faileduserids_;
 }
@@ -6819,52 +6569,26 @@ inline void DismissGroupReq::set_allocated_groupid(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:group.DismissGroupReq.groupID)
 }
 
-// string operatorUserID = 2;
+// uint64 operatorUserID = 2;
 inline void DismissGroupReq::clear_operatoruserid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.operatoruserid_.ClearToEmpty();
+  _impl_.operatoruserid_ = ::uint64_t{0u};
 }
-inline const std::string& DismissGroupReq::operatoruserid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t DismissGroupReq::operatoruserid() const {
   // @@protoc_insertion_point(field_get:group.DismissGroupReq.operatorUserID)
   return _internal_operatoruserid();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void DismissGroupReq::set_operatoruserid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.operatoruserid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+inline void DismissGroupReq::set_operatoruserid(::uint64_t value) {
+  _internal_set_operatoruserid(value);
   // @@protoc_insertion_point(field_set:group.DismissGroupReq.operatorUserID)
 }
-inline std::string* DismissGroupReq::mutable_operatoruserid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_operatoruserid();
-  // @@protoc_insertion_point(field_mutable:group.DismissGroupReq.operatorUserID)
-  return _s;
-}
-inline const std::string& DismissGroupReq::_internal_operatoruserid() const {
+inline ::uint64_t DismissGroupReq::_internal_operatoruserid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.operatoruserid_.Get();
+  return _impl_.operatoruserid_;
 }
-inline void DismissGroupReq::_internal_set_operatoruserid(const std::string& value) {
+inline void DismissGroupReq::_internal_set_operatoruserid(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.operatoruserid_.Set(value, GetArena());
-}
-inline std::string* DismissGroupReq::_internal_mutable_operatoruserid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.operatoruserid_.Mutable( GetArena());
-}
-inline std::string* DismissGroupReq::release_operatoruserid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:group.DismissGroupReq.operatorUserID)
-  return _impl_.operatoruserid_.Release();
-}
-inline void DismissGroupReq::set_allocated_operatoruserid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.operatoruserid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.operatoruserid_.IsDefault()) {
-    _impl_.operatoruserid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:group.DismissGroupReq.operatorUserID)
+  _impl_.operatoruserid_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -7162,52 +6886,26 @@ inline void UpdateGroupInfoResp::set_allocated_errmsg(std::string* value) {
 
 // GetUserGroupsReq
 
-// string userID = 1;
+// uint64 userID = 1;
 inline void GetUserGroupsReq::clear_userid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.ClearToEmpty();
+  _impl_.userid_ = ::uint64_t{0u};
 }
-inline const std::string& GetUserGroupsReq::userid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::uint64_t GetUserGroupsReq::userid() const {
   // @@protoc_insertion_point(field_get:group.GetUserGroupsReq.userID)
   return _internal_userid();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void GetUserGroupsReq::set_userid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+inline void GetUserGroupsReq::set_userid(::uint64_t value) {
+  _internal_set_userid(value);
   // @@protoc_insertion_point(field_set:group.GetUserGroupsReq.userID)
 }
-inline std::string* GetUserGroupsReq::mutable_userid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_userid();
-  // @@protoc_insertion_point(field_mutable:group.GetUserGroupsReq.userID)
-  return _s;
-}
-inline const std::string& GetUserGroupsReq::_internal_userid() const {
+inline ::uint64_t GetUserGroupsReq::_internal_userid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.userid_.Get();
+  return _impl_.userid_;
 }
-inline void GetUserGroupsReq::_internal_set_userid(const std::string& value) {
+inline void GetUserGroupsReq::_internal_set_userid(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.Set(value, GetArena());
-}
-inline std::string* GetUserGroupsReq::_internal_mutable_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.userid_.Mutable( GetArena());
-}
-inline std::string* GetUserGroupsReq::release_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:group.GetUserGroupsReq.userID)
-  return _impl_.userid_.Release();
-}
-inline void GetUserGroupsReq::set_allocated_userid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.userid_.IsDefault()) {
-    _impl_.userid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:group.GetUserGroupsReq.userID)
+  _impl_.userid_ = value;
 }
 
 // -------------------------------------------------------------------

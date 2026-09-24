@@ -6,7 +6,7 @@ import "sdkws.proto";
 // ── CreateGroup ──
 message CreateGroupReq {
   sdkws.GroupInfo groupInfo = 1;
-  repeated string initMemberIDs = 2;
+  repeated uint64 initMemberIDs = 2;
 }
 
 message CreateGroupResp {
@@ -43,7 +43,7 @@ message GetGroupMembersResp {
 // ── JoinGroup ──
 message JoinGroupReq {
   string groupID = 1;
-  string userID = 2;
+  uint64 userID = 2;
   string reqMsg = 3;
   int32 joinSource = 4;
 }
@@ -56,7 +56,7 @@ message JoinGroupResp {
 // ── LeaveGroup ──
 message LeaveGroupReq {
   string groupID = 1;
-  string userID = 2;
+  uint64 userID = 2;
 }
 
 message LeaveGroupResp {
@@ -67,33 +67,33 @@ message LeaveGroupResp {
 // ── InviteMembers ──
 message InviteMembersReq {
   string groupID = 1;
-  repeated string userIDs = 2;
-  string inviterUserID = 3;
+  repeated uint64 userIDs = 2;
+  uint64 inviterUserID = 3;
 }
 
 message InviteMembersResp {
   bool success = 1;
-  repeated string failedUserIDs = 2;
+  repeated uint64 failedUserIDs = 2;
   string errMsg = 3;
 }
 
 // ── KickMembers ──
 message KickMembersReq {
   string groupID = 1;
-  repeated string userIDs = 2;
-  string operatorUserID = 3;
+  repeated uint64 userIDs = 2;
+  uint64 operatorUserID = 3;
 }
 
 message KickMembersResp {
   bool success = 1;
-  repeated string failedUserIDs = 2;
+  repeated uint64 failedUserIDs = 2;
   string errMsg = 3;
 }
 
 // ── DismissGroup ──
 message DismissGroupReq {
   string groupID = 1;
-  string operatorUserID = 2;
+  uint64 operatorUserID = 2;
 }
 
 message DismissGroupResp {
@@ -114,7 +114,7 @@ message UpdateGroupInfoResp {
 
 // ── GetUserGroups ──
 message GetUserGroupsReq {
-  string userID = 1;
+  uint64 userID = 1;
 }
 
 message GetUserGroupsResp {

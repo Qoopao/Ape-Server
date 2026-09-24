@@ -56,7 +56,7 @@ std::vector<std::string> deserialize_vector(const std::string &str) {
     grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
     // 拷贝 userIDs 列表到协程
-    std::vector<std::string> user_ids(request->userids().begin(),
+    std::vector<uint64_t> user_ids(request->userids().begin(),
                                       request->userids().end());
 
     auto &redis = RedisConnector::instance();
@@ -73,7 +73,7 @@ std::vector<std::string> deserialize_vector(const std::string &str) {
                 // 1. 异步查 Redis 在线状态
                 try {
                     auto onlineVal = co_await RedisConnector::instance().get(
-                        "user:" + userID + ":online");
+                        "user:" + std::to_string(userID) + ":online");
                     if (onlineVal && *onlineVal == "1") {
                         status->set_isonline(true);
                         status->set_connectioncount(1);
@@ -90,11 +90,11 @@ std::vector<std::string> deserialize_vector(const std::string &str) {
 
                 // 2. Redis 未命中 -> 查持久化数据库（异步）
                 try {
-                    auto userInfo = co_await MySQLHandler::get_user_online_info(userID);
+                    auto userInfo = co_await MySQLHandler::find_user_by_id(userID);
                     if (userInfo) {
                         // 用户存在于 DB 中，缓存到 Redis 并标记离线
                         co_await RedisConnector::instance().setex(
-                            "user:" + userID + ":online", 300, "0");
+                            "user:" + std::to_string(userID) + ":online", 300, "0");
                         spdlog::debug(
                             "BackbonService::CheckUserOnline: user {} found in DB (offline)",
                             userID);

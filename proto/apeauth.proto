@@ -9,13 +9,13 @@ service AuthService {
 }
 
 message RegisterRequest {
-  string username = 1;
-  string password = 2;
-  string nickname = 3;
+  string phone = 1;
+  string nickname = 2;
+  string password = 3;
 }
 
 message LoginRequest {
-  string username = 1;
+  uint64 account = 1;
   string password = 2;
 }
 
@@ -25,22 +25,23 @@ message ValidateTokenReq {
 
 message ValidateTokenResp {
   bool valid = 1;
-  string user_id = 2;
-  string username = 3;
-  int64 expires_at = 4;
+  uint64 userID = 2;
+  uint64 account = 3;
+  int64 expiresAt = 4;
 }
 
 message AuthUser {
-  string user_id = 1;
-  string username = 2;
+  uint64 userID = 1;
+  uint64 account = 2;
   string nickname = 3;
+  string phone = 4;
 }
 
 message AuthResponse {
   bool success = 1;
-  string error_code = 2;
-  string error_message = 3;
+  string errorCode = 2;
+  string errorMessage = 3;
   string token = 4;
-  int64 expires_at = 5;
+  int64 expiresAt = 5;
   AuthUser user = 6;
 }

@@ -53,15 +53,13 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr PushToUserReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        msgdatabin_(
+      : msgdatabin_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         conversationid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
+        account_{::uint64_t{0u}},
         _cached_size_{0} {}
 
 template <typename>
@@ -99,7 +97,7 @@ const ::uint32_t
         ~0u,  // no _inlined_string_donated_
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::gateway_push::PushToUserReq, _impl_.userid_),
+        PROTOBUF_FIELD_OFFSET(::gateway_push::PushToUserReq, _impl_.account_),
         PROTOBUF_FIELD_OFFSET(::gateway_push::PushToUserReq, _impl_.msgdatabin_),
         PROTOBUF_FIELD_OFFSET(::gateway_push::PushToUserReq, _impl_.conversationid_),
         ~0u,  // no _has_bits_
@@ -124,19 +122,19 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_gateway_5fpush_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
-    "\n\022gateway_push.proto\022\014gateway_push\"K\n\rPu"
-    "shToUserReq\022\016\n\006userID\030\001 \001(\t\022\022\n\nmsgDataBi"
-    "n\030\002 \001(\014\022\026\n\016conversationID\030\003 \001(\t\"!\n\016PushT"
-    "oUserResp\022\017\n\007success\030\001 \001(\0102]\n\022GatewayPus"
-    "hService\022G\n\nPushToUser\022\033.gateway_push.Pu"
-    "shToUserReq\032\034.gateway_push.PushToUserRes"
-    "pb\006proto3"
+    "\n\022gateway_push.proto\022\014gateway_push\"L\n\rPu"
+    "shToUserReq\022\017\n\007account\030\001 \001(\004\022\022\n\nmsgDataB"
+    "in\030\002 \001(\014\022\026\n\016conversationID\030\003 \001(\t\"!\n\016Push"
+    "ToUserResp\022\017\n\007success\030\001 \001(\0102]\n\022GatewayPu"
+    "shService\022G\n\nPushToUser\022\033.gateway_push.P"
+    "ushToUserReq\032\034.gateway_push.PushToUserRe"
+    "spb\006proto3"
 };
 static ::absl::once_flag descriptor_table_gateway_5fpush_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_gateway_5fpush_2eproto = {
     false,
     false,
-    249,
+    250,
     descriptor_table_protodef_gateway_5fpush_2eproto,
     "gateway_push.proto",
     &descriptor_table_gateway_5fpush_2eproto_once,
@@ -168,8 +166,7 @@ PushToUserReq::PushToUserReq(::google::protobuf::Arena* arena)
 inline PROTOBUF_NDEBUG_INLINE PushToUserReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::gateway_push::PushToUserReq& from_msg)
-      : userid_(arena, from.userid_),
-        msgdatabin_(arena, from.msgdatabin_),
+      : msgdatabin_(arena, from.msgdatabin_),
         conversationid_(arena, from.conversationid_),
         _cached_size_{0} {}
 
@@ -186,19 +183,20 @@ PushToUserReq::PushToUserReq(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.account_ = from._impl_.account_;
 
   // @@protoc_insertion_point(copy_constructor:gateway_push.PushToUserReq)
 }
 inline PROTOBUF_NDEBUG_INLINE PushToUserReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : userid_(arena),
-        msgdatabin_(arena),
+      : msgdatabin_(arena),
         conversationid_(arena),
         _cached_size_{0} {}
 
 inline void PushToUserReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.account_ = {};
 }
 PushToUserReq::~PushToUserReq() {
   // @@protoc_insertion_point(destructor:gateway_push.PushToUserReq)
@@ -208,7 +206,6 @@ inline void PushToUserReq::SharedDtor(MessageLite& self) {
   PushToUserReq& this_ = static_cast<PushToUserReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   this_._impl_.msgdatabin_.Destroy();
   this_._impl_.conversationid_.Destroy();
   this_._impl_.~Impl_();
@@ -250,7 +247,7 @@ const ::google::protobuf::internal::ClassData* PushToUserReq::GetClassData() con
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 55, 2> PushToUserReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 0, 49, 2> PushToUserReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -269,9 +266,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 55, 2> PushToUserReq::_table_ = {
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
-    // string userID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(PushToUserReq, _impl_.userid_)}},
+    // uint64 account = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(PushToUserReq, _impl_.account_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(PushToUserReq, _impl_.account_)}},
     // bytes msgDataBin = 2;
     {::_pbi::TcParser::FastBS1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(PushToUserReq, _impl_.msgdatabin_)}},
@@ -281,9 +278,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 55, 2> PushToUserReq::_table_ = {
   }}, {{
     65535, 65535
   }}, {{
-    // string userID = 1;
-    {PROTOBUF_FIELD_OFFSET(PushToUserReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // uint64 account = 1;
+    {PROTOBUF_FIELD_OFFSET(PushToUserReq, _impl_.account_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // bytes msgDataBin = 2;
     {PROTOBUF_FIELD_OFFSET(PushToUserReq, _impl_.msgdatabin_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kBytes | ::_fl::kRepAString)},
@@ -293,9 +290,8 @@ const ::_pbi::TcParseTable<2, 3, 0, 55, 2> PushToUserReq::_table_ = {
   }},
   // no aux_entries
   {{
-    "\32\6\0\16\0\0\0\0"
+    "\32\0\0\16\0\0\0\0"
     "gateway_push.PushToUserReq"
-    "userID"
     "conversationID"
   }},
 };
@@ -307,9 +303,9 @@ PROTOBUF_NOINLINE void PushToUserReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.userid_.ClearToEmpty();
   _impl_.msgdatabin_.ClearToEmpty();
   _impl_.conversationid_.ClearToEmpty();
+  _impl_.account_ = ::uint64_t{0u};
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -328,12 +324,11 @@ PROTOBUF_NOINLINE void PushToUserReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string userID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "gateway_push.PushToUserReq.userID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 account = 1;
+          if (this_._internal_account() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_account(), target);
           }
 
           // bytes msgDataBin = 2;
@@ -375,11 +370,6 @@ PROTOBUF_NOINLINE void PushToUserReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string userID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
-            }
             // bytes msgDataBin = 2;
             if (!this_._internal_msgdatabin().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::BytesSize(
@@ -389,6 +379,11 @@ PROTOBUF_NOINLINE void PushToUserReq::Clear() {
             if (!this_._internal_conversationid().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_conversationid());
+            }
+            // uint64 account = 1;
+            if (this_._internal_account() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_account());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -403,14 +398,14 @@ void PushToUserReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::g
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
-  }
   if (!from._internal_msgdatabin().empty()) {
     _this->_internal_set_msgdatabin(from._internal_msgdatabin());
   }
   if (!from._internal_conversationid().empty()) {
     _this->_internal_set_conversationid(from._internal_conversationid());
+  }
+  if (from._internal_account() != 0) {
+    _this->_impl_.account_ = from._impl_.account_;
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -428,9 +423,9 @@ void PushToUserReq::InternalSwap(PushToUserReq* PROTOBUF_RESTRICT other) {
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.msgdatabin_, &other->_impl_.msgdatabin_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.conversationid_, &other->_impl_.conversationid_, arena);
+        swap(_impl_.account_, other->_impl_.account_);
 }
 
 ::google::protobuf::Metadata PushToUserReq::GetMetadata() const {

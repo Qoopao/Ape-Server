@@ -5,6 +5,7 @@
 #include <boost/beast/websocket/ssl.hpp>
 #include <boost/asio/experimental/channel.hpp>
 #include <boost/beast.hpp>
+#include <cstdint>
 #include <grpcpp/channel.h>
 #include <deque>
 #include <memory>
@@ -37,12 +38,12 @@ public:
     // 异步发送文本帧到客户端
     void asyncSend(std::shared_ptr<std::string> payload);
 
-    // 获取用户 ID
-    const std::string& userId() const { return userId_; }
+    // 获取用户账号
+    const uint64_t account() const { return account_; }
 
 private:
     websocket::stream<boost::asio::ssl::stream<tcp::socket>> ws_;       // ssl
-    std::string userId_;
+    uint64_t account_;
     beast::flat_buffer buffer_;
     AuthClient* auth_client_;
     MsgClient* msg_client_;

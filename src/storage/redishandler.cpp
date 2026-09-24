@@ -1,6 +1,7 @@
 #include "storage/redishandler.h"
 #include "storage/redisconnector.h"
 
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <vector>
@@ -26,8 +27,8 @@
 // 内部工具
 // ──────────────────────────────────────────
 
-std::string RedisHandler::offlineMsgKey(const std::string &userId) {
-    return "user_msgs:" + userId;
+std::string RedisHandler::offlineMsgKey(const uint64_t userId) {
+    return "user_msgs:" + std::to_string(userId);
 }
 
 std::string RedisHandler::serializeMsg(const sdkws::MsgData &msg) {
@@ -112,7 +113,7 @@ RedisHandler::DeleteMsgCache(const std::string &msgid) {
 // 将离线消息存入 Redis ZSET
 // ──────────────────────────────────────────
 boost::asio::awaitable<bool>
-RedisHandler::SaveOfflineMsg(const std::string &userId,
+RedisHandler::SaveOfflineMsg(const uint64_t userId,
                              const sdkws::MsgData &msg) {
     try {
         auto &redis = RedisConnector::instance();
@@ -135,7 +136,7 @@ RedisHandler::SaveOfflineMsg(const std::string &userId,
 // 从 Redis ZSET 拉取离线消息（按 seq 范围查询）
 // ──────────────────────────────────────────
 boost::asio::awaitable<std::vector<sdkws::MsgData>>
-RedisHandler::GetOfflineMsgs(const std::string &userId, int64_t afterSeq,
+RedisHandler::GetOfflineMsgs(const uint64_t userId, int64_t afterSeq,
                              int limit, const std::string &conversationID) {
     std::vector<sdkws::MsgData> result;
     try {
@@ -169,7 +170,7 @@ RedisHandler::GetOfflineMsgs(const std::string &userId, int64_t afterSeq,
 // 删除离线消息（按 msgId 列表）
 // ──────────────────────────────────────────
 boost::asio::awaitable<bool>
-RedisHandler::DeleteOfflineMsgs(const std::string &userId,
+RedisHandler::DeleteOfflineMsgs(const uint64_t userId,
                                 const std::vector<std::string> &msgIds) {
     try {
         if (msgIds.empty()) {
@@ -208,7 +209,7 @@ RedisHandler::DeleteOfflineMsgs(const std::string &userId,
 // ACK 单个离线消息
 // ──────────────────────────────────────────
 boost::asio::awaitable<bool>
-RedisHandler::AckOfflineMsg(const std::string &userId,
+RedisHandler::AckOfflineMsg(const uint64_t userId,
                             const std::string &msgId) {
     try {
         auto &redis = RedisConnector::instance();
@@ -237,7 +238,7 @@ RedisHandler::AckOfflineMsg(const std::string &userId,
 // ──────────────────────────────────────────
 boost::asio::awaitable<bool>
 RedisHandler::AckOfflineMsgsBatch(
-    const std::string &userId, const std::vector<std::string> &msgIds) {
+    const uint64_t userId, const std::vector<std::string> &msgIds) {
     try {
         if (msgIds.empty()) {
             co_return true;
@@ -308,14 +309,14 @@ static std::string groupMembersKey(const std::string &groupID) {
 
 boost::asio::awaitable<void>
 RedisHandler::CacheGroupMembers(const std::string &groupID,
-                                const std::vector<std::string> &memberIDs) {
+                                const std::vector<uint64_t> &memberIDs) {
     if (memberIDs.empty()) co_return;
     try {
         auto &redis = RedisConnector::instance();
         std::string key = groupMembersKey(groupID);
         co_await redis.del(key);
         for (const auto &uid : memberIDs) {
-            co_await redis.sadd(key, uid);
+            co_await redis.sadd(key, std::to_string(uid));
         }
         co_await redis.expire(key, 1800);
         spdlog::debug("CacheGroupMembers: group={}, count={}", groupID,
@@ -325,16 +326,21 @@ RedisHandler::CacheGroupMembers(const std::string &groupID,
     }
 }
 
-boost::asio::awaitable<std::vector<std::string>>
+boost::asio::awaitable<std::vector<uint64_t>>
 RedisHandler::GetGroupMembersFromCache(const std::string &groupID) {
     try {
         auto &redis = RedisConnector::instance();
         auto members = co_await redis.smembers(groupMembersKey(groupID));
-        co_return members;
+        std::vector<uint64_t> result;
+        result.reserve(members.size());
+        for (const auto &m : members) {
+            result.push_back(std::stoull(m));
+        }
+        co_return result;
     } catch (const std::exception &e) {
         spdlog::error("RedisHandler::GetGroupMembersFromCache failed: {}",
                       e.what());
-        co_return std::vector<std::string>{};
+        co_return std::vector<uint64_t>{};
     }
 }
 
@@ -366,7 +372,7 @@ RedisHandler::InvalidateGroupCache(const std::string &groupID) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 boost::asio::awaitable<long long>
-RedisHandler::BatchSaveOfflineMsg(const std::vector<std::string> &userIDs,
+RedisHandler::BatchSaveOfflineMsg(const std::vector<uint64_t> &userIDs,
                                    const sdkws::MsgData &msg) {
     if (userIDs.empty()) co_return 0;
 

@@ -1,6 +1,7 @@
 #include "services/gateway_push_service/server.h"
 #include "gateway/ws_session_manager.h"
 #include "sdkws.pb.h"
+#include <cstdint>
 #include <spdlog/spdlog.h>
 
 GatewayPushServer::GatewayPushServer(const std::string &service_name,
@@ -14,38 +15,38 @@ GatewayPushServer::GatewayPushServer(const std::string &service_name,
 
     grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
-    const std::string &userID = request->userid();
+    const uint64_t &account = request->account();
     const std::string &msgDataBin = request->msgdatabin();
 
-    if (userID.empty()) {
-        spdlog::error("GatewayPushServer::PushToUser: empty userID");
+    if (account == 0) {
+        spdlog::error("GatewayPushServer::PushToUser: empty account");
         response->set_success(false);
         reactor->Finish(::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT,
-                              "userID is required"));
+                              "account is required"));
         return reactor;
     }
 
-    spdlog::info("GatewayPushServer::PushToUser: userID={}, dataLen={}",
-                 userID, msgDataBin.size());
+    spdlog::info("GatewayPushServer::PushToUser: account={}, dataLen={}",
+                 account, msgDataBin.size());
 
     // 构建 WebSocket 推送消息（SdkWSResp, type=104）
     sdkws::SdkWSResp pushResp;
     pushResp.set_type(104);  // 104: 下推用户消息
-    pushResp.set_userid(userID);
+    pushResp.set_account(account);
     pushResp.set_data(msgDataBin);
 
     std::string pushBin = pushResp.SerializeAsString();
     auto payload = std::make_shared<std::string>(std::move(pushBin));
 
-    bool pushed = WSSessionManager::instance().pushToUser(userID, payload);
+    bool pushed = WSSessionManager::instance().pushToUser(account, payload);
 
     response->set_success(pushed);
     if (pushed) {
         spdlog::info("GatewayPushServer::PushToUser: pushed to user={} succeeded",
-                     userID);
+                     account);
     } else {
         spdlog::warn("GatewayPushServer::PushToUser: push to user={} failed (no active session)",
-                     userID);
+                     account);
     }
 
     reactor->Finish(::grpc::Status::OK);

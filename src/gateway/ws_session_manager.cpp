@@ -1,6 +1,7 @@
 #include "gateway/ws_session_manager.h"
 #include "om/otel_metrics.h"
 
+#include <cstdint>
 #include <spdlog/spdlog.h>
 
 WSSessionManager& WSSessionManager::instance() {
@@ -8,45 +9,45 @@ WSSessionManager& WSSessionManager::instance() {
     return mgr;
 }
 
-void WSSessionManager::registerSession(const std::string& userId,
+void WSSessionManager::registerSession(const uint64_t account,
                                        std::shared_ptr<WSSession> session) {
     std::unique_lock lock(mutex_);
-    bool isReplacing = sessions_.find(userId) != sessions_.end();
-    sessions_[userId] = session;
-    int64_t total = static_cast<int64_t>(sessions_.size());
+    bool isReplacing = sessions_.find(account) != sessions_.end();
+    sessions_[account] = session;
+    uint64_t total = sessions_.size();
     lock.unlock();
 
     if (!isReplacing) {
         ape::otel::WsConnectionsActive().Add(1);
     }
-    spdlog::info("WSSessionManager: registered session for user={}, total={}", userId, total);
+    spdlog::info("WSSessionManager: registered session for user={}, total={}", account, total);
 }
 
 
-bool WSSessionManager::unregisterSession(const std::string& userId,
+bool WSSessionManager::unregisterSession(const uint64_t account,
                                          std::shared_ptr<WSSession> session) {
     std::unique_lock lock(mutex_);
-    auto it = sessions_.find(userId);
+    auto it = sessions_.find(account);
     if (it != sessions_.end() && it->second == session) {
         sessions_.erase(it);
         lock.unlock();
         ape::otel::WsConnectionsActive().Add(-1);
-        spdlog::info("unregistered session for user={}", userId);
+        spdlog::info("unregistered session for user={}", account);
         return true;
     }
     lock.unlock();
-    spdlog::info("stale session for user={}, skipping", userId);
+    spdlog::info("stale session for user={}, skipping", account);
     return false;
 }
 
 
 
-bool WSSessionManager::pushToUser(const std::string& userId,
+bool WSSessionManager::pushToUser(const uint64_t account,
                                   std::shared_ptr<std::string> payload) {
     std::shared_lock lock(mutex_);
-    auto it = sessions_.find(userId);
+    auto it = sessions_.find(account);
     if (it == sessions_.end()) {
-        spdlog::warn("WSSessionManager: no session for user={}, cannot push", userId);
+        spdlog::warn("WSSessionManager: no session for user={}, cannot push", account);
         return false;
     }
 
@@ -57,7 +58,7 @@ bool WSSessionManager::pushToUser(const std::string& userId,
     return true;
 }
 
-bool WSSessionManager::hasSession(const std::string& userId) {
+bool WSSessionManager::hasSession(const uint64_t account) {
     std::shared_lock lock(mutex_);
-    return sessions_.find(userId) != sessions_.end();
+    return sessions_.find(account) != sessions_.end();
 }

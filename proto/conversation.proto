@@ -18,11 +18,11 @@ package conversation;
 import "sdkws.proto";
 
 message Conversation {
-  string ownerUserID = 1;
+  uint64 ownerUserID = 1;
   string conversationID = 2;
   int32 recvMsgOpt = 3;
   int32 conversationType = 4;
-  string userID = 5;
+  uint64 userID = 5;
   string groupID = 6;
   bool isPinned = 7;
   string attachedInfo = 8;
@@ -39,7 +39,7 @@ message Conversation {
 
 message ConversationInfo {
   string conversationID = 1;
-  string ownerUserID = 2;
+  uint64 ownerUserID = 2;
   int32 conversationType = 3;  // 0: 单聊 1: 群聊
   string conversationName = 4;
   string conversationAvatar = 5;
@@ -53,7 +53,7 @@ message ConversationInfo {
 message ConversationReq {
   string conversationID = 1;
   int32 conversationType = 2;
-  string userID = 3;
+  uint64 userID = 3;
   string groupID = 4;
   int32 recvMsgOpt = 5;
   bool isPinned = 6;
@@ -76,7 +76,7 @@ message SetConversationResp {}
 
 message GetConversationReq {
   string conversationID = 1;
-  string ownerUserID = 2;
+  uint64 ownerUserID = 2;
 }
 
 message GetConversationResp {
@@ -84,7 +84,7 @@ message GetConversationResp {
 }
 
 message GetSortedConversationListReq {
-  string userID = 1;
+  uint64 userID = 1;
   repeated string conversationIDs = 2;
   sdkws.RequestPagination pagination = 3;
 }
@@ -107,8 +107,8 @@ message MsgInfo {
   string serverMsgID = 1;
   string clientMsgID = 2;
   int32 sessionType = 3;
-  string sendID = 4;
-  string recvID = 5;
+  uint64 sendID = 4;
+  uint64 recvID = 5;
   string senderName = 6;
   string faceURL = 7;
   string groupID = 8;
@@ -124,7 +124,7 @@ message MsgInfo {
 }
 
 message GetConversationsReq {
-  string ownerUserID = 1;
+  uint64 ownerUserID = 1;
   repeated string conversationIDs = 2;
 }
 
@@ -133,7 +133,7 @@ message GetConversationsResp {
 }
 
 message GetAllConversationsReq {
-  string ownerUserID = 1;
+  uint64 ownerUserID = 1;
 }
 
 message GetAllConversationsResp {
@@ -145,12 +145,12 @@ message GetRecvMsgNotNotifyUserIDsReq {
 }
 
 message GetRecvMsgNotNotifyUserIDsResp {
-  repeated string userIDs = 1;
+  repeated uint64 userIDs = 1;
 }
 
 message CreateSingleChatConversationsReq {
-  string recvID = 1;
-  string sendID = 2;
+  uint64 recvID = 1;
+  uint64 sendID = 2;
   string conversationID = 3;
   int32 conversationType = 4;
 }
@@ -158,7 +158,7 @@ message CreateSingleChatConversationsReq {
 message CreateSingleChatConversationsResp {}
 
 message CreateGroupChatConversationsReq {
-  repeated string userIDs = 1;
+  repeated uint64 userIDs = 1;
   string groupID = 2;
 }
 
@@ -166,7 +166,7 @@ message CreateGroupChatConversationsResp {}
 
 message SetConversationMaxSeqReq {
   string conversationID = 1;
-  repeated string ownerUserID = 2;
+  repeated uint64 ownerUserID = 2;
   int64 maxSeq = 3;
 }
 
@@ -174,14 +174,14 @@ message SetConversationMaxSeqResp {}
 
 message SetConversationMinSeqReq {
   string conversationID = 1;
-  repeated string ownerUserID = 2;
+  repeated uint64 ownerUserID = 2;
   int64 minSeq = 3;
 }
 
 message SetConversationMinSeqResp {}
 
 message GetConversationIDsReq {
-  string userID = 1;
+  uint64 userID = 1;
 }
 
 message GetConversationIDsResp {
@@ -189,14 +189,14 @@ message GetConversationIDsResp {
 }
 
 message SetConversationsReq {
-  repeated string userIDs = 1;
+  repeated uint64 userIDs = 1;
   ConversationReq conversation = 2;
 }
 
 message SetConversationsResp {}
 
 message GetUserConversationIDsHashReq {
-  string ownerUserID = 1;
+  uint64 ownerUserID = 1;
 }
 
 message GetUserConversationIDsHashResp {
@@ -213,11 +213,11 @@ message GetConversationsByConversationIDResp {
 
 message GetConversationOfflinePushUserIDsReq {
   string conversationID = 1;
-  repeated string userIDs = 2;
+  repeated uint64 userIDs = 2;
 }
 
 message GetConversationOfflinePushUserIDsResp {
-  repeated string userIDs = 1;
+  repeated uint64 userIDs = 1;
 }
 
 message GetConversationNotReceiveMessageUserIDsReq {
@@ -225,12 +225,12 @@ message GetConversationNotReceiveMessageUserIDsReq {
 }
 
 message GetConversationNotReceiveMessageUserIDsResp {
-  repeated string userIDs = 1;
+  repeated uint64 userIDs = 1;
 }
 
 message UpdateConversationReq {
   string conversationID = 1;
-  repeated string userIDs = 2;
+  repeated uint64 userIDs = 2;
   int32 recvMsgOpt = 3;
   bool isPinned = 4;
   string attachedInfo = 5;
@@ -249,7 +249,7 @@ message UpdateConversationResp {}
 
 message GetFullOwnerConversationIDsReq {
   uint64 idHash = 1;
-  string userID = 2;
+  uint64 userID = 2;
 }
 
 message GetFullOwnerConversationIDsResp {
@@ -260,7 +260,7 @@ message GetFullOwnerConversationIDsResp {
 }
 
 message GetIncrementalConversationReq {
-  string userID = 1;
+  uint64 userID = 1;
   string versionID = 2;
   uint64 version = 3;
 }
@@ -275,7 +275,7 @@ message GetIncrementalConversationResp {
 }
 
 message GetOwnerConversationReq {
-  string userID = 1;
+  uint64 userID = 1;
   sdkws.RequestPagination pagination = 2;
 }
 
@@ -291,7 +291,7 @@ message GetConversationsNeedClearMsgResp {
 }
 
 message GetNotNotifyConversationIDsReq {
-  string userID = 1;
+  uint64 userID = 1;
 }
 
 message GetNotNotifyConversationIDsResp {
@@ -299,7 +299,7 @@ message GetNotNotifyConversationIDsResp {
 }
 
 message GetPinnedConversationIDsReq {
-  string userID = 1;
+  uint64 userID = 1;
 }
 
 message GetPinnedConversationIDsResp {
@@ -315,7 +315,7 @@ message ClearUserConversationMsgResp {
 }
 
 message UpdateConversationsByUserReq{
-  string userID = 1;
+  uint64 userID = 1;
   string ex = 2;
 }
 

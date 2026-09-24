@@ -30,9 +30,7 @@ inline constexpr UserOnlineStatus::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : platformids_{},
         _platformids_cached_byte_size_{0},
-        userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
         isonline_{false},
         connectioncount_{0},
         lastactivetime_{::int64_t{0}},
@@ -234,6 +232,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 inline constexpr CheckUserOnlineReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : userids_{},
+        _userids_cached_byte_size_{0},
         _cached_size_{0} {}
 
 template <typename>
@@ -410,10 +409,10 @@ static const ::_pb::Message* const file_default_instances[] = {
 const char descriptor_table_protodef_backbon_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
     "\n\rbackbon.proto\022\007backbon\"%\n\022CheckUserOnl"
-    "ineReq\022\017\n\007userIDs\030\001 \003(\t\"B\n\023CheckUserOnli"
+    "ineReq\022\017\n\007userIDs\030\001 \003(\004\"B\n\023CheckUserOnli"
     "neResp\022+\n\010statuses\030\001 \003(\0132\031.backbon.UserO"
     "nlineStatus\"z\n\020UserOnlineStatus\022\016\n\006userI"
-    "D\030\001 \001(\t\022\020\n\010isOnline\030\002 \001(\010\022\027\n\017connectionC"
+    "D\030\001 \001(\004\022\020\n\010isOnline\030\002 \001(\010\022\027\n\017connectionC"
     "ount\030\003 \001(\005\022\023\n\013platformIDs\030\004 \003(\005\022\026\n\016lastA"
     "ctiveTime\030\005 \001(\003\"F\n\022RegisterServiceReq\022\017\n"
     "\007service\030\001 \001(\t\022\016\n\006ipport\030\002 \003(\t\022\017\n\007method"
@@ -472,6 +471,7 @@ inline PROTOBUF_NDEBUG_INLINE CheckUserOnlineReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::backbon::CheckUserOnlineReq& from_msg)
       : userids_{visibility, arena, from.userids_},
+        _userids_cached_byte_size_{0},
         _cached_size_{0} {}
 
 CheckUserOnlineReq::CheckUserOnlineReq(
@@ -494,6 +494,7 @@ inline PROTOBUF_NDEBUG_INLINE CheckUserOnlineReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : userids_{visibility, arena},
+        _userids_cached_byte_size_{0},
         _cached_size_{0} {}
 
 inline void CheckUserOnlineReq::SharedCtor(::_pb::Arena* arena) {
@@ -558,7 +559,7 @@ const ::google::protobuf::internal::ClassData* CheckUserOnlineReq::GetClassData(
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 1, 0, 42, 2> CheckUserOnlineReq::_table_ = {
+const ::_pbi::TcParseTable<0, 1, 0, 0, 2> CheckUserOnlineReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -576,21 +577,18 @@ const ::_pbi::TcParseTable<0, 1, 0, 42, 2> CheckUserOnlineReq::_table_ = {
     ::_pbi::TcParser::GetTable<::backbon::CheckUserOnlineReq>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // repeated string userIDs = 1;
-    {::_pbi::TcParser::FastUR1,
+    // repeated uint64 userIDs = 1;
+    {::_pbi::TcParser::FastV64P1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(CheckUserOnlineReq, _impl_.userids_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // repeated string userIDs = 1;
+    // repeated uint64 userIDs = 1;
     {PROTOBUF_FIELD_OFFSET(CheckUserOnlineReq, _impl_.userids_), 0, 0,
-    (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
+    (0 | ::_fl::kFcRepeated | ::_fl::kPackedUInt64)},
   }},
   // no aux_entries
   {{
-    "\32\7\0\0\0\0\0\0"
-    "backbon.CheckUserOnlineReq"
-    "userIDs"
   }},
 };
 
@@ -620,12 +618,13 @@ PROTOBUF_NOINLINE void CheckUserOnlineReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // repeated string userIDs = 1;
-          for (int i = 0, n = this_._internal_userids_size(); i < n; ++i) {
-            const auto& s = this_._internal_userids().Get(i);
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.CheckUserOnlineReq.userIDs");
-            target = stream->WriteString(1, s, target);
+          // repeated uint64 userIDs = 1;
+          {
+            int byte_size = this_._impl_._userids_cached_byte_size_.Get();
+            if (byte_size > 0) {
+              target = stream->WriteUInt64Packed(
+                  1, this_._internal_userids(), byte_size, target);
+            }
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -653,14 +652,12 @@ PROTOBUF_NOINLINE void CheckUserOnlineReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // repeated string userIDs = 1;
+            // repeated uint64 userIDs = 1;
             {
               total_size +=
-                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_userids().size());
-              for (int i = 0, n = this_._internal_userids().size(); i < n; ++i) {
-                total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-                    this_._internal_userids().Get(i));
-              }
+                  ::_pbi::WireFormatLite::UInt64SizeWithPackedTagSize(
+                      this_._internal_userids(), 1,
+                      this_._impl_._userids_cached_byte_size_);
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -958,7 +955,6 @@ inline PROTOBUF_NDEBUG_INLINE UserOnlineStatus::Impl_::Impl_(
     const Impl_& from, const ::backbon::UserOnlineStatus& from_msg)
       : platformids_{visibility, arena, from.platformids_},
         _platformids_cached_byte_size_{0},
-        userid_(arena, from.userid_),
         _cached_size_{0} {}
 
 UserOnlineStatus::UserOnlineStatus(
@@ -975,11 +971,11 @@ UserOnlineStatus::UserOnlineStatus(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
   ::memcpy(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, isonline_),
+               offsetof(Impl_, userid_),
            reinterpret_cast<const char *>(&from._impl_) +
-               offsetof(Impl_, isonline_),
+               offsetof(Impl_, userid_),
            offsetof(Impl_, lastactivetime_) -
-               offsetof(Impl_, isonline_) +
+               offsetof(Impl_, userid_) +
                sizeof(Impl_::lastactivetime_));
 
   // @@protoc_insertion_point(copy_constructor:backbon.UserOnlineStatus)
@@ -989,16 +985,15 @@ inline PROTOBUF_NDEBUG_INLINE UserOnlineStatus::Impl_::Impl_(
     ::google::protobuf::Arena* arena)
       : platformids_{visibility, arena},
         _platformids_cached_byte_size_{0},
-        userid_(arena),
         _cached_size_{0} {}
 
 inline void UserOnlineStatus::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
   ::memset(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, isonline_),
+               offsetof(Impl_, userid_),
            0,
            offsetof(Impl_, lastactivetime_) -
-               offsetof(Impl_, isonline_) +
+               offsetof(Impl_, userid_) +
                sizeof(Impl_::lastactivetime_));
 }
 UserOnlineStatus::~UserOnlineStatus() {
@@ -1009,7 +1004,6 @@ inline void UserOnlineStatus::SharedDtor(MessageLite& self) {
   UserOnlineStatus& this_ = static_cast<UserOnlineStatus&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -1025,7 +1019,7 @@ constexpr auto UserOnlineStatus::InternalNewImpl_() {
                   ::google::protobuf::Message::internal_visibility()),
   });
   if (arena_bits.has_value()) {
-    return ::google::protobuf::internal::MessageCreator::CopyInit(
+    return ::google::protobuf::internal::MessageCreator::ZeroInit(
         sizeof(UserOnlineStatus), alignof(UserOnlineStatus), *arena_bits);
   } else {
     return ::google::protobuf::internal::MessageCreator(&UserOnlineStatus::PlacementNew_,
@@ -1061,7 +1055,7 @@ const ::google::protobuf::internal::ClassData* UserOnlineStatus::GetClassData() 
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 5, 0, 39, 2> UserOnlineStatus::_table_ = {
+const ::_pbi::TcParseTable<3, 5, 0, 0, 2> UserOnlineStatus::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -1080,9 +1074,9 @@ const ::_pbi::TcParseTable<3, 5, 0, 39, 2> UserOnlineStatus::_table_ = {
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
-    // string userID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(UserOnlineStatus, _impl_.userid_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(UserOnlineStatus, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(UserOnlineStatus, _impl_.userid_)}},
     // bool isOnline = 2;
     {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(UserOnlineStatus, _impl_.isonline_), 63>(),
      {16, 63, 0, PROTOBUF_FIELD_OFFSET(UserOnlineStatus, _impl_.isonline_)}},
@@ -1100,9 +1094,9 @@ const ::_pbi::TcParseTable<3, 5, 0, 39, 2> UserOnlineStatus::_table_ = {
   }}, {{
     65535, 65535
   }}, {{
-    // string userID = 1;
+    // uint64 userID = 1;
     {PROTOBUF_FIELD_OFFSET(UserOnlineStatus, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // bool isOnline = 2;
     {PROTOBUF_FIELD_OFFSET(UserOnlineStatus, _impl_.isonline_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kBool)},
@@ -1118,9 +1112,6 @@ const ::_pbi::TcParseTable<3, 5, 0, 39, 2> UserOnlineStatus::_table_ = {
   }},
   // no aux_entries
   {{
-    "\30\6\0\0\0\0\0\0"
-    "backbon.UserOnlineStatus"
-    "userID"
   }},
 };
 
@@ -1132,10 +1123,9 @@ PROTOBUF_NOINLINE void UserOnlineStatus::Clear() {
   (void) cached_has_bits;
 
   _impl_.platformids_.Clear();
-  _impl_.userid_.ClearToEmpty();
-  ::memset(&_impl_.isonline_, 0, static_cast<::size_t>(
+  ::memset(&_impl_.userid_, 0, static_cast<::size_t>(
       reinterpret_cast<char*>(&_impl_.lastactivetime_) -
-      reinterpret_cast<char*>(&_impl_.isonline_)) + sizeof(_impl_.lastactivetime_));
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.lastactivetime_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -1154,12 +1144,11 @@ PROTOBUF_NOINLINE void UserOnlineStatus::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string userID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.UserOnlineStatus.userID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
           // bool isOnline = 2;
@@ -1226,10 +1215,10 @@ PROTOBUF_NOINLINE void UserOnlineStatus::Clear() {
             }
           }
            {
-            // string userID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
             // bool isOnline = 2;
             if (this_._internal_isonline() != 0) {
@@ -1259,8 +1248,8 @@ void UserOnlineStatus::MergeImpl(::google::protobuf::MessageLite& to_msg, const 
   (void) cached_has_bits;
 
   _this->_internal_mutable_platformids()->MergeFrom(from._internal_platformids());
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   if (from._internal_isonline() != 0) {
     _this->_impl_.isonline_ = from._impl_.isonline_;
@@ -1284,17 +1273,14 @@ void UserOnlineStatus::CopyFrom(const UserOnlineStatus& from) {
 
 void UserOnlineStatus::InternalSwap(UserOnlineStatus* PROTOBUF_RESTRICT other) {
   using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.platformids_.InternalSwap(&other->_impl_.platformids_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(UserOnlineStatus, _impl_.lastactivetime_)
       + sizeof(UserOnlineStatus::_impl_.lastactivetime_)
-      - PROTOBUF_FIELD_OFFSET(UserOnlineStatus, _impl_.isonline_)>(
-          reinterpret_cast<char*>(&_impl_.isonline_),
-          reinterpret_cast<char*>(&other->_impl_.isonline_));
+      - PROTOBUF_FIELD_OFFSET(UserOnlineStatus, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
 ::google::protobuf::Metadata UserOnlineStatus::GetMetadata() const {

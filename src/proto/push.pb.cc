@@ -64,9 +64,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr DelUserPushTokenReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : userid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+      : userid_{::uint64_t{0u}},
         platformid_{0},
         _cached_size_{0} {}
 
@@ -110,12 +108,10 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr AddPendingOfflineAckReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : userid_(
+      : servermsgid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        servermsgid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
         seq_{::int64_t{0}},
         _cached_size_{0} {}
 
@@ -159,12 +155,10 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr AckMsgReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : userid_(
+      : servermsgid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        servermsgid_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        userid_{::uint64_t{0u}},
         seq_{::int64_t{0}},
         acktype_{0},
         _cached_size_{0} {}
@@ -193,6 +187,7 @@ inline constexpr PushMsgReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
         userids_{},
+        _userids_cached_byte_size_{0},
         conversationid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
@@ -331,13 +326,13 @@ const char descriptor_table_protodef_push_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIA
     protodesc_cold) = {
     "\n\npush.proto\022\004push\032\013sdkws.proto\"V\n\nPushM"
     "sgReq\022\037\n\007msgData\030\001 \001(\0132\016.sdkws.MsgData\022\026"
-    "\n\016conversationID\030\002 \001(\t\022\017\n\007userIDs\030\003 \003(\t\""
+    "\n\016conversationID\030\002 \001(\t\022\017\n\007userIDs\030\003 \003(\004\""
     "\r\n\013PushMsgResp\"9\n\023DelUserPushTokenReq\022\016\n"
-    "\006userID\030\001 \001(\t\022\022\n\nplatformID\030\002 \001(\005\"\026\n\024Del"
+    "\006userID\030\001 \001(\004\022\022\n\nplatformID\030\002 \001(\005\"\026\n\024Del"
     "UserPushTokenResp\"N\n\tAckMsgReq\022\016\n\006userID"
-    "\030\001 \001(\t\022\023\n\013serverMsgID\030\002 \001(\t\022\013\n\003seq\030\003 \001(\003"
+    "\030\001 \001(\004\022\023\n\013serverMsgID\030\002 \001(\t\022\013\n\003seq\030\003 \001(\003"
     "\022\017\n\007ackType\030\004 \001(\005\"\014\n\nAckMsgResp\"K\n\027AddPe"
-    "ndingOfflineAckReq\022\016\n\006userID\030\001 \001(\t\022\023\n\013se"
+    "ndingOfflineAckReq\022\016\n\006userID\030\001 \001(\004\022\023\n\013se"
     "rverMsgID\030\002 \001(\t\022\013\n\003seq\030\003 \001(\003\"\032\n\030AddPendi"
     "ngOfflineAckResp2\214\002\n\013PushService\022.\n\007Push"
     "Msg\022\020.push.PushMsgReq\032\021.push.PushMsgResp"
@@ -400,6 +395,7 @@ inline PROTOBUF_NDEBUG_INLINE PushMsgReq::Impl_::Impl_(
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
         userids_{visibility, arena, from.userids_},
+        _userids_cached_byte_size_{0},
         conversationid_(arena, from.conversationid_) {}
 
 PushMsgReq::PushMsgReq(
@@ -427,6 +423,7 @@ inline PROTOBUF_NDEBUG_INLINE PushMsgReq::Impl_::Impl_(
     ::google::protobuf::Arena* arena)
       : _cached_size_{0},
         userids_{visibility, arena},
+        _userids_cached_byte_size_{0},
         conversationid_(arena) {}
 
 inline void PushMsgReq::SharedCtor(::_pb::Arena* arena) {
@@ -494,7 +491,7 @@ const ::google::protobuf::internal::ClassData* PushMsgReq::GetClassData() const 
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 1, 45, 2> PushMsgReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 1, 38, 2> PushMsgReq::_table_ = {
   {
     PROTOBUF_FIELD_OFFSET(PushMsgReq, _impl_._has_bits_),
     0, // no _extensions_
@@ -519,8 +516,8 @@ const ::_pbi::TcParseTable<2, 3, 1, 45, 2> PushMsgReq::_table_ = {
     // string conversationID = 2;
     {::_pbi::TcParser::FastUS1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(PushMsgReq, _impl_.conversationid_)}},
-    // repeated string userIDs = 3;
-    {::_pbi::TcParser::FastUR1,
+    // repeated uint64 userIDs = 3;
+    {::_pbi::TcParser::FastV64P1,
      {26, 63, 0, PROTOBUF_FIELD_OFFSET(PushMsgReq, _impl_.userids_)}},
   }}, {{
     65535, 65535
@@ -531,16 +528,15 @@ const ::_pbi::TcParseTable<2, 3, 1, 45, 2> PushMsgReq::_table_ = {
     // string conversationID = 2;
     {PROTOBUF_FIELD_OFFSET(PushMsgReq, _impl_.conversationid_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // repeated string userIDs = 3;
+    // repeated uint64 userIDs = 3;
     {PROTOBUF_FIELD_OFFSET(PushMsgReq, _impl_.userids_), -1, 0,
-    (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
+    (0 | ::_fl::kFcRepeated | ::_fl::kPackedUInt64)},
   }}, {{
     {::_pbi::TcParser::GetTable<::sdkws::MsgData>()},
   }}, {{
-    "\17\0\16\7\0\0\0\0"
+    "\17\0\16\0\0\0\0\0"
     "push.PushMsgReq"
     "conversationID"
-    "userIDs"
   }},
 };
 
@@ -593,12 +589,13 @@ PROTOBUF_NOINLINE void PushMsgReq::Clear() {
             target = stream->WriteStringMaybeAliased(2, _s, target);
           }
 
-          // repeated string userIDs = 3;
-          for (int i = 0, n = this_._internal_userids_size(); i < n; ++i) {
-            const auto& s = this_._internal_userids().Get(i);
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "push.PushMsgReq.userIDs");
-            target = stream->WriteString(3, s, target);
+          // repeated uint64 userIDs = 3;
+          {
+            int byte_size = this_._impl_._userids_cached_byte_size_.Get();
+            if (byte_size > 0) {
+              target = stream->WriteUInt64Packed(
+                  3, this_._internal_userids(), byte_size, target);
+            }
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -626,14 +623,12 @@ PROTOBUF_NOINLINE void PushMsgReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // repeated string userIDs = 3;
+            // repeated uint64 userIDs = 3;
             {
               total_size +=
-                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_userids().size());
-              for (int i = 0, n = this_._internal_userids().size(); i < n; ++i) {
-                total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-                    this_._internal_userids().Get(i));
-              }
+                  ::_pbi::WireFormatLite::UInt64SizeWithPackedTagSize(
+                      this_._internal_userids(), 1,
+                      this_._impl_._userids_cached_byte_size_);
             }
           }
            {
@@ -822,38 +817,24 @@ DelUserPushTokenReq::DelUserPushTokenReq(::google::protobuf::Arena* arena)
   SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:push.DelUserPushTokenReq)
 }
-inline PROTOBUF_NDEBUG_INLINE DelUserPushTokenReq::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from, const ::push::DelUserPushTokenReq& from_msg)
-      : userid_(arena, from.userid_),
-        _cached_size_{0} {}
-
 DelUserPushTokenReq::DelUserPushTokenReq(
-    ::google::protobuf::Arena* arena,
-    const DelUserPushTokenReq& from)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(arena, _class_data_.base()) {
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(arena) {
-#endif  // PROTOBUF_CUSTOM_VTABLE
-  DelUserPushTokenReq* const _this = this;
-  (void)_this;
-  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
-      from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-  _impl_.platformid_ = from._impl_.platformid_;
-
-  // @@protoc_insertion_point(copy_constructor:push.DelUserPushTokenReq)
+    ::google::protobuf::Arena* arena, const DelUserPushTokenReq& from)
+    : DelUserPushTokenReq(arena) {
+  MergeFrom(from);
 }
 inline PROTOBUF_NDEBUG_INLINE DelUserPushTokenReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : userid_(arena),
-        _cached_size_{0} {}
+      : _cached_size_{0} {}
 
 inline void DelUserPushTokenReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.platformid_ = {};
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           0,
+           offsetof(Impl_, platformid_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::platformid_));
 }
 DelUserPushTokenReq::~DelUserPushTokenReq() {
   // @@protoc_insertion_point(destructor:push.DelUserPushTokenReq)
@@ -863,7 +844,6 @@ inline void DelUserPushTokenReq::SharedDtor(MessageLite& self) {
   DelUserPushTokenReq& this_ = static_cast<DelUserPushTokenReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -872,7 +852,7 @@ inline void* DelUserPushTokenReq::PlacementNew_(const void*, void* mem,
   return ::new (mem) DelUserPushTokenReq(arena);
 }
 constexpr auto DelUserPushTokenReq::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(DelUserPushTokenReq),
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(DelUserPushTokenReq),
                                             alignof(DelUserPushTokenReq));
 }
 PROTOBUF_CONSTINIT
@@ -903,7 +883,7 @@ const ::google::protobuf::internal::ClassData* DelUserPushTokenReq::GetClassData
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 39, 2> DelUserPushTokenReq::_table_ = {
+const ::_pbi::TcParseTable<1, 2, 0, 0, 2> DelUserPushTokenReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -924,24 +904,21 @@ const ::_pbi::TcParseTable<1, 2, 0, 39, 2> DelUserPushTokenReq::_table_ = {
     // int32 platformID = 2;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(DelUserPushTokenReq, _impl_.platformid_), 63>(),
      {16, 63, 0, PROTOBUF_FIELD_OFFSET(DelUserPushTokenReq, _impl_.platformid_)}},
-    // string userID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(DelUserPushTokenReq, _impl_.userid_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(DelUserPushTokenReq, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(DelUserPushTokenReq, _impl_.userid_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // string userID = 1;
+    // uint64 userID = 1;
     {PROTOBUF_FIELD_OFFSET(DelUserPushTokenReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // int32 platformID = 2;
     {PROTOBUF_FIELD_OFFSET(DelUserPushTokenReq, _impl_.platformid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt32)},
   }},
   // no aux_entries
   {{
-    "\30\6\0\0\0\0\0\0"
-    "push.DelUserPushTokenReq"
-    "userID"
   }},
 };
 
@@ -952,8 +929,9 @@ PROTOBUF_NOINLINE void DelUserPushTokenReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.userid_.ClearToEmpty();
-  _impl_.platformid_ = 0;
+  ::memset(&_impl_.userid_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.platformid_) -
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.platformid_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -972,12 +950,11 @@ PROTOBUF_NOINLINE void DelUserPushTokenReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string userID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "push.DelUserPushTokenReq.userID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
           // int32 platformID = 2;
@@ -1012,10 +989,10 @@ PROTOBUF_NOINLINE void DelUserPushTokenReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string userID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
             // int32 platformID = 2;
             if (this_._internal_platformid() != 0) {
@@ -1035,8 +1012,8 @@ void DelUserPushTokenReq::MergeImpl(::google::protobuf::MessageLite& to_msg, con
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   if (from._internal_platformid() != 0) {
     _this->_impl_.platformid_ = from._impl_.platformid_;
@@ -1054,11 +1031,13 @@ void DelUserPushTokenReq::CopyFrom(const DelUserPushTokenReq& from) {
 
 void DelUserPushTokenReq::InternalSwap(DelUserPushTokenReq* PROTOBUF_RESTRICT other) {
   using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
-        swap(_impl_.platformid_, other->_impl_.platformid_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(DelUserPushTokenReq, _impl_.platformid_)
+      + sizeof(DelUserPushTokenReq::_impl_.platformid_)
+      - PROTOBUF_FIELD_OFFSET(DelUserPushTokenReq, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
 ::google::protobuf::Metadata DelUserPushTokenReq::GetMetadata() const {
@@ -1185,8 +1164,7 @@ AckMsgReq::AckMsgReq(::google::protobuf::Arena* arena)
 inline PROTOBUF_NDEBUG_INLINE AckMsgReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::push::AckMsgReq& from_msg)
-      : userid_(arena, from.userid_),
-        servermsgid_(arena, from.servermsgid_),
+      : servermsgid_(arena, from.servermsgid_),
         _cached_size_{0} {}
 
 AckMsgReq::AckMsgReq(
@@ -1203,11 +1181,11 @@ AckMsgReq::AckMsgReq(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
   ::memcpy(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, seq_),
+               offsetof(Impl_, userid_),
            reinterpret_cast<const char *>(&from._impl_) +
-               offsetof(Impl_, seq_),
+               offsetof(Impl_, userid_),
            offsetof(Impl_, acktype_) -
-               offsetof(Impl_, seq_) +
+               offsetof(Impl_, userid_) +
                sizeof(Impl_::acktype_));
 
   // @@protoc_insertion_point(copy_constructor:push.AckMsgReq)
@@ -1215,17 +1193,16 @@ AckMsgReq::AckMsgReq(
 inline PROTOBUF_NDEBUG_INLINE AckMsgReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : userid_(arena),
-        servermsgid_(arena),
+      : servermsgid_(arena),
         _cached_size_{0} {}
 
 inline void AckMsgReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
   ::memset(reinterpret_cast<char *>(&_impl_) +
-               offsetof(Impl_, seq_),
+               offsetof(Impl_, userid_),
            0,
            offsetof(Impl_, acktype_) -
-               offsetof(Impl_, seq_) +
+               offsetof(Impl_, userid_) +
                sizeof(Impl_::acktype_));
 }
 AckMsgReq::~AckMsgReq() {
@@ -1236,7 +1213,6 @@ inline void AckMsgReq::SharedDtor(MessageLite& self) {
   AckMsgReq& this_ = static_cast<AckMsgReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   this_._impl_.servermsgid_.Destroy();
   this_._impl_.~Impl_();
 }
@@ -1277,7 +1253,7 @@ const ::google::protobuf::internal::ClassData* AckMsgReq::GetClassData() const {
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 0, 40, 2> AckMsgReq::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 0, 34, 2> AckMsgReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -1298,9 +1274,9 @@ const ::_pbi::TcParseTable<2, 4, 0, 40, 2> AckMsgReq::_table_ = {
     // int32 ackType = 4;
     {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(AckMsgReq, _impl_.acktype_), 63>(),
      {32, 63, 0, PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.acktype_)}},
-    // string userID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.userid_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AckMsgReq, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.userid_)}},
     // string serverMsgID = 2;
     {::_pbi::TcParser::FastUS1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.servermsgid_)}},
@@ -1310,9 +1286,9 @@ const ::_pbi::TcParseTable<2, 4, 0, 40, 2> AckMsgReq::_table_ = {
   }}, {{
     65535, 65535
   }}, {{
-    // string userID = 1;
+    // uint64 userID = 1;
     {PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // string serverMsgID = 2;
     {PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.servermsgid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
@@ -1325,9 +1301,8 @@ const ::_pbi::TcParseTable<2, 4, 0, 40, 2> AckMsgReq::_table_ = {
   }},
   // no aux_entries
   {{
-    "\16\6\13\0\0\0\0\0"
+    "\16\0\13\0\0\0\0\0"
     "push.AckMsgReq"
-    "userID"
     "serverMsgID"
   }},
 };
@@ -1339,11 +1314,10 @@ PROTOBUF_NOINLINE void AckMsgReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.userid_.ClearToEmpty();
   _impl_.servermsgid_.ClearToEmpty();
-  ::memset(&_impl_.seq_, 0, static_cast<::size_t>(
+  ::memset(&_impl_.userid_, 0, static_cast<::size_t>(
       reinterpret_cast<char*>(&_impl_.acktype_) -
-      reinterpret_cast<char*>(&_impl_.seq_)) + sizeof(_impl_.acktype_));
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.acktype_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -1362,12 +1336,11 @@ PROTOBUF_NOINLINE void AckMsgReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string userID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "push.AckMsgReq.userID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
           // string serverMsgID = 2;
@@ -1417,15 +1390,15 @@ PROTOBUF_NOINLINE void AckMsgReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string userID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
-            }
             // string serverMsgID = 2;
             if (!this_._internal_servermsgid().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_servermsgid());
+            }
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
             // int64 seq = 3;
             if (this_._internal_seq() != 0) {
@@ -1450,11 +1423,11 @@ void AckMsgReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::googl
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
-  }
   if (!from._internal_servermsgid().empty()) {
     _this->_internal_set_servermsgid(from._internal_servermsgid());
+  }
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   if (from._internal_seq() != 0) {
     _this->_impl_.seq_ = from._impl_.seq_;
@@ -1478,14 +1451,13 @@ void AckMsgReq::InternalSwap(AckMsgReq* PROTOBUF_RESTRICT other) {
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.servermsgid_, &other->_impl_.servermsgid_, arena);
   ::google::protobuf::internal::memswap<
       PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.acktype_)
       + sizeof(AckMsgReq::_impl_.acktype_)
-      - PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.seq_)>(
-          reinterpret_cast<char*>(&_impl_.seq_),
-          reinterpret_cast<char*>(&other->_impl_.seq_));
+      - PROTOBUF_FIELD_OFFSET(AckMsgReq, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
 ::google::protobuf::Metadata AckMsgReq::GetMetadata() const {
@@ -1612,8 +1584,7 @@ AddPendingOfflineAckReq::AddPendingOfflineAckReq(::google::protobuf::Arena* aren
 inline PROTOBUF_NDEBUG_INLINE AddPendingOfflineAckReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::push::AddPendingOfflineAckReq& from_msg)
-      : userid_(arena, from.userid_),
-        servermsgid_(arena, from.servermsgid_),
+      : servermsgid_(arena, from.servermsgid_),
         _cached_size_{0} {}
 
 AddPendingOfflineAckReq::AddPendingOfflineAckReq(
@@ -1629,20 +1600,30 @@ AddPendingOfflineAckReq::AddPendingOfflineAckReq(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
-  _impl_.seq_ = from._impl_.seq_;
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, userid_),
+           offsetof(Impl_, seq_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::seq_));
 
   // @@protoc_insertion_point(copy_constructor:push.AddPendingOfflineAckReq)
 }
 inline PROTOBUF_NDEBUG_INLINE AddPendingOfflineAckReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : userid_(arena),
-        servermsgid_(arena),
+      : servermsgid_(arena),
         _cached_size_{0} {}
 
 inline void AddPendingOfflineAckReq::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.seq_ = {};
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, userid_),
+           0,
+           offsetof(Impl_, seq_) -
+               offsetof(Impl_, userid_) +
+               sizeof(Impl_::seq_));
 }
 AddPendingOfflineAckReq::~AddPendingOfflineAckReq() {
   // @@protoc_insertion_point(destructor:push.AddPendingOfflineAckReq)
@@ -1652,7 +1633,6 @@ inline void AddPendingOfflineAckReq::SharedDtor(MessageLite& self) {
   AddPendingOfflineAckReq& this_ = static_cast<AddPendingOfflineAckReq&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.userid_.Destroy();
   this_._impl_.servermsgid_.Destroy();
   this_._impl_.~Impl_();
 }
@@ -1693,7 +1673,7 @@ const ::google::protobuf::internal::ClassData* AddPendingOfflineAckReq::GetClass
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 54, 2> AddPendingOfflineAckReq::_table_ = {
+const ::_pbi::TcParseTable<2, 3, 0, 48, 2> AddPendingOfflineAckReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -1712,9 +1692,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 54, 2> AddPendingOfflineAckReq::_table_ = {
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
-    // string userID = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.userid_)}},
+    // uint64 userID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AddPendingOfflineAckReq, _impl_.userid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.userid_)}},
     // string serverMsgID = 2;
     {::_pbi::TcParser::FastUS1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.servermsgid_)}},
@@ -1724,9 +1704,9 @@ const ::_pbi::TcParseTable<2, 3, 0, 54, 2> AddPendingOfflineAckReq::_table_ = {
   }}, {{
     65535, 65535
   }}, {{
-    // string userID = 1;
+    // uint64 userID = 1;
     {PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.userid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // string serverMsgID = 2;
     {PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.servermsgid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
@@ -1736,9 +1716,8 @@ const ::_pbi::TcParseTable<2, 3, 0, 54, 2> AddPendingOfflineAckReq::_table_ = {
   }},
   // no aux_entries
   {{
-    "\34\6\13\0\0\0\0\0"
+    "\34\0\13\0\0\0\0\0"
     "push.AddPendingOfflineAckReq"
-    "userID"
     "serverMsgID"
   }},
 };
@@ -1750,9 +1729,10 @@ PROTOBUF_NOINLINE void AddPendingOfflineAckReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.userid_.ClearToEmpty();
   _impl_.servermsgid_.ClearToEmpty();
-  _impl_.seq_ = ::int64_t{0};
+  ::memset(&_impl_.userid_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.seq_) -
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.seq_));
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -1771,12 +1751,11 @@ PROTOBUF_NOINLINE void AddPendingOfflineAckReq::Clear() {
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string userID = 1;
-          if (!this_._internal_userid().empty()) {
-            const std::string& _s = this_._internal_userid();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "push.AddPendingOfflineAckReq.userID");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // uint64 userID = 1;
+          if (this_._internal_userid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_userid(), target);
           }
 
           // string serverMsgID = 2;
@@ -1819,15 +1798,15 @@ PROTOBUF_NOINLINE void AddPendingOfflineAckReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string userID = 1;
-            if (!this_._internal_userid().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_userid());
-            }
             // string serverMsgID = 2;
             if (!this_._internal_servermsgid().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_servermsgid());
+            }
+            // uint64 userID = 1;
+            if (this_._internal_userid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_userid());
             }
             // int64 seq = 3;
             if (this_._internal_seq() != 0) {
@@ -1847,11 +1826,11 @@ void AddPendingOfflineAckReq::MergeImpl(::google::protobuf::MessageLite& to_msg,
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_userid().empty()) {
-    _this->_internal_set_userid(from._internal_userid());
-  }
   if (!from._internal_servermsgid().empty()) {
     _this->_internal_set_servermsgid(from._internal_servermsgid());
+  }
+  if (from._internal_userid() != 0) {
+    _this->_impl_.userid_ = from._impl_.userid_;
   }
   if (from._internal_seq() != 0) {
     _this->_impl_.seq_ = from._impl_.seq_;
@@ -1872,9 +1851,13 @@ void AddPendingOfflineAckReq::InternalSwap(AddPendingOfflineAckReq* PROTOBUF_RES
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.userid_, &other->_impl_.userid_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.servermsgid_, &other->_impl_.servermsgid_, arena);
-        swap(_impl_.seq_, other->_impl_.seq_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.seq_)
+      + sizeof(AddPendingOfflineAckReq::_impl_.seq_)
+      - PROTOBUF_FIELD_OFFSET(AddPendingOfflineAckReq, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
 ::google::protobuf::Metadata AddPendingOfflineAckReq::GetMetadata() const {

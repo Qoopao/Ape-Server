@@ -5,7 +5,7 @@ package backbon;
 //---------------------------------用户相关-------------------------------------
 // CheckUserOnlineReq 检查用户在线状态请求
 message CheckUserOnlineReq {
-  repeated string userIDs = 1; // 用户ID列表
+  repeated uint64 userIDs = 1; // 用户ID列表
 }
 
 // CheckUserOnlineResp 检查用户在线状态响应
@@ -15,7 +15,7 @@ message CheckUserOnlineResp {
 
 // UserOnlineStatus 用户在线状态
 message UserOnlineStatus {
-  string userID = 1; // 用户ID
+  uint64 userID = 1; // 用户ID
   bool isOnline = 2; // 是否在线
   int32 connectionCount = 3; // 连接数量
   repeated int32 platformIDs = 4; // 在线平台ID列表

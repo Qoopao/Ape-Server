@@ -26,7 +26,7 @@ message MsgDataToMongoByMQ {
 }
 
 message GetMaxAndMinSeqReq {
-  string UserID = 1;
+  uint64 userID = 1;
 }
 message GetMaxAndMinSeqResp {
   int64 MaxSeq = 1;
@@ -80,7 +80,7 @@ message DelMsgsResp {}
 message RevokeMsgReq {
   string conversationID = 1;
   int64 seq = 2;
-  string userID = 3;
+  uint64 userID = 3;
 }
 
 message RevokeMsgResp {}
@@ -88,14 +88,14 @@ message RevokeMsgResp {}
 message MarkMsgsAsReadReq {
   string conversationID = 1;
   repeated int64 seqs = 2;
-  string userID = 3;
+  uint64 userID = 3;
 }
 
 message MarkMsgsAsReadResp {}
 
 message MarkConversationAsReadReq {
   string conversationID = 1;
-  string userID = 2;
+  uint64 userID = 2;
   int64 hasReadSeq = 3;
   repeated int64 seqs = 4;
 }
@@ -104,7 +104,7 @@ message MarkConversationAsReadResp {}
 
 message SetConversationHasReadSeqReq {
   string conversationID = 1;
-  string userID = 2;
+  uint64 userID = 2;
   int64 hasReadSeq = 3;
   bool noNotification = 4;
 }
@@ -118,14 +118,14 @@ message DeleteSyncOpt {
 
 message ClearConversationsMsgReq {
   repeated string conversationIDs = 1;
-  string userID = 2;
+  uint64 userID = 2;
   DeleteSyncOpt deleteSyncOpt = 3;
 }
 
 message ClearConversationsMsgResp {}
 
 message UserClearAllMsgReq {
-  string userID = 1;
+  uint64 userID = 1;
   DeleteSyncOpt deleteSyncOpt = 3;
 }
 
@@ -134,7 +134,7 @@ message UserClearAllMsgResp {}
 message DeleteMsgsReq {
   string conversationID = 1;
   repeated int64 seqs = 2;
-  string userID = 3;
+  uint64 userID = 3;
   DeleteSyncOpt deleteSyncOpt = 4;
 }
 
@@ -159,7 +159,7 @@ message GetMaxSeqsReq {
 }
 
 message GetHasReadSeqsReq {
-  string userID = 1;
+  uint64 userID = 1;
   repeated string conversationIDs = 2;
 }
 
@@ -185,7 +185,7 @@ message GetConversationMaxSeqResp {
 }
 
 message GetConversationsHasReadAndMaxSeqReq {
-  string userID = 1;
+  uint64 userID = 1;
   repeated string conversationIDs = 2;
   bool returnPinned = 3;
 }
@@ -241,8 +241,8 @@ message GetActiveGroupResp {
 }
 
 message SearchMessageReq {
-  string sendID = 1; //发送者ID
-  string recvID = 2; //接收者ID
+  uint64 sendID = 1; //发送者ID
+  uint64 recvID = 2; //接收者ID
   int32 contentType = 3;
   string sendTime = 4;
   int32 sessionType = 5;
@@ -267,8 +267,8 @@ message SearchMessageResp {
 message ChatLog {
   string serverMsgID = 1;
   string clientMsgID = 2;
-  string sendID = 3;
-  string recvID = 4;
+  uint64 sendID = 3;
+  uint64 recvID = 4;
   string groupID = 5;
   string recvNickname = 6;
   int32 senderPlatformID = 7;
@@ -291,7 +291,7 @@ message ChatLog {
 }
 
 message batchSendMessageReq {
-  repeated string recvIDList = 1;
+  repeated uint64 recvIDList = 1;
   sdkws.MsgData msgData = 2;
 }
 
@@ -317,7 +317,7 @@ message DestructMsgsResp {
 }
 
 message SetUserConversationsMinSeqReq {
-  repeated string userIDs = 1;
+  repeated uint64 userIDs = 1;
   string conversationID = 2;
   int64 seq = 3;
 }
@@ -330,7 +330,7 @@ message ConversationSeqs {
 }
 
 message GetSeqMessageReq {
-  string userID = 1;
+  uint64 userID = 1;
   repeated ConversationSeqs conversations = 2;
   sdkws.PullOrder order = 3;
 }
@@ -357,14 +357,14 @@ message GetActiveConversationResp {
 
 message SetUserConversationMaxSeqReq {
   string conversationID = 1;
-  repeated string ownerUserID = 2;
+  repeated uint64 ownerUserID = 2;
   int64 maxSeq = 3;
 }
 message SetUserConversationMaxSeqResp {}
 
 message SetUserConversationMinSeqReq {
   string conversationID = 1;
-  repeated string ownerUserID = 2;
+  repeated uint64 ownerUserID = 2;
   int64 minSeq = 3;
 }
 message SetUserConversationMinSeqResp {}
@@ -379,7 +379,7 @@ message GetLastMessageSeqByTimeResp {
 }
 
 message GetLastMessageReq {
-  string userID = 1;
+  uint64 userID = 1;
   repeated string conversationIDs = 2;
 }
 message GetLastMessageResp {

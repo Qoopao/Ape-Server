@@ -9,7 +9,10 @@
 #include "storage/redisconnector.h"
 #include "storage/redishandler.h"
 #include <chrono>
+#include <cstdint>
 #include <spdlog/spdlog.h>
+#include <string>
+#include <sys/types.h>
 
 PushServer::PushServer(const std::string &service_name,
                        const std::string &listen_address)
@@ -137,7 +140,7 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
               try {
                 auto members =
                     co_await MySQLHandler::GetGroupMembers(groupID, 0, 10000);
-                std::vector<std::string> ids;
+                std::vector<uint64_t> ids;
                 for (const auto &m : members)
                   ids.push_back(m.userid());
                 co_await RedisHandler::CacheGroupMembers(groupID, ids);
@@ -156,7 +159,7 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
           }
 
           // 3. 小群：获取成员列表，逐个推在线成员（排除发送者）
-          std::vector<std::string> memberIDs;
+          std::vector<uint64_t> memberIDs;
           try {
             memberIDs =
                 co_await RedisHandler::GetGroupMembersFromCache(groupID);
@@ -176,7 +179,7 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
 
           std::string serverMsgID = msgData.servermsgid();
           std::string msgDataBin = msgData.SerializeAsString();
-          std::string senderID = msgData.sendid();
+          uint64_t senderID = msgData.sendid();
           std::string ackKey = "pending_ack:online:" + serverMsgID;
           int onlineCount = 0;
 
@@ -187,7 +190,7 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
             bool online = false;
             try {
               auto val = co_await RedisConnector::instance().get(
-                  "user:" + memberID + ":online");
+                  "user:" + std::to_string(memberID) + ":online");
               online = (val && (*val == "1" || *val == "true"));
             } catch (...) {}
 
@@ -196,7 +199,7 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
                 bool pushed = co_await pushClient->PushToUser(
                     memberID, msgDataBin, conversationID);
                 if (pushed) {
-                  co_await RedisConnector::instance().sadd(ackKey, memberID);
+                  co_await RedisConnector::instance().sadd(ackKey, std::to_string(memberID));
                   onlineCount++;
                 }
               } catch (const std::exception &e) {
@@ -236,7 +239,7 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
         // 查 Redis 在线状态
         try {
           auto onlineVal = co_await RedisConnector::instance().get(
-              "user:" + msgData.recvid() + ":online");
+              "user:" + std::to_string(msgData.recvid()) + ":online");
           if (onlineVal) {
             recvOnline = (*onlineVal == "1" || *onlineVal == "true");
           }
@@ -244,7 +247,7 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
           spdlog::error("PushServer::PushMsg: Redis error: {}", e.what());
         }
 
-        std::string recvID = msgData.recvid();
+        uint64_t recvID = msgData.recvid();
         std::string serverMsgID = msgData.servermsgid();
         std::string msgDataBin = msgData.SerializeAsString();
 
@@ -271,7 +274,7 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
                        recvID, serverMsgID);
 
           std::string ackKey = "pending_ack:online:" + serverMsgID;
-          co_await RedisConnector::instance().sadd(ackKey, recvID);
+          co_await RedisConnector::instance().sadd(ackKey, std::to_string(recvID));
           co_await RedisConnector::instance().expire(ackKey, 300);
 
           int64_t deadline =
@@ -301,7 +304,7 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
           }
           try {
             std::string offlineAckKey =
-                "pending_ack:offline:" + recvID + ":" + serverMsgID;
+                "pending_ack:offline:" + std::to_string(recvID) + ":" + serverMsgID;
             co_await RedisConnector::instance().set(offlineAckKey, "1");
             co_await RedisConnector::instance().expire(offlineAckKey,
                                                         86400 * 30);
@@ -329,7 +332,7 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
           }
           try {
             std::string offlineAckKey =
-                "pending_ack:offline:" + recvID + ":" + serverMsgID;
+                "pending_ack:offline:" + std::to_string(recvID) + ":" + serverMsgID;
             co_await RedisConnector::instance().set(offlineAckKey, "1");
             co_await RedisConnector::instance().expire(offlineAckKey,
                                                         86400 * 30);
@@ -423,7 +426,7 @@ PushServer::AckMsg(::grpc::CallbackServerContext *context,
 
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
-  std::string userID = request->userid();
+  uint64_t userID = request->userid();
   std::string serverMsgID = request->servermsgid();
   int64_t seq = request->seq();
   int32_t ackType = request->acktype();
@@ -455,7 +458,7 @@ PushServer::AckMsg(::grpc::CallbackServerContext *context,
 
             // ② 维护 pending_ack:online SET
             std::string ackKey = "pending_ack:online:" + serverMsgID;
-            co_await RedisConnector::instance().srem(ackKey, userID);
+            co_await RedisConnector::instance().srem(ackKey, std::to_string(userID));
 
             // ③ 检查全部 ACK 完成 → 写 MongoDB + 延迟双删
             long long remaining =
@@ -496,7 +499,7 @@ PushServer::AckMsg(::grpc::CallbackServerContext *context,
 
             // ② 清理 pending_ack:offline
             std::string offlineAckKey =
-                "pending_ack:offline:" + userID + ":" + serverMsgID;
+                "pending_ack:offline:" + std::to_string(userID) + ":" + serverMsgID;
             co_await RedisConnector::instance().del(offlineAckKey);
 
             // ③ 写 MongoDB
@@ -536,7 +539,7 @@ PushServer::AckMsg(::grpc::CallbackServerContext *context,
             }
           }
           if (!convID.empty()) {
-            std::string seqKey = "user:" + userID + ":" + convID + ":last_seq";
+            std::string seqKey = "user:" + std::to_string(userID) + ":" + convID + ":last_seq";
             auto lastSeqOpt = co_await RedisConnector::instance().get(seqKey);
             int64_t currentSeq = lastSeqOpt ? std::stoll(*lastSeqOpt) : 0;
             if (seq > currentSeq) {
@@ -565,7 +568,7 @@ PushServer::AddPendingOfflineAck(::grpc::CallbackServerContext *context,
                                  ::push::AddPendingOfflineAckResp *response) {
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
-  std::string userID = request->userid();
+  uint64_t userID = request->userid();
   std::string serverMsgID = request->servermsgid();
   int64_t seq = request->seq();
 
@@ -581,7 +584,7 @@ PushServer::AddPendingOfflineAck(::grpc::CallbackServerContext *context,
         try {
           // 将离线消息添加到pending_ack集合，等待客户端ACK
           std::string ackKey =
-              "pending_ack:offline:" + userID + ":" + serverMsgID;
+              "pending_ack:offline:" + std::to_string(userID) + ":" + serverMsgID;
           co_await RedisConnector::instance().set(ackKey, "1");
           co_await RedisConnector::instance().expire(
               ackKey, 86400 * 30); // 30天超时，防止遗留
@@ -651,7 +654,7 @@ boost::asio::awaitable<void> PushServer::CheckExpiredPendingAck() {
           // 单聊消息：原有逻辑——创建 pending_ack:offline 记录
           if (msgDataOpt.has_value()) {
             sdkws::MsgData msgData = msgDataOpt.value();
-            std::string recvID = msgData.recvid();
+            uint64_t recvID = msgData.recvid();
 
             spdlog::warn(
                 "CheckExpiredPendingAck: online ACK timeout for "
@@ -660,7 +663,7 @@ boost::asio::awaitable<void> PushServer::CheckExpiredPendingAck() {
 
             try {
               std::string offlineAckKey =
-                  "pending_ack:offline:" + recvID + ":" + serverMsgID;
+                  "pending_ack:offline:" + std::to_string(recvID) + ":" + serverMsgID;
               co_await redis.set(offlineAckKey, "1");
               co_await redis.expire(offlineAckKey, 86400 * 30);
             } catch (const std::exception &e) {
