@@ -16,17 +16,17 @@ public:
     // 用户注册
     ::grpc::ServerUnaryReactor *Register(::grpc::CallbackServerContext *context,
                                          const ::auth::RegisterRequest *request,
-                                         ::auth::AuthResponse *response) override;
+                                         ::auth::AuthRegResponse *response) override;
 
     // 用户登录
     ::grpc::ServerUnaryReactor *Login(::grpc::CallbackServerContext *context,
                                       const ::auth::LoginRequest *request,
-                                      ::auth::AuthResponse *response) override;
+                                      ::auth::AuthRegResponse *response) override;
 
     // Token 验证
     ::grpc::ServerUnaryReactor *ValidateToken(::grpc::CallbackServerContext *context,
                                               const ::auth::ValidateTokenReq *request,
-                                              ::auth::ValidateTokenResp *response) override;
+                                              ::auth::ValidateTokenResponse *response) override;
 
 private:
     // 生成密码哈希: SHA256(salt + password)

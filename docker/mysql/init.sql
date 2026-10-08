@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS `users` (
     updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
                    ON UPDATE CURRENT_TIMESTAMP COMMENT '记录更新时间',
     last_login_at  DATETIME DEFAULT NULL COMMENT '最后登录时间',
-    UNIQUE KEY uk_account (account)
+    UNIQUE KEY uk_account (account),
+    UNIQUE KEY uk_phone (phone)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO users (
@@ -92,7 +93,7 @@ CREATE TABLE IF NOT EXISTS account_pool (
     updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
                 ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uk_account (account),
-    KEY idx_status (status)
+    KEY idx_status_id (status,id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 补货锁表（数据库实现的分布式锁）
@@ -106,4 +107,15 @@ CREATE TABLE IF NOT EXISTS account_pool_refill_lock (
 
 -- 初始化游标行（只插一次，用 INSERT IGNORE 保证幂等）
 INSERT IGNORE INTO account_pool_cursor (id, next_start)
-VALUES (1, 1000000000);
+VALUES (1, 1000000002); -- Fresh DB only: seeded user 1000000001 is already allocated.
+
+CREATE TABLE IF NOT EXISTS registration_requests (
+ request_id VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin PRIMARY KEY,
+ payload_salt VARCHAR(64) CHARACTER SET ascii NOT NULL,
+ payload_hash CHAR(64) CHARACTER SET ascii NOT NULL,
+ user_id BIGINT UNSIGNED NULL,
+ account BIGINT UNSIGNED NULL,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ UNIQUE KEY registration_uk_user(user_id),
+ UNIQUE KEY registration_uk_result_account(account)
+) ENGINE=InnoDB;

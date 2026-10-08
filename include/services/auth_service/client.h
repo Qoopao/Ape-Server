@@ -14,9 +14,9 @@ public:
     AuthClient(std::shared_ptr<grpc::Channel> channel)
         : stub_(auth::AuthService::NewStub(channel)) {}
 
-    // Token 验证：返回 (valid, user_id, username, expires_at)
-    boost::asio::awaitable<::auth::ValidateTokenResp> ValidateToken(const std::string& token);
-    boost::asio::awaitable<::auth::AuthResponse> LoginRequest(const uint64_t account, const std::string& plainPWD);
+    boost::asio::awaitable<::auth::ValidateTokenResponse> ValidateToken(const std::string& token);
+    boost::asio::awaitable<::auth::AuthRegResponse> LoginRequest(const uint64_t account, const std::string& plainPWD);
+    boost::asio::awaitable<::auth::AuthRegResponse> RegisterRequest(const std::string& phone, const std::string& nickname, const std::string& password, const std::string& requestId);
 
 private:
     std::unique_ptr<auth::AuthService::Stub> stub_;

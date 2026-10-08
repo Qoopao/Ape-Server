@@ -50,8 +50,11 @@ private:
     PushClient* push_client_;
     GroupClient* group_client_;
 
-    // 握手后等待认证帧
-    boost::asio::awaitable<void> doReadAuth();
+    // 握手后等待第一帧
+    boost::asio::awaitable<void> doRead();
+    boost::asio::awaitable<void> handleReg(sdkws::SdkWSReq& req);
+    boost::asio::awaitable<void> handleAuth(sdkws::SdkWSReq& req);
+    boost::asio::awaitable<void> fallback(sdkws::SdkWSReq& req);
 
     // 认证通过后进入消息循环（保持心跳 / 等待断开）
     boost::asio::awaitable<void> doReadLoop();

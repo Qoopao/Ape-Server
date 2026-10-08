@@ -26,7 +26,7 @@ namespace _pbi = ::google::protobuf::internal;
 namespace _fl = ::google::protobuf::internal::field_layout;
 namespace auth {
 
-inline constexpr ValidateTokenResp::Impl_::Impl_(
+inline constexpr ValidateTokenResponse::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : userid_{::uint64_t{0u}},
         account_{::uint64_t{0u}},
@@ -35,7 +35,7 @@ inline constexpr ValidateTokenResp::Impl_::Impl_(
         _cached_size_{0} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR ValidateTokenResp::ValidateTokenResp(::_pbi::ConstantInitialized)
+PROTOBUF_CONSTEXPR ValidateTokenResponse::ValidateTokenResponse(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(_class_data_.base()),
 #else   // PROTOBUF_CUSTOM_VTABLE
@@ -43,16 +43,16 @@ PROTOBUF_CONSTEXPR ValidateTokenResp::ValidateTokenResp(::_pbi::ConstantInitiali
 #endif  // PROTOBUF_CUSTOM_VTABLE
       _impl_(::_pbi::ConstantInitialized()) {
 }
-struct ValidateTokenRespDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR ValidateTokenRespDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~ValidateTokenRespDefaultTypeInternal() {}
+struct ValidateTokenResponseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ValidateTokenResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ValidateTokenResponseDefaultTypeInternal() {}
   union {
-    ValidateTokenResp _instance;
+    ValidateTokenResponse _instance;
   };
 };
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ValidateTokenRespDefaultTypeInternal _ValidateTokenResp_default_instance_;
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ValidateTokenResponseDefaultTypeInternal _ValidateTokenResponse_default_instance_;
 
 inline constexpr ValidateTokenReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -174,7 +174,7 @@ struct AuthUserDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AuthUserDefaultTypeInternal _AuthUser_default_instance_;
 
-inline constexpr AuthResponse::Impl_::Impl_(
+inline constexpr AuthRegResponse::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : _cached_size_{0},
         errorcode_(
@@ -191,7 +191,7 @@ inline constexpr AuthResponse::Impl_::Impl_(
         success_{false} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR AuthResponse::AuthResponse(::_pbi::ConstantInitialized)
+PROTOBUF_CONSTEXPR AuthRegResponse::AuthRegResponse(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(_class_data_.base()),
 #else   // PROTOBUF_CUSTOM_VTABLE
@@ -199,16 +199,16 @@ PROTOBUF_CONSTEXPR AuthResponse::AuthResponse(::_pbi::ConstantInitialized)
 #endif  // PROTOBUF_CUSTOM_VTABLE
       _impl_(::_pbi::ConstantInitialized()) {
 }
-struct AuthResponseDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR AuthResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~AuthResponseDefaultTypeInternal() {}
+struct AuthRegResponseDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR AuthRegResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~AuthRegResponseDefaultTypeInternal() {}
   union {
-    AuthResponse _instance;
+    AuthRegResponse _instance;
   };
 };
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AuthResponseDefaultTypeInternal _AuthResponse_default_instance_;
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 AuthRegResponseDefaultTypeInternal _AuthRegResponse_default_instance_;
 }  // namespace auth
 static constexpr const ::_pb::EnumDescriptor**
     file_level_enum_descriptors_apeauth_2eproto = nullptr;
@@ -248,17 +248,17 @@ const ::uint32_t
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenReq, _impl_.token_),
         ~0u,  // no _has_bits_
-        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _internal_metadata_),
+        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResponse, _internal_metadata_),
         ~0u,  // no _extensions_
         ~0u,  // no _oneof_case_
         ~0u,  // no _weak_field_map_
         ~0u,  // no _inlined_string_donated_
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.valid_),
-        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.userid_),
-        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.account_),
-        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResp, _impl_.expiresat_),
+        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResponse, _impl_.valid_),
+        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResponse, _impl_.userid_),
+        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResponse, _impl_.account_),
+        PROTOBUF_FIELD_OFFSET(::auth::ValidateTokenResponse, _impl_.expiresat_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -271,20 +271,20 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _impl_.account_),
         PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _impl_.nickname_),
         PROTOBUF_FIELD_OFFSET(::auth::AuthUser, _impl_.phone_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_._has_bits_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _internal_metadata_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthRegResponse, _impl_._has_bits_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthRegResponse, _internal_metadata_),
         ~0u,  // no _extensions_
         ~0u,  // no _oneof_case_
         ~0u,  // no _weak_field_map_
         ~0u,  // no _inlined_string_donated_
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.success_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.errorcode_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.errormessage_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.token_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.expiresat_),
-        PROTOBUF_FIELD_OFFSET(::auth::AuthResponse, _impl_.user_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthRegResponse, _impl_.success_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthRegResponse, _impl_.errorcode_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthRegResponse, _impl_.errormessage_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthRegResponse, _impl_.token_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthRegResponse, _impl_.expiresat_),
+        PROTOBUF_FIELD_OFFSET(::auth::AuthRegResponse, _impl_.user_),
         ~0u,
         ~0u,
         ~0u,
@@ -298,17 +298,17 @@ static const ::_pbi::MigrationSchema
         {0, -1, -1, sizeof(::auth::RegisterRequest)},
         {11, -1, -1, sizeof(::auth::LoginRequest)},
         {21, -1, -1, sizeof(::auth::ValidateTokenReq)},
-        {30, -1, -1, sizeof(::auth::ValidateTokenResp)},
+        {30, -1, -1, sizeof(::auth::ValidateTokenResponse)},
         {42, -1, -1, sizeof(::auth::AuthUser)},
-        {54, 68, -1, sizeof(::auth::AuthResponse)},
+        {54, 68, -1, sizeof(::auth::AuthRegResponse)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::auth::_RegisterRequest_default_instance_._instance,
     &::auth::_LoginRequest_default_instance_._instance,
     &::auth::_ValidateTokenReq_default_instance_._instance,
-    &::auth::_ValidateTokenResp_default_instance_._instance,
+    &::auth::_ValidateTokenResponse_default_instance_._instance,
     &::auth::_AuthUser_default_instance_._instance,
-    &::auth::_AuthResponse_default_instance_._instance,
+    &::auth::_AuthRegResponse_default_instance_._instance,
 };
 const char descriptor_table_protodef_apeauth_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
@@ -316,25 +316,26 @@ const char descriptor_table_protodef_apeauth_2eproto[] ABSL_ATTRIBUTE_SECTION_VA
     "\022\r\n\005phone\030\001 \001(\t\022\020\n\010nickname\030\002 \001(\t\022\020\n\010pas"
     "sword\030\003 \001(\t\"1\n\014LoginRequest\022\017\n\007account\030\001"
     " \001(\004\022\020\n\010password\030\002 \001(\t\"!\n\020ValidateTokenR"
-    "eq\022\r\n\005token\030\001 \001(\t\"V\n\021ValidateTokenResp\022\r"
-    "\n\005valid\030\001 \001(\010\022\016\n\006userID\030\002 \001(\004\022\017\n\007account"
-    "\030\003 \001(\004\022\021\n\texpiresAt\030\004 \001(\003\"L\n\010AuthUser\022\016\n"
-    "\006userID\030\001 \001(\004\022\017\n\007account\030\002 \001(\004\022\020\n\010nickna"
-    "me\030\003 \001(\t\022\r\n\005phone\030\004 \001(\t\"\210\001\n\014AuthResponse"
-    "\022\017\n\007success\030\001 \001(\010\022\021\n\terrorCode\030\002 \001(\t\022\024\n\014"
-    "errorMessage\030\003 \001(\t\022\r\n\005token\030\004 \001(\t\022\021\n\texp"
-    "iresAt\030\005 \001(\003\022\034\n\004user\030\006 \001(\0132\016.auth.AuthUs"
-    "er2\267\001\n\013AuthService\0225\n\010Register\022\025.auth.Re"
-    "gisterRequest\032\022.auth.AuthResponse\022/\n\005Log"
-    "in\022\022.auth.LoginRequest\032\022.auth.AuthRespon"
-    "se\022@\n\rValidateToken\022\026.auth.ValidateToken"
-    "Req\032\027.auth.ValidateTokenRespb\006proto3"
+    "eq\022\r\n\005token\030\001 \001(\t\"Z\n\025ValidateTokenRespon"
+    "se\022\r\n\005valid\030\001 \001(\010\022\016\n\006userID\030\002 \001(\004\022\017\n\007acc"
+    "ount\030\003 \001(\004\022\021\n\texpiresAt\030\004 \001(\003\"L\n\010AuthUse"
+    "r\022\016\n\006userID\030\001 \001(\004\022\017\n\007account\030\002 \001(\004\022\020\n\010ni"
+    "ckname\030\003 \001(\t\022\r\n\005phone\030\004 \001(\t\"\213\001\n\017AuthRegR"
+    "esponse\022\017\n\007success\030\001 \001(\010\022\021\n\terrorCode\030\002 "
+    "\001(\t\022\024\n\014errorMessage\030\003 \001(\t\022\r\n\005token\030\004 \001(\t"
+    "\022\021\n\texpiresAt\030\005 \001(\003\022\034\n\004user\030\006 \001(\0132\016.auth"
+    ".AuthUser2\301\001\n\013AuthService\0228\n\010Register\022\025."
+    "auth.RegisterRequest\032\025.auth.AuthRegRespo"
+    "nse\0222\n\005Login\022\022.auth.LoginRequest\032\025.auth."
+    "AuthRegResponse\022D\n\rValidateToken\022\026.auth."
+    "ValidateTokenReq\032\033.auth.ValidateTokenRes"
+    "ponseb\006proto3"
 };
 static ::absl::once_flag descriptor_table_apeauth_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_apeauth_2eproto = {
     false,
     false,
-    676,
+    693,
     descriptor_table_protodef_apeauth_2eproto,
     "apeauth.proto",
     &descriptor_table_apeauth_2eproto_once,
@@ -1127,30 +1128,30 @@ void ValidateTokenReq::InternalSwap(ValidateTokenReq* PROTOBUF_RESTRICT other) {
 }
 // ===================================================================
 
-class ValidateTokenResp::_Internal {
+class ValidateTokenResponse::_Internal {
  public:
 };
 
-ValidateTokenResp::ValidateTokenResp(::google::protobuf::Arena* arena)
+ValidateTokenResponse::ValidateTokenResponse(::google::protobuf::Arena* arena)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(arena, _class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
   SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:auth.ValidateTokenResp)
+  // @@protoc_insertion_point(arena_constructor:auth.ValidateTokenResponse)
 }
-ValidateTokenResp::ValidateTokenResp(
-    ::google::protobuf::Arena* arena, const ValidateTokenResp& from)
-    : ValidateTokenResp(arena) {
+ValidateTokenResponse::ValidateTokenResponse(
+    ::google::protobuf::Arena* arena, const ValidateTokenResponse& from)
+    : ValidateTokenResponse(arena) {
   MergeFrom(from);
 }
-inline PROTOBUF_NDEBUG_INLINE ValidateTokenResp::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE ValidateTokenResponse::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : _cached_size_{0} {}
 
-inline void ValidateTokenResp::SharedCtor(::_pb::Arena* arena) {
+inline void ValidateTokenResponse::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
   ::memset(reinterpret_cast<char *>(&_impl_) +
                offsetof(Impl_, userid_),
@@ -1159,54 +1160,54 @@ inline void ValidateTokenResp::SharedCtor(::_pb::Arena* arena) {
                offsetof(Impl_, userid_) +
                sizeof(Impl_::valid_));
 }
-ValidateTokenResp::~ValidateTokenResp() {
-  // @@protoc_insertion_point(destructor:auth.ValidateTokenResp)
+ValidateTokenResponse::~ValidateTokenResponse() {
+  // @@protoc_insertion_point(destructor:auth.ValidateTokenResponse)
   SharedDtor(*this);
 }
-inline void ValidateTokenResp::SharedDtor(MessageLite& self) {
-  ValidateTokenResp& this_ = static_cast<ValidateTokenResp&>(self);
+inline void ValidateTokenResponse::SharedDtor(MessageLite& self) {
+  ValidateTokenResponse& this_ = static_cast<ValidateTokenResponse&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.~Impl_();
 }
 
-inline void* ValidateTokenResp::PlacementNew_(const void*, void* mem,
+inline void* ValidateTokenResponse::PlacementNew_(const void*, void* mem,
                                         ::google::protobuf::Arena* arena) {
-  return ::new (mem) ValidateTokenResp(arena);
+  return ::new (mem) ValidateTokenResponse(arena);
 }
-constexpr auto ValidateTokenResp::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(ValidateTokenResp),
-                                            alignof(ValidateTokenResp));
+constexpr auto ValidateTokenResponse::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(ValidateTokenResponse),
+                                            alignof(ValidateTokenResponse));
 }
 PROTOBUF_CONSTINIT
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::google::protobuf::internal::ClassDataFull ValidateTokenResp::_class_data_ = {
+const ::google::protobuf::internal::ClassDataFull ValidateTokenResponse::_class_data_ = {
     ::google::protobuf::internal::ClassData{
-        &_ValidateTokenResp_default_instance_._instance,
+        &_ValidateTokenResponse_default_instance_._instance,
         &_table_.header,
         nullptr,  // OnDemandRegisterArenaDtor
         nullptr,  // IsInitialized
-        &ValidateTokenResp::MergeImpl,
-        ::google::protobuf::Message::GetNewImpl<ValidateTokenResp>(),
+        &ValidateTokenResponse::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<ValidateTokenResponse>(),
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        &ValidateTokenResp::SharedDtor,
-        ::google::protobuf::Message::GetClearImpl<ValidateTokenResp>(), &ValidateTokenResp::ByteSizeLong,
-            &ValidateTokenResp::_InternalSerialize,
+        &ValidateTokenResponse::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<ValidateTokenResponse>(), &ValidateTokenResponse::ByteSizeLong,
+            &ValidateTokenResponse::_InternalSerialize,
 #endif  // PROTOBUF_CUSTOM_VTABLE
-        PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_._cached_size_),
+        PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_._cached_size_),
         false,
     },
-    &ValidateTokenResp::kDescriptorMethods,
+    &ValidateTokenResponse::kDescriptorMethods,
     &descriptor_table_apeauth_2eproto,
     nullptr,  // tracker
 };
-const ::google::protobuf::internal::ClassData* ValidateTokenResp::GetClassData() const {
+const ::google::protobuf::internal::ClassData* ValidateTokenResponse::GetClassData() const {
   ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
   ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 0, 0, 2> ValidateTokenResp::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 0, 0, 2> ValidateTokenResponse::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -1221,35 +1222,35 @@ const ::_pbi::TcParseTable<2, 4, 0, 0, 2> ValidateTokenResp::_table_ = {
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
     #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::auth::ValidateTokenResp>(),  // to_prefetch
+    ::_pbi::TcParser::GetTable<::auth::ValidateTokenResponse>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     // int64 expiresAt = 4;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ValidateTokenResp, _impl_.expiresat_), 63>(),
-     {32, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.expiresat_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ValidateTokenResponse, _impl_.expiresat_), 63>(),
+     {32, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_.expiresat_)}},
     // bool valid = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ValidateTokenResp, _impl_.valid_), 63>(),
-     {8, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.valid_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ValidateTokenResponse, _impl_.valid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_.valid_)}},
     // uint64 userID = 2;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ValidateTokenResp, _impl_.userid_), 63>(),
-     {16, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.userid_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ValidateTokenResponse, _impl_.userid_), 63>(),
+     {16, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_.userid_)}},
     // uint64 account = 3;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ValidateTokenResp, _impl_.account_), 63>(),
-     {24, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.account_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ValidateTokenResponse, _impl_.account_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_.account_)}},
   }}, {{
     65535, 65535
   }}, {{
     // bool valid = 1;
-    {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.valid_), 0, 0,
+    {PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_.valid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kBool)},
     // uint64 userID = 2;
-    {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.userid_), 0, 0,
+    {PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_.userid_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // uint64 account = 3;
-    {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.account_), 0, 0,
+    {PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_.account_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
     // int64 expiresAt = 4;
-    {PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.expiresat_), 0, 0,
+    {PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_.expiresat_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
   }},
   // no aux_entries
@@ -1257,8 +1258,8 @@ const ::_pbi::TcParseTable<2, 4, 0, 0, 2> ValidateTokenResp::_table_ = {
   }},
 };
 
-PROTOBUF_NOINLINE void ValidateTokenResp::Clear() {
-// @@protoc_insertion_point(message_clear_start:auth.ValidateTokenResp)
+PROTOBUF_NOINLINE void ValidateTokenResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:auth.ValidateTokenResponse)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
@@ -1271,17 +1272,17 @@ PROTOBUF_NOINLINE void ValidateTokenResp::Clear() {
 }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::uint8_t* ValidateTokenResp::_InternalSerialize(
+        ::uint8_t* ValidateTokenResponse::_InternalSerialize(
             const MessageLite& base, ::uint8_t* target,
             ::google::protobuf::io::EpsCopyOutputStream* stream) {
-          const ValidateTokenResp& this_ = static_cast<const ValidateTokenResp&>(base);
+          const ValidateTokenResponse& this_ = static_cast<const ValidateTokenResponse&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-        ::uint8_t* ValidateTokenResp::_InternalSerialize(
+        ::uint8_t* ValidateTokenResponse::_InternalSerialize(
             ::uint8_t* target,
             ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-          const ValidateTokenResp& this_ = *this;
+          const ValidateTokenResponse& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(serialize_to_array_start:auth.ValidateTokenResp)
+          // @@protoc_insertion_point(serialize_to_array_start:auth.ValidateTokenResponse)
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
@@ -1318,18 +1319,18 @@ PROTOBUF_NOINLINE void ValidateTokenResp::Clear() {
                 ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
                     this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
           }
-          // @@protoc_insertion_point(serialize_to_array_end:auth.ValidateTokenResp)
+          // @@protoc_insertion_point(serialize_to_array_end:auth.ValidateTokenResponse)
           return target;
         }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::size_t ValidateTokenResp::ByteSizeLong(const MessageLite& base) {
-          const ValidateTokenResp& this_ = static_cast<const ValidateTokenResp&>(base);
+        ::size_t ValidateTokenResponse::ByteSizeLong(const MessageLite& base) {
+          const ValidateTokenResponse& this_ = static_cast<const ValidateTokenResponse&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-        ::size_t ValidateTokenResp::ByteSizeLong() const {
-          const ValidateTokenResp& this_ = *this;
+        ::size_t ValidateTokenResponse::ByteSizeLong() const {
+          const ValidateTokenResponse& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(message_byte_size_start:auth.ValidateTokenResp)
+          // @@protoc_insertion_point(message_byte_size_start:auth.ValidateTokenResponse)
           ::size_t total_size = 0;
 
           ::uint32_t cached_has_bits = 0;
@@ -1362,10 +1363,10 @@ PROTOBUF_NOINLINE void ValidateTokenResp::Clear() {
                                                      &this_._impl_._cached_size_);
         }
 
-void ValidateTokenResp::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
-  auto* const _this = static_cast<ValidateTokenResp*>(&to_msg);
-  auto& from = static_cast<const ValidateTokenResp&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:auth.ValidateTokenResp)
+void ValidateTokenResponse::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<ValidateTokenResponse*>(&to_msg);
+  auto& from = static_cast<const ValidateTokenResponse&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:auth.ValidateTokenResponse)
   ABSL_DCHECK_NE(&from, _this);
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -1385,26 +1386,26 @@ void ValidateTokenResp::MergeImpl(::google::protobuf::MessageLite& to_msg, const
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void ValidateTokenResp::CopyFrom(const ValidateTokenResp& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:auth.ValidateTokenResp)
+void ValidateTokenResponse::CopyFrom(const ValidateTokenResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:auth.ValidateTokenResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 
-void ValidateTokenResp::InternalSwap(ValidateTokenResp* PROTOBUF_RESTRICT other) {
+void ValidateTokenResponse::InternalSwap(ValidateTokenResponse* PROTOBUF_RESTRICT other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.valid_)
-      + sizeof(ValidateTokenResp::_impl_.valid_)
-      - PROTOBUF_FIELD_OFFSET(ValidateTokenResp, _impl_.userid_)>(
+      PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_.valid_)
+      + sizeof(ValidateTokenResponse::_impl_.valid_)
+      - PROTOBUF_FIELD_OFFSET(ValidateTokenResponse, _impl_.userid_)>(
           reinterpret_cast<char*>(&_impl_.userid_),
           reinterpret_cast<char*>(&other->_impl_.userid_));
 }
 
-::google::protobuf::Metadata ValidateTokenResp::GetMetadata() const {
+::google::protobuf::Metadata ValidateTokenResponse::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================
@@ -1733,41 +1734,41 @@ void AuthUser::InternalSwap(AuthUser* PROTOBUF_RESTRICT other) {
 }
 // ===================================================================
 
-class AuthResponse::_Internal {
+class AuthRegResponse::_Internal {
  public:
   using HasBits =
-      decltype(std::declval<AuthResponse>()._impl_._has_bits_);
+      decltype(std::declval<AuthRegResponse>()._impl_._has_bits_);
   static constexpr ::int32_t kHasBitsOffset =
-      8 * PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_._has_bits_);
+      8 * PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_._has_bits_);
 };
 
-AuthResponse::AuthResponse(::google::protobuf::Arena* arena)
+AuthRegResponse::AuthRegResponse(::google::protobuf::Arena* arena)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(arena, _class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
   SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:auth.AuthResponse)
+  // @@protoc_insertion_point(arena_constructor:auth.AuthRegResponse)
 }
-inline PROTOBUF_NDEBUG_INLINE AuthResponse::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE AuthRegResponse::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from, const ::auth::AuthResponse& from_msg)
+    const Impl_& from, const ::auth::AuthRegResponse& from_msg)
       : _has_bits_{from._has_bits_},
         _cached_size_{0},
         errorcode_(arena, from.errorcode_),
         errormessage_(arena, from.errormessage_),
         token_(arena, from.token_) {}
 
-AuthResponse::AuthResponse(
+AuthRegResponse::AuthRegResponse(
     ::google::protobuf::Arena* arena,
-    const AuthResponse& from)
+    const AuthRegResponse& from)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(arena, _class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
-  AuthResponse* const _this = this;
+  AuthRegResponse* const _this = this;
   (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
@@ -1784,9 +1785,9 @@ AuthResponse::AuthResponse(
                offsetof(Impl_, expiresat_) +
                sizeof(Impl_::success_));
 
-  // @@protoc_insertion_point(copy_constructor:auth.AuthResponse)
+  // @@protoc_insertion_point(copy_constructor:auth.AuthRegResponse)
 }
-inline PROTOBUF_NDEBUG_INLINE AuthResponse::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE AuthRegResponse::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : _cached_size_{0},
@@ -1794,7 +1795,7 @@ inline PROTOBUF_NDEBUG_INLINE AuthResponse::Impl_::Impl_(
         errormessage_(arena),
         token_(arena) {}
 
-inline void AuthResponse::SharedCtor(::_pb::Arena* arena) {
+inline void AuthRegResponse::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
   ::memset(reinterpret_cast<char *>(&_impl_) +
                offsetof(Impl_, user_),
@@ -1803,12 +1804,12 @@ inline void AuthResponse::SharedCtor(::_pb::Arena* arena) {
                offsetof(Impl_, user_) +
                sizeof(Impl_::success_));
 }
-AuthResponse::~AuthResponse() {
-  // @@protoc_insertion_point(destructor:auth.AuthResponse)
+AuthRegResponse::~AuthRegResponse() {
+  // @@protoc_insertion_point(destructor:auth.AuthRegResponse)
   SharedDtor(*this);
 }
-inline void AuthResponse::SharedDtor(MessageLite& self) {
-  AuthResponse& this_ = static_cast<AuthResponse&>(self);
+inline void AuthRegResponse::SharedDtor(MessageLite& self) {
+  AuthRegResponse& this_ = static_cast<AuthRegResponse&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.errorcode_.Destroy();
@@ -1818,45 +1819,45 @@ inline void AuthResponse::SharedDtor(MessageLite& self) {
   this_._impl_.~Impl_();
 }
 
-inline void* AuthResponse::PlacementNew_(const void*, void* mem,
+inline void* AuthRegResponse::PlacementNew_(const void*, void* mem,
                                         ::google::protobuf::Arena* arena) {
-  return ::new (mem) AuthResponse(arena);
+  return ::new (mem) AuthRegResponse(arena);
 }
-constexpr auto AuthResponse::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(AuthResponse),
-                                            alignof(AuthResponse));
+constexpr auto AuthRegResponse::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(AuthRegResponse),
+                                            alignof(AuthRegResponse));
 }
 PROTOBUF_CONSTINIT
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::google::protobuf::internal::ClassDataFull AuthResponse::_class_data_ = {
+const ::google::protobuf::internal::ClassDataFull AuthRegResponse::_class_data_ = {
     ::google::protobuf::internal::ClassData{
-        &_AuthResponse_default_instance_._instance,
+        &_AuthRegResponse_default_instance_._instance,
         &_table_.header,
         nullptr,  // OnDemandRegisterArenaDtor
         nullptr,  // IsInitialized
-        &AuthResponse::MergeImpl,
-        ::google::protobuf::Message::GetNewImpl<AuthResponse>(),
+        &AuthRegResponse::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<AuthRegResponse>(),
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        &AuthResponse::SharedDtor,
-        ::google::protobuf::Message::GetClearImpl<AuthResponse>(), &AuthResponse::ByteSizeLong,
-            &AuthResponse::_InternalSerialize,
+        &AuthRegResponse::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<AuthRegResponse>(), &AuthRegResponse::ByteSizeLong,
+            &AuthRegResponse::_InternalSerialize,
 #endif  // PROTOBUF_CUSTOM_VTABLE
-        PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_._cached_size_),
+        PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_._cached_size_),
         false,
     },
-    &AuthResponse::kDescriptorMethods,
+    &AuthRegResponse::kDescriptorMethods,
     &descriptor_table_apeauth_2eproto,
     nullptr,  // tracker
 };
-const ::google::protobuf::internal::ClassData* AuthResponse::GetClassData() const {
+const ::google::protobuf::internal::ClassData* AuthRegResponse::GetClassData() const {
   ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
   ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<3, 6, 1, 52, 2> AuthResponse::_table_ = {
+const ::_pbi::TcParseTable<3, 6, 1, 55, 2> AuthRegResponse::_table_ = {
   {
-    PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_._has_bits_),
     0, // no _extensions_
     6, 56,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
@@ -1869,63 +1870,63 @@ const ::_pbi::TcParseTable<3, 6, 1, 52, 2> AuthResponse::_table_ = {
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
     #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::auth::AuthResponse>(),  // to_prefetch
+    ::_pbi::TcParser::GetTable<::auth::AuthRegResponse>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     {::_pbi::TcParser::MiniParse, {}},
     // bool success = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AuthResponse, _impl_.success_), 63>(),
-     {8, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.success_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(AuthRegResponse, _impl_.success_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.success_)}},
     // string errorCode = 2;
     {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.errorcode_)}},
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.errorcode_)}},
     // string errorMessage = 3;
     {::_pbi::TcParser::FastUS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.errormessage_)}},
+     {26, 63, 0, PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.errormessage_)}},
     // string token = 4;
     {::_pbi::TcParser::FastUS1,
-     {34, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.token_)}},
+     {34, 63, 0, PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.token_)}},
     // int64 expiresAt = 5;
-    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AuthResponse, _impl_.expiresat_), 63>(),
-     {40, 63, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.expiresat_)}},
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(AuthRegResponse, _impl_.expiresat_), 63>(),
+     {40, 63, 0, PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.expiresat_)}},
     // .auth.AuthUser user = 6;
     {::_pbi::TcParser::FastMtS1,
-     {50, 0, 0, PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.user_)}},
+     {50, 0, 0, PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.user_)}},
     {::_pbi::TcParser::MiniParse, {}},
   }}, {{
     65535, 65535
   }}, {{
     // bool success = 1;
-    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.success_), -1, 0,
+    {PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.success_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kBool)},
     // string errorCode = 2;
-    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.errorcode_), -1, 0,
+    {PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.errorcode_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string errorMessage = 3;
-    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.errormessage_), -1, 0,
+    {PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.errormessage_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // string token = 4;
-    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.token_), -1, 0,
+    {PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.token_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
     // int64 expiresAt = 5;
-    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.expiresat_), -1, 0,
+    {PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.expiresat_), -1, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
     // .auth.AuthUser user = 6;
-    {PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.user_), _Internal::kHasBitsOffset + 0, 0,
+    {PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.user_), _Internal::kHasBitsOffset + 0, 0,
     (0 | ::_fl::kFcOptional | ::_fl::kMessage | ::_fl::kTvTable)},
   }}, {{
     {::_pbi::TcParser::GetTable<::auth::AuthUser>()},
   }}, {{
-    "\21\0\11\14\5\0\0\0"
-    "auth.AuthResponse"
+    "\24\0\11\14\5\0\0\0"
+    "auth.AuthRegResponse"
     "errorCode"
     "errorMessage"
     "token"
   }},
 };
 
-PROTOBUF_NOINLINE void AuthResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:auth.AuthResponse)
+PROTOBUF_NOINLINE void AuthRegResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:auth.AuthRegResponse)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
@@ -1947,17 +1948,17 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
 }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::uint8_t* AuthResponse::_InternalSerialize(
+        ::uint8_t* AuthRegResponse::_InternalSerialize(
             const MessageLite& base, ::uint8_t* target,
             ::google::protobuf::io::EpsCopyOutputStream* stream) {
-          const AuthResponse& this_ = static_cast<const AuthResponse&>(base);
+          const AuthRegResponse& this_ = static_cast<const AuthRegResponse&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-        ::uint8_t* AuthResponse::_InternalSerialize(
+        ::uint8_t* AuthRegResponse::_InternalSerialize(
             ::uint8_t* target,
             ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-          const AuthResponse& this_ = *this;
+          const AuthRegResponse& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(serialize_to_array_start:auth.AuthResponse)
+          // @@protoc_insertion_point(serialize_to_array_start:auth.AuthRegResponse)
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
@@ -1972,7 +1973,7 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
           if (!this_._internal_errorcode().empty()) {
             const std::string& _s = this_._internal_errorcode();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthResponse.errorCode");
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthRegResponse.errorCode");
             target = stream->WriteStringMaybeAliased(2, _s, target);
           }
 
@@ -1980,7 +1981,7 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
           if (!this_._internal_errormessage().empty()) {
             const std::string& _s = this_._internal_errormessage();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthResponse.errorMessage");
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthRegResponse.errorMessage");
             target = stream->WriteStringMaybeAliased(3, _s, target);
           }
 
@@ -1988,7 +1989,7 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
           if (!this_._internal_token().empty()) {
             const std::string& _s = this_._internal_token();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthResponse.token");
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "auth.AuthRegResponse.token");
             target = stream->WriteStringMaybeAliased(4, _s, target);
           }
 
@@ -2012,18 +2013,18 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
                 ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
                     this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
           }
-          // @@protoc_insertion_point(serialize_to_array_end:auth.AuthResponse)
+          // @@protoc_insertion_point(serialize_to_array_end:auth.AuthRegResponse)
           return target;
         }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::size_t AuthResponse::ByteSizeLong(const MessageLite& base) {
-          const AuthResponse& this_ = static_cast<const AuthResponse&>(base);
+        ::size_t AuthRegResponse::ByteSizeLong(const MessageLite& base) {
+          const AuthRegResponse& this_ = static_cast<const AuthRegResponse&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-        ::size_t AuthResponse::ByteSizeLong() const {
-          const AuthResponse& this_ = *this;
+        ::size_t AuthRegResponse::ByteSizeLong() const {
+          const AuthRegResponse& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(message_byte_size_start:auth.AuthResponse)
+          // @@protoc_insertion_point(message_byte_size_start:auth.AuthRegResponse)
           ::size_t total_size = 0;
 
           ::uint32_t cached_has_bits = 0;
@@ -2071,11 +2072,11 @@ PROTOBUF_NOINLINE void AuthResponse::Clear() {
                                                      &this_._impl_._cached_size_);
         }
 
-void AuthResponse::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
-  auto* const _this = static_cast<AuthResponse*>(&to_msg);
-  auto& from = static_cast<const AuthResponse&>(from_msg);
+void AuthRegResponse::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<AuthRegResponse*>(&to_msg);
+  auto& from = static_cast<const AuthRegResponse&>(from_msg);
   ::google::protobuf::Arena* arena = _this->GetArena();
-  // @@protoc_insertion_point(class_specific_merge_from_start:auth.AuthResponse)
+  // @@protoc_insertion_point(class_specific_merge_from_start:auth.AuthRegResponse)
   ABSL_DCHECK_NE(&from, _this);
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -2109,15 +2110,15 @@ void AuthResponse::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::go
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void AuthResponse::CopyFrom(const AuthResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:auth.AuthResponse)
+void AuthRegResponse::CopyFrom(const AuthRegResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:auth.AuthRegResponse)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 
-void AuthResponse::InternalSwap(AuthResponse* PROTOBUF_RESTRICT other) {
+void AuthRegResponse::InternalSwap(AuthRegResponse* PROTOBUF_RESTRICT other) {
   using std::swap;
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
@@ -2127,14 +2128,14 @@ void AuthResponse::InternalSwap(AuthResponse* PROTOBUF_RESTRICT other) {
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.errormessage_, &other->_impl_.errormessage_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.token_, &other->_impl_.token_, arena);
   ::google::protobuf::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.success_)
-      + sizeof(AuthResponse::_impl_.success_)
-      - PROTOBUF_FIELD_OFFSET(AuthResponse, _impl_.user_)>(
+      PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.success_)
+      + sizeof(AuthRegResponse::_impl_.success_)
+      - PROTOBUF_FIELD_OFFSET(AuthRegResponse, _impl_.user_)>(
           reinterpret_cast<char*>(&_impl_.user_),
           reinterpret_cast<char*>(&other->_impl_.user_));
 }
 
-::google::protobuf::Metadata AuthResponse::GetMetadata() const {
+::google::protobuf::Metadata AuthRegResponse::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // @@protoc_insertion_point(namespace_scope)

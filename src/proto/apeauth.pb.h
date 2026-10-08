@@ -52,9 +52,9 @@ struct TableStruct_apeauth_2eproto {
 extern const ::google::protobuf::internal::DescriptorTable
     descriptor_table_apeauth_2eproto;
 namespace auth {
-class AuthResponse;
-struct AuthResponseDefaultTypeInternal;
-extern AuthResponseDefaultTypeInternal _AuthResponse_default_instance_;
+class AuthRegResponse;
+struct AuthRegResponseDefaultTypeInternal;
+extern AuthRegResponseDefaultTypeInternal _AuthRegResponse_default_instance_;
 class AuthUser;
 struct AuthUserDefaultTypeInternal;
 extern AuthUserDefaultTypeInternal _AuthUser_default_instance_;
@@ -67,9 +67,9 @@ extern RegisterRequestDefaultTypeInternal _RegisterRequest_default_instance_;
 class ValidateTokenReq;
 struct ValidateTokenReqDefaultTypeInternal;
 extern ValidateTokenReqDefaultTypeInternal _ValidateTokenReq_default_instance_;
-class ValidateTokenResp;
-struct ValidateTokenRespDefaultTypeInternal;
-extern ValidateTokenRespDefaultTypeInternal _ValidateTokenResp_default_instance_;
+class ValidateTokenResponse;
+struct ValidateTokenResponseDefaultTypeInternal;
+extern ValidateTokenResponseDefaultTypeInternal _ValidateTokenResponse_default_instance_;
 }  // namespace auth
 namespace google {
 namespace protobuf {
@@ -83,31 +83,31 @@ namespace auth {
 
 // -------------------------------------------------------------------
 
-class ValidateTokenResp final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:auth.ValidateTokenResp) */ {
+class ValidateTokenResponse final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:auth.ValidateTokenResponse) */ {
  public:
-  inline ValidateTokenResp() : ValidateTokenResp(nullptr) {}
-  ~ValidateTokenResp() PROTOBUF_FINAL;
+  inline ValidateTokenResponse() : ValidateTokenResponse(nullptr) {}
+  ~ValidateTokenResponse() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(ValidateTokenResp* msg, std::destroying_delete_t) {
+  void operator delete(ValidateTokenResponse* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(ValidateTokenResp));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ValidateTokenResponse));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR ValidateTokenResp(
+  explicit PROTOBUF_CONSTEXPR ValidateTokenResponse(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline ValidateTokenResp(const ValidateTokenResp& from) : ValidateTokenResp(nullptr, from) {}
-  inline ValidateTokenResp(ValidateTokenResp&& from) noexcept
-      : ValidateTokenResp(nullptr, std::move(from)) {}
-  inline ValidateTokenResp& operator=(const ValidateTokenResp& from) {
+  inline ValidateTokenResponse(const ValidateTokenResponse& from) : ValidateTokenResponse(nullptr, from) {}
+  inline ValidateTokenResponse(ValidateTokenResponse&& from) noexcept
+      : ValidateTokenResponse(nullptr, std::move(from)) {}
+  inline ValidateTokenResponse& operator=(const ValidateTokenResponse& from) {
     CopyFrom(from);
     return *this;
   }
-  inline ValidateTokenResp& operator=(ValidateTokenResp&& from) noexcept {
+  inline ValidateTokenResponse& operator=(ValidateTokenResponse&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -135,16 +135,16 @@ class ValidateTokenResp final : public ::google::protobuf::Message
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const ValidateTokenResp& default_instance() {
+  static const ValidateTokenResponse& default_instance() {
     return *internal_default_instance();
   }
-  static inline const ValidateTokenResp* internal_default_instance() {
-    return reinterpret_cast<const ValidateTokenResp*>(
-        &_ValidateTokenResp_default_instance_);
+  static inline const ValidateTokenResponse* internal_default_instance() {
+    return reinterpret_cast<const ValidateTokenResponse*>(
+        &_ValidateTokenResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages = 3;
-  friend void swap(ValidateTokenResp& a, ValidateTokenResp& b) { a.Swap(&b); }
-  inline void Swap(ValidateTokenResp* other) {
+  friend void swap(ValidateTokenResponse& a, ValidateTokenResponse& b) { a.Swap(&b); }
+  inline void Swap(ValidateTokenResponse* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -152,7 +152,7 @@ class ValidateTokenResp final : public ::google::protobuf::Message
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(ValidateTokenResp* other) {
+  void UnsafeArenaSwap(ValidateTokenResponse* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -160,13 +160,13 @@ class ValidateTokenResp final : public ::google::protobuf::Message
 
   // implements Message ----------------------------------------------
 
-  ValidateTokenResp* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<ValidateTokenResp>(arena);
+  ValidateTokenResponse* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ValidateTokenResponse>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const ValidateTokenResp& from);
+  void CopyFrom(const ValidateTokenResponse& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const ValidateTokenResp& from) { ValidateTokenResp::MergeImpl(*this, from); }
+  void MergeFrom(const ValidateTokenResponse& from) { ValidateTokenResponse::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -203,18 +203,18 @@ class ValidateTokenResp final : public ::google::protobuf::Message
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(ValidateTokenResp* other);
+  void InternalSwap(ValidateTokenResponse* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "auth.ValidateTokenResp"; }
+  static ::absl::string_view FullMessageName() { return "auth.ValidateTokenResponse"; }
 
  protected:
-  explicit ValidateTokenResp(::google::protobuf::Arena* arena);
-  ValidateTokenResp(::google::protobuf::Arena* arena, const ValidateTokenResp& from);
-  ValidateTokenResp(::google::protobuf::Arena* arena, ValidateTokenResp&& from) noexcept
-      : ValidateTokenResp(arena) {
+  explicit ValidateTokenResponse(::google::protobuf::Arena* arena);
+  ValidateTokenResponse(::google::protobuf::Arena* arena, const ValidateTokenResponse& from);
+  ValidateTokenResponse(::google::protobuf::Arena* arena, ValidateTokenResponse&& from) noexcept
+      : ValidateTokenResponse(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -274,7 +274,7 @@ class ValidateTokenResp final : public ::google::protobuf::Message
   void _internal_set_valid(bool value);
 
   public:
-  // @@protoc_insertion_point(class_scope:auth.ValidateTokenResp)
+  // @@protoc_insertion_point(class_scope:auth.ValidateTokenResponse)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
@@ -296,7 +296,7 @@ class ValidateTokenResp final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const ValidateTokenResp& from_msg);
+                          const ValidateTokenResponse& from_msg);
     ::uint64_t userid_;
     ::uint64_t account_;
     ::int64_t expiresat_;
@@ -1183,31 +1183,31 @@ class AuthUser final : public ::google::protobuf::Message
 };
 // -------------------------------------------------------------------
 
-class AuthResponse final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:auth.AuthResponse) */ {
+class AuthRegResponse final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:auth.AuthRegResponse) */ {
  public:
-  inline AuthResponse() : AuthResponse(nullptr) {}
-  ~AuthResponse() PROTOBUF_FINAL;
+  inline AuthRegResponse() : AuthRegResponse(nullptr) {}
+  ~AuthRegResponse() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(AuthResponse* msg, std::destroying_delete_t) {
+  void operator delete(AuthRegResponse* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(AuthResponse));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(AuthRegResponse));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR AuthResponse(
+  explicit PROTOBUF_CONSTEXPR AuthRegResponse(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline AuthResponse(const AuthResponse& from) : AuthResponse(nullptr, from) {}
-  inline AuthResponse(AuthResponse&& from) noexcept
-      : AuthResponse(nullptr, std::move(from)) {}
-  inline AuthResponse& operator=(const AuthResponse& from) {
+  inline AuthRegResponse(const AuthRegResponse& from) : AuthRegResponse(nullptr, from) {}
+  inline AuthRegResponse(AuthRegResponse&& from) noexcept
+      : AuthRegResponse(nullptr, std::move(from)) {}
+  inline AuthRegResponse& operator=(const AuthRegResponse& from) {
     CopyFrom(from);
     return *this;
   }
-  inline AuthResponse& operator=(AuthResponse&& from) noexcept {
+  inline AuthRegResponse& operator=(AuthRegResponse&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -1235,16 +1235,16 @@ class AuthResponse final : public ::google::protobuf::Message
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const AuthResponse& default_instance() {
+  static const AuthRegResponse& default_instance() {
     return *internal_default_instance();
   }
-  static inline const AuthResponse* internal_default_instance() {
-    return reinterpret_cast<const AuthResponse*>(
-        &_AuthResponse_default_instance_);
+  static inline const AuthRegResponse* internal_default_instance() {
+    return reinterpret_cast<const AuthRegResponse*>(
+        &_AuthRegResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages = 5;
-  friend void swap(AuthResponse& a, AuthResponse& b) { a.Swap(&b); }
-  inline void Swap(AuthResponse* other) {
+  friend void swap(AuthRegResponse& a, AuthRegResponse& b) { a.Swap(&b); }
+  inline void Swap(AuthRegResponse* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -1252,7 +1252,7 @@ class AuthResponse final : public ::google::protobuf::Message
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(AuthResponse* other) {
+  void UnsafeArenaSwap(AuthRegResponse* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -1260,13 +1260,13 @@ class AuthResponse final : public ::google::protobuf::Message
 
   // implements Message ----------------------------------------------
 
-  AuthResponse* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<AuthResponse>(arena);
+  AuthRegResponse* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<AuthRegResponse>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const AuthResponse& from);
+  void CopyFrom(const AuthRegResponse& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const AuthResponse& from) { AuthResponse::MergeImpl(*this, from); }
+  void MergeFrom(const AuthRegResponse& from) { AuthRegResponse::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -1303,18 +1303,18 @@ class AuthResponse final : public ::google::protobuf::Message
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(AuthResponse* other);
+  void InternalSwap(AuthRegResponse* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "auth.AuthResponse"; }
+  static ::absl::string_view FullMessageName() { return "auth.AuthRegResponse"; }
 
  protected:
-  explicit AuthResponse(::google::protobuf::Arena* arena);
-  AuthResponse(::google::protobuf::Arena* arena, const AuthResponse& from);
-  AuthResponse(::google::protobuf::Arena* arena, AuthResponse&& from) noexcept
-      : AuthResponse(arena) {
+  explicit AuthRegResponse(::google::protobuf::Arena* arena);
+  AuthRegResponse(::google::protobuf::Arena* arena, const AuthRegResponse& from);
+  AuthRegResponse(::google::protobuf::Arena* arena, AuthRegResponse&& from) noexcept
+      : AuthRegResponse(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -1419,13 +1419,13 @@ class AuthResponse final : public ::google::protobuf::Message
   void _internal_set_success(bool value);
 
   public:
-  // @@protoc_insertion_point(class_scope:auth.AuthResponse)
+  // @@protoc_insertion_point(class_scope:auth.AuthRegResponse)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       3, 6, 1,
-      52, 2>
+      55, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -1441,7 +1441,7 @@ class AuthResponse final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const AuthResponse& from_msg);
+                          const AuthRegResponse& from_msg);
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     ::google::protobuf::internal::ArenaStringPtr errorcode_;
@@ -1744,92 +1744,92 @@ inline void ValidateTokenReq::set_allocated_token(std::string* value) {
 
 // -------------------------------------------------------------------
 
-// ValidateTokenResp
+// ValidateTokenResponse
 
 // bool valid = 1;
-inline void ValidateTokenResp::clear_valid() {
+inline void ValidateTokenResponse::clear_valid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.valid_ = false;
 }
-inline bool ValidateTokenResp::valid() const {
-  // @@protoc_insertion_point(field_get:auth.ValidateTokenResp.valid)
+inline bool ValidateTokenResponse::valid() const {
+  // @@protoc_insertion_point(field_get:auth.ValidateTokenResponse.valid)
   return _internal_valid();
 }
-inline void ValidateTokenResp::set_valid(bool value) {
+inline void ValidateTokenResponse::set_valid(bool value) {
   _internal_set_valid(value);
-  // @@protoc_insertion_point(field_set:auth.ValidateTokenResp.valid)
+  // @@protoc_insertion_point(field_set:auth.ValidateTokenResponse.valid)
 }
-inline bool ValidateTokenResp::_internal_valid() const {
+inline bool ValidateTokenResponse::_internal_valid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.valid_;
 }
-inline void ValidateTokenResp::_internal_set_valid(bool value) {
+inline void ValidateTokenResponse::_internal_set_valid(bool value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.valid_ = value;
 }
 
 // uint64 userID = 2;
-inline void ValidateTokenResp::clear_userid() {
+inline void ValidateTokenResponse::clear_userid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.userid_ = ::uint64_t{0u};
 }
-inline ::uint64_t ValidateTokenResp::userid() const {
-  // @@protoc_insertion_point(field_get:auth.ValidateTokenResp.userID)
+inline ::uint64_t ValidateTokenResponse::userid() const {
+  // @@protoc_insertion_point(field_get:auth.ValidateTokenResponse.userID)
   return _internal_userid();
 }
-inline void ValidateTokenResp::set_userid(::uint64_t value) {
+inline void ValidateTokenResponse::set_userid(::uint64_t value) {
   _internal_set_userid(value);
-  // @@protoc_insertion_point(field_set:auth.ValidateTokenResp.userID)
+  // @@protoc_insertion_point(field_set:auth.ValidateTokenResponse.userID)
 }
-inline ::uint64_t ValidateTokenResp::_internal_userid() const {
+inline ::uint64_t ValidateTokenResponse::_internal_userid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.userid_;
 }
-inline void ValidateTokenResp::_internal_set_userid(::uint64_t value) {
+inline void ValidateTokenResponse::_internal_set_userid(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.userid_ = value;
 }
 
 // uint64 account = 3;
-inline void ValidateTokenResp::clear_account() {
+inline void ValidateTokenResponse::clear_account() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.account_ = ::uint64_t{0u};
 }
-inline ::uint64_t ValidateTokenResp::account() const {
-  // @@protoc_insertion_point(field_get:auth.ValidateTokenResp.account)
+inline ::uint64_t ValidateTokenResponse::account() const {
+  // @@protoc_insertion_point(field_get:auth.ValidateTokenResponse.account)
   return _internal_account();
 }
-inline void ValidateTokenResp::set_account(::uint64_t value) {
+inline void ValidateTokenResponse::set_account(::uint64_t value) {
   _internal_set_account(value);
-  // @@protoc_insertion_point(field_set:auth.ValidateTokenResp.account)
+  // @@protoc_insertion_point(field_set:auth.ValidateTokenResponse.account)
 }
-inline ::uint64_t ValidateTokenResp::_internal_account() const {
+inline ::uint64_t ValidateTokenResponse::_internal_account() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.account_;
 }
-inline void ValidateTokenResp::_internal_set_account(::uint64_t value) {
+inline void ValidateTokenResponse::_internal_set_account(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.account_ = value;
 }
 
 // int64 expiresAt = 4;
-inline void ValidateTokenResp::clear_expiresat() {
+inline void ValidateTokenResponse::clear_expiresat() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.expiresat_ = ::int64_t{0};
 }
-inline ::int64_t ValidateTokenResp::expiresat() const {
-  // @@protoc_insertion_point(field_get:auth.ValidateTokenResp.expiresAt)
+inline ::int64_t ValidateTokenResponse::expiresat() const {
+  // @@protoc_insertion_point(field_get:auth.ValidateTokenResponse.expiresAt)
   return _internal_expiresat();
 }
-inline void ValidateTokenResp::set_expiresat(::int64_t value) {
+inline void ValidateTokenResponse::set_expiresat(::int64_t value) {
   _internal_set_expiresat(value);
-  // @@protoc_insertion_point(field_set:auth.ValidateTokenResp.expiresAt)
+  // @@protoc_insertion_point(field_set:auth.ValidateTokenResponse.expiresAt)
 }
-inline ::int64_t ValidateTokenResp::_internal_expiresat() const {
+inline ::int64_t ValidateTokenResponse::_internal_expiresat() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.expiresat_;
 }
-inline void ValidateTokenResp::_internal_set_expiresat(::int64_t value) {
+inline void ValidateTokenResponse::_internal_set_expiresat(::int64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.expiresat_ = value;
 }
@@ -1980,217 +1980,217 @@ inline void AuthUser::set_allocated_phone(std::string* value) {
 
 // -------------------------------------------------------------------
 
-// AuthResponse
+// AuthRegResponse
 
 // bool success = 1;
-inline void AuthResponse::clear_success() {
+inline void AuthRegResponse::clear_success() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.success_ = false;
 }
-inline bool AuthResponse::success() const {
-  // @@protoc_insertion_point(field_get:auth.AuthResponse.success)
+inline bool AuthRegResponse::success() const {
+  // @@protoc_insertion_point(field_get:auth.AuthRegResponse.success)
   return _internal_success();
 }
-inline void AuthResponse::set_success(bool value) {
+inline void AuthRegResponse::set_success(bool value) {
   _internal_set_success(value);
-  // @@protoc_insertion_point(field_set:auth.AuthResponse.success)
+  // @@protoc_insertion_point(field_set:auth.AuthRegResponse.success)
 }
-inline bool AuthResponse::_internal_success() const {
+inline bool AuthRegResponse::_internal_success() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.success_;
 }
-inline void AuthResponse::_internal_set_success(bool value) {
+inline void AuthRegResponse::_internal_set_success(bool value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.success_ = value;
 }
 
 // string errorCode = 2;
-inline void AuthResponse::clear_errorcode() {
+inline void AuthRegResponse::clear_errorcode() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.errorcode_.ClearToEmpty();
 }
-inline const std::string& AuthResponse::errorcode() const
+inline const std::string& AuthRegResponse::errorcode() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:auth.AuthResponse.errorCode)
+  // @@protoc_insertion_point(field_get:auth.AuthRegResponse.errorCode)
   return _internal_errorcode();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void AuthResponse::set_errorcode(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void AuthRegResponse::set_errorcode(Arg_&& arg,
                                                      Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.errorcode_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:auth.AuthResponse.errorCode)
+  // @@protoc_insertion_point(field_set:auth.AuthRegResponse.errorCode)
 }
-inline std::string* AuthResponse::mutable_errorcode() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline std::string* AuthRegResponse::mutable_errorcode() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   std::string* _s = _internal_mutable_errorcode();
-  // @@protoc_insertion_point(field_mutable:auth.AuthResponse.errorCode)
+  // @@protoc_insertion_point(field_mutable:auth.AuthRegResponse.errorCode)
   return _s;
 }
-inline const std::string& AuthResponse::_internal_errorcode() const {
+inline const std::string& AuthRegResponse::_internal_errorcode() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.errorcode_.Get();
 }
-inline void AuthResponse::_internal_set_errorcode(const std::string& value) {
+inline void AuthRegResponse::_internal_set_errorcode(const std::string& value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.errorcode_.Set(value, GetArena());
 }
-inline std::string* AuthResponse::_internal_mutable_errorcode() {
+inline std::string* AuthRegResponse::_internal_mutable_errorcode() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _impl_.errorcode_.Mutable( GetArena());
 }
-inline std::string* AuthResponse::release_errorcode() {
+inline std::string* AuthRegResponse::release_errorcode() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:auth.AuthResponse.errorCode)
+  // @@protoc_insertion_point(field_release:auth.AuthRegResponse.errorCode)
   return _impl_.errorcode_.Release();
 }
-inline void AuthResponse::set_allocated_errorcode(std::string* value) {
+inline void AuthRegResponse::set_allocated_errorcode(std::string* value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.errorcode_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.errorcode_.IsDefault()) {
     _impl_.errorcode_.Set("", GetArena());
   }
-  // @@protoc_insertion_point(field_set_allocated:auth.AuthResponse.errorCode)
+  // @@protoc_insertion_point(field_set_allocated:auth.AuthRegResponse.errorCode)
 }
 
 // string errorMessage = 3;
-inline void AuthResponse::clear_errormessage() {
+inline void AuthRegResponse::clear_errormessage() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.errormessage_.ClearToEmpty();
 }
-inline const std::string& AuthResponse::errormessage() const
+inline const std::string& AuthRegResponse::errormessage() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:auth.AuthResponse.errorMessage)
+  // @@protoc_insertion_point(field_get:auth.AuthRegResponse.errorMessage)
   return _internal_errormessage();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void AuthResponse::set_errormessage(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void AuthRegResponse::set_errormessage(Arg_&& arg,
                                                      Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.errormessage_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:auth.AuthResponse.errorMessage)
+  // @@protoc_insertion_point(field_set:auth.AuthRegResponse.errorMessage)
 }
-inline std::string* AuthResponse::mutable_errormessage() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline std::string* AuthRegResponse::mutable_errormessage() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   std::string* _s = _internal_mutable_errormessage();
-  // @@protoc_insertion_point(field_mutable:auth.AuthResponse.errorMessage)
+  // @@protoc_insertion_point(field_mutable:auth.AuthRegResponse.errorMessage)
   return _s;
 }
-inline const std::string& AuthResponse::_internal_errormessage() const {
+inline const std::string& AuthRegResponse::_internal_errormessage() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.errormessage_.Get();
 }
-inline void AuthResponse::_internal_set_errormessage(const std::string& value) {
+inline void AuthRegResponse::_internal_set_errormessage(const std::string& value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.errormessage_.Set(value, GetArena());
 }
-inline std::string* AuthResponse::_internal_mutable_errormessage() {
+inline std::string* AuthRegResponse::_internal_mutable_errormessage() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _impl_.errormessage_.Mutable( GetArena());
 }
-inline std::string* AuthResponse::release_errormessage() {
+inline std::string* AuthRegResponse::release_errormessage() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:auth.AuthResponse.errorMessage)
+  // @@protoc_insertion_point(field_release:auth.AuthRegResponse.errorMessage)
   return _impl_.errormessage_.Release();
 }
-inline void AuthResponse::set_allocated_errormessage(std::string* value) {
+inline void AuthRegResponse::set_allocated_errormessage(std::string* value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.errormessage_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.errormessage_.IsDefault()) {
     _impl_.errormessage_.Set("", GetArena());
   }
-  // @@protoc_insertion_point(field_set_allocated:auth.AuthResponse.errorMessage)
+  // @@protoc_insertion_point(field_set_allocated:auth.AuthRegResponse.errorMessage)
 }
 
 // string token = 4;
-inline void AuthResponse::clear_token() {
+inline void AuthRegResponse::clear_token() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.token_.ClearToEmpty();
 }
-inline const std::string& AuthResponse::token() const
+inline const std::string& AuthRegResponse::token() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:auth.AuthResponse.token)
+  // @@protoc_insertion_point(field_get:auth.AuthRegResponse.token)
   return _internal_token();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void AuthResponse::set_token(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void AuthRegResponse::set_token(Arg_&& arg,
                                                      Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.token_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:auth.AuthResponse.token)
+  // @@protoc_insertion_point(field_set:auth.AuthRegResponse.token)
 }
-inline std::string* AuthResponse::mutable_token() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline std::string* AuthRegResponse::mutable_token() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   std::string* _s = _internal_mutable_token();
-  // @@protoc_insertion_point(field_mutable:auth.AuthResponse.token)
+  // @@protoc_insertion_point(field_mutable:auth.AuthRegResponse.token)
   return _s;
 }
-inline const std::string& AuthResponse::_internal_token() const {
+inline const std::string& AuthRegResponse::_internal_token() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.token_.Get();
 }
-inline void AuthResponse::_internal_set_token(const std::string& value) {
+inline void AuthRegResponse::_internal_set_token(const std::string& value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.token_.Set(value, GetArena());
 }
-inline std::string* AuthResponse::_internal_mutable_token() {
+inline std::string* AuthRegResponse::_internal_mutable_token() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _impl_.token_.Mutable( GetArena());
 }
-inline std::string* AuthResponse::release_token() {
+inline std::string* AuthRegResponse::release_token() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:auth.AuthResponse.token)
+  // @@protoc_insertion_point(field_release:auth.AuthRegResponse.token)
   return _impl_.token_.Release();
 }
-inline void AuthResponse::set_allocated_token(std::string* value) {
+inline void AuthRegResponse::set_allocated_token(std::string* value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.token_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.token_.IsDefault()) {
     _impl_.token_.Set("", GetArena());
   }
-  // @@protoc_insertion_point(field_set_allocated:auth.AuthResponse.token)
+  // @@protoc_insertion_point(field_set_allocated:auth.AuthRegResponse.token)
 }
 
 // int64 expiresAt = 5;
-inline void AuthResponse::clear_expiresat() {
+inline void AuthRegResponse::clear_expiresat() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.expiresat_ = ::int64_t{0};
 }
-inline ::int64_t AuthResponse::expiresat() const {
-  // @@protoc_insertion_point(field_get:auth.AuthResponse.expiresAt)
+inline ::int64_t AuthRegResponse::expiresat() const {
+  // @@protoc_insertion_point(field_get:auth.AuthRegResponse.expiresAt)
   return _internal_expiresat();
 }
-inline void AuthResponse::set_expiresat(::int64_t value) {
+inline void AuthRegResponse::set_expiresat(::int64_t value) {
   _internal_set_expiresat(value);
-  // @@protoc_insertion_point(field_set:auth.AuthResponse.expiresAt)
+  // @@protoc_insertion_point(field_set:auth.AuthRegResponse.expiresAt)
 }
-inline ::int64_t AuthResponse::_internal_expiresat() const {
+inline ::int64_t AuthRegResponse::_internal_expiresat() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.expiresat_;
 }
-inline void AuthResponse::_internal_set_expiresat(::int64_t value) {
+inline void AuthRegResponse::_internal_set_expiresat(::int64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.expiresat_ = value;
 }
 
 // .auth.AuthUser user = 6;
-inline bool AuthResponse::has_user() const {
+inline bool AuthRegResponse::has_user() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.user_ != nullptr);
   return value;
 }
-inline void AuthResponse::clear_user() {
+inline void AuthRegResponse::clear_user() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (_impl_.user_ != nullptr) _impl_.user_->Clear();
   _impl_._has_bits_[0] &= ~0x00000001u;
 }
-inline const ::auth::AuthUser& AuthResponse::_internal_user() const {
+inline const ::auth::AuthUser& AuthRegResponse::_internal_user() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   const ::auth::AuthUser* p = _impl_.user_;
   return p != nullptr ? *p : reinterpret_cast<const ::auth::AuthUser&>(::auth::_AuthUser_default_instance_);
 }
-inline const ::auth::AuthUser& AuthResponse::user() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:auth.AuthResponse.user)
+inline const ::auth::AuthUser& AuthRegResponse::user() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:auth.AuthRegResponse.user)
   return _internal_user();
 }
-inline void AuthResponse::unsafe_arena_set_allocated_user(::auth::AuthUser* value) {
+inline void AuthRegResponse::unsafe_arena_set_allocated_user(::auth::AuthUser* value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (GetArena() == nullptr) {
     delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.user_);
@@ -2201,9 +2201,9 @@ inline void AuthResponse::unsafe_arena_set_allocated_user(::auth::AuthUser* valu
   } else {
     _impl_._has_bits_[0] &= ~0x00000001u;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:auth.AuthResponse.user)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:auth.AuthRegResponse.user)
 }
-inline ::auth::AuthUser* AuthResponse::release_user() {
+inline ::auth::AuthUser* AuthRegResponse::release_user() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
 
   _impl_._has_bits_[0] &= ~0x00000001u;
@@ -2222,16 +2222,16 @@ inline ::auth::AuthUser* AuthResponse::release_user() {
   }
   return released;
 }
-inline ::auth::AuthUser* AuthResponse::unsafe_arena_release_user() {
+inline ::auth::AuthUser* AuthRegResponse::unsafe_arena_release_user() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:auth.AuthResponse.user)
+  // @@protoc_insertion_point(field_release:auth.AuthRegResponse.user)
 
   _impl_._has_bits_[0] &= ~0x00000001u;
   ::auth::AuthUser* temp = _impl_.user_;
   _impl_.user_ = nullptr;
   return temp;
 }
-inline ::auth::AuthUser* AuthResponse::_internal_mutable_user() {
+inline ::auth::AuthUser* AuthRegResponse::_internal_mutable_user() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (_impl_.user_ == nullptr) {
     auto* p = ::google::protobuf::Message::DefaultConstruct<::auth::AuthUser>(GetArena());
@@ -2239,13 +2239,13 @@ inline ::auth::AuthUser* AuthResponse::_internal_mutable_user() {
   }
   return _impl_.user_;
 }
-inline ::auth::AuthUser* AuthResponse::mutable_user() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::auth::AuthUser* AuthRegResponse::mutable_user() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   _impl_._has_bits_[0] |= 0x00000001u;
   ::auth::AuthUser* _msg = _internal_mutable_user();
-  // @@protoc_insertion_point(field_mutable:auth.AuthResponse.user)
+  // @@protoc_insertion_point(field_mutable:auth.AuthRegResponse.user)
   return _msg;
 }
-inline void AuthResponse::set_allocated_user(::auth::AuthUser* value) {
+inline void AuthRegResponse::set_allocated_user(::auth::AuthUser* value) {
   ::google::protobuf::Arena* message_arena = GetArena();
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (message_arena == nullptr) {
@@ -2263,7 +2263,7 @@ inline void AuthResponse::set_allocated_user(::auth::AuthUser* value) {
   }
 
   _impl_.user_ = reinterpret_cast<::auth::AuthUser*>(value);
-  // @@protoc_insertion_point(field_set_allocated:auth.AuthResponse.user)
+  // @@protoc_insertion_point(field_set_allocated:auth.AuthRegResponse.user)
 }
 
 #ifdef __GNUC__

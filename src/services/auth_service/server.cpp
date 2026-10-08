@@ -4,6 +4,8 @@
 #include "storage/mysqlhandler.h"
 #include "storage/redisconnector.h"
 #include "util/account_pool.h"
+#include "storage/registration_store.h"
+#include <algorithm>
 #include "util/uuid.h"
 
 #include <boost/asio/co_spawn.hpp>
@@ -69,158 +71,89 @@ int64_t AuthServiceImpl::calculate_expiry() {
         .count();
 }
 
-// ──────────────────────────────────────────
-// Register — 全异步：取号 + 写入 MySQL + Redis token
-// ──────────────────────────────────────────
-::grpc::ServerUnaryReactor *AuthServiceImpl::Register(
-    ::grpc::CallbackServerContext *context,
-    const ::auth::RegisterRequest *request,
-    ::auth::AuthResponse *response) {
+::grpc::ServerUnaryReactor* AuthServiceImpl::Register(
+    ::grpc::CallbackServerContext* context,
+    const ::auth::RegisterRequest* request,
+    ::auth::AuthRegResponse* response)
+{
+    auto* reactor = context->DefaultReactor();
 
-    grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
+    const auto id = context->client_metadata().find("x-registration-id");
+    const std::string requestId = id == context->client_metadata().end() ? "" :
+        std::string(id->second.data(), id->second.size());
+    const bool validId = !requestId.empty() && requestId.size() <= 64 &&
+        std::all_of(requestId.begin(), requestId.end(), [](unsigned char c) {
+            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+                   (c >= '0' && c <= '9') || c == '-';
+        });
 
-    const std::string password = request->password();
-    const std::string nickname = request->nickname();
-    const std::string phone    = request->phone();
+    const auto phone = request->phone();
+    const bool validPhone = phone.size() == 11 && phone[0] == '1' &&
+        phone[1] >= '3' && phone[1] <= '9' &&
+        std::all_of(phone.begin(), phone.end(), [](unsigned char c) { return c >= '0' && c <= '9'; });
 
-    spdlog::info("[AuthService] Register request: nickname={}", nickname);
-
-    // 参数校验（同步检查，无 IO）
-    if (nickname.empty() || password.empty()) {
+    if (!validId || !validPhone || request->nickname().empty() || request->nickname().size() > 256 ||
+        request->password().empty() || request->password().size() > 1024) {
         response->set_success(false);
-        response->set_errorcode("INVALID_PARAM");
-        response->set_errormessage("Nickname and password are required");
-        spdlog::warn("[AuthService] Register failed: empty nickname or password");
+        response->set_errorcode("INVALID_INFO");
+        response->set_errormessage("Valid registration request ID, phone, nickname and password are required");
         reactor->Finish(::grpc::Status::OK);
         return reactor;
     }
 
-    // 准备用户数据（account 由取号获得，user_id 由数据库自增返回）
-    userInfo user;
-    user.user_id = 0;      // 插入后回填
-    user.account = 0;      // 取号后赋值
-    user.nickname = nickname;
-    user.phone = phone;
-    user.password_salt = generate_salt();
-    user.password_hash = hash_password(password, user.password_salt);
-
-    std::string token = generate_token();
-    int64_t expires_at = calculate_expiry();
-
-    boost::asio::co_spawn(
-        MySQLConnector::instance().get_executor(),
-        [reactor, response, user = std::move(user), token, expires_at] () mutable
-            -> boost::asio::awaitable<void> {
-            bool failed = false;
-
-            try {
-                // ── 1. 插入用户，拿到自增 user_id ──
-                auto inserted_id = co_await MySQLHandler::insert_user(user);
-                if (!inserted_id.has_value()) {
+    auto task = [](std::string id, std::string phone, std::string nickname, std::string password,
+                   ::auth::AuthRegResponse* response) -> boost::asio::awaitable<void> {
+        registration::Input input;
+        input.request_id = std::move(id);
+        input.payload = registration::payload(phone, nickname, password);
+        input.user.phone = std::move(phone);
+        input.user.nickname = std::move(nickname);
+        input.user.password_salt = generate_salt();
+        input.user.password_hash = hash_password(password, input.user.password_salt);
+        const auto result = co_await registration::create(MySQLConnector::instance().get_pool(0), input);
+        response->set_success(true);
+        auto* user = response->mutable_user();
+        user->set_userid(result.user_id);
+        user->set_account(result.account);
+        user->set_phone(input.user.phone);
+        user->set_nickname(input.user.nickname);
+    };
+    try {
+        // Pool 0 is not thread-safe; all operations must run on its executor.
+        boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),
+            task(requestId, phone, request->nickname(), request->password(), response),
+            [reactor, response](std::exception_ptr error) {
+                if (error) {
+                    response->Clear();
                     response->set_success(false);
-                    response->set_errorcode("DB_ERROR");
-                    response->set_errormessage("Failed to create user in database");
-                    spdlog::error("[AuthService] Register failed: DB insert error");
-                    reactor->Finish(::grpc::Status::OK);
-                    co_return;
-                }
-                user.user_id = inserted_id.value();
-
-                // ── 2. 从账号池取号 ──
-                uint64_t account = co_await AccountPoolTool::acquire();
-                if (account == 0) {
-                    // 池空，紧急补货后再取一次
-                    spdlog::warn("[AuthService] Account pool empty, emergency refill");
-                    co_await AccountPoolTool::refill(
-                        AccountPoolAllocator::kRefillBatch);
-                    account = co_await AccountPoolTool::acquire();
-                    if (account == 0) {
-                        response->set_success(false);
-                        response->set_errorcode("ACCOUNT_POOL_EMPTY");
-                        response->set_errormessage(
-                            "Account pool exhausted, please retry later");
-                        spdlog::error(
-                            "[AuthService] Register failed: account pool empty, user_id={}",
-                            user.user_id);
-                        reactor->Finish(::grpc::Status::OK);
-                        co_return;
+                    try { 
+                        std::rethrow_exception(error); 
+                    } catch (const registration::Error& e) {        // 已定义的业务异常
+                        response->set_errorcode(e.code);
+                        response->set_errormessage(e.what());
+                    } catch (const std::exception& e) {               // 任何继承std::exception但不是registration::Error的异常
+                        spdlog::warn(e.what());
+                        response->set_errorcode("DB_ERROR");
+                        response->set_errormessage("Registration could not be completed; retry the same request ID");
+                    } catch (...) {                                 // 未知异常
+                        response->set_errorcode("INNER_ERROR");
+                        response->set_errormessage("Registration could not be completed");
                     }
                 }
-                user.account = account;
-
-                // ── 3. 把 account 写回 user 表 ──
-                bool updated = co_await MySQLHandler::update_account(
-                    user.user_id, user.account);
-                if (!updated) {
-                    response->set_success(false);
-                    response->set_errorcode("DB_ERROR");
-                    response->set_errormessage("Failed to persist account number");
-                    spdlog::error(
-                        "[AuthService] Register failed: update account error, user_id={}",
-                        user.user_id);
-                    reactor->Finish(::grpc::Status::OK);
-                    co_return;
-                }
-
-                // ── 4. 持久化 token 到 Redis ──
-                std::string key = std::string(TOKEN_KEY_PREFIX) + token;
-                std::string value =
-                    std::to_string(user.user_id) + "," +
-                    std::to_string(user.account);
-                co_await RedisConnector::instance().setex(
-                    key, TOKEN_TTL_SECONDS, value);
-                spdlog::info(
-                    "[AuthService] Token persisted: user_id={}, account={}",
-                    user.user_id, user.account);
-
-                // ── 5. 构造响应 ──
-                response->set_success(true);
-                response->set_token(token);
-                response->set_expiresat(expires_at);
-                auto *auth_user = response->mutable_user();
-                auth_user->set_userid(user.user_id);
-                auth_user->set_account(user.account);
-                auth_user->set_nickname(user.nickname);
-
-                spdlog::info(
-                    "[AuthService] User registered: user_id={}, account={}",
-                    user.user_id, user.account);
                 reactor->Finish(::grpc::Status::OK);
-
-            } catch (const std::exception &e) {
-                failed = true;
-                spdlog::error(
-                    "[AuthService] Register coroutine exception: {}", e.what());
-            }
-
-            // catch 里不能 co_await，失败处理放在这里
-            if (failed) {
-                response->set_success(false);
-                response->set_errorcode("INTERNAL_ERROR");
-                response->set_errormessage("Internal error");
-                reactor->Finish(::grpc::Status(
-                    ::grpc::StatusCode::INTERNAL, "internal error"));
-                co_return;
-            }
-
-            // ── 6. 触发懒补货（异步，不阻塞本次注册）──
-            boost::asio::co_spawn(
-                MySQLConnector::instance().get_executor(),
-                AccountPoolTool::ensure_pool_not_low(),
-                boost::asio::detached);
-        },
-        boost::asio::detached);
-
+            });
+    } catch (...) {
+        response->set_success(false);
+        response->set_errorcode("INNER_ERROR");
+        response->set_errormessage("Unable to start registration");
+        reactor->Finish(::grpc::Status::OK);
+    }
     return reactor;
 }
-
-// ──────────────────────────────────────────
-// Login — 全异步：MySQL 查询 + 密码验证 + 更新登录时间 + Redis token
-// ──────────────────────────────────────────
 ::grpc::ServerUnaryReactor *AuthServiceImpl::Login(
     ::grpc::CallbackServerContext *context,
     const ::auth::LoginRequest *request,
-    ::auth::AuthResponse *response) {
+    ::auth::AuthRegResponse *response) {
 
     grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
@@ -251,7 +184,7 @@ int64_t AuthServiceImpl::calculate_expiry() {
                 if (!user_opt.has_value()) {
                     response->set_success(false);
                     response->set_errorcode("USER_NOT_FOUND");
-                    response->set_errormessage("Invalid username or password");
+                    response->set_errormessage("Invalid username");
                     spdlog::warn("[AuthService] Login failed: account {} not found",
                                  account);
                     reactor->Finish(::grpc::Status::OK);
@@ -314,7 +247,7 @@ int64_t AuthServiceImpl::calculate_expiry() {
 ::grpc::ServerUnaryReactor *AuthServiceImpl::ValidateToken(
     ::grpc::CallbackServerContext *context,
     const ::auth::ValidateTokenReq *request,
-    ::auth::ValidateTokenResp *response) {
+    ::auth::ValidateTokenResponse *response) {
 
     grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
