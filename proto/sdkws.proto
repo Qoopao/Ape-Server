@@ -358,6 +358,7 @@ message SdkWSResp {
   string errorCode = 5; // 错误码
   string errorMsg = 6; // 错误信息
   bytes data = 7; // 数据
+  // Response types: 104 live MsgData; 200 offline MsgData; 209 offline replay complete (empty data).
   int32 type = 8; // 类型
   int32 trackID = 9; // 客户端追踪ID
   string logID = 10; // 服务端 logid

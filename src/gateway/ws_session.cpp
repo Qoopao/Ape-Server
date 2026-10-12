@@ -738,6 +738,7 @@ asio::awaitable<void> WSSession::pullAndPushOfflineMsgs() {
     // 3. 逐条推送给客户端，按会话级 last_seq 过滤已 ACK 的消息
     int64_t batchMaxSeq = lastSeq;
     for (const auto &msg : batchMsgs) {
+      batchMaxSeq = std::max(batchMaxSeq, msg.seq());
       // 检查该会话的 last_seq，跳过已 ACK 的消息
       try {
         std::string seqKey = "user:" + std::to_string(account_) + ":" +
@@ -763,16 +764,21 @@ asio::awaitable<void> WSSession::pullAndPushOfflineMsgs() {
       pushResp.set_data(msg.SerializeAsString());
       std::string pushBin = pushResp.SerializeAsString();
 
+      // Register before yielding to the write: a fast client can ACK immediately.
+      pendingOfflineMsgs_[msg.servermsgid()] = {msg.seq(), msg.convid()};
       ws_.binary(true);
       co_await queuedWrite(std::make_shared<std::string>(std::move(pushBin)));
-
-      pendingOfflineMsgs_[msg.servermsgid()] = {msg.seq(), msg.convid()};
       if (msg.seq() > batchMaxSeq) {
         batchMaxSeq = msg.seq();
       }
       spdlog::debug(
           "WSSession: pushed offline msg to user {}, msgId={}, seq={}",
           account_, msg.servermsgid(), msg.seq());
+    }
+
+    if (pendingOfflineMsgs_.empty()) {
+      lastSeq = batchMaxSeq;
+      continue;
     }
 
     // 4. 等待客户端 ACK 清空本批次（doReadLoop / handleAck 并发处理并通知）
@@ -808,6 +814,13 @@ asio::awaitable<void> WSSession::pullAndPushOfflineMsgs() {
     lastSeq = batchMaxSeq;
   }
 
+  // 向客户端发送完成推送通知
+  sdkws::SdkWSResp completeResp;
+  completeResp.set_type(209);
+  completeResp.set_account(account_);
+  completeResp.set_errorcode("0");
+  completeResp.set_errormsg("offline sync complete");
+  co_await queuedWrite(std::make_shared<std::string>(completeResp.SerializeAsString()));
   spdlog::info("WSSession: offline push complete for user {}", account_);
 }
 
