@@ -7,12 +7,16 @@
 #include "services/gateway_push_service/server.h"
 #include "services/msg_service/server.h"
 #include "services/group_service/server.h"
+#include "services/friend_service/server.h"
+#include "services/conversation_service/server.h"
 #include "services/push_service/server.h"
 #include "om/otel_logger.h"
 #include "om/otel_metrics.h"
 #include "om/otel_tracer.h"
 #include "storage/redisconnector.h"
 #include "storage/mysqlconnector.h"
+#include "storage/mysqlhandler.h"
+#include <boost/asio/use_future.hpp>
 #include "util/ioc_pool.h"
 #include "storage/mongoconnector.h"
 #include "util/snowflake.h"
@@ -43,6 +47,12 @@ int main() {
 
     // ── 初始化 MySQL 连接池 ──
     MySQLConnector::instance().start(2);
+    boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),
+        MySQLHandler::InitializeConversations(), boost::asio::use_future).get();
+    boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),
+        MySQLHandler::InitializeOutbox(), boost::asio::use_future).get();
+    boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),
+        MySQLHandler::InitializeGroups(), boost::asio::use_future).get();
 
     // ── 初始化 MongoDB 连接池 ──
     MongoConnector::instance().start(4);
@@ -80,15 +90,14 @@ int main() {
 
     // ── 3. 启动 MsgService，通过 BackbonService 注册到 etcd ──
     spdlog::info("=== Starting MsgService on 0.0.0.0:50053 ===");
+    // Keep the producer alive until MsgService and its outbox worker have shut down.
+    auto producer = std::make_unique<KafkaProducer>("msg_topic");
     auto msg_server =
         std::make_unique<MsgServiceImpl>("MsgService", "0.0.0.0:50053");
     msg_server->EnableEtcdRegistration("localhost:50052",
                                        {"GetMaxSeq",
-                                        "GetMaxSeqs",
-                                        "GetHasReadSeqs",
+                                        "GetSingleChatHistory",
                                         "GetMsgByConversationIDs",
-                                        "GetConversationMaxSeq",
-                                        "PullMessageBySeqs",
                                         "GetSeqMessage",
                                         "SearchMessage",
                                         "SendMessages",
@@ -103,16 +112,11 @@ int main() {
                                         "GetSendMsgStatus",
                                         "RevokeMsg",
                                         "MarkMsgsAsRead",
-                                        "MarkConversationAsRead",
-                                        "SetConversationHasReadSeq",
-                                        "GetConversationsHasReadAndMaxSeq",
                                         "GetActiveUser",
                                         "GetActiveGroup",
                                         "GetServerTime",
                                         "ClearMsg",
                                         "DestructMsgs",
-                                        "GetActiveConversation",
-                                        "SetUserConversationMaxSeq",
                                         "GetLastMessageSeqByTime",
                                         "GetLastMessage"});
     msg_server->Start();
@@ -121,19 +125,20 @@ int main() {
     spdlog::info("=== Starting GroupService on 0.0.0.0:50056 ===");
     auto group_server =
         std::make_unique<GroupServiceImpl>("GroupService", "0.0.0.0:50056");
-    group_server->EnableEtcdRegistration("localhost:50052",
-                                         {"CreateGroup",
-                                          "GetGroupInfo",
-                                          "GetGroupMembers",
-                                          "JoinGroup",
-                                          "LeaveGroup",
-                                          "InviteMembers",
-                                          "KickMembers",
-                                          "DismissGroup",
-                                          "UpdateGroupInfo",
-                                          "GetUserGroups",
-                                          "GetGroupMemberCount"});
+    group_server->EnableEtcdRegistration("localhost:50052", {"Execute"});
     group_server->Start();
+    group_server->StartDelivery();
+
+    auto friend_server = std::make_unique<FriendServiceImpl>("FriendService", "0.0.0.0:50057");
+    friend_server->EnableEtcdRegistration("localhost:50052", {"Execute"});
+    friend_server->Start();
+
+    auto conversation_server = std::make_unique<ConversationServiceImpl>(
+        "ConversationService", "0.0.0.0:50058");
+    conversation_server->EnableEtcdRegistration("localhost:50052",
+        {"GetAllConversations", "GetConversation", "GetSortedConversationList",
+         "MarkConversationRead", "UpdateConversationSettings", "DeleteConversation"});
+    conversation_server->Start();
 
     // ── 4. 启动 GatewayPushServer（供 PushService 通过 gRPC 调用推送至
     // WebSocket）──
@@ -146,7 +151,6 @@ int main() {
 
     // ── 5. 创建消息队列生产者和消费者（依赖注入）──
     // 创建 Kafka 生产者（由 main 持有，与进程同寿）
-    auto producer = std::make_unique<KafkaProducer>("msg_topic");
     msg_server->SetProducer(producer.get());
     spdlog::info("Kafka producer created and injected into MsgService");
 
@@ -169,6 +173,7 @@ int main() {
     push_server->SetIOCPool(&kafka_ioc_pool);
 
     push_server->Start();
+    msg_server->StartOutbox();
 
     // ── 等待所有需要注册的服务完成 etcd 注册后再启动网关 ──
     spdlog::info("=== Waiting for all services to register to etcd... ===");
@@ -187,6 +192,10 @@ int main() {
     if (!group_server->WaitForEtcdRegistration(30)) {
       spdlog::warn("GroupService etcd registration timeout or failed, continuing anyway");
     }
+    if (!friend_server->WaitForEtcdRegistration(30))
+      spdlog::warn("FriendService registration timeout, continuing with fallback");
+    if (!conversation_server->WaitForEtcdRegistration(30))
+      spdlog::warn("ConversationService registration timeout, continuing with fallback");
     spdlog::info("=== All services registered to etcd, starting gateway ===");
 
     // ── 启动 WebServer 网关 ──
@@ -198,6 +207,8 @@ int main() {
         std::make_unique<BackbonClient>(backbon_channel);
     WebServer server(4, 6666, std::move(backbon_client_for_web));
     server.start();
+    msg_server->StopOutbox();
+    group_server->StopDelivery();
 
     // ── 清理所有服务 ──
     spdlog::info(" WebServer Gateway closed...");

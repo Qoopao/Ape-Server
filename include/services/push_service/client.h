@@ -23,7 +23,6 @@ public:
     boost::asio::awaitable<::push::AckMsgResp> AckMsg(const ::push::AckMsgReq& request);
 
     // 预登记离线消息待ACK项（用户上线拉取离线消息后调用）
-    boost::asio::awaitable<::push::AddPendingOfflineAckResp> AddPendingOfflineAck(const ::push::AddPendingOfflineAckReq& request);
 
 private:
     std::unique_ptr<push::PushService::Stub> stub_;

@@ -22,6 +22,7 @@
 namespace msg {
 
 static const char* MessageService_method_names[] = {
+  "/msg.MessageService/GetSingleChatHistory",
   "/msg.MessageService/GetMaxSeq",
   "/msg.MessageService/GetMaxSeqs",
   "/msg.MessageService/GetHasReadSeqs",
@@ -64,40 +65,64 @@ std::unique_ptr< MessageService::Stub> MessageService::NewStub(const std::shared
 }
 
 MessageService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
-  : channel_(channel), rpcmethod_GetMaxSeq_(MessageService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetMaxSeqs_(MessageService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetHasReadSeqs_(MessageService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetMsgByConversationIDs_(MessageService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetConversationMaxSeq_(MessageService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_PullMessageBySeqs_(MessageService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetSeqMessage_(MessageService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SearchMessage_(MessageService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SendMessages_(MessageService_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SendSimpleMsg_(MessageService_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetUserConversationsMinSeq_(MessageService_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ClearConversationsMsg_(MessageService_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_UserClearAllMsg_(MessageService_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_DeleteMsgs_(MessageService_method_names[13], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_DeleteMsgPhysicalBySeq_(MessageService_method_names[14], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_DeleteMsgPhysical_(MessageService_method_names[15], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetSendMsgStatus_(MessageService_method_names[16], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetSendMsgStatus_(MessageService_method_names[17], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_RevokeMsg_(MessageService_method_names[18], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_MarkMsgsAsRead_(MessageService_method_names[19], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_MarkConversationAsRead_(MessageService_method_names[20], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetConversationHasReadSeq_(MessageService_method_names[21], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetConversationsHasReadAndMaxSeq_(MessageService_method_names[22], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetActiveUser_(MessageService_method_names[23], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetActiveGroup_(MessageService_method_names[24], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetServerTime_(MessageService_method_names[25], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ClearMsg_(MessageService_method_names[26], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_DestructMsgs_(MessageService_method_names[27], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetActiveConversation_(MessageService_method_names[28], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetUserConversationMaxSeq_(MessageService_method_names[29], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetUserConversationMinSeq_(MessageService_method_names[30], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetLastMessageSeqByTime_(MessageService_method_names[31], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetLastMessage_(MessageService_method_names[32], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  : channel_(channel), rpcmethod_GetSingleChatHistory_(MessageService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetMaxSeq_(MessageService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetMaxSeqs_(MessageService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetHasReadSeqs_(MessageService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetMsgByConversationIDs_(MessageService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetConversationMaxSeq_(MessageService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_PullMessageBySeqs_(MessageService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetSeqMessage_(MessageService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SearchMessage_(MessageService_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SendMessages_(MessageService_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SendSimpleMsg_(MessageService_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetUserConversationsMinSeq_(MessageService_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ClearConversationsMsg_(MessageService_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UserClearAllMsg_(MessageService_method_names[13], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_DeleteMsgs_(MessageService_method_names[14], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_DeleteMsgPhysicalBySeq_(MessageService_method_names[15], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_DeleteMsgPhysical_(MessageService_method_names[16], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetSendMsgStatus_(MessageService_method_names[17], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetSendMsgStatus_(MessageService_method_names[18], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_RevokeMsg_(MessageService_method_names[19], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_MarkMsgsAsRead_(MessageService_method_names[20], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_MarkConversationAsRead_(MessageService_method_names[21], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetConversationHasReadSeq_(MessageService_method_names[22], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetConversationsHasReadAndMaxSeq_(MessageService_method_names[23], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetActiveUser_(MessageService_method_names[24], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetActiveGroup_(MessageService_method_names[25], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetServerTime_(MessageService_method_names[26], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ClearMsg_(MessageService_method_names[27], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_DestructMsgs_(MessageService_method_names[28], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetActiveConversation_(MessageService_method_names[29], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetUserConversationMaxSeq_(MessageService_method_names[30], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetUserConversationMinSeq_(MessageService_method_names[31], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetLastMessageSeqByTime_(MessageService_method_names[32], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetLastMessage_(MessageService_method_names[33], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
+
+::grpc::Status MessageService::Stub::GetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::msg::GetSingleChatHistoryResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::msg::GetSingleChatHistoryReq, ::msg::GetSingleChatHistoryResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetSingleChatHistory_, context, request, response);
+}
+
+void MessageService::Stub::async::GetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq* request, ::msg::GetSingleChatHistoryResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::msg::GetSingleChatHistoryReq, ::msg::GetSingleChatHistoryResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetSingleChatHistory_, context, request, response, std::move(f));
+}
+
+void MessageService::Stub::async::GetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq* request, ::msg::GetSingleChatHistoryResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetSingleChatHistory_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::msg::GetSingleChatHistoryResp>* MessageService::Stub::PrepareAsyncGetSingleChatHistoryRaw(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::msg::GetSingleChatHistoryResp, ::msg::GetSingleChatHistoryReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetSingleChatHistory_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::msg::GetSingleChatHistoryResp>* MessageService::Stub::AsyncGetSingleChatHistoryRaw(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetSingleChatHistoryRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
 
 ::grpc::Status MessageService::Stub::GetMaxSeq(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq& request, ::sdkws::GetMaxSeqResp* response) {
   return ::grpc::internal::BlockingUnaryCall< ::sdkws::GetMaxSeqReq, ::sdkws::GetMaxSeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetMaxSeq_, context, request, response);
@@ -862,6 +887,16 @@ MessageService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       MessageService_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetSingleChatHistoryReq, ::msg::GetSingleChatHistoryResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](MessageService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::msg::GetSingleChatHistoryReq* req,
+             ::msg::GetSingleChatHistoryResp* resp) {
+               return service->GetSingleChatHistory(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      MessageService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::sdkws::GetMaxSeqReq, ::sdkws::GetMaxSeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
              ::grpc::ServerContext* ctx,
@@ -870,7 +905,7 @@ MessageService::Service::Service() {
                return service->GetMaxSeq(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[1],
+      MessageService_method_names[2],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetMaxSeqsReq, ::msg::SeqsInfoResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -880,7 +915,7 @@ MessageService::Service::Service() {
                return service->GetMaxSeqs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[2],
+      MessageService_method_names[3],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetHasReadSeqsReq, ::msg::SeqsInfoResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -890,7 +925,7 @@ MessageService::Service::Service() {
                return service->GetHasReadSeqs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[3],
+      MessageService_method_names[4],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetMsgByConversationIDsReq, ::msg::GetMsgByConversationIDsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -900,7 +935,7 @@ MessageService::Service::Service() {
                return service->GetMsgByConversationIDs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[4],
+      MessageService_method_names[5],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetConversationMaxSeqReq, ::msg::GetConversationMaxSeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -910,7 +945,7 @@ MessageService::Service::Service() {
                return service->GetConversationMaxSeq(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[5],
+      MessageService_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::sdkws::PullMessageBySeqsReq, ::sdkws::PullMessageBySeqsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -920,7 +955,7 @@ MessageService::Service::Service() {
                return service->PullMessageBySeqs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[6],
+      MessageService_method_names[7],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetSeqMessageReq, ::msg::GetSeqMessageResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -930,7 +965,7 @@ MessageService::Service::Service() {
                return service->GetSeqMessage(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[7],
+      MessageService_method_names[8],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::SearchMessageReq, ::msg::SearchMessageResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -940,7 +975,7 @@ MessageService::Service::Service() {
                return service->SearchMessage(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[8],
+      MessageService_method_names[9],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::sdkws::SendMessageReq, ::sdkws::SendMessageResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -950,7 +985,7 @@ MessageService::Service::Service() {
                return service->SendMessages(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[9],
+      MessageService_method_names[10],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::SendSimpleMsgReq, ::msg::SendSimpleMsgResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -960,7 +995,7 @@ MessageService::Service::Service() {
                return service->SendSimpleMsg(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[10],
+      MessageService_method_names[11],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::SetUserConversationsMinSeqReq, ::msg::SetUserConversationsMinSeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -970,7 +1005,7 @@ MessageService::Service::Service() {
                return service->SetUserConversationsMinSeq(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[11],
+      MessageService_method_names[12],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::ClearConversationsMsgReq, ::msg::ClearConversationsMsgResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -980,7 +1015,7 @@ MessageService::Service::Service() {
                return service->ClearConversationsMsg(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[12],
+      MessageService_method_names[13],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::UserClearAllMsgReq, ::msg::UserClearAllMsgResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -990,7 +1025,7 @@ MessageService::Service::Service() {
                return service->UserClearAllMsg(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[13],
+      MessageService_method_names[14],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::DeleteMsgsReq, ::msg::DeleteMsgsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1000,7 +1035,7 @@ MessageService::Service::Service() {
                return service->DeleteMsgs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[14],
+      MessageService_method_names[15],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::DeleteMsgPhysicalBySeqReq, ::msg::DeleteMsgPhysicalBySeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1010,7 +1045,7 @@ MessageService::Service::Service() {
                return service->DeleteMsgPhysicalBySeq(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[15],
+      MessageService_method_names[16],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::DeleteMsgPhysicalReq, ::msg::DeleteMsgPhysicalResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1020,7 +1055,7 @@ MessageService::Service::Service() {
                return service->DeleteMsgPhysical(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[16],
+      MessageService_method_names[17],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::SetSendMsgStatusReq, ::msg::SetSendMsgStatusResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1030,7 +1065,7 @@ MessageService::Service::Service() {
                return service->SetSendMsgStatus(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[17],
+      MessageService_method_names[18],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetSendMsgStatusReq, ::msg::GetSendMsgStatusResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1040,7 +1075,7 @@ MessageService::Service::Service() {
                return service->GetSendMsgStatus(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[18],
+      MessageService_method_names[19],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::RevokeMsgReq, ::msg::RevokeMsgResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1050,7 +1085,7 @@ MessageService::Service::Service() {
                return service->RevokeMsg(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[19],
+      MessageService_method_names[20],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::MarkMsgsAsReadReq, ::msg::MarkMsgsAsReadResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1060,7 +1095,7 @@ MessageService::Service::Service() {
                return service->MarkMsgsAsRead(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[20],
+      MessageService_method_names[21],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::MarkConversationAsReadReq, ::msg::MarkConversationAsReadResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1070,7 +1105,7 @@ MessageService::Service::Service() {
                return service->MarkConversationAsRead(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[21],
+      MessageService_method_names[22],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::SetConversationHasReadSeqReq, ::msg::SetConversationHasReadSeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1080,7 +1115,7 @@ MessageService::Service::Service() {
                return service->SetConversationHasReadSeq(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[22],
+      MessageService_method_names[23],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetConversationsHasReadAndMaxSeqReq, ::msg::GetConversationsHasReadAndMaxSeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1090,7 +1125,7 @@ MessageService::Service::Service() {
                return service->GetConversationsHasReadAndMaxSeq(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[23],
+      MessageService_method_names[24],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetActiveUserReq, ::msg::GetActiveUserResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1100,7 +1135,7 @@ MessageService::Service::Service() {
                return service->GetActiveUser(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[24],
+      MessageService_method_names[25],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetActiveGroupReq, ::msg::GetActiveGroupResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1110,7 +1145,7 @@ MessageService::Service::Service() {
                return service->GetActiveGroup(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[25],
+      MessageService_method_names[26],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetServerTimeReq, ::msg::GetServerTimeResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1120,7 +1155,7 @@ MessageService::Service::Service() {
                return service->GetServerTime(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[26],
+      MessageService_method_names[27],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::ClearMsgReq, ::msg::ClearMsgResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1130,7 +1165,7 @@ MessageService::Service::Service() {
                return service->ClearMsg(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[27],
+      MessageService_method_names[28],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::DestructMsgsReq, ::msg::DestructMsgsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1140,7 +1175,7 @@ MessageService::Service::Service() {
                return service->DestructMsgs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[28],
+      MessageService_method_names[29],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetActiveConversationReq, ::msg::GetActiveConversationResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1150,7 +1185,7 @@ MessageService::Service::Service() {
                return service->GetActiveConversation(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[29],
+      MessageService_method_names[30],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::SetUserConversationMaxSeqReq, ::msg::SetUserConversationMaxSeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1160,7 +1195,7 @@ MessageService::Service::Service() {
                return service->SetUserConversationMaxSeq(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[30],
+      MessageService_method_names[31],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::SetUserConversationMinSeqReq, ::msg::SetUserConversationMinSeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1170,7 +1205,7 @@ MessageService::Service::Service() {
                return service->SetUserConversationMinSeq(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[31],
+      MessageService_method_names[32],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetLastMessageSeqByTimeReq, ::msg::GetLastMessageSeqByTimeResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1180,7 +1215,7 @@ MessageService::Service::Service() {
                return service->GetLastMessageSeqByTime(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      MessageService_method_names[32],
+      MessageService_method_names[33],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< MessageService::Service, ::msg::GetLastMessageReq, ::msg::GetLastMessageResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](MessageService::Service* service,
@@ -1192,6 +1227,13 @@ MessageService::Service::Service() {
 }
 
 MessageService::Service::~Service() {
+}
+
+::grpc::Status MessageService::Service::GetSingleChatHistory(::grpc::ServerContext* context, const ::msg::GetSingleChatHistoryReq* request, ::msg::GetSingleChatHistoryResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
 ::grpc::Status MessageService::Service::GetMaxSeq(::grpc::ServerContext* context, const ::sdkws::GetMaxSeqReq* request, ::sdkws::GetMaxSeqResp* response) {

@@ -11,6 +11,8 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <functional>
+#include <vector>
 
 #include "sdkws.pb.h"
 
@@ -18,6 +20,8 @@ class AuthClient;
 class MsgClient;
 class PushClient;
 class GroupClient;
+class FriendClient;
+class ConversationClient;
 
 namespace beast = boost::beast;
 namespace websocket = beast::websocket;
@@ -29,7 +33,8 @@ class WSSession : public std::enable_shared_from_this<WSSession> {
 public:
     explicit WSSession(boost::asio::ssl::stream<tcp::socket> &&stream, AuthClient* auth_client,
                        MsgClient* msg_client, PushClient* push_client,
-                       GroupClient* group_client = nullptr);
+                       GroupClient* group_client = nullptr, FriendClient* friend_client = nullptr,
+                       ConversationClient* conversation_client = nullptr);
     ~WSSession();
 
     // 启动 WebSocket 握手和消息循环（协程入口）
@@ -42,13 +47,17 @@ public:
     const uint64_t account() const { return account_; }
 
 private:
+    friend struct WSSessionTestAccess;
     websocket::stream<boost::asio::ssl::stream<tcp::socket>> ws_;       // ssl
-    uint64_t account_;
+    uint64_t account_{0};
+    bool disconnected_{false}; // 仅在本会话 executor 上访问，断线清理幂等。
     beast::flat_buffer buffer_;
     AuthClient* auth_client_;
     MsgClient* msg_client_;
     PushClient* push_client_;
     GroupClient* group_client_;
+    FriendClient* friend_client_;
+    ConversationClient* conversation_client_;
 
     // 握手后等待第一帧
     boost::asio::awaitable<void> doRead();
@@ -61,6 +70,13 @@ private:
 
     // 认证通过后拉取并推送离线消息
     boost::asio::awaitable<void> pullAndPushOfflineMsgs();
+    // 单一来源的顺序扫描；I/O 回调分离，便于验证分页与中断时序。
+    boost::asio::awaitable<void> scanOfflineMessages(
+        std::function<boost::asio::awaitable<std::vector<sdkws::MsgData>>(int64_t,int)> fetch,
+        std::function<boost::asio::awaitable<void>(sdkws::MsgData)> deliver);
+    boost::asio::awaitable<void> deliverOfflineMessage(sdkws::MsgData message);
+    boost::asio::awaitable<void> waitOfflineBatch(
+        std::chrono::steady_clock::duration timeout = std::chrono::seconds(60));
 
     // 处理统一ACK（type=106）：在线/离线消息确认，转发给PushService
     boost::asio::awaitable<void> handleAck(const sdkws::SdkWSReq& req);
@@ -81,12 +97,9 @@ private:
     // serverMsgId → (seq, convID) 映射，ACK 时按会话更新 last_seq
     std::unordered_map<std::string, PendingMsg> pendingOfflineMsgs_;
 
-    // 协程间通知通道：handleAck 清空本批次 pendingOfflineMsgs_ 后
-    // 通过此 channel 唤醒 pullAndPushOfflineMsgs，替代定时器忙等轮询
-    // capacity=0 保证 try_send 必须等 async_receive 就绪，形成 rendezvous
-    std::unique_ptr<
-        boost::asio::experimental::channel<void(boost::system::error_code)>>
-        batch_ack_signal_;
+    // 一次性 ACK 截止定时器：ACK 完成/断线时 cancel，无轮询。
+    // 等待协程保留 shared_ptr，断线清理不能提前销毁在途操作的 timer。
+    std::shared_ptr<boost::asio::steady_timer> batch_ack_timer_;
 
     // 写队列通道：所有 ws_.async_write 统一走此 channel，由
     // doDrainWriteQueue 协程串行消费，避免并发写导致 soft_mutex assert

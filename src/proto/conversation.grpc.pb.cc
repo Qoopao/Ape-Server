@@ -22,6 +22,9 @@
 namespace conversation {
 
 static const char* ConversationService_method_names[] = {
+  "/conversation.ConversationService/MarkConversationRead",
+  "/conversation.ConversationService/UpdateConversationSettings",
+  "/conversation.ConversationService/DeleteConversation",
   "/conversation.ConversationService/GetConversation",
   "/conversation.ConversationService/GetSortedConversationList",
   "/conversation.ConversationService/GetAllConversations",
@@ -58,34 +61,106 @@ std::unique_ptr< ConversationService::Stub> ConversationService::NewStub(const s
 }
 
 ConversationService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
-  : channel_(channel), rpcmethod_GetConversation_(ConversationService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetSortedConversationList_(ConversationService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetAllConversations_(ConversationService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetConversations_(ConversationService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetConversation_(ConversationService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetRecvMsgNotNotifyUserIDs_(ConversationService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_CreateSingleChatConversations_(ConversationService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_CreateGroupChatConversations_(ConversationService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetConversationMaxSeq_(ConversationService_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetConversationMinSeq_(ConversationService_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetConversationIDs_(ConversationService_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_SetConversations_(ConversationService_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetUserConversationIDsHash_(ConversationService_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetConversationsByConversationID_(ConversationService_method_names[13], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetConversationOfflinePushUserIDs_(ConversationService_method_names[14], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetConversationNotReceiveMessageUserIDs_(ConversationService_method_names[15], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_UpdateConversation_(ConversationService_method_names[16], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetFullOwnerConversationIDs_(ConversationService_method_names[17], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetIncrementalConversation_(ConversationService_method_names[18], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetOwnerConversation_(ConversationService_method_names[19], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetConversationsNeedClearMsg_(ConversationService_method_names[20], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetNotNotifyConversationIDs_(ConversationService_method_names[21], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetPinnedConversationIDs_(ConversationService_method_names[22], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ClearUserConversationMsg_(ConversationService_method_names[23], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_UpdateConversationsByUser_(ConversationService_method_names[24], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_FetchConvMessaegList_(ConversationService_method_names[25], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_FetchUserMessaegList_(ConversationService_method_names[26], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  : channel_(channel), rpcmethod_MarkConversationRead_(ConversationService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UpdateConversationSettings_(ConversationService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_DeleteConversation_(ConversationService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetConversation_(ConversationService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetSortedConversationList_(ConversationService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetAllConversations_(ConversationService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetConversations_(ConversationService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetConversation_(ConversationService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetRecvMsgNotNotifyUserIDs_(ConversationService_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_CreateSingleChatConversations_(ConversationService_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_CreateGroupChatConversations_(ConversationService_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetConversationMaxSeq_(ConversationService_method_names[11], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetConversationMinSeq_(ConversationService_method_names[12], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetConversationIDs_(ConversationService_method_names[13], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SetConversations_(ConversationService_method_names[14], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetUserConversationIDsHash_(ConversationService_method_names[15], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetConversationsByConversationID_(ConversationService_method_names[16], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetConversationOfflinePushUserIDs_(ConversationService_method_names[17], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetConversationNotReceiveMessageUserIDs_(ConversationService_method_names[18], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UpdateConversation_(ConversationService_method_names[19], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetFullOwnerConversationIDs_(ConversationService_method_names[20], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetIncrementalConversation_(ConversationService_method_names[21], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetOwnerConversation_(ConversationService_method_names[22], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetConversationsNeedClearMsg_(ConversationService_method_names[23], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetNotNotifyConversationIDs_(ConversationService_method_names[24], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetPinnedConversationIDs_(ConversationService_method_names[25], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ClearUserConversationMsg_(ConversationService_method_names[26], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UpdateConversationsByUser_(ConversationService_method_names[27], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_FetchConvMessaegList_(ConversationService_method_names[28], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_FetchUserMessaegList_(ConversationService_method_names[29], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
+
+::grpc::Status ConversationService::Stub::MarkConversationRead(::grpc::ClientContext* context, const ::conversation::MarkConversationReadReq& request, ::conversation::MarkConversationReadResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::conversation::MarkConversationReadReq, ::conversation::MarkConversationReadResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_MarkConversationRead_, context, request, response);
+}
+
+void ConversationService::Stub::async::MarkConversationRead(::grpc::ClientContext* context, const ::conversation::MarkConversationReadReq* request, ::conversation::MarkConversationReadResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::conversation::MarkConversationReadReq, ::conversation::MarkConversationReadResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_MarkConversationRead_, context, request, response, std::move(f));
+}
+
+void ConversationService::Stub::async::MarkConversationRead(::grpc::ClientContext* context, const ::conversation::MarkConversationReadReq* request, ::conversation::MarkConversationReadResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_MarkConversationRead_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::conversation::MarkConversationReadResp>* ConversationService::Stub::PrepareAsyncMarkConversationReadRaw(::grpc::ClientContext* context, const ::conversation::MarkConversationReadReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::conversation::MarkConversationReadResp, ::conversation::MarkConversationReadReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_MarkConversationRead_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::conversation::MarkConversationReadResp>* ConversationService::Stub::AsyncMarkConversationReadRaw(::grpc::ClientContext* context, const ::conversation::MarkConversationReadReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncMarkConversationReadRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status ConversationService::Stub::UpdateConversationSettings(::grpc::ClientContext* context, const ::conversation::UpdateConversationSettingsReq& request, ::conversation::UpdateConversationSettingsResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::conversation::UpdateConversationSettingsReq, ::conversation::UpdateConversationSettingsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_UpdateConversationSettings_, context, request, response);
+}
+
+void ConversationService::Stub::async::UpdateConversationSettings(::grpc::ClientContext* context, const ::conversation::UpdateConversationSettingsReq* request, ::conversation::UpdateConversationSettingsResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::conversation::UpdateConversationSettingsReq, ::conversation::UpdateConversationSettingsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpdateConversationSettings_, context, request, response, std::move(f));
+}
+
+void ConversationService::Stub::async::UpdateConversationSettings(::grpc::ClientContext* context, const ::conversation::UpdateConversationSettingsReq* request, ::conversation::UpdateConversationSettingsResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_UpdateConversationSettings_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::conversation::UpdateConversationSettingsResp>* ConversationService::Stub::PrepareAsyncUpdateConversationSettingsRaw(::grpc::ClientContext* context, const ::conversation::UpdateConversationSettingsReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::conversation::UpdateConversationSettingsResp, ::conversation::UpdateConversationSettingsReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_UpdateConversationSettings_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::conversation::UpdateConversationSettingsResp>* ConversationService::Stub::AsyncUpdateConversationSettingsRaw(::grpc::ClientContext* context, const ::conversation::UpdateConversationSettingsReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncUpdateConversationSettingsRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status ConversationService::Stub::DeleteConversation(::grpc::ClientContext* context, const ::conversation::DeleteConversationReq& request, ::conversation::DeleteConversationResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::conversation::DeleteConversationReq, ::conversation::DeleteConversationResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_DeleteConversation_, context, request, response);
+}
+
+void ConversationService::Stub::async::DeleteConversation(::grpc::ClientContext* context, const ::conversation::DeleteConversationReq* request, ::conversation::DeleteConversationResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::conversation::DeleteConversationReq, ::conversation::DeleteConversationResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_DeleteConversation_, context, request, response, std::move(f));
+}
+
+void ConversationService::Stub::async::DeleteConversation(::grpc::ClientContext* context, const ::conversation::DeleteConversationReq* request, ::conversation::DeleteConversationResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_DeleteConversation_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::conversation::DeleteConversationResp>* ConversationService::Stub::PrepareAsyncDeleteConversationRaw(::grpc::ClientContext* context, const ::conversation::DeleteConversationReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::conversation::DeleteConversationResp, ::conversation::DeleteConversationReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_DeleteConversation_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::conversation::DeleteConversationResp>* ConversationService::Stub::AsyncDeleteConversationRaw(::grpc::ClientContext* context, const ::conversation::DeleteConversationReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncDeleteConversationRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
 
 ::grpc::Status ConversationService::Stub::GetConversation(::grpc::ClientContext* context, const ::conversation::GetConversationReq& request, ::conversation::GetConversationResp* response) {
   return ::grpc::internal::BlockingUnaryCall< ::conversation::GetConversationReq, ::conversation::GetConversationResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetConversation_, context, request, response);
@@ -712,6 +787,36 @@ ConversationService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       ConversationService_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::MarkConversationReadReq, ::conversation::MarkConversationReadResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ConversationService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::conversation::MarkConversationReadReq* req,
+             ::conversation::MarkConversationReadResp* resp) {
+               return service->MarkConversationRead(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ConversationService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::UpdateConversationSettingsReq, ::conversation::UpdateConversationSettingsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ConversationService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::conversation::UpdateConversationSettingsReq* req,
+             ::conversation::UpdateConversationSettingsResp* resp) {
+               return service->UpdateConversationSettings(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ConversationService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::DeleteConversationReq, ::conversation::DeleteConversationResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ConversationService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::conversation::DeleteConversationReq* req,
+             ::conversation::DeleteConversationResp* resp) {
+               return service->DeleteConversation(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ConversationService_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetConversationReq, ::conversation::GetConversationResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
              ::grpc::ServerContext* ctx,
@@ -720,7 +825,7 @@ ConversationService::Service::Service() {
                return service->GetConversation(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[1],
+      ConversationService_method_names[4],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetSortedConversationListReq, ::conversation::GetSortedConversationListResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -730,7 +835,7 @@ ConversationService::Service::Service() {
                return service->GetSortedConversationList(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[2],
+      ConversationService_method_names[5],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetAllConversationsReq, ::conversation::GetAllConversationsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -740,7 +845,7 @@ ConversationService::Service::Service() {
                return service->GetAllConversations(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[3],
+      ConversationService_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetConversationsReq, ::conversation::GetConversationsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -750,7 +855,7 @@ ConversationService::Service::Service() {
                return service->GetConversations(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[4],
+      ConversationService_method_names[7],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::SetConversationReq, ::conversation::SetConversationResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -760,7 +865,7 @@ ConversationService::Service::Service() {
                return service->SetConversation(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[5],
+      ConversationService_method_names[8],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetRecvMsgNotNotifyUserIDsReq, ::conversation::GetRecvMsgNotNotifyUserIDsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -770,7 +875,7 @@ ConversationService::Service::Service() {
                return service->GetRecvMsgNotNotifyUserIDs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[6],
+      ConversationService_method_names[9],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::CreateSingleChatConversationsReq, ::conversation::CreateSingleChatConversationsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -780,7 +885,7 @@ ConversationService::Service::Service() {
                return service->CreateSingleChatConversations(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[7],
+      ConversationService_method_names[10],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::CreateGroupChatConversationsReq, ::conversation::CreateGroupChatConversationsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -790,7 +895,7 @@ ConversationService::Service::Service() {
                return service->CreateGroupChatConversations(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[8],
+      ConversationService_method_names[11],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::SetConversationMaxSeqReq, ::conversation::SetConversationMaxSeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -800,7 +905,7 @@ ConversationService::Service::Service() {
                return service->SetConversationMaxSeq(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[9],
+      ConversationService_method_names[12],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::SetConversationMinSeqReq, ::conversation::SetConversationMinSeqResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -810,7 +915,7 @@ ConversationService::Service::Service() {
                return service->SetConversationMinSeq(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[10],
+      ConversationService_method_names[13],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetConversationIDsReq, ::conversation::GetConversationIDsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -820,7 +925,7 @@ ConversationService::Service::Service() {
                return service->GetConversationIDs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[11],
+      ConversationService_method_names[14],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::SetConversationsReq, ::conversation::SetConversationsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -830,7 +935,7 @@ ConversationService::Service::Service() {
                return service->SetConversations(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[12],
+      ConversationService_method_names[15],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetUserConversationIDsHashReq, ::conversation::GetUserConversationIDsHashResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -840,7 +945,7 @@ ConversationService::Service::Service() {
                return service->GetUserConversationIDsHash(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[13],
+      ConversationService_method_names[16],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetConversationsByConversationIDReq, ::conversation::GetConversationsByConversationIDResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -850,7 +955,7 @@ ConversationService::Service::Service() {
                return service->GetConversationsByConversationID(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[14],
+      ConversationService_method_names[17],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetConversationOfflinePushUserIDsReq, ::conversation::GetConversationOfflinePushUserIDsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -860,7 +965,7 @@ ConversationService::Service::Service() {
                return service->GetConversationOfflinePushUserIDs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[15],
+      ConversationService_method_names[18],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetConversationNotReceiveMessageUserIDsReq, ::conversation::GetConversationNotReceiveMessageUserIDsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -870,7 +975,7 @@ ConversationService::Service::Service() {
                return service->GetConversationNotReceiveMessageUserIDs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[16],
+      ConversationService_method_names[19],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::UpdateConversationReq, ::conversation::UpdateConversationResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -880,7 +985,7 @@ ConversationService::Service::Service() {
                return service->UpdateConversation(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[17],
+      ConversationService_method_names[20],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetFullOwnerConversationIDsReq, ::conversation::GetFullOwnerConversationIDsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -890,7 +995,7 @@ ConversationService::Service::Service() {
                return service->GetFullOwnerConversationIDs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[18],
+      ConversationService_method_names[21],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetIncrementalConversationReq, ::conversation::GetIncrementalConversationResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -900,7 +1005,7 @@ ConversationService::Service::Service() {
                return service->GetIncrementalConversation(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[19],
+      ConversationService_method_names[22],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetOwnerConversationReq, ::conversation::GetOwnerConversationResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -910,7 +1015,7 @@ ConversationService::Service::Service() {
                return service->GetOwnerConversation(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[20],
+      ConversationService_method_names[23],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetConversationsNeedClearMsgReq, ::conversation::GetConversationsNeedClearMsgResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -920,7 +1025,7 @@ ConversationService::Service::Service() {
                return service->GetConversationsNeedClearMsg(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[21],
+      ConversationService_method_names[24],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetNotNotifyConversationIDsReq, ::conversation::GetNotNotifyConversationIDsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -930,7 +1035,7 @@ ConversationService::Service::Service() {
                return service->GetNotNotifyConversationIDs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[22],
+      ConversationService_method_names[25],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::GetPinnedConversationIDsReq, ::conversation::GetPinnedConversationIDsResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -940,7 +1045,7 @@ ConversationService::Service::Service() {
                return service->GetPinnedConversationIDs(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[23],
+      ConversationService_method_names[26],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::ClearUserConversationMsgReq, ::conversation::ClearUserConversationMsgResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -950,7 +1055,7 @@ ConversationService::Service::Service() {
                return service->ClearUserConversationMsg(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[24],
+      ConversationService_method_names[27],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::conversation::UpdateConversationsByUserReq, ::conversation::UpdateConversationsByUserResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -960,7 +1065,7 @@ ConversationService::Service::Service() {
                return service->UpdateConversationsByUser(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[25],
+      ConversationService_method_names[28],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::sdkws::FetchConvMessageListReq, ::sdkws::FetchConvMessageListResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -970,7 +1075,7 @@ ConversationService::Service::Service() {
                return service->FetchConvMessaegList(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      ConversationService_method_names[26],
+      ConversationService_method_names[29],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< ConversationService::Service, ::sdkws::FetchUserMessageListReq, ::sdkws::FetchUserMessageListResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ConversationService::Service* service,
@@ -982,6 +1087,27 @@ ConversationService::Service::Service() {
 }
 
 ConversationService::Service::~Service() {
+}
+
+::grpc::Status ConversationService::Service::MarkConversationRead(::grpc::ServerContext* context, const ::conversation::MarkConversationReadReq* request, ::conversation::MarkConversationReadResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ConversationService::Service::UpdateConversationSettings(::grpc::ServerContext* context, const ::conversation::UpdateConversationSettingsReq* request, ::conversation::UpdateConversationSettingsResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ConversationService::Service::DeleteConversation(::grpc::ServerContext* context, const ::conversation::DeleteConversationReq* request, ::conversation::DeleteConversationResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
 ::grpc::Status ConversationService::Service::GetConversation(::grpc::ServerContext* context, const ::conversation::GetConversationReq* request, ::conversation::GetConversationResp* response) {

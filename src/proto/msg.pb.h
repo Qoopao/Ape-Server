@@ -220,6 +220,12 @@ extern GetServerTimeReqDefaultTypeInternal _GetServerTimeReq_default_instance_;
 class GetServerTimeResp;
 struct GetServerTimeRespDefaultTypeInternal;
 extern GetServerTimeRespDefaultTypeInternal _GetServerTimeResp_default_instance_;
+class GetSingleChatHistoryReq;
+struct GetSingleChatHistoryReqDefaultTypeInternal;
+extern GetSingleChatHistoryReqDefaultTypeInternal _GetSingleChatHistoryReq_default_instance_;
+class GetSingleChatHistoryResp;
+struct GetSingleChatHistoryRespDefaultTypeInternal;
+extern GetSingleChatHistoryRespDefaultTypeInternal _GetSingleChatHistoryResp_default_instance_;
 class MarkConversationAsReadReq;
 struct MarkConversationAsReadReqDefaultTypeInternal;
 extern MarkConversationAsReadReqDefaultTypeInternal _MarkConversationAsReadReq_default_instance_;
@@ -3835,6 +3841,232 @@ class MarkConversationAsReadReq final : public ::google::protobuf::Message
     ::google::protobuf::internal::ArenaStringPtr conversationid_;
     ::uint64_t userid_;
     ::int64_t hasreadseq_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_msg_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetSingleChatHistoryReq final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:msg.GetSingleChatHistoryReq) */ {
+ public:
+  inline GetSingleChatHistoryReq() : GetSingleChatHistoryReq(nullptr) {}
+  ~GetSingleChatHistoryReq() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(GetSingleChatHistoryReq* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(GetSingleChatHistoryReq));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR GetSingleChatHistoryReq(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline GetSingleChatHistoryReq(const GetSingleChatHistoryReq& from) : GetSingleChatHistoryReq(nullptr, from) {}
+  inline GetSingleChatHistoryReq(GetSingleChatHistoryReq&& from) noexcept
+      : GetSingleChatHistoryReq(nullptr, std::move(from)) {}
+  inline GetSingleChatHistoryReq& operator=(const GetSingleChatHistoryReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetSingleChatHistoryReq& operator=(GetSingleChatHistoryReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetSingleChatHistoryReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetSingleChatHistoryReq* internal_default_instance() {
+    return reinterpret_cast<const GetSingleChatHistoryReq*>(
+        &_GetSingleChatHistoryReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 90;
+  friend void swap(GetSingleChatHistoryReq& a, GetSingleChatHistoryReq& b) { a.Swap(&b); }
+  inline void Swap(GetSingleChatHistoryReq* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetSingleChatHistoryReq* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetSingleChatHistoryReq* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<GetSingleChatHistoryReq>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetSingleChatHistoryReq& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const GetSingleChatHistoryReq& from) { GetSingleChatHistoryReq::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(GetSingleChatHistoryReq* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "msg.GetSingleChatHistoryReq"; }
+
+ protected:
+  explicit GetSingleChatHistoryReq(::google::protobuf::Arena* arena);
+  GetSingleChatHistoryReq(::google::protobuf::Arena* arena, const GetSingleChatHistoryReq& from);
+  GetSingleChatHistoryReq(::google::protobuf::Arena* arena, GetSingleChatHistoryReq&& from) noexcept
+      : GetSingleChatHistoryReq(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kOwnerUserIDFieldNumber = 1,
+    kPeerUserIDFieldNumber = 2,
+    kAfterSeqFieldNumber = 3,
+    kLimitFieldNumber = 4,
+  };
+  // uint64 ownerUserID = 1;
+  void clear_owneruserid() ;
+  ::uint64_t owneruserid() const;
+  void set_owneruserid(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_owneruserid() const;
+  void _internal_set_owneruserid(::uint64_t value);
+
+  public:
+  // uint64 peerUserID = 2;
+  void clear_peeruserid() ;
+  ::uint64_t peeruserid() const;
+  void set_peeruserid(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_peeruserid() const;
+  void _internal_set_peeruserid(::uint64_t value);
+
+  public:
+  // int64 afterSeq = 3;
+  void clear_afterseq() ;
+  ::int64_t afterseq() const;
+  void set_afterseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_afterseq() const;
+  void _internal_set_afterseq(::int64_t value);
+
+  public:
+  // int32 limit = 4;
+  void clear_limit() ;
+  ::int32_t limit() const;
+  void set_limit(::int32_t value);
+
+  private:
+  ::int32_t _internal_limit() const;
+  void _internal_set_limit(::int32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:msg.GetSingleChatHistoryReq)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 4, 0,
+      0, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const GetSingleChatHistoryReq& from_msg);
+    ::uint64_t owneruserid_;
+    ::uint64_t peeruserid_;
+    ::int64_t afterseq_;
+    ::int32_t limit_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -15581,6 +15813,239 @@ class MsgDataToDB final : public ::google::protobuf::Message
 };
 // -------------------------------------------------------------------
 
+class GetSingleChatHistoryResp final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:msg.GetSingleChatHistoryResp) */ {
+ public:
+  inline GetSingleChatHistoryResp() : GetSingleChatHistoryResp(nullptr) {}
+  ~GetSingleChatHistoryResp() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(GetSingleChatHistoryResp* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(GetSingleChatHistoryResp));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR GetSingleChatHistoryResp(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline GetSingleChatHistoryResp(const GetSingleChatHistoryResp& from) : GetSingleChatHistoryResp(nullptr, from) {}
+  inline GetSingleChatHistoryResp(GetSingleChatHistoryResp&& from) noexcept
+      : GetSingleChatHistoryResp(nullptr, std::move(from)) {}
+  inline GetSingleChatHistoryResp& operator=(const GetSingleChatHistoryResp& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetSingleChatHistoryResp& operator=(GetSingleChatHistoryResp&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetSingleChatHistoryResp& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetSingleChatHistoryResp* internal_default_instance() {
+    return reinterpret_cast<const GetSingleChatHistoryResp*>(
+        &_GetSingleChatHistoryResp_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 91;
+  friend void swap(GetSingleChatHistoryResp& a, GetSingleChatHistoryResp& b) { a.Swap(&b); }
+  inline void Swap(GetSingleChatHistoryResp* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetSingleChatHistoryResp* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetSingleChatHistoryResp* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<GetSingleChatHistoryResp>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetSingleChatHistoryResp& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const GetSingleChatHistoryResp& from) { GetSingleChatHistoryResp::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(GetSingleChatHistoryResp* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "msg.GetSingleChatHistoryResp"; }
+
+ protected:
+  explicit GetSingleChatHistoryResp(::google::protobuf::Arena* arena);
+  GetSingleChatHistoryResp(::google::protobuf::Arena* arena, const GetSingleChatHistoryResp& from);
+  GetSingleChatHistoryResp(::google::protobuf::Arena* arena, GetSingleChatHistoryResp&& from) noexcept
+      : GetSingleChatHistoryResp(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kMessagesFieldNumber = 2,
+    kPeerUserIDFieldNumber = 1,
+    kNextSeqFieldNumber = 4,
+    kHasMoreFieldNumber = 3,
+  };
+  // repeated .sdkws.MsgData messages = 2;
+  int messages_size() const;
+  private:
+  int _internal_messages_size() const;
+
+  public:
+  void clear_messages() ;
+  ::sdkws::MsgData* mutable_messages(int index);
+  ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>* mutable_messages();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>& _internal_messages() const;
+  ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>* _internal_mutable_messages();
+  public:
+  const ::sdkws::MsgData& messages(int index) const;
+  ::sdkws::MsgData* add_messages();
+  const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>& messages() const;
+  // uint64 peerUserID = 1;
+  void clear_peeruserid() ;
+  ::uint64_t peeruserid() const;
+  void set_peeruserid(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_peeruserid() const;
+  void _internal_set_peeruserid(::uint64_t value);
+
+  public:
+  // int64 nextSeq = 4;
+  void clear_nextseq() ;
+  ::int64_t nextseq() const;
+  void set_nextseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_nextseq() const;
+  void _internal_set_nextseq(::int64_t value);
+
+  public:
+  // bool hasMore = 3;
+  void clear_hasmore() ;
+  bool hasmore() const;
+  void set_hasmore(bool value);
+
+  private:
+  bool _internal_hasmore() const;
+  void _internal_set_hasmore(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:msg.GetSingleChatHistoryResp)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 4, 1,
+      0, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const GetSingleChatHistoryResp& from_msg);
+    ::google::protobuf::RepeatedPtrField< ::sdkws::MsgData > messages_;
+    ::uint64_t peeruserid_;
+    ::int64_t nextseq_;
+    bool hasmore_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_msg_2eproto;
+};
+// -------------------------------------------------------------------
+
 class GetMsgByConversationIDsResp_MsgDatasEntry_DoNotUse final
     : public ::google::protobuf::internal::MapEntry<
           std::string, ::google::protobuf::Message,
@@ -23936,6 +24401,213 @@ inline ::google::protobuf::Map<std::string, ::sdkws::MsgData>* GetLastMessageRes
 inline ::google::protobuf::Map<std::string, ::sdkws::MsgData>* GetLastMessageResp::mutable_msgs() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_mutable_map:msg.GetLastMessageResp.msgs)
   return _internal_mutable_msgs();
+}
+
+// -------------------------------------------------------------------
+
+// GetSingleChatHistoryReq
+
+// uint64 ownerUserID = 1;
+inline void GetSingleChatHistoryReq::clear_owneruserid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.owneruserid_ = ::uint64_t{0u};
+}
+inline ::uint64_t GetSingleChatHistoryReq::owneruserid() const {
+  // @@protoc_insertion_point(field_get:msg.GetSingleChatHistoryReq.ownerUserID)
+  return _internal_owneruserid();
+}
+inline void GetSingleChatHistoryReq::set_owneruserid(::uint64_t value) {
+  _internal_set_owneruserid(value);
+  // @@protoc_insertion_point(field_set:msg.GetSingleChatHistoryReq.ownerUserID)
+}
+inline ::uint64_t GetSingleChatHistoryReq::_internal_owneruserid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.owneruserid_;
+}
+inline void GetSingleChatHistoryReq::_internal_set_owneruserid(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.owneruserid_ = value;
+}
+
+// uint64 peerUserID = 2;
+inline void GetSingleChatHistoryReq::clear_peeruserid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.peeruserid_ = ::uint64_t{0u};
+}
+inline ::uint64_t GetSingleChatHistoryReq::peeruserid() const {
+  // @@protoc_insertion_point(field_get:msg.GetSingleChatHistoryReq.peerUserID)
+  return _internal_peeruserid();
+}
+inline void GetSingleChatHistoryReq::set_peeruserid(::uint64_t value) {
+  _internal_set_peeruserid(value);
+  // @@protoc_insertion_point(field_set:msg.GetSingleChatHistoryReq.peerUserID)
+}
+inline ::uint64_t GetSingleChatHistoryReq::_internal_peeruserid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.peeruserid_;
+}
+inline void GetSingleChatHistoryReq::_internal_set_peeruserid(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.peeruserid_ = value;
+}
+
+// int64 afterSeq = 3;
+inline void GetSingleChatHistoryReq::clear_afterseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.afterseq_ = ::int64_t{0};
+}
+inline ::int64_t GetSingleChatHistoryReq::afterseq() const {
+  // @@protoc_insertion_point(field_get:msg.GetSingleChatHistoryReq.afterSeq)
+  return _internal_afterseq();
+}
+inline void GetSingleChatHistoryReq::set_afterseq(::int64_t value) {
+  _internal_set_afterseq(value);
+  // @@protoc_insertion_point(field_set:msg.GetSingleChatHistoryReq.afterSeq)
+}
+inline ::int64_t GetSingleChatHistoryReq::_internal_afterseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.afterseq_;
+}
+inline void GetSingleChatHistoryReq::_internal_set_afterseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.afterseq_ = value;
+}
+
+// int32 limit = 4;
+inline void GetSingleChatHistoryReq::clear_limit() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.limit_ = 0;
+}
+inline ::int32_t GetSingleChatHistoryReq::limit() const {
+  // @@protoc_insertion_point(field_get:msg.GetSingleChatHistoryReq.limit)
+  return _internal_limit();
+}
+inline void GetSingleChatHistoryReq::set_limit(::int32_t value) {
+  _internal_set_limit(value);
+  // @@protoc_insertion_point(field_set:msg.GetSingleChatHistoryReq.limit)
+}
+inline ::int32_t GetSingleChatHistoryReq::_internal_limit() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.limit_;
+}
+inline void GetSingleChatHistoryReq::_internal_set_limit(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.limit_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// GetSingleChatHistoryResp
+
+// uint64 peerUserID = 1;
+inline void GetSingleChatHistoryResp::clear_peeruserid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.peeruserid_ = ::uint64_t{0u};
+}
+inline ::uint64_t GetSingleChatHistoryResp::peeruserid() const {
+  // @@protoc_insertion_point(field_get:msg.GetSingleChatHistoryResp.peerUserID)
+  return _internal_peeruserid();
+}
+inline void GetSingleChatHistoryResp::set_peeruserid(::uint64_t value) {
+  _internal_set_peeruserid(value);
+  // @@protoc_insertion_point(field_set:msg.GetSingleChatHistoryResp.peerUserID)
+}
+inline ::uint64_t GetSingleChatHistoryResp::_internal_peeruserid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.peeruserid_;
+}
+inline void GetSingleChatHistoryResp::_internal_set_peeruserid(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.peeruserid_ = value;
+}
+
+// repeated .sdkws.MsgData messages = 2;
+inline int GetSingleChatHistoryResp::_internal_messages_size() const {
+  return _internal_messages().size();
+}
+inline int GetSingleChatHistoryResp::messages_size() const {
+  return _internal_messages_size();
+}
+inline ::sdkws::MsgData* GetSingleChatHistoryResp::mutable_messages(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:msg.GetSingleChatHistoryResp.messages)
+  return _internal_mutable_messages()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>* GetSingleChatHistoryResp::mutable_messages()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable_list:msg.GetSingleChatHistoryResp.messages)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_messages();
+}
+inline const ::sdkws::MsgData& GetSingleChatHistoryResp::messages(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:msg.GetSingleChatHistoryResp.messages)
+  return _internal_messages().Get(index);
+}
+inline ::sdkws::MsgData* GetSingleChatHistoryResp::add_messages() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::sdkws::MsgData* _add = _internal_mutable_messages()->Add();
+  // @@protoc_insertion_point(field_add:msg.GetSingleChatHistoryResp.messages)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>& GetSingleChatHistoryResp::messages() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:msg.GetSingleChatHistoryResp.messages)
+  return _internal_messages();
+}
+inline const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>&
+GetSingleChatHistoryResp::_internal_messages() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.messages_;
+}
+inline ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>*
+GetSingleChatHistoryResp::_internal_mutable_messages() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.messages_;
+}
+
+// bool hasMore = 3;
+inline void GetSingleChatHistoryResp::clear_hasmore() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hasmore_ = false;
+}
+inline bool GetSingleChatHistoryResp::hasmore() const {
+  // @@protoc_insertion_point(field_get:msg.GetSingleChatHistoryResp.hasMore)
+  return _internal_hasmore();
+}
+inline void GetSingleChatHistoryResp::set_hasmore(bool value) {
+  _internal_set_hasmore(value);
+  // @@protoc_insertion_point(field_set:msg.GetSingleChatHistoryResp.hasMore)
+}
+inline bool GetSingleChatHistoryResp::_internal_hasmore() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.hasmore_;
+}
+inline void GetSingleChatHistoryResp::_internal_set_hasmore(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hasmore_ = value;
+}
+
+// int64 nextSeq = 4;
+inline void GetSingleChatHistoryResp::clear_nextseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.nextseq_ = ::int64_t{0};
+}
+inline ::int64_t GetSingleChatHistoryResp::nextseq() const {
+  // @@protoc_insertion_point(field_get:msg.GetSingleChatHistoryResp.nextSeq)
+  return _internal_nextseq();
+}
+inline void GetSingleChatHistoryResp::set_nextseq(::int64_t value) {
+  _internal_set_nextseq(value);
+  // @@protoc_insertion_point(field_set:msg.GetSingleChatHistoryResp.nextSeq)
+}
+inline ::int64_t GetSingleChatHistoryResp::_internal_nextseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.nextseq_;
+}
+inline void GetSingleChatHistoryResp::_internal_set_nextseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.nextseq_ = value;
 }
 
 #ifdef __GNUC__

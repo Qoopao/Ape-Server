@@ -6,6 +6,7 @@ build/
 
 # vcpkg 安装目录
 vcpkg_installed/
+__pycache__/
 
 # etcd目录
 docker/etcd/etcd_data_*/

@@ -5,6 +5,8 @@
 #include <boost/asio/awaitable.hpp>
 #include <boost/asio/use_awaitable.hpp>
 #include <boost/asio/async_result.hpp>
+#include <boost/asio/associated_executor.hpp>
+#include <boost/asio/post.hpp>
 
 namespace ape {
 namespace grpc_util {
@@ -32,8 +34,11 @@ auto GrpcAwait(InitFunc&& init) -> boost::asio::awaitable<grpc::Status> {
             // 再传递一个可拷贝的 lambda 给 gRPC。
             auto handler_ptr = std::make_shared<std::decay_t<decltype(handler)>>(
                 std::move(handler));
-            init([handler_ptr](grpc::Status status) {
-                (*handler_ptr)(std::move(status));
+            const auto executor = boost::asio::get_associated_executor(*handler_ptr);
+            init([handler_ptr, executor](grpc::Status status) {
+                boost::asio::post(executor, [handler_ptr, status = std::move(status)]() mutable {
+                    (*handler_ptr)(std::move(status));
+                });
             });
         },
         boost::asio::use_awaitable);

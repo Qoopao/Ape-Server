@@ -3,6 +3,22 @@
 #include "om/otel_trace_propagation.h"
 #include <grpcpp/support/status.h>
 #include <spdlog/spdlog.h>
+#include <chrono>
+#include <stdexcept>
+
+boost::asio::awaitable<::msg::GetSingleChatHistoryResp> MsgClient::GetSingleChatHistory(
+    const ::msg::GetSingleChatHistoryReq& request) {
+  ::msg::GetSingleChatHistoryResp reply;
+  grpc::ClientContext context;
+  context.set_deadline(std::chrono::system_clock::now() + std::chrono::seconds(10));
+  auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+    stub_->async()->GetSingleChatHistory(&context, &request, &reply,
+        std::forward<decltype(handler)>(handler));
+  });
+  if (!status.ok())
+    throw std::runtime_error(status.error_message());
+  co_return reply;
+}
 
 boost::asio::awaitable<::sdkws::GetMaxSeqResp> MsgClient::GetMaxSeq(const ::sdkws::GetMaxSeqReq& request) {
   ::sdkws::GetMaxSeqResp reply;
@@ -79,20 +95,7 @@ boost::asio::awaitable<::msg::GetConversationMaxSeqResp> MsgClient::GetConversat
   co_return reply;
 }
 
-boost::asio::awaitable<::sdkws::PullMessageBySeqsResp> MsgClient::PullMessageBySeqs(const ::sdkws::PullMessageBySeqsReq& request) {
-  ::sdkws::PullMessageBySeqsResp reply;
-  grpc::ClientContext context;
-  auto status = co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
-    stub_->async()->PullMessageBySeqs(&context, &request, &reply,
-        std::forward<decltype(handler)>(handler));
-  });
-  if (!status.ok()) {
-    spdlog::error("PullMessageBySeqs failed: {} {}",
-                  static_cast<int>(status.error_code()),
-                  status.error_message());
-  }
-  co_return reply;
-}
+
 
 boost::asio::awaitable<::msg::GetSeqMessageResp> MsgClient::GetSeqMessage(const ::msg::GetSeqMessageReq& request) {
   ::msg::GetSeqMessageResp reply;

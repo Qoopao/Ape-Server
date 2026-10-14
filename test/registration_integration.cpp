@@ -1,4 +1,4 @@
-#include "storage/registration_store.h"
+#include "storage/mysqlhandler.h"
 #include "util/account_pool.h"
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/detached.hpp>
@@ -16,14 +16,14 @@ using boost::asio::awaitable;
 using boost::asio::use_awaitable;
 using Pool = boost::mysql::connection_pool;
 void check(bool condition, const char* message) { if (!condition) throw std::runtime_error(message); }
-registration::Input input(int i, const std::string& id = "") {
-    registration::Input in;
+MySQLHandler::RegistrationInput input(int i, const std::string& id = "") {
+    MySQLHandler::RegistrationInput in;
     in.request_id = id.empty() ? "test-" + std::to_string(i) : id;
     in.user.phone = std::to_string(13800000000ULL + i);
     in.user.nickname = "tester";
     in.user.password_salt = "random-test-salt";
     in.user.password_hash = "test-hash";
-    in.payload = registration::payload(in.user.phone, in.user.nickname, "abc123");
+    in.payload = MySQLHandler::registration_payload(in.user.phone, in.user.nickname, "abc123");
     return in;
 }
 awaitable<void> sql(Pool& pool, std::string query) {
@@ -38,23 +38,23 @@ awaitable<uint64_t> scalar(Pool& pool, std::string query) {
     auto f = r.rows()[0][0];
     co_return f.is_uint64() ? f.as_uint64() : static_cast<uint64_t>(f.as_int64());
 }
-awaitable<void> expect(Pool& pool, registration::Input in, std::string code) {
+awaitable<void> expect(Pool& pool, MySQLHandler::RegistrationInput in, std::string code) {
     bool caught = false;
-    try { co_await registration::create(pool, in); }
-    catch (const registration::Error& e) { caught = e.code == code; if (!caught) throw; }
+    try { co_await MySQLHandler::register_user(pool, in); }
+    catch (const MySQLHandler::RegistrationError& e) { caught = e.code == code; if (!caught) throw; }
     check(caught, "expected registration error missing");
 }
-awaitable<std::vector<registration::Result>> concurrent(Pool& pool, bool same, int base) {
+awaitable<std::vector<MySQLHandler::RegistrationResult>> concurrent(Pool& pool, bool same, int base) {
     auto executor = co_await boost::asio::this_coro::executor;
-    std::vector<registration::Result> results(12);
+    std::vector<MySQLHandler::RegistrationResult> results(12);
     std::exception_ptr failure;
     int pending = 12;
     for (int i = 0; i < 12; ++i) {
-        auto task = [](Pool& p, registration::Input in) -> awaitable<registration::Result> {
-            co_return co_await registration::create(p,in);
+        auto task = [](Pool& p, MySQLHandler::RegistrationInput in) -> awaitable<MySQLHandler::RegistrationResult> {
+            co_return co_await MySQLHandler::register_user(p,in);
         };
         boost::asio::co_spawn(executor, task(pool,input(same ? base : base+i)),
-            [&,i](std::exception_ptr e, registration::Result r) {
+            [&,i](std::exception_ptr e, MySQLHandler::RegistrationResult r) {
                 if (e) failure = e;
                 results[i] = r; --pending;
             });
@@ -76,16 +76,16 @@ awaitable<void> tests(Pool& pool, bool lostCommit, bool unconfirmed) {
             check(co_await scalar(pool,"SELECT COUNT(*) FROM users WHERE phone='13800000901'")==0,
                   "undelivered COMMIT created user");
         }
-        auto a = co_await registration::create(pool,in);
-        auto b = co_await registration::create(pool,in);
+        auto a = co_await MySQLHandler::register_user(pool,in);
+        auto b = co_await MySQLHandler::register_user(pool,in);
         check(a.account == b.account && a.user_id == b.user_id, "lost COMMIT replay changed result");
         check(co_await scalar(pool,"SELECT COUNT(*) FROM users WHERE phone='"+in.user.phone+"'") == 1, "lost COMMIT duplicated user");
         std::cout << "PASS lost-COMMIT acknowledgement recovery\n";
         co_return;
     }
     auto first = input(1);
-    auto a = co_await registration::create(pool,first);
-    auto b = co_await registration::create(pool,first);
+    auto a = co_await MySQLHandler::register_user(pool,first);
+    auto b = co_await MySQLHandler::register_user(pool,first);
     check(a.account == b.account && a.user_id == b.user_id, "replay mismatch");
     first.payload += "changed";
     co_await expect(pool,first,"IDEMPOTENCY_CONFLICT");
@@ -93,15 +93,15 @@ awaitable<void> tests(Pool& pool, bool lostCommit, bool unconfirmed) {
     {
         unsigned pending=8, successes=0, conflicts=0;
         std::exception_ptr failure;
-        auto task=[](Pool& p,registration::Input in)->awaitable<registration::Result>{
-            co_return co_await registration::create(p,in);
+        auto task=[](Pool& p,MySQLHandler::RegistrationInput in)->awaitable<MySQLHandler::RegistrationResult>{
+            co_return co_await MySQLHandler::register_user(p,in);
         };
         for(unsigned i=0;i<8;++i)
             boost::asio::co_spawn(co_await boost::asio::this_coro::executor,
                 task(pool,input(5,"phone-race-"+std::to_string(i))),
-                [&](std::exception_ptr e,registration::Result){
+                [&](std::exception_ptr e,MySQLHandler::RegistrationResult){
                     if(!e)++successes;
-                    else try{std::rethrow_exception(e);}catch(const registration::Error& x){
+                    else try{std::rethrow_exception(e);}catch(const MySQLHandler::RegistrationError& x){
                         if(x.code=="PHONE_EXISTS")++conflicts;else failure=e;
                     }catch(...){failure=e;}
                     --pending;
@@ -124,7 +124,7 @@ awaitable<void> tests(Pool& pool, bool lostCommit, bool unconfirmed) {
     const auto before = co_await scalar(pool,"SELECT COUNT(*) FROM account_pool WHERE status=1");
     auto bad = input(80); bad.user.nickname = std::string(1000,'x');
     bool failed = false;
-    try { co_await registration::create(pool,bad); } catch (...) { failed = true; }
+    try { co_await MySQLHandler::register_user(pool,bad); } catch (...) { failed = true; }
     check(failed,"forced insert failure missing");
     check(co_await scalar(pool,"SELECT COUNT(*) FROM account_pool WHERE status=1") == before,"failed insert consumed account");
     check(co_await scalar(pool,"SELECT COUNT(*) FROM registration_requests WHERE request_id='test-80'") == 0,"failed insert left ledger");
@@ -145,7 +145,7 @@ awaitable<void> tests(Pool& pool, bool lostCommit, bool unconfirmed) {
     bool released = false;
     boost::asio::co_spawn(co_await boost::asio::this_coro::executor,delayed(*holder.operator->()),
         [&](std::exception_ptr e){ releaseError=e; released=true; });
-    co_await registration::create(pool,input(81));
+    co_await MySQLHandler::register_user(pool,input(81));
     check(released && !releaseError,"holder release failed");
     check(co_await scalar(pool,"SELECT next_start FROM account_pool_cursor WHERE id=1") == cursor,"temporary lock triggered refill");
     // Keep lock through all three attempts, then verify the whole transaction rolled back.
@@ -174,14 +174,14 @@ awaitable<void> tests(Pool& pool, bool lostCommit, bool unconfirmed) {
     const auto start = co_await scalar(pool,"SELECT next_start FROM account_pool_cursor WHERE id=1");
     co_await sql(pool,"UPDATE account_pool_cursor SET next_start=1000000000 WHERE id=1");
     bool unsafe = false;
-    try { co_await registration::refill(pool,10000); }
-    catch (const registration::Error& e) { unsafe = e.code=="POOL_INCONSISTENT"; }
+    try { co_await MySQLHandler::refill_accounts(pool,10000); }
+    catch (const MySQLHandler::RegistrationError& e) { unsafe = e.code=="POOL_INCONSISTENT"; }
     check(unsafe,"unsafe cursor was accepted");
     co_await sql(pool,"UPDATE account_pool_cursor SET next_start="+std::to_string(start)+" WHERE id=1");
     co_await sql(pool,"CREATE TRIGGER fail_refill BEFORE INSERT ON account_pool FOR EACH ROW "
         "SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT='test refill failure'");
     bool refillFailed = false;
-    try { co_await registration::refill(pool,10000); } catch (...) { refillFailed=true; }
+    try { co_await MySQLHandler::refill_accounts(pool,10000); } catch (...) { refillFailed=true; }
     check(refillFailed,"forced refill failure missing");
     check(co_await scalar(pool,"SELECT next_start FROM account_pool_cursor WHERE id=1")==start,"failed refill advanced cursor");
     check(co_await scalar(pool,"SELECT COUNT(*) FROM account_pool WHERE status=0")==0,"failed refill left accounts");
@@ -190,7 +190,7 @@ awaitable<void> tests(Pool& pool, bool lostCommit, bool unconfirmed) {
     unsigned pending = 8; std::exception_ptr failure;
     for (unsigned i=0;i<8;++i)
         boost::asio::co_spawn(co_await boost::asio::this_coro::executor,
-            registration::refill(pool,AccountPoolAllocator::kRefillBatch),
+            MySQLHandler::refill_accounts(pool,AccountPoolAllocator::kRefillBatch),
             [&](std::exception_ptr e){ if(e)failure=e; --pending; });
     while(pending) { boost::asio::steady_timer t(co_await boost::asio::this_coro::executor);
         t.expires_after(std::chrono::milliseconds(5)); co_await t.async_wait(use_awaitable); }
@@ -200,7 +200,7 @@ awaitable<void> tests(Pool& pool, bool lostCommit, bool unconfirmed) {
     std::cout << "PASS concurrent refill coordination\n";
     co_await sql(pool,"ALTER TABLE account_pool MODIFY account BIGINT UNSIGNED NOT NULL");
     co_await sql(pool,"ALTER TABLE users MODIFY account BIGINT UNSIGNED NOT NULL");
-    const auto unsignedResult=co_await registration::create(pool,input(85));
+    const auto unsignedResult=co_await MySQLHandler::register_user(pool,input(85));
     check(unsignedResult.account>=1000000000ULL,"unsigned account read failed");
     std::cout << "PASS signed and unsigned MySQL integer columns\n";
 }

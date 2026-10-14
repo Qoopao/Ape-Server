@@ -30,6 +30,7 @@ public:
 
     // 检查用户是否有活跃连接
     bool hasSession(const uint64_t account);
+    std::vector<uint64_t> onlineAccounts();
 
 private:
     WSSessionManager() = default;

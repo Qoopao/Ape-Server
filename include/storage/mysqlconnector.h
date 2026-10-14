@@ -31,7 +31,7 @@ class MySQLConnector {
 public:
   static MySQLConnector &instance();
 
-  void start(int pool_size = 2);
+  void start(int pool_size = 2, const boost::mysql::pool_params* settings = nullptr);
   void stop();
 
   int pool_size() const;

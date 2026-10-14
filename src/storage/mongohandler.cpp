@@ -14,6 +14,8 @@
 #include <optional>
 #include <spdlog/spdlog.h>
 #include <string>
+#include <stdexcept>
+#include <cmath>
 
 #include "storage/mongoconnector.h"
 #include "storage/mongohandler.h"
@@ -33,7 +35,7 @@ MongoHandler::get_collection(const std::string db_name,
 }
 
 // Set
-bool MongoHandler::SaveMsgToMongo(const sdkws::MsgData &msg) {
+bool MongoHandler::SaveMsgToMongo(const sdkws::MsgData &msg, bool committed) {
   try {
     // 直接获取 pool entry 并保持其生命周期直到 insert_one 完成，
     // 避免 get_collection() 返回后 pool entry 析构导致 client 失效
@@ -63,14 +65,21 @@ bool MongoHandler::SaveMsgToMongo(const sdkws::MsgData &msg) {
         bsoncxx::builder::basic::kvp("isRecalled", msg.isrecalled()),
         bsoncxx::builder::basic::kvp("isPinned", msg.ispinned()),
         bsoncxx::builder::basic::kvp("isGroupMsg", msg.isgroupmsg()),
-        bsoncxx::builder::basic::kvp("ext", msg.ext())
+        bsoncxx::builder::basic::kvp("ext", msg.ext()),
+        bsoncxx::builder::basic::kvp("committed", committed)
       );
 
     // 观察doc的值
     // auto view = doc.view();
     // spdlog::info("Inserting doc: {}", bsoncxx::to_json(view));
 
-    auto result = collection.insert_one(doc.view());
+    auto filter = bsoncxx::builder::basic::make_document(
+        bsoncxx::builder::basic::kvp("serverMsgID", msg.servermsgid()));
+    auto update = bsoncxx::builder::basic::make_document(
+        bsoncxx::builder::basic::kvp("$setOnInsert", doc.view()));
+    mongocxx::options::update options;
+    options.upsert(true);
+    auto result = collection.update_one(filter.view(), update.view(), options);
     if (result) {
       spdlog::info("SaveMsgToMongo success, serverMsgID={}", msg.servermsgid());
       return true;
@@ -111,56 +120,14 @@ bool MongoHandler::GetMsgByServerMsgID(const std::string &serverMsgID,
 
     bsoncxx::document::view doc = *it;
 
-    // 每个字段先检查存在性再取值
-    if (auto e = doc["serverMsgID"])
-      outMsg.set_servermsgid(std::string{e.get_string().value});
-    if (auto e = doc["sendID"])
-      outMsg.set_sendid(e.get_int64().value);
-    if (auto e = doc["recvID"])
-      outMsg.set_recvid(e.get_int64().value);
-    if (auto e = doc["convID"])
-      outMsg.set_convid(std::string{e.get_string().value});
-    if (auto e = doc["clientMsgID"])
-      outMsg.set_clientmsgid(std::string{e.get_string().value});
-    if (auto e = doc["senderPlatformID"])
-      outMsg.set_senderplatformid(e.get_int32().value);
-    if (auto e = doc["senderNickname"])
-      outMsg.set_sendernickname(std::string{e.get_string().value});
-    if (auto e = doc["senderFaceURL"])
-      outMsg.set_senderfaceurl(std::string{e.get_string().value});
-    if (auto e = doc["sessionType"])
-      outMsg.set_sessiontype(e.get_int32().value);
-    if (auto e = doc["msgFrom"])
-      outMsg.set_msgfrom(e.get_int32().value);
-    if (auto e = doc["contentType"])
-      outMsg.set_contenttype(e.get_int32().value);
-    if (auto e = doc["content"])
-      outMsg.set_content(std::string{e.get_string().value});
-    if (auto e = doc["seq"])
-      outMsg.set_seq(e.get_int64().value);
-    if (auto e = doc["sendTime"])
-      outMsg.set_sendtime(e.get_double().value);
-    if (auto e = doc["status"])
-      outMsg.set_status(e.get_int32().value);
-    if (auto e = doc["isRead"])
-      outMsg.set_isread(e.get_bool().value);
-    if (auto e = doc["isDeleted"])
-      outMsg.set_isdeleted(e.get_bool().value);
-    if (auto e = doc["isRecalled"])
-      outMsg.set_isrecalled(e.get_bool().value);
-    if (auto e = doc["isPinned"])
-      outMsg.set_ispinned(e.get_bool().value);
-    if (auto e = doc["isGroupMsg"])
-      outMsg.set_isgroupmsg(e.get_bool().value);
-    if (auto e = doc["ext"])
-      outMsg.set_ext(std::string{e.get_string().value});
+    outMsg = DecodeMessage(doc);
 
     spdlog::info("GetMsgByServerMsgID success, serverMsgID={}", serverMsgID);
     return true;
   } catch (const mongocxx::exception &e) {
     spdlog::error("GetMsgByServerMsgID exception: {}, serverMsgID={}", e.what(),
                   serverMsgID);
-    return false;
+    throw;
   }
 }
 
@@ -168,6 +135,7 @@ std::vector<sdkws::MsgData>
 MongoHandler::GetMsgsBySeqFromMongo(const uint64_t userId, int64_t afterSeq,
                                     int limit) {
   std::vector<sdkws::MsgData> results;
+  if (limit <= 0 || !userId) return results;
   try {
     auto &mongoconnector = MongoConnector::instance();
     auto client = mongoconnector.acquire_client();
@@ -176,6 +144,14 @@ MongoHandler::GetMsgsBySeqFromMongo(const uint64_t userId, int64_t afterSeq,
     bsoncxx::builder::stream::document filter{};
     filter << "recvID" << static_cast<int64_t>(userId) << "seq"
            << bsoncxx::builder::stream::open_document << "$gt" << afterSeq
+           << bsoncxx::builder::stream::close_document;
+    // 此查询只为单聊恢复提供严格升序候选；新群聊由 GroupService 独立同步。
+    filter << "isGroupMsg" << bsoncxx::builder::stream::open_document << "$ne" << true
+           << bsoncxx::builder::stream::close_document;
+    filter << "sessionType" << 1;
+    filter << "committed" << bsoncxx::builder::stream::open_document << "$ne" << false
+           << bsoncxx::builder::stream::close_document;
+    filter << "status" << bsoncxx::builder::stream::open_document << "$ne" << 2
            << bsoncxx::builder::stream::close_document;
 
     mongocxx::options::find opts{};
@@ -187,34 +163,11 @@ MongoHandler::GetMsgsBySeqFromMongo(const uint64_t userId, int64_t afterSeq,
 
     for (auto &&doc : cursor) {
       try {
-        sdkws::MsgData msg;
-        if (auto e = doc["serverMsgID"])
-          msg.set_servermsgid(std::string{e.get_string().value});
-        if (auto e = doc["sendID"])
-          msg.set_sendid(e.get_int64().value);
-        if (auto e = doc["recvID"])
-          msg.set_recvid(e.get_int64().value);
-        if (auto e = doc["convID"])
-          msg.set_convid(std::string{e.get_string().value});
-        if (auto e = doc["clientMsgID"])
-          msg.set_clientmsgid(std::string{e.get_string().value});
-        if (auto e = doc["senderNickname"])
-          msg.set_sendernickname(std::string{e.get_string().value});
-        if (auto e = doc["sessionType"])
-          msg.set_sessiontype(std::int32_t{e.get_int32().value});
-        if (auto e = doc["contentType"])
-          msg.set_contenttype(std::int32_t{e.get_int32().value});
-        if (auto e = doc["content"])
-          msg.set_content(std::string{e.get_string().value});
-        if (auto e = doc["seq"])
-          msg.set_seq(e.get_int64().value);
-        if (auto e = doc["sendTime"])
-          msg.set_sendtime(double{e.get_double().value});
-        if (auto e = doc["isGroupMsg"])
-          msg.set_isgroupmsg(e.get_bool().value);
+        auto msg = DecodeMessage(doc);
         results.push_back(std::move(msg));
       } catch (...) {
         spdlog::error("GetMsgsBySeqFromMongo parse failed for user={}", userId);
+        throw;
       }
     }
 
@@ -224,7 +177,7 @@ MongoHandler::GetMsgsBySeqFromMongo(const uint64_t userId, int64_t afterSeq,
   } catch (const mongocxx::exception &e) {
     spdlog::error("GetMsgsBySeqFromMongo exception: {}, userId={}", e.what(),
                   userId);
-    return results;
+    throw;
   }
 }
 
@@ -262,9 +215,9 @@ bool MongoHandler::MarkMsgsAsDelivered(const uint64_t userId,
 // ==================== 异步版本（IOCPool worker 卸载） ====================
 
 boost::asio::awaitable<bool>
-MongoHandler::SaveMsgToMongoAsync(sdkws::MsgData msg) {
+MongoHandler::SaveMsgToMongoAsync(sdkws::MsgData msg, bool committed) {
   co_return co_await MongoConnector::instance().async_run(
-      [msg = std::move(msg)]() mutable { return SaveMsgToMongo(msg); });
+      [msg = std::move(msg), committed]() mutable { return SaveMsgToMongo(msg, committed); });
 }
 
 boost::asio::awaitable<std::optional<sdkws::MsgData>>
@@ -297,352 +250,137 @@ MongoHandler::MarkMsgsAsDeliveredAsync(uint64_t userId,
       });
 }
 
-bool MongoHandler::MarkMsgAsDelivered(const std::string &serverMsgID) {
-  try {
-    auto &mongoconnector = MongoConnector::instance();
-    auto client = mongoconnector.acquire_client();
-    auto collection = (*client)["IM-System"]["msg"];
-    bsoncxx::builder::stream::document filter{};
-    filter << "serverMsgID" << serverMsgID;
-    bsoncxx::builder::stream::document update{};
-    update << "$set" << bsoncxx::builder::stream::open_document << "status" << 2
-           << bsoncxx::builder::stream::close_document;
-    collection.update_one(filter.view(), update.view());
-    spdlog::info("MarkMsgAsDelivered success, serverMsgID={}", serverMsgID);
-    return true;
-  } catch (const mongocxx::exception &e) {
-    spdlog::error("MarkMsgAsDelivered exception: {}, serverMsgID={}", e.what(),
-                  serverMsgID);
-    return false;
-  }
-}
-
-bool MongoHandler::MarkMsgAsPushFailed(const std::string &serverMsgID) {
-  try {
-    auto &mongoconnector = MongoConnector::instance();
-    auto client = mongoconnector.acquire_client();
-    auto collection = (*client)["IM-System"]["msg"];
-    bsoncxx::builder::stream::document filter{};
-    filter << "serverMsgID" << serverMsgID;
-    bsoncxx::builder::stream::document update{};
-    update << "$set" << bsoncxx::builder::stream::open_document << "status" << 3
-           << bsoncxx::builder::stream::close_document << "$bit"
-           << bsoncxx::builder::stream::open_document << "dStatus"
-           << bsoncxx::builder::stream::open_document << "or" << 1
-           << bsoncxx::builder::stream::close_document
-           << bsoncxx::builder::stream::close_document;
-    collection.update_one(filter.view(), update.view());
-    spdlog::info("MarkMsgAsPushFailed success, serverMsgID={}", serverMsgID);
-    return true;
-  } catch (const mongocxx::exception &e) {
-    spdlog::error("MarkMsgAsPushFailed exception: {}, serverMsgID={}", e.what(),
-                  serverMsgID);
-    return false;
-  }
-}
-
-bool MongoHandler::MarkMsgAsOffline(const std::string &serverMsgID) {
-  try {
-    auto &mongoconnector = MongoConnector::instance();
-    auto client = mongoconnector.acquire_client();
-    auto collection = (*client)["IM-System"]["msg"];
-    bsoncxx::builder::stream::document filter{};
-    filter << "serverMsgID" << serverMsgID;
-    bsoncxx::builder::stream::document update{};
-    update << "$bit" << bsoncxx::builder::stream::open_document << "dStatus"
-           << bsoncxx::builder::stream::open_document << "or" << 1
-           << bsoncxx::builder::stream::close_document
-           << bsoncxx::builder::stream::close_document;
-    collection.update_one(filter.view(), update.view());
-    spdlog::info("MarkMsgAsOffline success, serverMsgID={}", serverMsgID);
-    return true;
-  } catch (const mongocxx::exception &e) {
-    spdlog::error("MarkMsgAsOffline exception: {}, serverMsgID={}", e.what(),
-                  serverMsgID);
-    return false;
-  }
-}
-
-boost::asio::awaitable<bool>
-MongoHandler::MarkMsgAsDeliveredAsync(std::string serverMsgID) {
-  co_return co_await MongoConnector::instance().async_run(
-      [serverMsgID = std::move(serverMsgID)]() {
-        return MarkMsgAsDelivered(serverMsgID);
-      });
-}
-
-boost::asio::awaitable<bool>
-MongoHandler::MarkMsgAsPushFailedAsync(std::string serverMsgID) {
-  co_return co_await MongoConnector::instance().async_run(
-      [serverMsgID = std::move(serverMsgID)]() {
-        return MarkMsgAsPushFailed(serverMsgID);
-      });
-}
-
-boost::asio::awaitable<bool>
-MongoHandler::MarkMsgAsOfflineAsync(std::string serverMsgID) {
-  co_return co_await MongoConnector::instance().async_run(
-      [serverMsgID = std::move(serverMsgID)]() {
-        return MarkMsgAsOffline(serverMsgID);
-      });
-}
-
-// ==================== 已消费检查（幂等兜底） ====================
-
-bool MongoHandler::IsMsgAlreadyConsumed(const std::string &serverMsgID) {
-  try {
-    auto &mongoconnector = MongoConnector::instance();
-    auto client = mongoconnector.acquire_client();
-    auto collection = (*client)["IM-System"]["msg"];
-
-    bsoncxx::builder::stream::document filter{};
-    filter << "serverMsgID" << serverMsgID;
-
-    mongocxx::options::find opts{};
-    opts.limit(1);
-    // 只取 status 和 dStatus 字段，减少 IO
-    opts.projection(bsoncxx::builder::stream::document{}
-                    << "status" << 1 << "dStatus" << 1 << "_id" << 0
-                    << bsoncxx::builder::stream::finalize);
-
-    auto cursor = collection.find(filter.view(), opts);
-    auto it = cursor.begin();
-    if (it == cursor.end()) {
-      spdlog::warn("IsMsgAlreadyConsumed: msg not found, serverMsgID={}",
-                   serverMsgID);
-      return false; // 消息不存在，视为非终态
-    }
-
-    auto doc = *it;
-    int32_t status = 0;
-    int32_t dStatus = 0;
-    if (auto e = doc["status"]) {
-      status = e.get_int32().value;
-    }
-    if (auto e = doc["dStatus"]) {
-      dStatus = e.get_int32().value;
-    }
-    // status >= 2（已送达/失败/删除/撤回）或 dStatus bit0=1（已标记离线）
-    return status >= 2 || (dStatus & 1) != 0;
-  } catch (const mongocxx::exception &e) {
-    spdlog::error("IsMsgAlreadyConsumed exception: {}, serverMsgID={}",
-                  e.what(), serverMsgID);
-    return false; // MongoDB 异常时返回 false，宁重复不丢
-  }
-}
-
-boost::asio::awaitable<bool>
-MongoHandler::IsMsgAlreadyConsumedAsync(std::string serverMsgID) {
-  co_return co_await MongoConnector::instance().async_run(
-      [serverMsgID = std::move(serverMsgID)]() {
-        return IsMsgAlreadyConsumed(serverMsgID);
-      });
-}
-
-// ==================== 会话管理 ====================
-
-bool MongoHandler::DoesConversationExist(const std::string &convID) {
-  try {
-    auto &mongoconnector = MongoConnector::instance();
-    auto client = mongoconnector.acquire_client();
-    auto collection = (*client)["IM-System"]["conversations"];
-
-    bsoncxx::builder::stream::document filter{};
-    filter << "conversationID" << convID;
-
-    int64_t count = collection.count_documents(filter.view());
-    return count > 0;
-  } catch (const mongocxx::exception &e) {
-    spdlog::error("DoesConversationExist exception: {}, convID = {} ", e.what(), convID);
-    return false;
-  }
-}
-
-boost::asio::awaitable<bool>
-MongoHandler::DoesConversationExistAsync(std::string convID) {
-  co_return co_await MongoConnector::instance().async_run(
-      [convID = std::move(convID)]() { return DoesConversationExist(convID); });
-}
-
-bool MongoHandler::CreateSingleChatConversations(const uint64_t sendID,
-                                                 const uint64_t recvID,
-                                                 const std::string &convID) {
-  try {
-    auto &mongoconnector = MongoConnector::instance();
-    auto client = mongoconnector.acquire_client();
-    auto collection = (*client)["IM-System"]["conversations"];
-
-    // 为双方各创建一条 Conversation 记录（同一 convID，不同 ownerUserID）
-    struct {
-      uint64_t owner;
-      uint64_t user;
-    } records[2] = {{sendID, recvID}, {recvID, sendID}};
-
-    for (const auto &r : records) {
-      bsoncxx::builder::stream::document filter{};
-      filter << "ownerUserID" << static_cast<int64_t>(r.owner) << "conversationID" << convID;
-
-      bsoncxx::builder::stream::document doc{};
-      doc << "ownerUserID" << static_cast<int64_t>(r.owner) << "conversationID" << convID
-          << "conversationType" << 1 // 单聊
-          << "userID" << static_cast<int64_t>(r.user) << "groupID"
-          << ""
-          << "isPinned" << false << "isPrivateChat" << false << "recvMsgOpt"
-          << 0 << "groupAtType" << 0 << "burnDuration" << 0 << "minSeq"
-          << int64_t{0} << "maxSeq" << int64_t{0} << "msgDestructTime"
-          << int64_t{0} << "latestMsgDestructTime" << int64_t{0}
-          << "isMsgDestruct" << false << "ex"
-          << ""
-          << "attachedInfo"
-          << "";
-
-      bsoncxx::builder::stream::document update{};
-      update << "$setOnInsert" << doc.view();
-
-      mongocxx::options::update opts{};
-      opts.upsert(true);
-      collection.update_one(filter.view(), update.view(), opts);
-    }
-
-    spdlog::info(
-        "CreateSingleChatConversations: convID={}, sendID={}, recvID={}",
-        convID, sendID, recvID);
-    return true;
-  } catch (const mongocxx::exception &e) {
-    spdlog::error("CreateSingleChatConversations exception: {}", e.what());
-    return false;
-  }
-}
-
-boost::asio::awaitable<bool> MongoHandler::CreateSingleChatConversationsAsync(
-    uint64_t sendID, uint64_t recvID, std::string convID) {
-  co_return co_await MongoConnector::instance().async_run(
-      [sendID = std::move(sendID), recvID = std::move(recvID),
-       convID = std::move(convID)]() {
-        return CreateSingleChatConversations(sendID, recvID, convID);
-      });
-}
-
-// ── 创建群聊会话 ──
-
-bool MongoHandler::CreateGroupChatConversations(
-    const std::string &groupID, const std::vector<uint64_t> &userIDs) {
-  try {
-    auto &mongoconnector = MongoConnector::instance();
-    auto client = mongoconnector.acquire_client();
-    auto collection = (*client)["IM-System"]["conversations"];
-
-    for (const auto &uid : userIDs) {
-      bsoncxx::builder::stream::document filter{};
-      filter << "ownerUserID" << static_cast<int64_t>(uid) << "conversationID" << groupID;
-
-      bsoncxx::builder::stream::document doc{};
-      doc << "ownerUserID" << static_cast<int64_t>(uid) << "conversationID" << groupID
-          << "conversationType" << 2 // 群聊
-          << "userID" << static_cast<int64_t>(uid) << "groupID" << groupID << "isPinned" << false
-          << "isPrivateChat" << false << "recvMsgOpt" << 0 << "groupAtType" << 0
-          << "burnDuration" << 0 << "minSeq" << int64_t{0} << "maxSeq"
-          << int64_t{0} << "msgDestructTime" << int64_t{0}
-          << "latestMsgDestructTime" << int64_t{0} << "isMsgDestruct" << false
-          << "ex"
-          << ""
-          << "attachedInfo"
-          << "";
-
-      bsoncxx::builder::stream::document update{};
-      update << "$setOnInsert" << doc.view();
-
-      mongocxx::options::update opts{};
-      opts.upsert(true);
-      collection.update_one(filter.view(), update.view(), opts);
-    }
-
-    spdlog::info("CreateGroupChatConversations: groupID={}, memberCount={}",
-                 groupID, userIDs.size());
-    return true;
-  } catch (const mongocxx::exception &e) {
-    spdlog::error("CreateGroupChatConversations exception: {}, convID = {}", e.what(), groupID);
-    return false;
-  }
-}
-
-boost::asio::awaitable<bool> MongoHandler::CreateGroupChatConversationsAsync(
-    std::string groupID, std::vector<uint64_t> userIDs) {
-  co_return co_await MongoConnector::instance().async_run(
-      [groupID = std::move(groupID), userIDs = std::move(userIDs)]() {
-        return CreateGroupChatConversations(groupID, userIDs);
-      });
-}
-
-// ── 按群 ID 列表批量查询群消息 ──
-
-std::vector<sdkws::MsgData> MongoHandler::GetGroupMsgsBySeqFromMongo(
-    const std::vector<std::string> &groupIDs, int64_t afterSeq, int limit) {
-  std::vector<sdkws::MsgData> messages;
-  if (groupIDs.empty())
-    return messages;
-
-  try {
-    auto &mongoconnector = MongoConnector::instance();
-    auto client = mongoconnector.acquire_client();
-    auto collection = (*client)["IM-System"]["msg"];
-
-    using bsoncxx::builder::stream::close_array;
-    using bsoncxx::builder::stream::close_document;
-    using bsoncxx::builder::stream::document;
-    using bsoncxx::builder::stream::open_array;
-    using bsoncxx::builder::stream::open_document;
-
-    // Build $in array for groupIDs
-    bsoncxx::builder::stream::array group_array;
-    for (const auto &gid : groupIDs) {
-      group_array << gid;
-    }
-
-    document filter{};
-    filter << "isGroupMsg" << true << "convID" << open_document << "$in"
-           << group_array.view() << close_document << "seq" << open_document
-           << "$gt" << afterSeq << close_document;
-
-    mongocxx::options::find opts{};
-    opts.limit(limit);
-    opts.sort(document{} << "seq" << int32_t{1}
-                         << bsoncxx::builder::stream::finalize);
-
-    auto cursor = collection.find(filter.view(), opts);
-    for (auto &doc : cursor) {
-      try {
-        sdkws::MsgData msg;
-        auto json = bsoncxx::to_json(doc);
-        auto parseStatus =
-            google::protobuf::util::JsonStringToMessage(json, &msg);
-        if (!parseStatus.ok()) {
-          spdlog::warn(
-              "GetGroupMsgsBySeqFromMongo: JsonStringToMessage failed: {}",
-              parseStatus.message());
-          continue;
+namespace {
+boost::asio::awaitable<std::vector<std::string>>
+singleChatHistory(std::string conversation, bool erase, int64_t cutoff)
+{
+    co_return co_await MongoConnector::instance().async_run([conversation, erase, cutoff] {
+        using bsoncxx::builder::basic::kvp;
+        using bsoncxx::builder::basic::make_document;
+        auto client = MongoConnector::instance().acquire_client();
+        auto db = (*client)["IM-System"];
+        auto filter = make_document(kvp("convID", conversation), kvp("isGroupMsg", false),
+            kvp("seq", make_document(kvp("$lte", cutoff))));
+        std::vector<std::string> ids;
+        for (auto doc : db["msg"].find(filter.view())) {
+            if (auto id = doc["serverMsgID"])
+                ids.emplace_back(id.get_string().value);
         }
-        messages.push_back(std::move(msg));
-      } catch (const std::exception &e) {
-        spdlog::warn("GetGroupMsgsBySeqFromMongo: parse error: {}", e.what());
-      }
-    }
-
-    spdlog::debug(
-        "GetGroupMsgsBySeqFromMongo: groupIDs.size()={}, afterSeq={}, "
-        "found={}",
-        groupIDs.size(), afterSeq, messages.size());
-  } catch (const mongocxx::exception &e) {
-    spdlog::error("GetGroupMsgsBySeqFromMongo exception: {}", e.what());
-  }
-  return messages;
+        if (erase && !db["msg"].delete_many(filter.view()))
+            throw std::runtime_error("Unable to delete MongoDB chat messages");
+        return ids;
+    });
 }
 
-boost::asio::awaitable<std::vector<sdkws::MsgData>>
-MongoHandler::GetGroupMsgsBySeqFromMongoAsync(std::vector<std::string> groupIDs,
-                                              int64_t afterSeq, int limit) {
-  co_return co_await MongoConnector::instance().async_run(
-      [groupIDs = std::move(groupIDs), afterSeq, limit]() {
-        return GetGroupMsgsBySeqFromMongo(groupIDs, afterSeq, limit);
-      });
+}
+boost::asio::awaitable<std::vector<std::string>> MongoHandler::GetSingleChatMessageIDsAsync(std::string conversation, int64_t cutoff)
+{
+    co_return co_await singleChatHistory(std::move(conversation), false, cutoff);
+}
+boost::asio::awaitable<std::vector<sdkws::MsgData>> MongoHandler::GetSingleChatHistoryAsync(
+    std::string conversation, int64_t afterSeq, int limit)
+{
+    co_return co_await MongoConnector::instance().async_run(
+        [conversation = std::move(conversation), afterSeq, limit] {
+            using bsoncxx::builder::basic::kvp;
+            using bsoncxx::builder::basic::make_document;
+            auto client = MongoConnector::instance().acquire_client();
+            auto collection = (*client)["IM-System"]["msg"];
+            auto filter = make_document(kvp("convID", conversation), kvp("isGroupMsg", false),
+                kvp("committed", make_document(kvp("$ne", false))),
+                kvp("seq", make_document(kvp("$gt", afterSeq))));
+            mongocxx::options::find options;
+            options.limit(limit);
+            options.sort(make_document(kvp("seq", 1)));
+            std::vector<sdkws::MsgData> result;
+            for (auto doc : collection.find(filter.view(), options)) {
+                sdkws::MsgData message;
+                if (auto field = doc["serverMsgID"])
+                    message.set_servermsgid(std::string(field.get_string().value));
+                if (auto field = doc["clientMsgID"])
+                    message.set_clientmsgid(std::string(field.get_string().value));
+                if (auto field = doc["sendID"])
+                    message.set_sendid(field.get_int64().value);
+                if (auto field = doc["recvID"])
+                    message.set_recvid(field.get_int64().value);
+                if (auto field = doc["seq"])
+                    message.set_seq(field.get_int64().value);
+                if (auto field = doc["sendTime"]) {
+                    if (field.type() == bsoncxx::type::k_double)
+                        message.set_sendtime(field.get_double().value);
+                    else if (field.type() == bsoncxx::type::k_int64)
+                        message.set_sendtime(field.get_int64().value);
+                }
+                if (auto field = doc["contentType"])
+                    message.set_contenttype(field.get_int32().value);
+                if (auto field = doc["content"])
+                    message.set_content(std::string(field.get_string().value));
+                if (auto field = doc["senderNickname"])
+                    message.set_sendernickname(std::string(field.get_string().value));
+                message.set_convid(conversation);
+                message.set_sessiontype(1);
+                result.push_back(std::move(message));
+            }
+            return result;
+        });
+}
+boost::asio::awaitable<std::vector<std::string>> MongoHandler::DeleteSingleChatHistoryAsync(std::string conversation, int64_t cutoff)
+{
+    co_return co_await singleChatHistory(std::move(conversation), true, cutoff);
+}
+
+boost::asio::awaitable<void> MongoHandler::PublishMessage(std::string serverId)
+{
+    co_await MongoConnector::instance().async_run([serverId = std::move(serverId)] {
+        using bsoncxx::builder::basic::kvp;
+        using bsoncxx::builder::basic::make_document;
+        auto client = MongoConnector::instance().acquire_client();
+        auto filter = make_document(kvp("serverMsgID", serverId));
+        auto update = make_document(kvp("$set", make_document(kvp("committed", true))));
+        auto result = (*client)["IM-System"]["msg"].update_one(filter.view(), update.view());
+        if (!result || result->matched_count() == 0)
+            throw std::runtime_error("Message body is missing");
+    });
+}
+
+sdkws::MsgData MongoHandler::DecodeMessage(bsoncxx::document::view doc) {
+    sdkws::MsgData message;
+    auto integer=[](bsoncxx::document::element element)->int64_t {
+        if(element.type()==bsoncxx::type::k_int64) return element.get_int64().value;
+        if(element.type()==bsoncxx::type::k_int32) return element.get_int32().value;
+        if(element.type()==bsoncxx::type::k_double) {
+            auto value=element.get_double().value;
+            if(std::isfinite(value) && std::trunc(value)==value && value>=0 && value<9223372036854775808.0)
+                return static_cast<int64_t>(value);
+        }
+        throw std::runtime_error("Invalid numeric message metadata");
+    };
+#define READ_STRING(field,setter) if(auto value=doc[field]) message.setter(std::string{value.get_string().value});
+#define READ_INTEGER(field,setter) if(auto value=doc[field]) message.setter(integer(value));
+#define READ_BOOL(field,setter) if(auto value=doc[field]) message.setter(value.get_bool().value);
+    READ_STRING("serverMsgID",set_servermsgid)
+    READ_STRING("convID",set_convid)
+    READ_STRING("clientMsgID",set_clientmsgid)
+    READ_STRING("senderNickname",set_sendernickname)
+    READ_STRING("senderFaceURL",set_senderfaceurl)
+    READ_STRING("content",set_content)
+    READ_STRING("ext",set_ext)
+    READ_INTEGER("sendID",set_sendid)
+    READ_INTEGER("recvID",set_recvid)
+    READ_INTEGER("seq",set_seq)
+    READ_INTEGER("sendTime",set_sendtime)
+    READ_INTEGER("senderPlatformID",set_senderplatformid)
+    READ_INTEGER("sessionType",set_sessiontype)
+    READ_INTEGER("msgFrom",set_msgfrom)
+    READ_INTEGER("contentType",set_contenttype)
+    READ_INTEGER("status",set_status)
+    READ_BOOL("isRead",set_isread)
+    READ_BOOL("isDeleted",set_isdeleted)
+    READ_BOOL("isRecalled",set_isrecalled)
+    READ_BOOL("isPinned",set_ispinned)
+    READ_BOOL("isGroupMsg",set_isgroupmsg)
+#undef READ_STRING
+#undef READ_INTEGER
+#undef READ_BOOL
+    return message;
 }

@@ -33,6 +33,7 @@ public:
 
     // 投递消息（实现 IMessageProducer 接口）
     bool deliver(std::string& key, void* payload, size_t payloadSize) override;
+    boost::asio::awaitable<bool> deliverConfirmed(std::string key, std::string payload) override;
 
     // 析构函数：释放资源
     ~KafkaProducer();

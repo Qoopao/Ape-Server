@@ -23,10 +23,10 @@ find_package(OpenSSL REQUIRED)
 find_package(opentelemetry-cpp CONFIG REQUIRED)
 
 # 收集所有 src 下的 .cpp
-file(GLOB_RECURSE ALL_IMPL_FILE "src/*.cpp")
+file(GLOB_RECURSE ALL_IMPL_FILE CONFIGURE_DEPENDS "src/*.cpp")
 
 # 收集src下protobuf生成的cc文件
-file(GLOB_RECURSE PROTO_CC_FILE "src/proto/*.cc")
+file(GLOB_RECURSE PROTO_CC_FILE CONFIGURE_DEPENDS "src/proto/*.cc")
 
 list(APPEND ALL_IMPL_FILE ${PROTO_CC_FILE})
 
@@ -99,6 +99,24 @@ target_link_libraries(main PRIVATE ape-server)
 # target_link_libraries(stress_test PRIVATE ape-server)
 
 option(APE_REGISTRATION_TESTS "Build isolated MySQL registration integration tests" OFF)
+option(APE_GROUP_TESTS "Build isolated group chat integration tests" OFF)
+option(APE_MONGO_INDEX_TESTS "Build MongoDB index compatibility tests" OFF)
+option(APE_OFFLINE_LOGIN_TESTS "Build offline-login regression tests" OFF)
+if(APE_OFFLINE_LOGIN_TESTS)
+    add_executable(offline_disconnect_test test/offline_disconnect_test.cpp)
+    target_link_libraries(offline_disconnect_test PRIVATE ape-server)
+    add_executable(offline_login_test test/offline_login_test.cpp)
+    target_link_libraries(offline_login_test PRIVATE ape-server)
+endif()
+if(APE_MONGO_INDEX_TESTS)
+    add_executable(mongo_indexes_test test/mongo_indexes_test.cpp src/storage/mongoconnector.cpp)
+    target_include_directories(mongo_indexes_test PRIVATE include)
+    target_link_libraries(mongo_indexes_test PRIVATE mongo::mongocxx_static mongo::bsoncxx_static utf8proc::utf8proc Boost::asio Boost::thread spdlog::spdlog)
+endif()
+if(APE_GROUP_TESTS)
+    add_executable(group_integration test/group_integration.cpp)
+    target_link_libraries(group_integration PRIVATE ape-server)
+endif()
 if(APE_REGISTRATION_TESTS)
     add_executable(registration_integration test/registration_integration.cpp)
     target_link_libraries(registration_integration PRIVATE ape-server)

@@ -567,15 +567,19 @@ RedisConnector::eval(const std::string& script,
     co_await boost::asio::dispatch(
         boost::asio::bind_executor(ioc.get_executor(), boost::asio::use_awaitable));
 
-    boost::redis::request req;
-    req.push("EVAL", script, std::to_string(keys.size()));
-    for (const auto& k : keys) {
-        req.push(k);
-    }
-    for (const auto& a : args) {
-        req.push(a);
-    }
+    auto req = MakeEvalRequest(script,keys,args);
     boost::redis::response<long long> resp;
     co_await conn.async_exec(req, resp, boost::asio::use_awaitable);
     co_return std::get<0>(resp).value();
+}
+
+boost::redis::request RedisConnector::MakeEvalRequest(const std::string& script,
+    const std::vector<std::string>& keys,const std::vector<std::string>& args) {
+    boost::redis::request req;
+    std::vector<std::string> parameters{script, std::to_string(keys.size())};
+    parameters.insert(parameters.end(), keys.begin(), keys.end());
+    parameters.insert(parameters.end(), args.begin(), args.end());
+    // push() adds a command, not an argument to the preceding command.
+    req.push_range("EVAL", parameters);
+    return req;
 }

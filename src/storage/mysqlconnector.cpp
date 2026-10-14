@@ -21,7 +21,7 @@ MySQLConnector::~MySQLConnector()
     stop();
 }
 
-void MySQLConnector::start(int pool_size)
+void MySQLConnector::start(int pool_size, const boost::mysql::pool_params* settings)
 {
     if (_running)
     {
@@ -45,6 +45,11 @@ void MySQLConnector::start(int pool_size)
         params.password = "ape_password";
         params.database = "ape_auth";
         params.ssl = boost::mysql::ssl_mode::disable;
+        if(settings) {
+            params.server_address=settings->server_address;
+            params.username=settings->username; params.password=settings->password;
+            params.database=settings->database; params.ssl=settings->ssl;
+        }
 
         // 按 worker 数等分连接上限，避免总连接数膨胀
         // 每个 pool 至少保留 1 个 initial / 2 个 max

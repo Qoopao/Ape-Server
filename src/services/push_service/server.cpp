@@ -6,8 +6,10 @@
 #include "services/push_service/push_msg_handler.h"
 #include "storage/mongohandler.h"
 #include "storage/mysqlhandler.h"
+#include "storage/mysqlconnector.h"
 #include "storage/redisconnector.h"
 #include "storage/redishandler.h"
+#include "storage/mysqlhandler.h"
 #include <chrono>
 #include <cstdint>
 #include <spdlog/spdlog.h>
@@ -52,11 +54,7 @@ void PushServer::Start() {
     spdlog::info("PushServer: consumer started in background thread");
   }
 
-  // 启动后台协程：定期扫描超时的在线 pending_ack，回退到离线存储
-  boost::asio::co_spawn(RedisConnector::instance().get_executor(),
-                        CheckExpiredPendingAck(), boost::asio::detached);
-  spdlog::info(
-      "PushServer: CheckExpiredPendingAck background coroutine started");
+
 }
 
 ::grpc::ServerUnaryReactor *
@@ -89,25 +87,11 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
       "[PushService] PushMsg sender={} - token validation deferred (TODO)",
       msgData.sendid());
 
-  // ── 群聊/单聊 推送分流 ──
-  // 前置：MsgService.SendMessages 已完成：
-  //   - 小群（≤200）：MongoDB + 批量 per-user ZSET + 1 条 Kafka 消息
-  //   - 大群（>200）：MongoDB + 批量 per-user ZSET（不走 Kafka，纯 pull）
-  //   - 单聊：MongoDB + Redis ZSET + Kafka 消息
-  // PushService 仅处理小群和单聊消息的实时推送。大群消息不会到达此处。
-  // 前置：SendMessages 已完成 MongoDB(IM-System.msg, status=1) + Redis 落库。
-  //
-  //   recvOnline? ─Yes→ 尝试 Gateway 推送
-  //     │                    ↓
-  //     │              pushed? ─Yes→ pending_ack:online (等 ACK → status=2)
-  //     │                    ↓
-  //     │                    No/异常 → status=3, dStatus|=1, pending_ack:offline
-  //     ↓
-  //     No → dStatus|=1, pending_ack:offline (等 ACK → status=2)
-  //
-  // CheckExpiredPendingAck 定时扫描 deadlines → 超时未 ACK 降级为 offline pending_ack。
-  //
-  // AckMsg(延迟双删): ZREM → MarkMsgsAsDelivered(status=2) → sleep(500ms) → ZREM
+  // 单聊前置：Outbox 已提交正文和会话，并发布正文、保存 Redis 离线数据。
+  // PushMsg 只尝试在线分发；离线或网关未接受时，依靠登录同步恢复未 ACK 消息。
+  // gRPC OK 表示分发处理结束，不代表客户端已收到；消费者随后记录 dispatch_done。
+  // 接收完成以 MySQL ACK 回执为准，Mongo status=2 由 ACK 清理任务异步更新。
+  // 新群聊使用 GroupService 的独立投递链路，本接口拒绝旧群事件。
 
   // 预初始化 GatewayPushClient
   getGatewayPushClient();
@@ -120,247 +104,56 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
        conversationID = std::move(conversationID),
        pushClient]() -> boost::asio::awaitable<void> {
 
-        // ── 群聊推送：大小群分流 ──
+        // GroupService owns group delivery. Reject the retired Kafka group path.
         if (msgData.isgroupmsg()) {
-          std::string groupID = conversationID;
-          spdlog::info("PushServer::PushMsg: group msg for group={}, "
-                       "serverMsgID={}",
-                       groupID, msgData.servermsgid());
-
-          // 1. 获取群成员数（Redis 优先，MySQL 兜底）
-          int64_t memberCount = 0;
-          try {
-            memberCount = co_await RedisHandler::GetGroupMemberCountFromCache(
-                groupID);
-          } catch (...) {}
-          if (memberCount == 0) {
-            memberCount = co_await MySQLHandler::GetGroupMemberCount(groupID);
-            // 回填 Redis 缓存，避免下次再穿透 MySQL
-            if (memberCount > 0) {
-              try {
-                auto members =
-                    co_await MySQLHandler::GetGroupMembers(groupID, 0, 10000);
-                std::vector<uint64_t> ids;
-                for (const auto &m : members)
-                  ids.push_back(m.userid());
-                co_await RedisHandler::CacheGroupMembers(groupID, ids);
-              } catch (...) {}
-            }
-          }
-
-          // 2. 大小群阈值判断
-          int64_t threshold = 200;
-          if (memberCount > threshold) {
-            spdlog::info("PushServer::PushMsg: big group ({} > {}), pull-only, "
-                         "group={}",
-                         memberCount, threshold, groupID);
-            reactor->Finish(::grpc::Status::OK);
-            co_return;
-          }
-
-          // 3. 小群：获取成员列表，逐个推在线成员（排除发送者）
-          std::vector<uint64_t> memberIDs;
-          try {
-            memberIDs =
-                co_await RedisHandler::GetGroupMembersFromCache(groupID);
-          } catch (...) {}
-          if (memberIDs.empty()) {
-            auto members =
-                co_await MySQLHandler::GetGroupMembers(groupID, 0, 10000);
-            for (const auto &m : members)
-              memberIDs.push_back(m.userid());
-            // 回填 Redis 缓存
-            if (!memberIDs.empty()) {
-              try {
-                co_await RedisHandler::CacheGroupMembers(groupID, memberIDs);
-              } catch (...) {}
-            }
-          }
-
-          std::string serverMsgID = msgData.servermsgid();
-          std::string msgDataBin = msgData.SerializeAsString();
-          uint64_t senderID = msgData.sendid();
-          std::string ackKey = "pending_ack:online:" + serverMsgID;
-          int onlineCount = 0;
-
-          for (const auto &memberID : memberIDs) {
-            if (memberID == senderID)
-              continue;
-
-            bool online = false;
-            try {
-              auto val = co_await RedisConnector::instance().get(
-                  "user:" + std::to_string(memberID) + ":online");
-              online = (val && (*val == "1" || *val == "true"));
-            } catch (...) {}
-
-            if (online) {
-              try {
-                bool pushed = co_await pushClient->PushToUser(
-                    memberID, msgDataBin, conversationID);
-                if (pushed) {
-                  co_await RedisConnector::instance().sadd(ackKey, std::to_string(memberID));
-                  onlineCount++;
-                }
-              } catch (const std::exception &e) {
-                spdlog::error("PushServer::PushMsg: push to {} failed: {}",
-                              memberID, e.what());
-              }
-            }
-          }
-
-          if (onlineCount > 0) {
-            co_await RedisConnector::instance().expire(ackKey, 300);
-            int64_t deadline = std::chrono::duration_cast<std::chrono::seconds>(
-                                   std::chrono::system_clock::now()
-                                       .time_since_epoch())
-                                   .count() +
-                               300;
-            co_await RedisConnector::instance().zadd(
-                "pending_ack:deadlines", deadline, serverMsgID);
-            spdlog::info("PushServer::PushMsg: group push done, group={}, "
-                         "onlineCount={}, totalMembers={}",
-                         groupID, onlineCount, memberIDs.size());
-          }
-
-          // 缓存 convID 映射
-          co_await RedisConnector::instance().set(
-              "msg_conv:" + serverMsgID, conversationID);
-          co_await RedisConnector::instance().expire(
-              "msg_conv:" + serverMsgID, 7 * 86400);
-
-          reactor->Finish(::grpc::Status::OK);
+          reactor->Finish(grpc::Status(grpc::StatusCode::UNIMPLEMENTED,
+                                      "Use GroupService Execute for group messages"));
           co_return;
         }
 
         // ── 单聊推送 ──
-        bool recvOnline = false;
-
-        // 查 Redis 在线状态
         try {
-          auto onlineVal = co_await RedisConnector::instance().get(
-              "user:" + std::to_string(msgData.recvid()) + ":online");
-          if (onlineVal) {
-            recvOnline = (*onlineVal == "1" || *onlineVal == "true");
-          }
+          const auto allowed = co_await MySQLHandler::WithFriendMessage(msgData,
+              [&]() -> boost::asio::awaitable<void> {
+                const auto recvID = msgData.recvid();
+                const auto& serverMsgID = msgData.servermsgid();
+
+                // Redis 查询异常必须向上传播：不能把依赖故障误判成用户离线，
+                // 否则消费者会错误确认分发完成，停止 Outbox 的分发重试。
+                const auto online = co_await RedisConnector::instance().get(
+                    "user:" + std::to_string(recvID) + ":online");
+                const bool recvOnline = online && (*online == "1" || *online == "true");
+
+                bool pushed = false;
+                if (recvOnline) {
+                  // 在线标记只是快照，调用网关时用户可能已经断线。
+                  // GatewayPushClient 对 RPC 失败也返回 false，表示本次未确认
+                  // 在线投递，转由已持久化的离线恢复兜底；抛出的异常向上传播。
+                  pushed = co_await pushClient->PushToUser(
+                      recvID, msgData.SerializeAsString(), conversationID);
+                }
+
+                if (pushed) {
+                  // 网关接受不等于客户端落盘。接收确认由 MySQL 回执记录，
+                  // 无需创建旧 pending_ack Redis 元数据；未确认消息由登录恢复。
+                  spdlog::info("PushService: gateway accepted message={}, receiver={}, awaiting ACK",
+                               serverMsgID, recvID);
+                } else {
+                  // 无需再次写 dStatus、pending_ack:offline 或延迟双删正文缓存。
+                  // 正文已在 Kafka 发布前保存；登录同步从 Mongo 拉取，
+                  // 并用好友关系、删除水位和 MySQL ACK 回执过滤，直到接收确认。
+                  spdlog::info("PushService: message={} retained for offline recovery, receiver={}, online={}",
+                               serverMsgID, recvID, recvOnline);
+                }
+
+              }, true);
+          if (!allowed)
+            spdlog::info("PushService: discarded stale or non-friend message {}", msgData.servermsgid());
         } catch (const std::exception &e) {
-          spdlog::error("PushServer::PushMsg: Redis error: {}", e.what());
+          spdlog::error("PushService: single-chat dispatch failed: {}", e.what());
+          reactor->Finish(::grpc::Status(grpc::StatusCode::UNAVAILABLE, "Single-chat dispatch unavailable"));
+          co_return;
         }
-
-        uint64_t recvID = msgData.recvid();
-        std::string serverMsgID = msgData.servermsgid();
-        std::string msgDataBin = msgData.SerializeAsString();
-
-        // 在线，尝试 Gateway 推送
-        bool pushed = false;
-        if (recvOnline) {
-          spdlog::info("PushServer::PushMsg: receiver {} is online, pushing "
-                       "via GatewayPushService gRPC",
-                       recvID);
-          try {
-            pushed = co_await pushClient->PushToUser(recvID, msgDataBin,
-                                                      conversationID);
-          } catch (const std::exception &e) {
-            spdlog::error("PushServer::PushMsg: online push exception: {}, "
-                          "recvID={}",
-                          e.what(), recvID);
-          }
-        }
-
-        if (pushed) {
-          // 在线推送成功：Gateway 已接受投递，等待客户端 ACK 后将 status 置 2
-          spdlog::info("PushServer::PushMsg: online push succeeded, "
-                       "recvID={}, serverMsgID={}",
-                       recvID, serverMsgID);
-
-          std::string ackKey = "pending_ack:online:" + serverMsgID;
-          co_await RedisConnector::instance().sadd(ackKey, std::to_string(recvID));
-          co_await RedisConnector::instance().expire(ackKey, 300);
-
-          int64_t deadline =
-              std::chrono::duration_cast<std::chrono::seconds>(
-                  std::chrono::system_clock::now().time_since_epoch())
-                  .count() +
-              300;
-          co_await RedisConnector::instance().zadd("pending_ack:deadlines",
-                                                   deadline, serverMsgID);
-
-          spdlog::info("PushServer::PushMsg: added to pending_ack, "
-                       "key={}, user={}, deadline={}",
-                       ackKey, recvID, deadline);
-        } else if (recvOnline) {
-          // 在线但推送失败 → status=3, dStatus|=1（延迟双删保证缓存一致）
-          co_await RedisHandler::DeleteMsgCache(serverMsgID);         // 删缓存
-          try {
-            co_await MongoHandler::MarkMsgAsPushFailedAsync(serverMsgID); // 更新数据库
-            auto timer = boost::asio::steady_timer(
-                co_await boost::asio::this_coro::executor);
-            timer.expires_after(boost::asio::chrono::milliseconds(500)); // 延迟等待
-            co_await timer.async_wait(boost::asio::use_awaitable);
-            co_await RedisHandler::DeleteMsgCache(serverMsgID);       // 删缓存
-          } catch (const std::exception &e) {
-            spdlog::error("PushServer::PushMsg: MarkMsgAsPushFailed failed: {}",
-                          e.what());
-          }
-          try {
-            std::string offlineAckKey =
-                "pending_ack:offline:" + std::to_string(recvID) + ":" + serverMsgID;
-            co_await RedisConnector::instance().set(offlineAckKey, "1");
-            co_await RedisConnector::instance().expire(offlineAckKey,
-                                                        86400 * 30);
-            spdlog::info("PushServer::PushMsg: push failed, created offline "
-                         "pending_ack, key={}",
-                         offlineAckKey);
-          } catch (const std::exception &e) {
-            spdlog::error("PushServer::PushMsg: failed to create offline "
-                          "pending_ack: {}",
-                          e.what());
-          }
-        } else {
-          // 接收者离线 → dStatus|=1（延迟双删保证缓存一致）
-          co_await RedisHandler::DeleteMsgCache(serverMsgID);         // 删缓存
-          try {
-            co_await MongoHandler::MarkMsgAsOfflineAsync(serverMsgID); // 更新数据库
-            auto timer = boost::asio::steady_timer(
-                co_await boost::asio::this_coro::executor);
-            timer.expires_after(boost::asio::chrono::milliseconds(500)); // 延迟等待
-            co_await timer.async_wait(boost::asio::use_awaitable);
-            co_await RedisHandler::DeleteMsgCache(serverMsgID);       // 删缓存
-          } catch (const std::exception &e) {
-            spdlog::error("PushServer::PushMsg: MarkMsgAsOffline failed: {}",
-                          e.what());
-          }
-          try {
-            std::string offlineAckKey =
-                "pending_ack:offline:" + std::to_string(recvID) + ":" + serverMsgID;
-            co_await RedisConnector::instance().set(offlineAckKey, "1");
-            co_await RedisConnector::instance().expire(offlineAckKey,
-                                                        86400 * 30);
-            spdlog::info("PushServer::PushMsg: created offline pending_ack, "
-                         "key={}",
-                         offlineAckKey);
-          } catch (const std::exception &e) {
-            spdlog::error("PushServer::PushMsg: failed to create offline "
-                          "pending_ack: {}",
-                          e.what());
-          }
-        }
-
-        // TODO: serverMsgID→convID 映射应由 ConversationService 管理，
-        // 目前临时存 Redis（TTL 7 天），后续迁移到会话服务的持久化存储
-        // 缓存 serverMsgID → convID 映射，供 AckMsg 查 convID 更新会话级 last_seq
-        try {
-          co_await RedisConnector::instance().set("msg_conv:" + serverMsgID,
-                                                   conversationID);
-          co_await RedisConnector::instance().expire("msg_conv:" + serverMsgID,
-                                                      7 * 86400);
-        } catch (const std::exception &e) {
-          spdlog::error("PushServer::PushMsg: failed to cache msg_conv: {}",
-                        e.what());
-        }
-
-        spdlog::info("PushServer::PushMsg: push completed for conv={}",
-                     conversationID);
         reactor->Finish(::grpc::Status::OK);
       },
       boost::asio::detached);
@@ -372,193 +165,31 @@ PushServer::PushMsg(::grpc::CallbackServerContext *context,
 PushServer::AckMsg(::grpc::CallbackServerContext *context,
                    const ::push::AckMsgReq *request,
                    ::push::AckMsgResp *response) {
-
-  //  ---
-  // 一、用到的 Redis Key（统一 user_msgs ZSET 架构后）
-
-  // 在线ACK:
-  //   pending_ack:online:{msgID}      SET   成员=recvID    TTL=300s (5分钟)
-  //   pending_ack:deadlines            ZSET  score=截止时间戳 member=msgID
-
-  // 离线ACK:
-  //   pending_ack:offline:{userID}:{msgID}  STRING  value="1"   TTL=30天
-
-  // 全量消息缓存（在线/离线统一）:
-  //   user_msgs:{userID}              ZSET  score=seq  member=base64(msg)
-  //   TTL=7天 msg:{msgID}                     STRING  消息体 (MsgService存的)
-
-  // 公共:
-  //   user:{userID}:{convID}:last_seq  STRING  会话级最后ACK的seq
-
-  // ---
-  // 二、ACK 延迟双删流（统一架构）
-
-  // 所有消息出生时已在 SendMessages 写入 user_msgs:{recvID} ZSET。
-  // ACK 采用延迟双删保证副本集下缓存一致性：
-
-  // ┌─ AckMsg ───────────────────────────────────────────────────────────┐
-  // │                                                                     │
-  // │  ① ZREM user_msgs:{userID}                  ← 第一次删缓存          │
-  // │  ② MongoDB MarkMsgsAsDelivered (status=2) ← 更新真相源          │
-  // │     writeConcern: majority                                        │
-  // │  ③ sleep(500ms)                              ← 等副本集同步         │
-  // │  ④ ZREM user_msgs:{userID}                  ← 第二次删（清脏缓存）   │
-  // │                                                                     │
-  // │  并发 Reader 在①②之间从 MongoDB Secondary 读到 status=1        │
-  // │  的脏数据并回温到 user_msgs ZSET → ④ 的第二次 ZREM 将其清掉         │
-  // └─────────────────────────────────────────────────────────────────────┘
-
-  // ackType=1（在线ACK）:
-  //   在线推送成功 → SADD pending_ack:online + ZADD deadlines
-  //   ACK → SREM pending_ack → ZREM user_msgs → 全部ACK? → MongoDB status=2
-  //        → sleep(500ms) → ZREM user_msgs（延迟双删）
-  //        → DEL pending_ack + ZREM deadlines
-
-  // ackType=2（离线ACK）:
-  //   离线存储 → SET pending_ack:offline
-  //   ACK → ZREM user_msgs → DEL pending_ack:offline → MongoDB status=2
-  //        → sleep(500ms) → ZREM user_msgs（延迟双删）
-
-  // 关键点:
-  //   ZREM 幂等，多删无害。第二次 ZREM 专门清理并发 Reader 在
-  //   MongoDB 副本集复制延迟窗口内回温进 Redis 的脏缓存。
-  //   pending_ack:online 用 SET 是为了兼容群聊——多人各自 ACK。
-
-  grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-
-  uint64_t userID = request->userid();
-  std::string serverMsgID = request->servermsgid();
-  int64_t seq = request->seq();
-  int32_t ackType = request->acktype();
-
-  spdlog::info(
-      "[PushService] AckMsg: userID={}, serverMsgID={}, seq={}, ackType={}",
-      userID, serverMsgID, seq, ackType);
-
-  auto &redis = RedisConnector::instance();
-  boost::asio::co_spawn(
-      redis.get_executor(),
-      [reactor, response, userID = std::move(userID),
-       serverMsgID = std::move(serverMsgID), seq,
-       ackType]() -> boost::asio::awaitable<void> {
+  auto* reactor=context->DefaultReactor();
+  const auto owner=request->userid();
+  const auto id=request->servermsgid();
+  const auto type=request->acktype();
+  boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),
+      [reactor,owner,id,type]() -> boost::asio::awaitable<void> {
         try {
-          // ═══════════════════════════════════════════════════════
-          // 统一 ACK 处理 —— 延迟双删模式
-          //
-          // 所有消息（在线/离线）均在 user_msgs:{userID} ZSET 中。
-          // ACK 时先删缓存 → 写 MongoDB → 等副本集同步 → 再删缓存，
-          // 防止并发 Reader 在复制延迟窗口内将 Secondary 的脏数据回温到 Redis。
-          // ═══════════════════════════════════════════════════════
-
-          if (ackType == 1) {
-            // === 在线消息ACK (延迟双删) ===
-
-            // ① 第一次删：从 user_msgs ZSET 移除
-            co_await RedisHandler::AckOfflineMsg(userID, serverMsgID);
-
-            // ② 维护 pending_ack:online SET
-            std::string ackKey = "pending_ack:online:" + serverMsgID;
-            co_await RedisConnector::instance().srem(ackKey, std::to_string(userID));
-
-            // ③ 检查全部 ACK 完成 → 写 MongoDB + 延迟双删
-            long long remaining =
-                co_await RedisConnector::instance().scard(ackKey);
-            if (remaining == 0) {
-              std::vector<std::string> msgIds = {serverMsgID};
-              co_await MongoHandler::MarkMsgsAsDeliveredAsync(userID, msgIds);
-
-              // ④ 等副本集同步
-              auto timer = boost::asio::steady_timer(
-                  RedisConnector::instance().get_executor());
-              timer.expires_after(boost::asio::chrono::milliseconds(500));
-              co_await timer.async_wait(boost::asio::use_awaitable);
-
-              // ⑤ 第二次删：清理由 ①→③ 之间并发 Reader 回温的脏缓存
-              co_await RedisHandler::AckOfflineMsg(userID, serverMsgID);
-
-              // 清理 pending_ack 追踪
-              co_await RedisConnector::instance().del(ackKey);
-              co_await RedisConnector::instance().zrem("pending_ack:deadlines",
-                                                       serverMsgID);
-
-              spdlog::info("[PushService] AckMsg(online): all ACK done with "
-                           "delayed double delete, serverMsgID={}",
-                           serverMsgID);
-            } else {
-              // 群聊：还有其他人没 ACK，先只做自己的第一次 ZREM
-              // 延迟双删等 SCARD==0 时再做
-              spdlog::info("[PushService] AckMsg(online): remaining={}, "
-                           "serverMsgID={}",
-                           remaining, serverMsgID);
-            }
-          } else if (ackType == 2) {
-            // === 离线消息ACK (延迟双删) ===
-
-            // ① 第一次删：从 user_msgs ZSET 移除
-            co_await RedisHandler::AckOfflineMsg(userID, serverMsgID);
-
-            // ② 清理 pending_ack:offline
-            std::string offlineAckKey =
-                "pending_ack:offline:" + std::to_string(userID) + ":" + serverMsgID;
-            co_await RedisConnector::instance().del(offlineAckKey);
-
-            // ③ 写 MongoDB
-            std::vector<std::string> msgIds = {serverMsgID};
-            co_await MongoHandler::MarkMsgsAsDeliveredAsync(userID, msgIds);
-
-            // ④ 等副本集同步
-            auto timer = boost::asio::steady_timer(
-                RedisConnector::instance().get_executor());
-            timer.expires_after(boost::asio::chrono::milliseconds(500));
-            co_await timer.async_wait(boost::asio::use_awaitable);
-
-            // ⑤ 第二次删：清理由 ①→③ 之间并发 Reader 回温的脏缓存
-            co_await RedisHandler::AckOfflineMsg(userID, serverMsgID);
-
-            spdlog::info("[PushService] AckMsg(offline): delayed double delete "
-                         "done, user={}, serverMsgID={}",
-                         userID, serverMsgID);
-          } else {
-            spdlog::warn("[PushService] AckMsg: unknown ackType={}", ackType);
+          if(type!=1 && type!=2) {
+            reactor->Finish(grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,"Invalid acknowledgement type"));
+            co_return;
           }
-
-          // TODO: 会话水位应由 ConversationService.SetConversationMaxSeq 管理
-          // （双写 Redis + MongoDB conversations.maxSeq），目前只写 Redis
-          // 更新会话级 last_seq，记录每个用户在每个会话已确认的最高水位
-          std::string convID;
-          auto convOpt =
-              co_await RedisConnector::instance().get("msg_conv:" + serverMsgID);
-          if (convOpt && !convOpt->empty()) {
-            convID = *convOpt;
-          } else {
-            // 缓存未命中，从 MongoDB 回源拿 convID
-            auto msgOpt =
-                co_await MongoHandler::GetMsgByServerMsgIDAsync(serverMsgID);
-            if (msgOpt.has_value()) {
-              convID = msgOpt->convid();
-            }
+          // Both online/offline ACK persist the receipt and cleanup task atomically.
+          // Returning OK does not require Redis/Mongo cleanup to finish first.
+          if(!co_await MySQLHandler::QueueMessageAck(owner,id)) {
+            reactor->Finish(grpc::Status(grpc::StatusCode::UNIMPLEMENTED,"Use GroupService Ack for group messages"));
+            co_return;
           }
-          if (!convID.empty()) {
-            std::string seqKey = "user:" + std::to_string(userID) + ":" + convID + ":last_seq";
-            auto lastSeqOpt = co_await RedisConnector::instance().get(seqKey);
-            int64_t currentSeq = lastSeqOpt ? std::stoll(*lastSeqOpt) : 0;
-            if (seq > currentSeq) {
-              co_await RedisConnector::instance().set(seqKey,
-                                                      std::to_string(seq));
-            }
-          }
-
-        } catch (const std::exception &e) {
-          spdlog::error("[PushService] AckMsg: error: {}", e.what());
-          reactor->Finish(
-              ::grpc::Status(::grpc::StatusCode::INTERNAL, e.what()));
-          co_return;
+          reactor->Finish(grpc::Status::OK);
+        } catch(const std::invalid_argument& e) {
+          reactor->Finish(grpc::Status(grpc::StatusCode::INVALID_ARGUMENT,e.what()));
+        } catch(const std::exception& e) {
+          spdlog::error("PushService.AckMsg: {}",e.what());
+          reactor->Finish(grpc::Status(grpc::StatusCode::UNAVAILABLE,"ACK persistence unavailable"));
         }
-
-        reactor->Finish(::grpc::Status::OK);
-      },
-      boost::asio::detached);
-
+      },boost::asio::detached);
   return reactor;
 }
 
@@ -566,126 +197,9 @@ PushServer::AckMsg(::grpc::CallbackServerContext *context,
 PushServer::AddPendingOfflineAck(::grpc::CallbackServerContext *context,
                                  const ::push::AddPendingOfflineAckReq *request,
                                  ::push::AddPendingOfflineAckResp *response) {
-  grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-
-  uint64_t userID = request->userid();
-  std::string serverMsgID = request->servermsgid();
-  int64_t seq = request->seq();
-
-  spdlog::info(
-      "[PushService] AddPendingOfflineAck: userID={}, serverMsgID={}, seq={}",
-      userID, serverMsgID, seq);
-
-  auto &redis = RedisConnector::instance();
-  boost::asio::co_spawn(
-      redis.get_executor(),
-      [reactor, response, userID = std::move(userID),
-       serverMsgID = std::move(serverMsgID)]() -> boost::asio::awaitable<void> {
-        try {
-          // 将离线消息添加到pending_ack集合，等待客户端ACK
-          std::string ackKey =
-              "pending_ack:offline:" + std::to_string(userID) + ":" + serverMsgID;
-          co_await RedisConnector::instance().set(ackKey, "1");
-          co_await RedisConnector::instance().expire(
-              ackKey, 86400 * 30); // 30天超时，防止遗留
-          spdlog::info("[PushService] AddPendingOfflineAck: created "
-                       "pending_ack entry, key={}",
-                       ackKey);
-        } catch (const std::exception &e) {
-          spdlog::error("[PushService] AddPendingOfflineAck: Redis error: {}",
-                        e.what());
-          reactor->Finish(
-              ::grpc::Status(::grpc::StatusCode::INTERNAL, e.what()));
-          co_return;
-        }
-
-        reactor->Finish(::grpc::Status::OK);
-      },
-      boost::asio::detached);
-
+  auto* reactor=context->DefaultReactor();
+  reactor->Finish(grpc::Status(grpc::StatusCode::UNIMPLEMENTED,"Offline ACK tracking uses durable MySQL receipts"));
   return reactor;
-}
-
-// 如果某个消息一直没被ack，那发送方永远不会知道接收方到底收没收，需要考虑
-boost::asio::awaitable<void> PushServer::CheckExpiredPendingAck() {
-  // 每 30 秒扫描一次 deadline ZSET，将超时未 ACK 的在线消息回退到离线存储
-  auto &redis = RedisConnector::instance();
-  auto timer = boost::asio::steady_timer(redis.get_executor());
-
-  while (true) {
-    timer.expires_after(boost::asio::chrono::seconds(30));
-    boost::system::error_code ec;
-    co_await timer.async_wait(
-        boost::asio::redirect_error(boost::asio::use_awaitable, ec));
-    if (ec) {
-      spdlog::warn("CheckExpiredPendingAck: timer error: {}", ec.message());
-      continue;
-    }
-
-    try {
-      int64_t now = std::chrono::duration_cast<std::chrono::seconds>(
-                        std::chrono::system_clock::now().time_since_epoch())
-                        .count();
-
-      // 查询所有已过截止时间的 serverMsgID
-      auto expired =
-          co_await redis.zrangebyscore("pending_ack:deadlines", 0, now);
-
-      for (const auto &serverMsgID : expired) {
-        auto msgDataOpt = co_await RedisHandler::GetMsg(serverMsgID);
-        if (!msgDataOpt.has_value()) {
-          msgDataOpt =
-              co_await MongoHandler::GetMsgByServerMsgIDAsync(serverMsgID);
-        }
-
-        bool isGroupMsg = false;
-        if (msgDataOpt.has_value()) {
-          isGroupMsg = msgDataOpt->isgroupmsg();
-        }
-
-        if (isGroupMsg) {
-          // 群聊消息：只清理 pending_ack:online SET 和 deadline 条目，不做
-          // offline 降级。消息已在 SendMessages 阶段 fan-out 到每个成员的
-          // user_msgs ZSET，未 ACK 的成员下次 pull 时自然会拉到。
-          spdlog::warn("CheckExpiredPendingAck: group msg ACK timeout for "
-                       "serverMsgID={}, just cleaning up SET/deadline",
-                       serverMsgID);
-        } else {
-          // 单聊消息：原有逻辑——创建 pending_ack:offline 记录
-          if (msgDataOpt.has_value()) {
-            sdkws::MsgData msgData = msgDataOpt.value();
-            uint64_t recvID = msgData.recvid();
-
-            spdlog::warn(
-                "CheckExpiredPendingAck: online ACK timeout for "
-                "serverMsgID={}, recvID={}, falling back to offline storage",
-                serverMsgID, recvID);
-
-            try {
-              std::string offlineAckKey =
-                  "pending_ack:offline:" + std::to_string(recvID) + ":" + serverMsgID;
-              co_await redis.set(offlineAckKey, "1");
-              co_await redis.expire(offlineAckKey, 86400 * 30);
-            } catch (const std::exception &e) {
-              spdlog::error("CheckExpiredPendingAck: failed to create "
-                            "pending_ack:offline: {}",
-                            e.what());
-            }
-          }
-        }
-
-        co_await redis.del("pending_ack:online:" + serverMsgID);
-        co_await redis.zrem("pending_ack:deadlines", serverMsgID);
-
-        spdlog::info(
-            "CheckExpiredPendingAck: cleaned up expired pending_ack for "
-            "serverMsgID={}, isGroupMsg={}",
-            serverMsgID, isGroupMsg);
-      }
-    } catch (const std::exception &e) {
-      spdlog::error("CheckExpiredPendingAck: scan error: {}", e.what());
-    }
-  }
 }
 
 GatewayPushClient &PushServer::getGatewayPushClient() {

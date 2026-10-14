@@ -6,38 +6,16 @@
 #include <spdlog/spdlog.h>
 
 GroupClient::GroupClient(std::shared_ptr<grpc::Channel> channel)
-    : stub_(group::GroupService::NewStub(channel)) {}
+    : stub_(groupchat::GroupService::NewStub(channel)) {}
 
-#define GROUP_CLIENT_METHOD(Method, Req, Resp)                                 \
-  boost::asio::awaitable<::group::Resp> GroupClient::Method(                   \
-      const ::group::Req &request) {                                           \
-    grpc::ClientContext ctx;                                                   \
-    ape::otel::InjectTraceContextToGrpcMetadata(ctx);                          \
-    ctx.set_deadline(std::chrono::system_clock::now() +                        \
-                     std::chrono::seconds(5));                                 \
-    ::group::Resp resp;                                                        \
-    auto status = co_await ape::grpc_util::GrpcAwait([&](auto &&handler) {    \
-      stub_->async()->Method(&ctx, &request, &resp,                            \
-                             std::forward<decltype(handler)>(handler));        \
-    });                                                                        \
-    if (!status.ok()) {                                                        \
-      spdlog::error("GroupClient::" #Method ": gRPC error={}",                 \
-                    status.error_message());                                   \
-    }                                                                          \
-    co_return resp;                                                            \
-  }
-
-GROUP_CLIENT_METHOD(CreateGroup, CreateGroupReq, CreateGroupResp)
-GROUP_CLIENT_METHOD(GetGroupInfo, GetGroupInfoReq, GetGroupInfoResp)
-GROUP_CLIENT_METHOD(GetGroupMembers, GetGroupMembersReq, GetGroupMembersResp)
-GROUP_CLIENT_METHOD(JoinGroup, JoinGroupReq, JoinGroupResp)
-GROUP_CLIENT_METHOD(LeaveGroup, LeaveGroupReq, LeaveGroupResp)
-GROUP_CLIENT_METHOD(InviteMembers, InviteMembersReq, InviteMembersResp)
-GROUP_CLIENT_METHOD(KickMembers, KickMembersReq, KickMembersResp)
-GROUP_CLIENT_METHOD(DismissGroup, DismissGroupReq, DismissGroupResp)
-GROUP_CLIENT_METHOD(UpdateGroupInfo, UpdateGroupInfoReq, UpdateGroupInfoResp)
-GROUP_CLIENT_METHOD(GetUserGroups, GetUserGroupsReq, GetUserGroupsResp)
-GROUP_CLIENT_METHOD(GetGroupMemberCount, GetGroupMemberCountReq,
-                     GetGroupMemberCountResp)
-
-#undef GROUP_CLIENT_METHOD
+boost::asio::awaitable<groupchat::Reply> GroupClient::Execute(const groupchat::Command& request) {
+    grpc::ClientContext context;
+    ape::otel::InjectTraceContextToGrpcMetadata(context);
+    context.set_deadline(std::chrono::system_clock::now()+std::chrono::seconds(10));
+    groupchat::Reply reply;
+    auto status=co_await ape::grpc_util::GrpcAwait([&](auto&& handler) {
+        stub_->async()->Execute(&context,&request,&reply,std::forward<decltype(handler)>(handler));
+    });
+    if(!status.ok()) { reply.Clear(); reply.set_errorcode("DB_ERROR"); reply.set_errormessage("Group service unavailable"); spdlog::error("GroupClient.Execute: {}",status.error_message()); }
+    co_return reply;
+}

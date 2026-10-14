@@ -6,6 +6,8 @@
 #include "om/otel_tracer.h"
 #include "storage/redisconnector.h"
 #include "storage/redishandler.h"
+#include "storage/mysqlhandler.h"
+#include <chrono>
 #include <format>
 #include <opentelemetry/common/attribute_value.h>
 #include <opentelemetry/trace/scope.h>
@@ -31,27 +33,6 @@ boost::asio::awaitable<void> PushHandler::handle(const std::string topic,
                "serverMsgID={}, has_tp={}",
                topic, serverMsgID, !traceparent.empty());
 
-  // 幂等：Redis SET NX 快速拦截 + MongoDB 状态兜底
-  auto markResult = co_await RedisHandler::TryMarkMsgConsumed(serverMsgID);
-  if (markResult == RedisHandler::ConsumeMarkResult::Duplicate) {
-    spdlog::warn("PushHandler: duplicate message skipped, serverMsgID={}",
-                 serverMsgID);
-    co_return;
-  }
-  // 如果redis挂了
-  if (markResult == RedisHandler::ConsumeMarkResult::Unavailable) {
-    bool alreadyConsumed =
-        co_await MongoHandler::IsMsgAlreadyConsumedAsync(serverMsgID);
-    if (alreadyConsumed) {
-      spdlog::warn("PushHandler: msg already consumed (MongoDB fallback), "
-                   "serverMsgID={}",
-                   serverMsgID);
-      co_return;
-    }
-    spdlog::warn("PushHandler: Redis unavailable, msg not yet consumed, "
-                 "proceeding, serverMsgID={}",
-                 serverMsgID);
-  }
 
   // 获取完整消息（先缓存再数据库）
   std::optional<sdkws::MsgData> msgDataOpt;
@@ -61,11 +42,14 @@ boost::asio::awaitable<void> PushHandler::handle(const std::string topic,
   }
 
   if (!msgDataOpt.has_value()) {
-    throw std::runtime_error(
-        std::format("PushHandler: GetMsg Failed, serverMsgID={}", serverMsgID));
+    spdlog::info("PushHandler: message no longer exists, skipping {}", serverMsgID);
+    co_return;
   }
 
   sdkws::MsgData msgData = msgDataOpt.value();
+  // New groups have their own delivery loop; never route retired group events here.
+  if (msgData.isgroupmsg()) co_return;
+  if (co_await MySQLHandler::MessageDispatchDone(msgData.recvid(),serverMsgID)) co_return;
 
   // ── OTel: 从 traceparent 恢复父上下文，创建 Kafka Consumer Span ──
   auto tracer = ape::otel::GetTracer();
@@ -91,6 +75,7 @@ boost::asio::awaitable<void> PushHandler::handle(const std::string topic,
 
   push::PushMsgResp resp;
   grpc::ClientContext ctx;
+  ctx.set_deadline(std::chrono::system_clock::now() + std::chrono::seconds(8));
   ape::otel::InjectTraceContextToGrpcMetadata(ctx);
 
   auto status = co_await ape::grpc_util::GrpcAwait([&](auto &&handler) {
@@ -99,15 +84,13 @@ boost::asio::awaitable<void> PushHandler::handle(const std::string topic,
   });
 
   if (!status.ok()) {
-    // 处理失败，回滚消费标记，允许 Kafka 重投后重试
-    co_await RedisHandler::DeleteMsgConsumed(serverMsgID);
+    // 处理失败时不确认分发完成，允许 Kafka 或 Outbox 重试
     throw std::runtime_error(
         std::format("PushHandler: gRPC PushMsg failed: {}, serverMsgID={}",
                   status.error_message(), serverMsgID));
   } else {
     spdlog::info("PushHandler: PushMsg success, serverMsgID={}", serverMsgID);
-    // 确保 Unavailable 路径处理后补写 key
-    co_await RedisHandler::TryMarkMsgConsumed(serverMsgID);
+    co_await MySQLHandler::ConfirmMessageDispatch(serverMsgID);
   }
 
   if (kafkaSpan) {

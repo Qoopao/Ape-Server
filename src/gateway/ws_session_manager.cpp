@@ -9,6 +9,13 @@ WSSessionManager& WSSessionManager::instance() {
     return mgr;
 }
 
+std::vector<uint64_t> WSSessionManager::onlineAccounts() {
+    std::shared_lock lock(mutex_);
+    std::vector<uint64_t> accounts;
+    for (const auto& entry : sessions_) accounts.push_back(entry.first);
+    return accounts;
+}
+
 void WSSessionManager::registerSession(const uint64_t account,
                                        std::shared_ptr<WSSession> session) {
     std::unique_lock lock(mutex_);

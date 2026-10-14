@@ -31,6 +31,8 @@ public:
     void stop();
 
     int pool_size() const;
+    static boost::redis::request MakeEvalRequest(const std::string& script,
+        const std::vector<std::string>& keys,const std::vector<std::string>& args);
 
     // 返回一个 executor，供 co_spawn 使用（轮询选取 io_context）
     boost::asio::io_context::executor_type get_executor();

@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <boost/asio.hpp>
+#include <bsoncxx/document/view.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/pool.hpp>
 #include <mongocxx/uri.hpp>
@@ -32,6 +33,7 @@ public:
     static MongoConnector &instance();
 
     void start(int pool_size = 4);
+    static bool IsFullUniqueMessageIdIndex(bsoncxx::document::view index);
     void stop();
 
     int pool_size() const;

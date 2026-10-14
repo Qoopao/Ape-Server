@@ -1,4 +1,5 @@
 #include "services/msg_service/server.h"
+#include "services/msg_service/outbox_worker.h"
 #include "messagequeue/message_producer.h"
 #include "om/otel_trace_propagation.h"
 #include "sdkws.pb.h"
@@ -11,13 +12,71 @@
 #include <cstdint>
 #include <spdlog/spdlog.h>
 #include <string>
+#include <chrono>
+#include <stdexcept>
+#include <limits>
+#include <google/protobuf/util/json_util.h>
+#include <boost/asio/steady_timer.hpp>
+#include <boost/asio/this_coro.hpp>
 
 MsgServiceImpl::MsgServiceImpl(const std::string &service_name,
                                const std::string &listen_address)
     : BaseServiceServer<MsgServiceImpl>(service_name, listen_address) {}
 
 void MsgServiceImpl::SetProducer(IMessageProducer *producer) {
+  if(producer_!=producer) StopOutbox();
   producer_ = producer;
+}
+
+::grpc::ServerUnaryReactor *MsgServiceImpl::GetSingleChatHistory(
+    ::grpc::CallbackServerContext *context,
+    const ::msg::GetSingleChatHistoryReq *request,
+    ::msg::GetSingleChatHistoryResp *response) {
+  auto *reactor = context->DefaultReactor();
+  auto query = *request;
+  boost::asio::co_spawn(RedisConnector::instance().get_executor(),
+      [reactor, response, query = std::move(query)]() -> boost::asio::awaitable<void> {
+        if (!query.owneruserid() || !query.peeruserid() ||
+            query.owneruserid() == query.peeruserid() || query.afterseq() < 0) {
+          reactor->Finish(::grpc::Status(::grpc::StatusCode::INVALID_ARGUMENT,
+              "Invalid single-chat history request"));
+          co_return;
+        }
+        try {
+          sdkws::MsgData candidate;
+          candidate.set_sendid(query.owneruserid());
+          candidate.set_recvid(query.peeruserid());
+          candidate.set_seq(std::numeric_limits<int64_t>::max());
+          const auto id = std::to_string(std::min(query.owneruserid(), query.peeruserid())) +
+              "_" + std::to_string(std::max(query.owneruserid(), query.peeruserid()));
+          const int limit = std::clamp(query.limit(), 1, 100);
+          response->set_peeruserid(query.peeruserid());
+          const bool allowed = co_await MySQLHandler::WithFriendMessage(candidate,
+              [response, id, query, limit]() -> boost::asio::awaitable<void> {
+                const auto cutoff = co_await MySQLHandler::FriendDeletionSeq(query.owneruserid(), query.peeruserid());
+                auto messages = co_await MongoHandler::GetSingleChatHistoryAsync(
+                    id, std::max(query.afterseq(), cutoff), limit + 1);
+                co_await MySQLHandler::FilterVisibleMessages(messages);
+                response->set_hasmore(messages.size() > static_cast<size_t>(limit));
+                for (size_t i = 0; i < std::min(messages.size(), static_cast<size_t>(limit)); ++i) {
+                  const auto& message = messages[i];
+                  if ((message.sendid() != query.owneruserid() &&
+                       message.sendid() != query.peeruserid()) ||
+                      (message.recvid() != query.owneruserid() &&
+                       message.recvid() != query.peeruserid()))
+                    continue;
+                  *response->add_messages() = message;
+                  response->set_nextseq(message.seq());
+                }
+              });
+          reactor->Finish(allowed ? ::grpc::Status::OK :
+              ::grpc::Status(::grpc::StatusCode::PERMISSION_DENIED, "Users are not friends"));
+        } catch (const std::exception& e) {
+          spdlog::error("GetSingleChatHistory: {}", e.what());
+          reactor->Finish(::grpc::Status(::grpc::StatusCode::INTERNAL, "History unavailable"));
+        }
+      }, boost::asio::detached);
+  return reactor;
 }
 
 // ──────────────────────────────────────────
@@ -38,7 +97,7 @@ MsgServiceImpl::GetMaxSeqs(::grpc::CallbackServerContext *context,
                            const ::msg::GetMaxSeqsReq *request,
                            ::msg::SeqsInfoResp *response) {
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-  reactor->Finish(::grpc::Status::OK);
+  reactor->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "Use ConversationService"));
   return reactor;
 }
 
@@ -47,7 +106,7 @@ MsgServiceImpl::GetHasReadSeqs(::grpc::CallbackServerContext *context,
                                const ::msg::GetHasReadSeqsReq *request,
                                ::msg::SeqsInfoResp *response) {
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-  reactor->Finish(::grpc::Status::OK);
+  reactor->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "Use ConversationService"));
   return reactor;
 }
 
@@ -65,7 +124,7 @@ MsgServiceImpl::GetHasReadSeqs(::grpc::CallbackServerContext *context,
     const ::msg::GetConversationMaxSeqReq *request,
     ::msg::GetConversationMaxSeqResp *response) {
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-  reactor->Finish(::grpc::Status::OK);
+  reactor->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "Use ConversationService"));
   return reactor;
 }
 
@@ -77,133 +136,9 @@ MsgServiceImpl::GetHasReadSeqs(::grpc::CallbackServerContext *context,
 MsgServiceImpl::PullMessageBySeqs(::grpc::CallbackServerContext *context,
                                   const ::sdkws::PullMessageBySeqsReq *request,
                                   ::sdkws::PullMessageBySeqsResp *response) {
-  grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-
-  // request.seqRanges: repeated SeqRange (每个包含 conversationID, begin, end,
-  // num) 对每个会话拉取 seq 在 [begin, end] 范围的消息，最多 num 条
-
-  uint64_t userId = request->userid();
-  auto seqRanges = request->seqranges(); // 拷贝 protobuf repeated 字段
-
-  spdlog::info("PullMessageBySeqs: userId={}, numRanges={}", userId,
-               seqRanges.size());
-
-  // capturer 放外头以免 coroutine frame 持有 dangling 引用
-  auto &redis = RedisConnector::instance();
-  boost::asio::co_spawn(
-      redis.get_executor(),
-      [reactor, response, userId = std::move(userId),
-       seqRanges = std::move(seqRanges)]() -> boost::asio::awaitable<void> {
-        for (const auto &seqRange : seqRanges) {
-          std::string convID = seqRange.conversationid();
-          int64_t beginSeq = seqRange.begin();
-          int64_t endSeq = seqRange.end();
-          int32_t maxCount = seqRange.num();
-          if (maxCount <= 0 || maxCount > 200)
-            maxCount = 100;
-
-          spdlog::info("PullMessageBySeqs: convID={}, begin={}, end={}, num={}",
-                       convID, beginSeq, endSeq, maxCount);
-
-          std::vector<sdkws::MsgData> messages;
-
-          // 1. 优先从 Redis 热数据拉取（异步）
-          try {
-            auto redisMsgs = co_await RedisHandler::GetOfflineMsgs(
-                userId, beginSeq, maxCount, convID);
-            if (!redisMsgs.empty()) {
-              spdlog::info("PullMessageBySeqs: convID={} pulled {} msgs from "
-                           "Redis hot data",
-                           convID, redisMsgs.size());
-              messages = std::move(redisMsgs);
-            }
-          } catch (const std::exception &e) {
-            spdlog::warn(
-                "PullMessageBySeqs: Redis query failed for convID={}: {}",
-                convID, e.what());
-          }
-
-          // 2. 热数据不足，从 MongoDB 冷数据拉取（异步，IOCPool worker 卸载）
-          if (messages.empty()) {
-            try {
-              auto mongoMsgs =
-                  co_await MongoHandler::GetMsgsBySeqFromMongoAsync(
-                      userId, beginSeq, maxCount);
-              spdlog::info("PullMessageBySeqs: convID={} pulled {} msgs from "
-                           "MongoDB cold data",
-                           convID, mongoMsgs.size());
-
-              // 回温 user_msgs ZSET：MongoDB 冷数据写回 Redis 缓存
-              // 下次拉取同一段 seq 直接命中 Redis，不再穿透 MongoDB
-              for (auto &msg : mongoMsgs) {
-                try {
-                  co_await RedisHandler::SaveOfflineMsg(userId, msg);
-                } catch (const std::exception &e) {
-                  // 回温失败不影响主流程
-                }
-                messages.push_back(std::move(msg));
-              }
-            } catch (const std::exception &e) {
-              spdlog::error(
-                  "PullMessageBySeqs: MongoDB query failed for convID={}: {}",
-                  convID, e.what());
-            }
-          }
-
-          // 2b. 冷数据不足时，额外拉取群消息（此用户所在群的群消息）
-          if (messages.empty()) {
-            try {
-              auto groupIDs = co_await MySQLHandler::GetUserGroupIDs(userId);
-              if (!groupIDs.empty()) {
-                auto groupMsgs =
-                    co_await MongoHandler::GetGroupMsgsBySeqFromMongoAsync(
-                        groupIDs, beginSeq, maxCount);
-                if (!groupMsgs.empty()) {
-                  spdlog::info("PullMessageBySeqs: convID={} pulled {} group "
-                               "msgs from MongoDB cold data",
-                               convID, groupMsgs.size());
-                  for (auto &msg : groupMsgs) {
-                    try {
-                      co_await RedisHandler::SaveOfflineMsg(userId, msg);
-                    } catch (...) {
-                    }
-                    messages.push_back(std::move(msg));
-                  }
-                  // 按 seq 排序并截断
-                  std::sort(messages.begin(), messages.end(),
-                            [](const auto &a, const auto &b) {
-                              return a.seq() < b.seq();
-                            });
-                  if (static_cast<int>(messages.size()) > maxCount) {
-                    messages.resize(maxCount);
-                  }
-                }
-              }
-            } catch (const std::exception &e) {
-              spdlog::warn(
-                  "PullMessageBySeqs: group msg query failed for {}: {}",
-                  userId, e.what());
-            }
-          }
-
-          // 将该会话的消息写入响应（通过 MessageUnion 包装）
-          ::sdkws::PullMsgs pullMsgs;
-          for (auto &msgData : messages) {
-            auto *mu = pullMsgs.add_msgs(); // MessageUnion*
-            mu->set_iscmd(false);
-            *mu->mutable_msg() = std::move(msgData);
-          }
-          pullMsgs.set_isend(messages.size() < static_cast<size_t>(maxCount));
-          if (!messages.empty()) {
-            pullMsgs.set_endseq(messages.back().seq());
-          }
-          (*response->mutable_msgs())[convID] = std::move(pullMsgs);
-        }
-
-        reactor->Finish(::grpc::Status::OK);
-      },
-      boost::asio::detached);
-
+  auto* reactor=context->DefaultReactor();
+  reactor->Finish(grpc::Status(grpc::StatusCode::UNIMPLEMENTED,
+      "Use GetSingleChatHistory or GroupService Execute; legacy Redis offline pull is retired"));
   return reactor;
 }
 
@@ -270,139 +205,50 @@ MsgServiceImpl::SendMessages(::grpc::CallbackServerContext *context,
         for (int index = 0; index < msgSize; index++) {
           ::sdkws::MsgData msg = msgs[index];
 
-          // ── 群聊 / 单聊 分流 ──
+          // 群聊消息转移到网关判断，不在这里判断了
           if (msg.isgroupmsg()) {
-            // convID 就是 groupID（客户端传入）
-            std::string groupID = msg.convid();
-            msg.set_convid(groupID);
-            // msg.set_recvid(groupID);
-
-            // 生成服务器消息 ID 和序列号
-            msg.set_servermsgid(uuid::newone_str());
-            msg.set_seq(Snowflake::instance().nextId());
-
-            // 存入 MongoDB
-            if (!co_await MongoHandler::SaveMsgToMongoAsync(msg)) {
-              respInfos[index]->set_errorcode("1");
-              respInfos[index]->set_errormsg("SaveMsgToDB failed");
-              continue;
-            }
-
-            // 存入 Redis 消息缓存
-            if (!co_await RedisHandler::SaveMsg(msg)) {
-              continue;
-            }
-
-            // 获取群成员列表（Redis 缓存优先，MySQL 兜底）
-            std::vector<uint64_t> memberIDs;
-            memberIDs =
-                co_await RedisHandler::GetGroupMembersFromCache(groupID);
-            if (memberIDs.empty()) {
-              auto members =
-                  co_await MySQLHandler::GetGroupMembers(groupID, 0, 10000);
-              for (const auto &m : members) {
-                memberIDs.push_back(m.userid());
-              }
-              if (!memberIDs.empty()) {
-                co_await RedisHandler::CacheGroupMembers(groupID, memberIDs);
-              }
-            }
-
-            // 批量 fan-out 到每个成员的 user_msgs ZSET（Lua EVAL）
-            if (!memberIDs.empty()) {
-              co_await RedisHandler::BatchSaveOfflineMsg(memberIDs, msg);
-            }
-
-            // 确保群会话存在
-            bool exists =
-                co_await MongoHandler::DoesConversationExistAsync(groupID);
-            if (!exists) {
-              co_await MongoHandler::CreateGroupChatConversationsAsync(
-                  groupID, memberIDs);
-            }
-
-            // 大小群分流：小群投递 Kafka 走实时推送，大群纯 pull
-            // 阈值与 PushService::PushMsg 保持一致（200）
-            if (!memberIDs.empty() && memberIDs.size() <= 200) {
-              try {
-                std::string tp = ape::otel::EncodeCurrentTraceParent();
-                std::string payload = tp.empty() ? msg.servermsgid()
-                                                 : tp + "|" + msg.servermsgid();
-                std::string key_copy = msg.convid();
-                bool ok =
-                    producer->deliver(key_copy, payload.data(), payload.size());
-                if (!ok) {
-                  spdlog::warn("SendMessages(group): Kafka deliver failed for "
-                               "small group, msg={}, group={}",
-                               msg.servermsgid(), groupID);
-                }
-              } catch (const std::exception &e) {
-                spdlog::warn(
-                    "SendMessages(group): Kafka deliver exception for {}, {}",
-                    msg.servermsgid(), e.what());
-              }
-            }
+            respInfos[index]->set_errorcode("UPGRADE_REQUIRED");
+            respInfos[index]->set_errormsg("Use group chat Send (type 250)");
+            continue;
           } else {
-            // ── 单聊消息处理逻辑 ──
-            std::string normalizedConvID =
-                (msg.sendid() < msg.recvid())
-                    ? std::to_string(msg.sendid()) + "_" + std::to_string(msg.recvid())
-                    : std::to_string(msg.recvid()) + "_" + std::to_string(msg.sendid());
-            msg.set_convid(normalizedConvID);
-
-            // 为响应生成服务器消息id
+            msg.set_convid(std::to_string(std::min(msg.sendid(), msg.recvid())) + "_" +
+                std::to_string(std::max(msg.sendid(), msg.recvid())));
             msg.set_servermsgid(uuid::newone_str());
-
-            // 使用 Snowflake 生成递增唯一的会话内seq
             msg.set_seq(Snowflake::instance().nextId());
-
-            // 将消息存入数据库
-            bool saveResult = co_await MongoHandler::SaveMsgToMongoAsync(msg);
-            if (!saveResult) {
-              respInfos[index]->set_errorcode("1");
-              respInfos[index]->set_errormsg("SaveMsgToDB failed");
-              continue;
-            }
-
-            // 将消息放入缓存
-            bool saveRedisResult = co_await RedisHandler::SaveMsg(msg);
-            if (!saveRedisResult) {
-              respInfos[index]->set_errorcode("1");
-              respInfos[index]->set_errormsg("SaveMsgInfo failed");
-              continue;
-            }
-
-            // 全量消息 ZADD 进 user_msgs:{recvID} ZSET（在线/离线统一）
-            // score=seq，member=base64(MsgData)，TTL 7天
-            // 后续 PullMessageBySeqs 和 pullAndPushOfflineMsgs 均可从这里拉取
-            co_await RedisHandler::SaveOfflineMsg(msg.recvid(), msg);
-
-            // 如果会话不存在就创建会话，后续这里应该要归入会话服务
-            bool exists =
-                co_await MongoHandler::DoesConversationExistAsync(msg.convid());
-            if (!exists) {
-              co_await MongoHandler::CreateSingleChatConversationsAsync(
-                  msg.sendid(), msg.recvid(), msg.convid());
-            }
-
-            // 投递到消息队列，单聊群聊的逻辑不同
+            msg.set_sendtime(std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count());
             try {
-              std::string tp = ape::otel::EncodeCurrentTraceParent();
-              std::string payload =
-                  tp.empty() ? msg.servermsgid() : tp + "|" + msg.servermsgid();
-              std::string key_copy = msg.convid();
-              bool sendResult =
-                  producer->deliver(key_copy, payload.data(), payload.size());
-              if (!sendResult) {
-                respInfos[index]->set_errorcode("1");
-                respInfos[index]->set_errormsg("MsgToMQ failed");
+              auto task = co_await MySQLHandler::QueueSingleMessage(msg);
+              // 设置超时时间
+              boost::asio::steady_timer timer(co_await boost::asio::this_coro::executor);
+              const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(8);
+              
+              // 任务尚未完成 && 未取消 && 当前时间 < deadline
+              while (task.stage == 0 && task.state != 3 && std::chrono::steady_clock::now() < deadline) {
+                timer.expires_after(std::chrono::milliseconds(200));
+                co_await timer.async_wait(boost::asio::use_awaitable);
+                task = co_await MySQLHandler::GetOutboxTask(task.id);
+              }
+
+              if (!google::protobuf::util::JsonStringToMessage(task.payload, &msg).ok())
+                throw std::runtime_error("Invalid stored message");
+              if (task.state == 3) {
+                respInfos[index]->set_errorcode("NOT_FRIEND");
+                respInfos[index]->set_errormsg("Message cancelled because the friend relationship was removed");
                 continue;
               }
+              if (task.stage == 0) {
+                respInfos[index]->set_errorcode("PENDING");
+                respInfos[index]->set_errormsg("Message accepted; persistence is being retried");
+              }
+            } catch (const std::invalid_argument& e) {
+              respInfos[index]->set_errorcode("INVALID_MESSAGE");
+              respInfos[index]->set_errormsg(e.what());
+              continue;
             } catch (const std::exception &e) {
-              spdlog::error("SendMessages: MsgToMQ failed for msg {}: {}",
-                            msg.servermsgid(), e.what());
-              respInfos[index]->set_errorcode("1");
-              respInfos[index]->set_errormsg("MsgToMQ failed");
+              spdlog::error("SendMessages: single-chat storage failed: {}", e.what());
+              respInfos[index]->set_errorcode("DB_ERROR");
+              respInfos[index]->set_errormsg("Unable to confirm submission; retry with the same clientMsgID");
               continue;
             }
 
@@ -410,8 +256,8 @@ MsgServiceImpl::SendMessages(::grpc::CallbackServerContext *context,
             respInfos[index]->mutable_msg()->CopyFrom(msg);
           }
 
-          reactor->Finish(::grpc::Status::OK);
         }
+        reactor->Finish(::grpc::Status::OK);
       },
       boost::asio::detached);
 
@@ -522,7 +368,7 @@ MsgServiceImpl::MarkMsgsAsRead(::grpc::CallbackServerContext *context,
     const ::msg::MarkConversationAsReadReq *request,
     ::msg::MarkConversationAsReadResp *response) {
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-  reactor->Finish(::grpc::Status::OK);
+  reactor->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "Use ConversationService"));
   return reactor;
 }
 
@@ -531,7 +377,7 @@ MsgServiceImpl::MarkMsgsAsRead(::grpc::CallbackServerContext *context,
     const ::msg::SetConversationHasReadSeqReq *request,
     ::msg::SetConversationHasReadSeqResp *response) {
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-  reactor->Finish(::grpc::Status::OK);
+  reactor->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "Use ConversationService"));
   return reactor;
 }
 
@@ -540,7 +386,7 @@ MsgServiceImpl::MarkMsgsAsRead(::grpc::CallbackServerContext *context,
     const ::msg::GetConversationsHasReadAndMaxSeqReq *request,
     ::msg::GetConversationsHasReadAndMaxSeqResp *response) {
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-  reactor->Finish(::grpc::Status::OK);
+  reactor->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "Use ConversationService"));
   return reactor;
 }
 
@@ -594,7 +440,7 @@ MsgServiceImpl::DestructMsgs(::grpc::CallbackServerContext *context,
     const ::msg::GetActiveConversationReq *request,
     ::msg::GetActiveConversationResp *response) {
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-  reactor->Finish(::grpc::Status::OK);
+  reactor->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "Use ConversationService"));
   return reactor;
 }
 
@@ -603,7 +449,7 @@ MsgServiceImpl::DestructMsgs(::grpc::CallbackServerContext *context,
     const ::msg::SetUserConversationMaxSeqReq *request,
     ::msg::SetUserConversationMaxSeqResp *response) {
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-  reactor->Finish(::grpc::Status::OK);
+  reactor->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "Use ConversationService"));
   return reactor;
 }
 
@@ -632,4 +478,15 @@ MsgServiceImpl::GetLastMessage(::grpc::CallbackServerContext *context,
   grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
   reactor->Finish(::grpc::Status::OK);
   return reactor;
+}
+
+MsgServiceImpl::~MsgServiceImpl() { Stop(); StopOutbox(); }
+void MsgServiceImpl::StartOutbox() {
+    if(m_outbox) return;
+    if(!producer_) throw std::runtime_error("MsgService producer is required before starting outbox");
+    m_outbox=std::make_unique<OutboxWorker>(*producer_);
+    m_outbox->Start();
+}
+void MsgServiceImpl::StopOutbox() {
+    if(m_outbox) { m_outbox->Stop(); m_outbox.reset(); }
 }

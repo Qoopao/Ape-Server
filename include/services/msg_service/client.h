@@ -10,6 +10,8 @@
 
 class MsgClient {
  public:
+  boost::asio::awaitable<::msg::GetSingleChatHistoryResp> GetSingleChatHistory(
+      const ::msg::GetSingleChatHistoryReq& request);
   MsgClient(std::shared_ptr<grpc::Channel> channel)
       : stub_(msg::MessageService::NewStub(channel)) {}
 
@@ -18,7 +20,6 @@ class MsgClient {
   boost::asio::awaitable<::msg::SeqsInfoResp> GetHasReadSeqs(const ::msg::GetHasReadSeqsReq& request);
   boost::asio::awaitable<::msg::GetMsgByConversationIDsResp> GetMsgByConversationIDs(const ::msg::GetMsgByConversationIDsReq& request);
   boost::asio::awaitable<::msg::GetConversationMaxSeqResp> GetConversationMaxSeq(const ::msg::GetConversationMaxSeqReq& request);
-  boost::asio::awaitable<::sdkws::PullMessageBySeqsResp> PullMessageBySeqs(const ::sdkws::PullMessageBySeqsReq& request);
   boost::asio::awaitable<::msg::GetSeqMessageResp> GetSeqMessage(const ::msg::GetSeqMessageReq& request);
   boost::asio::awaitable<::msg::SearchMessageResp> SearchMessage(const ::msg::SearchMessageReq& request);
   boost::asio::awaitable<::sdkws::SendMessageResp> SendMessages(const ::sdkws::SendMessageReq& request);

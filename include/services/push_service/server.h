@@ -50,8 +50,8 @@ private:
   // 延迟初始化 GatewayPushClient（通过 etcd 服务发现 GatewayPushService 地址）
   GatewayPushClient& getGatewayPushClient();
 
-  // 后台协程：定期扫描超时的在线 pending_ack，回退到离线存储
-  boost::asio::awaitable<void> CheckExpiredPendingAck();
+
+
 
   std::unique_ptr<IMessageConsumer> consumer_;
   std::thread consumer_thread_;

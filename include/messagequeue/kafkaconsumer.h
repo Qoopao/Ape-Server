@@ -10,6 +10,11 @@
 #include <thread>
 #include <vector>
 #include <memory>
+#include <deque>
+#include <map>
+#include <mutex>
+#include <future>
+#include <boost/asio/awaitable.hpp>
 
 class IOC_Pool;
 
@@ -19,6 +24,10 @@ class ConsumerEventCb : public RdKafka::EventCb{
 };
 
 class ConsumerRebalanceCb : public RdKafka::RebalanceCb{
+public:
+    explicit ConsumerRebalanceCb(std::atomic<uint64_t>& generation) : generation_(generation) {}
+private:
+    std::atomic<uint64_t>& generation_;
     void rebalance_cb(RdKafka::KafkaConsumer *consumer,
                             RdKafka::ErrorCode err,
                             std::vector<RdKafka::TopicPartition *> &partitions) override;
@@ -55,6 +64,26 @@ public:
     ~KafkaConsumer();
 
 private:
+    struct Job
+    {
+        std::string topic, payload;
+        int partition = 0;
+        int64_t offset = 0;
+        uint64_t generation = 0;
+    };
+    struct PartitionLane
+    {
+        std::mutex mutex;
+        std::deque<Job> jobs;
+        std::future<void> worker;
+        bool paused = false;
+        uint64_t pauseGeneration = 0;
+    };
+    boost::asio::awaitable<void> processPartition(std::shared_ptr<PartitionLane> lane);
+    void updateBackpressure();
+    std::atomic<uint64_t> generation_{0};
+    std::mutex lanes_mutex_;
+    std::map<std::pair<std::string, int>, std::shared_ptr<PartitionLane>> lanes_;
     // 禁止拷贝和赋值
     KafkaConsumer(const KafkaConsumer &) = delete;
     KafkaConsumer &operator=(const KafkaConsumer &) = delete;
@@ -77,8 +106,6 @@ private:
     std::atomic<bool> running_{true};
     std::thread consume_thread_;
 
-    // 记录已提交的最新 offset，避免重复提交更小的 offset
-    std::atomic<int64_t> latest_committed_offset_{-1};
 };
 
 #endif

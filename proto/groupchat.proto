@@ -1,0 +1,106 @@
+syntax = "proto3";
+package groupchat;
+
+enum Operation {
+  List = 0;
+  Create = 1;
+  Search = 2;
+  Apply = 3;
+  Applications = 4;
+  Review = 5;
+  Members = 6;
+  Rename = 7;
+  Leave = 8;
+  Kick = 9;
+  Dismiss = 10;
+  Send = 11;
+  Pull = 12;
+  Ack = 13;
+  Read = 14;
+  MyApplications = 15;
+}
+message Group {
+  string id = 1;
+  string name = 2;
+  uint64 owner = 3;
+  uint64 memberCount = 4;
+  bool dismissed = 5;
+  bool joined = 6;
+  uint64 joinSeq = 7;
+  uint64 lastSeq = 8;
+  uint64 readSeq = 9;
+  uint64 unread = 10;
+  bool large = 11;
+  uint64 epoch = 12;
+  string number = 13; // Public ten-digit group number; id remains the stable conversation identifier.
+}
+message Member {
+  uint64 account = 1;
+  string nickname = 2;
+  bool owner = 3;
+}
+message Application {
+  uint64 id = 1;
+  string groupID = 2;
+  uint64 account = 3;
+  string nickname = 4;
+  string reason = 5;
+  int32 status = 6; // 0 pending, 1 accepted, 2 rejected, 3 closed
+  int64 time = 7;
+  string groupName = 8;
+  string groupNumber = 9;
+}
+message Message {
+  string id = 1;
+  string clientID = 2;
+  string groupID = 3;
+  uint64 sender = 4;
+  string nickname = 5;
+  string text = 6;
+  uint64 seq = 7;
+  int64 time = 8;
+}
+message Command {
+  Operation operation = 1;
+  uint64 actor = 2; // gateway always replaces this with authenticated account
+  string groupID = 3;
+  string text = 4;
+  uint64 target = 5;
+  uint64 applicationID = 6;
+  bool accept = 7;
+  uint64 after = 8;
+  uint32 limit = 9;
+  uint64 snapshot = 10;
+  string clientID = 11;
+  uint64 epoch = 12;
+}
+message Reply {
+  string errorCode = 1;
+  string errorMessage = 2;
+  repeated Group groups = 3;
+  repeated Member members = 4;
+  repeated Application applications = 5;
+  repeated Message messages = 6;
+  uint64 cursor = 7;
+  bool hasMore = 8;
+  uint64 snapshot = 9;
+  string groupID = 10;
+  uint64 epoch = 11;
+}
+// type 250: Command/Reply. type 251: refresh or new-message Notice.
+message Notice {
+  string groupID = 1;
+  uint64 lastSeq = 2;
+  repeated Message messages = 3; // small groups only; large groups pull
+  bool refresh = 4;
+  uint64 epoch = 5;
+}
+message LocalState {
+  Group group = 1;
+  uint64 cursor = 2;
+}
+
+// Unified group RPC; operations are selected by Command.operation.
+service GroupService {
+  rpc Execute(Command) returns (Reply);
+}

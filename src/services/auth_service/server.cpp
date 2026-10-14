@@ -4,7 +4,6 @@
 #include "storage/mysqlhandler.h"
 #include "storage/redisconnector.h"
 #include "util/account_pool.h"
-#include "storage/registration_store.h"
 #include <algorithm>
 #include "util/uuid.h"
 
@@ -103,14 +102,14 @@ int64_t AuthServiceImpl::calculate_expiry() {
 
     auto task = [](std::string id, std::string phone, std::string nickname, std::string password,
                    ::auth::AuthRegResponse* response) -> boost::asio::awaitable<void> {
-        registration::Input input;
+        MySQLHandler::RegistrationInput input;
         input.request_id = std::move(id);
-        input.payload = registration::payload(phone, nickname, password);
+        input.payload = MySQLHandler::registration_payload(phone, nickname, password);
         input.user.phone = std::move(phone);
         input.user.nickname = std::move(nickname);
         input.user.password_salt = generate_salt();
         input.user.password_hash = hash_password(password, input.user.password_salt);
-        const auto result = co_await registration::create(MySQLConnector::instance().get_pool(0), input);
+        const auto result = co_await MySQLHandler::register_user(MySQLConnector::instance().get_pool(0), input);
         response->set_success(true);
         auto* user = response->mutable_user();
         user->set_userid(result.user_id);
@@ -128,10 +127,10 @@ int64_t AuthServiceImpl::calculate_expiry() {
                     response->set_success(false);
                     try { 
                         std::rethrow_exception(error); 
-                    } catch (const registration::Error& e) {        // 已定义的业务异常
+                    } catch (const MySQLHandler::RegistrationError& e) {        // 已定义的业务异常
                         response->set_errorcode(e.code);
                         response->set_errormessage(e.what());
-                    } catch (const std::exception& e) {               // 任何继承std::exception但不是registration::Error的异常
+                    } catch (const std::exception& e) {               // 任何继承std::exception但不是MySQLHandler::RegistrationError的异常
                         spdlog::warn(e.what());
                         response->set_errorcode("DB_ERROR");
                         response->set_errormessage("Registration could not be completed; retry the same request ID");

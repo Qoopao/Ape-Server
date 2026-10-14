@@ -21,6 +21,8 @@ class MsgClient;
 class BackbonClient;
 class PushClient;
 class GroupClient;
+class FriendClient;
+class ConversationClient;
 
 using boost::asio::awaitable;
 using boost::asio::co_spawn;
@@ -69,6 +71,10 @@ private:
   std::unique_ptr<PushClient> push_client_;
   std::shared_ptr<grpc::Channel> group_channel_;
   std::unique_ptr<GroupClient> group_client_;
+  std::shared_ptr<grpc::Channel> friend_channel_;
+  std::unique_ptr<FriendClient> friend_client_;
+  std::shared_ptr<grpc::Channel> conversation_channel_;
+  std::unique_ptr<ConversationClient> conversation_client_;
   std::unique_ptr<BackbonClient> backbon_client_;
 };
 

@@ -10,13 +10,20 @@
 #include <spdlog/spdlog.h>
 
 class IMessageProducer;
+class OutboxWorker;
 
 class MsgServiceImpl final : public msg::MessageService::CallbackService,
                              public BaseServiceServer<MsgServiceImpl> {
 public:
+  ::grpc::ServerUnaryReactor *GetSingleChatHistory(
+      ::grpc::CallbackServerContext *context,
+      const ::msg::GetSingleChatHistoryReq *request,
+      ::msg::GetSingleChatHistoryResp *response) override;
   MsgServiceImpl(const std::string &service_name,
                  const std::string &listen_address);
-  ~MsgServiceImpl() override = default;
+  ~MsgServiceImpl() override;
+  void StartOutbox();
+  void StopOutbox();
 
   // 依赖注入：消息队列生产者
   void SetProducer(IMessageProducer *producer);
@@ -139,6 +146,7 @@ public:
 
 private:
   IMessageProducer *producer_{nullptr};
+  std::unique_ptr<OutboxWorker> m_outbox;
 };
 
 #endif

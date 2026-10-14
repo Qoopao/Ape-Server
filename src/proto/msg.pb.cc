@@ -486,6 +486,34 @@ struct MarkConversationAsReadReqDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 MarkConversationAsReadReqDefaultTypeInternal _MarkConversationAsReadReq_default_instance_;
 
+inline constexpr GetSingleChatHistoryReq::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : owneruserid_{::uint64_t{0u}},
+        peeruserid_{::uint64_t{0u}},
+        afterseq_{::int64_t{0}},
+        limit_{0},
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR GetSingleChatHistoryReq::GetSingleChatHistoryReq(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct GetSingleChatHistoryReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GetSingleChatHistoryReqDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GetSingleChatHistoryReqDefaultTypeInternal() {}
+  union {
+    GetSingleChatHistoryReq _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetSingleChatHistoryReqDefaultTypeInternal _GetSingleChatHistoryReq_default_instance_;
+
 inline constexpr GetServerTimeResp::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : servertime_{::int64_t{0}},
@@ -2024,6 +2052,34 @@ struct MsgDataToDBDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 MsgDataToDBDefaultTypeInternal _MsgDataToDB_default_instance_;
+
+inline constexpr GetSingleChatHistoryResp::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : messages_{},
+        peeruserid_{::uint64_t{0u}},
+        nextseq_{::int64_t{0}},
+        hasmore_{false},
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR GetSingleChatHistoryResp::GetSingleChatHistoryResp(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct GetSingleChatHistoryRespDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GetSingleChatHistoryRespDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GetSingleChatHistoryRespDefaultTypeInternal() {}
+  union {
+    GetSingleChatHistoryResp _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetSingleChatHistoryRespDefaultTypeInternal _GetSingleChatHistoryResp_default_instance_;
               template <typename>
 PROTOBUF_CONSTEXPR GetMsgByConversationIDsResp_MsgDatasEntry_DoNotUse::GetMsgByConversationIDsResp_MsgDatasEntry_DoNotUse(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
@@ -3229,6 +3285,30 @@ const ::uint32_t
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::msg::GetLastMessageResp, _impl_.msgs_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::msg::GetSingleChatHistoryReq, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::msg::GetSingleChatHistoryReq, _impl_.owneruserid_),
+        PROTOBUF_FIELD_OFFSET(::msg::GetSingleChatHistoryReq, _impl_.peeruserid_),
+        PROTOBUF_FIELD_OFFSET(::msg::GetSingleChatHistoryReq, _impl_.afterseq_),
+        PROTOBUF_FIELD_OFFSET(::msg::GetSingleChatHistoryReq, _impl_.limit_),
+        ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::msg::GetSingleChatHistoryResp, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::msg::GetSingleChatHistoryResp, _impl_.peeruserid_),
+        PROTOBUF_FIELD_OFFSET(::msg::GetSingleChatHistoryResp, _impl_.messages_),
+        PROTOBUF_FIELD_OFFSET(::msg::GetSingleChatHistoryResp, _impl_.hasmore_),
+        PROTOBUF_FIELD_OFFSET(::msg::GetSingleChatHistoryResp, _impl_.nextseq_),
 };
 
 static const ::_pbi::MigrationSchema
@@ -3323,6 +3403,8 @@ static const ::_pbi::MigrationSchema
         {936, -1, -1, sizeof(::msg::GetLastMessageReq)},
         {946, 956, -1, sizeof(::msg::GetLastMessageResp_MsgsEntry_DoNotUse)},
         {958, -1, -1, sizeof(::msg::GetLastMessageResp)},
+        {967, -1, -1, sizeof(::msg::GetSingleChatHistoryReq)},
+        {979, -1, -1, sizeof(::msg::GetSingleChatHistoryResp)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::msg::_MsgDataToMQ_default_instance_._instance,
@@ -3415,6 +3497,8 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::msg::_GetLastMessageReq_default_instance_._instance,
     &::msg::_GetLastMessageResp_MsgsEntry_DoNotUse_default_instance_._instance,
     &::msg::_GetLastMessageResp_default_instance_._instance,
+    &::msg::_GetSingleChatHistoryReq_default_instance_._instance,
+    &::msg::_GetSingleChatHistoryResp_default_instance_._instance,
 };
 const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
@@ -3576,70 +3660,77 @@ const char descriptor_table_protodef_msg_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIAB
     "etLastMessageResp\022/\n\004msgs\030\001 \003(\0132!.msg.Ge"
     "tLastMessageResp.MsgsEntry\032;\n\tMsgsEntry\022"
     "\013\n\003key\030\001 \001(\t\022\035\n\005value\030\002 \001(\0132\016.sdkws.MsgD"
-    "ata:\0028\0012\325\023\n\016MessageService\0226\n\tGetMaxSeq\022"
-    "\023.sdkws.GetMaxSeqReq\032\024.sdkws.GetMaxSeqRe"
-    "sp\0223\n\nGetMaxSeqs\022\022.msg.GetMaxSeqsReq\032\021.m"
-    "sg.SeqsInfoResp\022;\n\016GetHasReadSeqs\022\026.msg."
-    "GetHasReadSeqsReq\032\021.msg.SeqsInfoResp\022\\\n\027"
-    "GetMsgByConversationIDs\022\037.msg.GetMsgByCo"
-    "nversationIDsReq\032 .msg.GetMsgByConversat"
-    "ionIDsResp\022V\n\025GetConversationMaxSeq\022\035.ms"
-    "g.GetConversationMaxSeqReq\032\036.msg.GetConv"
-    "ersationMaxSeqResp\022N\n\021PullMessageBySeqs\022"
-    "\033.sdkws.PullMessageBySeqsReq\032\034.sdkws.Pul"
-    "lMessageBySeqsResp\022>\n\rGetSeqMessage\022\025.ms"
-    "g.GetSeqMessageReq\032\026.msg.GetSeqMessageRe"
-    "sp\022>\n\rSearchMessage\022\025.msg.SearchMessageR"
-    "eq\032\026.msg.SearchMessageResp\022=\n\014SendMessag"
-    "es\022\025.sdkws.SendMessageReq\032\026.sdkws.SendMe"
-    "ssageResp\022>\n\rSendSimpleMsg\022\025.msg.SendSim"
-    "pleMsgReq\032\026.msg.SendSimpleMsgResp\022e\n\032Set"
-    "UserConversationsMinSeq\022\".msg.SetUserCon"
-    "versationsMinSeqReq\032#.msg.SetUserConvers"
-    "ationsMinSeqResp\022V\n\025ClearConversationsMs"
-    "g\022\035.msg.ClearConversationsMsgReq\032\036.msg.C"
-    "learConversationsMsgResp\022D\n\017UserClearAll"
-    "Msg\022\027.msg.UserClearAllMsgReq\032\030.msg.UserC"
-    "learAllMsgResp\0225\n\nDeleteMsgs\022\022.msg.Delet"
-    "eMsgsReq\032\023.msg.DeleteMsgsResp\022Y\n\026DeleteM"
-    "sgPhysicalBySeq\022\036.msg.DeleteMsgPhysicalB"
-    "ySeqReq\032\037.msg.DeleteMsgPhysicalBySeqResp"
-    "\022J\n\021DeleteMsgPhysical\022\031.msg.DeleteMsgPhy"
-    "sicalReq\032\032.msg.DeleteMsgPhysicalResp\022G\n\020"
-    "SetSendMsgStatus\022\030.msg.SetSendMsgStatusR"
-    "eq\032\031.msg.SetSendMsgStatusResp\022G\n\020GetSend"
-    "MsgStatus\022\030.msg.GetSendMsgStatusReq\032\031.ms"
-    "g.GetSendMsgStatusResp\0222\n\tRevokeMsg\022\021.ms"
-    "g.RevokeMsgReq\032\022.msg.RevokeMsgResp\022A\n\016Ma"
-    "rkMsgsAsRead\022\026.msg.MarkMsgsAsReadReq\032\027.m"
-    "sg.MarkMsgsAsReadResp\022Y\n\026MarkConversatio"
-    "nAsRead\022\036.msg.MarkConversationAsReadReq\032"
-    "\037.msg.MarkConversationAsReadResp\022b\n\031SetC"
-    "onversationHasReadSeq\022!.msg.SetConversat"
-    "ionHasReadSeqReq\032\".msg.SetConversationHa"
-    "sReadSeqResp\022w\n GetConversationsHasReadA"
-    "ndMaxSeq\022(.msg.GetConversationsHasReadAn"
-    "dMaxSeqReq\032).msg.GetConversationsHasRead"
-    "AndMaxSeqResp\022>\n\rGetActiveUser\022\025.msg.Get"
-    "ActiveUserReq\032\026.msg.GetActiveUserResp\022A\n"
-    "\016GetActiveGroup\022\026.msg.GetActiveGroupReq\032"
-    "\027.msg.GetActiveGroupResp\022>\n\rGetServerTim"
-    "e\022\025.msg.GetServerTimeReq\032\026.msg.GetServer"
-    "TimeResp\022/\n\010ClearMsg\022\020.msg.ClearMsgReq\032\021"
-    ".msg.ClearMsgResp\022;\n\014DestructMsgs\022\024.msg."
-    "DestructMsgsReq\032\025.msg.DestructMsgsResp\022V"
-    "\n\025GetActiveConversation\022\035.msg.GetActiveC"
-    "onversationReq\032\036.msg.GetActiveConversati"
-    "onResp\022b\n\031SetUserConversationMaxSeq\022!.ms"
-    "g.SetUserConversationMaxSeqReq\032\".msg.Set"
-    "UserConversationMaxSeqResp\022b\n\031SetUserCon"
-    "versationMinSeq\022!.msg.SetUserConversatio"
-    "nMinSeqReq\032\".msg.SetUserConversationMinS"
-    "eqResp\022\\\n\027GetLastMessageSeqByTime\022\037.msg."
-    "GetLastMessageSeqByTimeReq\032 .msg.GetLast"
-    "MessageSeqByTimeResp\022A\n\016GetLastMessage\022\026"
-    ".msg.GetLastMessageReq\032\027.msg.GetLastMess"
-    "ageRespb\006proto3"
+    "ata:\0028\001\"c\n\027GetSingleChatHistoryReq\022\023\n\013ow"
+    "nerUserID\030\001 \001(\004\022\022\n\npeerUserID\030\002 \001(\004\022\020\n\010a"
+    "fterSeq\030\003 \001(\003\022\r\n\005limit\030\004 \001(\005\"r\n\030GetSingl"
+    "eChatHistoryResp\022\022\n\npeerUserID\030\001 \001(\004\022 \n\010"
+    "messages\030\002 \003(\0132\016.sdkws.MsgData\022\017\n\007hasMor"
+    "e\030\003 \001(\010\022\017\n\007nextSeq\030\004 \001(\0032\252\024\n\016MessageServ"
+    "ice\022S\n\024GetSingleChatHistory\022\034.msg.GetSin"
+    "gleChatHistoryReq\032\035.msg.GetSingleChatHis"
+    "toryResp\0226\n\tGetMaxSeq\022\023.sdkws.GetMaxSeqR"
+    "eq\032\024.sdkws.GetMaxSeqResp\0223\n\nGetMaxSeqs\022\022"
+    ".msg.GetMaxSeqsReq\032\021.msg.SeqsInfoResp\022;\n"
+    "\016GetHasReadSeqs\022\026.msg.GetHasReadSeqsReq\032"
+    "\021.msg.SeqsInfoResp\022\\\n\027GetMsgByConversati"
+    "onIDs\022\037.msg.GetMsgByConversationIDsReq\032 "
+    ".msg.GetMsgByConversationIDsResp\022V\n\025GetC"
+    "onversationMaxSeq\022\035.msg.GetConversationM"
+    "axSeqReq\032\036.msg.GetConversationMaxSeqResp"
+    "\022N\n\021PullMessageBySeqs\022\033.sdkws.PullMessag"
+    "eBySeqsReq\032\034.sdkws.PullMessageBySeqsResp"
+    "\022>\n\rGetSeqMessage\022\025.msg.GetSeqMessageReq"
+    "\032\026.msg.GetSeqMessageResp\022>\n\rSearchMessag"
+    "e\022\025.msg.SearchMessageReq\032\026.msg.SearchMes"
+    "sageResp\022=\n\014SendMessages\022\025.sdkws.SendMes"
+    "sageReq\032\026.sdkws.SendMessageResp\022>\n\rSendS"
+    "impleMsg\022\025.msg.SendSimpleMsgReq\032\026.msg.Se"
+    "ndSimpleMsgResp\022e\n\032SetUserConversationsM"
+    "inSeq\022\".msg.SetUserConversationsMinSeqRe"
+    "q\032#.msg.SetUserConversationsMinSeqResp\022V"
+    "\n\025ClearConversationsMsg\022\035.msg.ClearConve"
+    "rsationsMsgReq\032\036.msg.ClearConversationsM"
+    "sgResp\022D\n\017UserClearAllMsg\022\027.msg.UserClea"
+    "rAllMsgReq\032\030.msg.UserClearAllMsgResp\0225\n\n"
+    "DeleteMsgs\022\022.msg.DeleteMsgsReq\032\023.msg.Del"
+    "eteMsgsResp\022Y\n\026DeleteMsgPhysicalBySeq\022\036."
+    "msg.DeleteMsgPhysicalBySeqReq\032\037.msg.Dele"
+    "teMsgPhysicalBySeqResp\022J\n\021DeleteMsgPhysi"
+    "cal\022\031.msg.DeleteMsgPhysicalReq\032\032.msg.Del"
+    "eteMsgPhysicalResp\022G\n\020SetSendMsgStatus\022\030"
+    ".msg.SetSendMsgStatusReq\032\031.msg.SetSendMs"
+    "gStatusResp\022G\n\020GetSendMsgStatus\022\030.msg.Ge"
+    "tSendMsgStatusReq\032\031.msg.GetSendMsgStatus"
+    "Resp\0222\n\tRevokeMsg\022\021.msg.RevokeMsgReq\032\022.m"
+    "sg.RevokeMsgResp\022A\n\016MarkMsgsAsRead\022\026.msg"
+    ".MarkMsgsAsReadReq\032\027.msg.MarkMsgsAsReadR"
+    "esp\022Y\n\026MarkConversationAsRead\022\036.msg.Mark"
+    "ConversationAsReadReq\032\037.msg.MarkConversa"
+    "tionAsReadResp\022b\n\031SetConversationHasRead"
+    "Seq\022!.msg.SetConversationHasReadSeqReq\032\""
+    ".msg.SetConversationHasReadSeqResp\022w\n Ge"
+    "tConversationsHasReadAndMaxSeq\022(.msg.Get"
+    "ConversationsHasReadAndMaxSeqReq\032).msg.G"
+    "etConversationsHasReadAndMaxSeqResp\022>\n\rG"
+    "etActiveUser\022\025.msg.GetActiveUserReq\032\026.ms"
+    "g.GetActiveUserResp\022A\n\016GetActiveGroup\022\026."
+    "msg.GetActiveGroupReq\032\027.msg.GetActiveGro"
+    "upResp\022>\n\rGetServerTime\022\025.msg.GetServerT"
+    "imeReq\032\026.msg.GetServerTimeResp\022/\n\010ClearM"
+    "sg\022\020.msg.ClearMsgReq\032\021.msg.ClearMsgResp\022"
+    ";\n\014DestructMsgs\022\024.msg.DestructMsgsReq\032\025."
+    "msg.DestructMsgsResp\022V\n\025GetActiveConvers"
+    "ation\022\035.msg.GetActiveConversationReq\032\036.m"
+    "sg.GetActiveConversationResp\022b\n\031SetUserC"
+    "onversationMaxSeq\022!.msg.SetUserConversat"
+    "ionMaxSeqReq\032\".msg.SetUserConversationMa"
+    "xSeqResp\022b\n\031SetUserConversationMinSeq\022!."
+    "msg.SetUserConversationMinSeqReq\032\".msg.S"
+    "etUserConversationMinSeqResp\022\\\n\027GetLastM"
+    "essageSeqByTime\022\037.msg.GetLastMessageSeqB"
+    "yTimeReq\032 .msg.GetLastMessageSeqByTimeRe"
+    "sp\022A\n\016GetLastMessage\022\026.msg.GetLastMessag"
+    "eReq\032\027.msg.GetLastMessageRespb\006proto3"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_msg_2eproto_deps[2] =
     {
@@ -3650,13 +3741,13 @@ static ::absl::once_flag descriptor_table_msg_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_msg_2eproto = {
     false,
     false,
-    8855,
+    9157,
     descriptor_table_protodef_msg_2eproto,
     "msg.proto",
     &descriptor_table_msg_2eproto_once,
     descriptor_table_msg_2eproto_deps,
     2,
-    90,
+    92,
     schemas,
     file_default_instances,
     TableStruct_msg_2eproto::offsets,
@@ -24509,6 +24600,621 @@ void GetLastMessageResp::InternalSwap(GetLastMessageResp* PROTOBUF_RESTRICT othe
 }
 
 ::google::protobuf::Metadata GetLastMessageResp::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class GetSingleChatHistoryReq::_Internal {
+ public:
+};
+
+GetSingleChatHistoryReq::GetSingleChatHistoryReq(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:msg.GetSingleChatHistoryReq)
+}
+GetSingleChatHistoryReq::GetSingleChatHistoryReq(
+    ::google::protobuf::Arena* arena, const GetSingleChatHistoryReq& from)
+    : GetSingleChatHistoryReq(arena) {
+  MergeFrom(from);
+}
+inline PROTOBUF_NDEBUG_INLINE GetSingleChatHistoryReq::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : _cached_size_{0} {}
+
+inline void GetSingleChatHistoryReq::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, owneruserid_),
+           0,
+           offsetof(Impl_, limit_) -
+               offsetof(Impl_, owneruserid_) +
+               sizeof(Impl_::limit_));
+}
+GetSingleChatHistoryReq::~GetSingleChatHistoryReq() {
+  // @@protoc_insertion_point(destructor:msg.GetSingleChatHistoryReq)
+  SharedDtor(*this);
+}
+inline void GetSingleChatHistoryReq::SharedDtor(MessageLite& self) {
+  GetSingleChatHistoryReq& this_ = static_cast<GetSingleChatHistoryReq&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.~Impl_();
+}
+
+inline void* GetSingleChatHistoryReq::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) GetSingleChatHistoryReq(arena);
+}
+constexpr auto GetSingleChatHistoryReq::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::ZeroInit(sizeof(GetSingleChatHistoryReq),
+                                            alignof(GetSingleChatHistoryReq));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull GetSingleChatHistoryReq::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_GetSingleChatHistoryReq_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &GetSingleChatHistoryReq::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<GetSingleChatHistoryReq>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &GetSingleChatHistoryReq::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<GetSingleChatHistoryReq>(), &GetSingleChatHistoryReq::ByteSizeLong,
+            &GetSingleChatHistoryReq::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_._cached_size_),
+        false,
+    },
+    &GetSingleChatHistoryReq::kDescriptorMethods,
+    &descriptor_table_msg_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* GetSingleChatHistoryReq::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 4, 0, 0, 2> GetSingleChatHistoryReq::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    4, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967280,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    4,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::msg::GetSingleChatHistoryReq>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // int32 limit = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(GetSingleChatHistoryReq, _impl_.limit_), 63>(),
+     {32, 63, 0, PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_.limit_)}},
+    // uint64 ownerUserID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(GetSingleChatHistoryReq, _impl_.owneruserid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_.owneruserid_)}},
+    // uint64 peerUserID = 2;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(GetSingleChatHistoryReq, _impl_.peeruserid_), 63>(),
+     {16, 63, 0, PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_.peeruserid_)}},
+    // int64 afterSeq = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(GetSingleChatHistoryReq, _impl_.afterseq_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_.afterseq_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // uint64 ownerUserID = 1;
+    {PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_.owneruserid_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
+    // uint64 peerUserID = 2;
+    {PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_.peeruserid_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
+    // int64 afterSeq = 3;
+    {PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_.afterseq_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
+    // int32 limit = 4;
+    {PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_.limit_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kInt32)},
+  }},
+  // no aux_entries
+  {{
+  }},
+};
+
+PROTOBUF_NOINLINE void GetSingleChatHistoryReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:msg.GetSingleChatHistoryReq)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&_impl_.owneruserid_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.limit_) -
+      reinterpret_cast<char*>(&_impl_.owneruserid_)) + sizeof(_impl_.limit_));
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* GetSingleChatHistoryReq::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const GetSingleChatHistoryReq& this_ = static_cast<const GetSingleChatHistoryReq&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* GetSingleChatHistoryReq::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const GetSingleChatHistoryReq& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:msg.GetSingleChatHistoryReq)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // uint64 ownerUserID = 1;
+          if (this_._internal_owneruserid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_owneruserid(), target);
+          }
+
+          // uint64 peerUserID = 2;
+          if (this_._internal_peeruserid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                2, this_._internal_peeruserid(), target);
+          }
+
+          // int64 afterSeq = 3;
+          if (this_._internal_afterseq() != 0) {
+            target = ::google::protobuf::internal::WireFormatLite::
+                WriteInt64ToArrayWithField<3>(
+                    stream, this_._internal_afterseq(), target);
+          }
+
+          // int32 limit = 4;
+          if (this_._internal_limit() != 0) {
+            target = ::google::protobuf::internal::WireFormatLite::
+                WriteInt32ToArrayWithField<4>(
+                    stream, this_._internal_limit(), target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:msg.GetSingleChatHistoryReq)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t GetSingleChatHistoryReq::ByteSizeLong(const MessageLite& base) {
+          const GetSingleChatHistoryReq& this_ = static_cast<const GetSingleChatHistoryReq&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t GetSingleChatHistoryReq::ByteSizeLong() const {
+          const GetSingleChatHistoryReq& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:msg.GetSingleChatHistoryReq)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // uint64 ownerUserID = 1;
+            if (this_._internal_owneruserid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_owneruserid());
+            }
+            // uint64 peerUserID = 2;
+            if (this_._internal_peeruserid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_peeruserid());
+            }
+            // int64 afterSeq = 3;
+            if (this_._internal_afterseq() != 0) {
+              total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+                  this_._internal_afterseq());
+            }
+            // int32 limit = 4;
+            if (this_._internal_limit() != 0) {
+              total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+                  this_._internal_limit());
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void GetSingleChatHistoryReq::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<GetSingleChatHistoryReq*>(&to_msg);
+  auto& from = static_cast<const GetSingleChatHistoryReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:msg.GetSingleChatHistoryReq)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_owneruserid() != 0) {
+    _this->_impl_.owneruserid_ = from._impl_.owneruserid_;
+  }
+  if (from._internal_peeruserid() != 0) {
+    _this->_impl_.peeruserid_ = from._impl_.peeruserid_;
+  }
+  if (from._internal_afterseq() != 0) {
+    _this->_impl_.afterseq_ = from._impl_.afterseq_;
+  }
+  if (from._internal_limit() != 0) {
+    _this->_impl_.limit_ = from._impl_.limit_;
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GetSingleChatHistoryReq::CopyFrom(const GetSingleChatHistoryReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:msg.GetSingleChatHistoryReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void GetSingleChatHistoryReq::InternalSwap(GetSingleChatHistoryReq* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_.limit_)
+      + sizeof(GetSingleChatHistoryReq::_impl_.limit_)
+      - PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryReq, _impl_.owneruserid_)>(
+          reinterpret_cast<char*>(&_impl_.owneruserid_),
+          reinterpret_cast<char*>(&other->_impl_.owneruserid_));
+}
+
+::google::protobuf::Metadata GetSingleChatHistoryReq::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
+class GetSingleChatHistoryResp::_Internal {
+ public:
+};
+
+void GetSingleChatHistoryResp::clear_messages() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.messages_.Clear();
+}
+GetSingleChatHistoryResp::GetSingleChatHistoryResp(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:msg.GetSingleChatHistoryResp)
+}
+inline PROTOBUF_NDEBUG_INLINE GetSingleChatHistoryResp::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::msg::GetSingleChatHistoryResp& from_msg)
+      : messages_{visibility, arena, from.messages_},
+        _cached_size_{0} {}
+
+GetSingleChatHistoryResp::GetSingleChatHistoryResp(
+    ::google::protobuf::Arena* arena,
+    const GetSingleChatHistoryResp& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  GetSingleChatHistoryResp* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  ::memcpy(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, peeruserid_),
+           reinterpret_cast<const char *>(&from._impl_) +
+               offsetof(Impl_, peeruserid_),
+           offsetof(Impl_, hasmore_) -
+               offsetof(Impl_, peeruserid_) +
+               sizeof(Impl_::hasmore_));
+
+  // @@protoc_insertion_point(copy_constructor:msg.GetSingleChatHistoryResp)
+}
+inline PROTOBUF_NDEBUG_INLINE GetSingleChatHistoryResp::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : messages_{visibility, arena},
+        _cached_size_{0} {}
+
+inline void GetSingleChatHistoryResp::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+  ::memset(reinterpret_cast<char *>(&_impl_) +
+               offsetof(Impl_, peeruserid_),
+           0,
+           offsetof(Impl_, hasmore_) -
+               offsetof(Impl_, peeruserid_) +
+               sizeof(Impl_::hasmore_));
+}
+GetSingleChatHistoryResp::~GetSingleChatHistoryResp() {
+  // @@protoc_insertion_point(destructor:msg.GetSingleChatHistoryResp)
+  SharedDtor(*this);
+}
+inline void GetSingleChatHistoryResp::SharedDtor(MessageLite& self) {
+  GetSingleChatHistoryResp& this_ = static_cast<GetSingleChatHistoryResp&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.~Impl_();
+}
+
+inline void* GetSingleChatHistoryResp::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) GetSingleChatHistoryResp(arena);
+}
+constexpr auto GetSingleChatHistoryResp::InternalNewImpl_() {
+  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
+      PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.messages_) +
+          decltype(GetSingleChatHistoryResp::_impl_.messages_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+  });
+  if (arena_bits.has_value()) {
+    return ::google::protobuf::internal::MessageCreator::ZeroInit(
+        sizeof(GetSingleChatHistoryResp), alignof(GetSingleChatHistoryResp), *arena_bits);
+  } else {
+    return ::google::protobuf::internal::MessageCreator(&GetSingleChatHistoryResp::PlacementNew_,
+                                 sizeof(GetSingleChatHistoryResp),
+                                 alignof(GetSingleChatHistoryResp));
+  }
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull GetSingleChatHistoryResp::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_GetSingleChatHistoryResp_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &GetSingleChatHistoryResp::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<GetSingleChatHistoryResp>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &GetSingleChatHistoryResp::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<GetSingleChatHistoryResp>(), &GetSingleChatHistoryResp::ByteSizeLong,
+            &GetSingleChatHistoryResp::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_._cached_size_),
+        false,
+    },
+    &GetSingleChatHistoryResp::kDescriptorMethods,
+    &descriptor_table_msg_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* GetSingleChatHistoryResp::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<2, 4, 1, 0, 2> GetSingleChatHistoryResp::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    4, 24,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967280,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    4,  // num_field_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::msg::GetSingleChatHistoryResp>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // int64 nextSeq = 4;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(GetSingleChatHistoryResp, _impl_.nextseq_), 63>(),
+     {32, 63, 0, PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.nextseq_)}},
+    // uint64 peerUserID = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(GetSingleChatHistoryResp, _impl_.peeruserid_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.peeruserid_)}},
+    // repeated .sdkws.MsgData messages = 2;
+    {::_pbi::TcParser::FastMtR1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.messages_)}},
+    // bool hasMore = 3;
+    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GetSingleChatHistoryResp, _impl_.hasmore_), 63>(),
+     {24, 63, 0, PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.hasmore_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // uint64 peerUserID = 1;
+    {PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.peeruserid_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUInt64)},
+    // repeated .sdkws.MsgData messages = 2;
+    {PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.messages_), 0, 0,
+    (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+    // bool hasMore = 3;
+    {PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.hasmore_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kBool)},
+    // int64 nextSeq = 4;
+    {PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.nextseq_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
+  }}, {{
+    {::_pbi::TcParser::GetTable<::sdkws::MsgData>()},
+  }}, {{
+  }},
+};
+
+PROTOBUF_NOINLINE void GetSingleChatHistoryResp::Clear() {
+// @@protoc_insertion_point(message_clear_start:msg.GetSingleChatHistoryResp)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.messages_.Clear();
+  ::memset(&_impl_.peeruserid_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.hasmore_) -
+      reinterpret_cast<char*>(&_impl_.peeruserid_)) + sizeof(_impl_.hasmore_));
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* GetSingleChatHistoryResp::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const GetSingleChatHistoryResp& this_ = static_cast<const GetSingleChatHistoryResp&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* GetSingleChatHistoryResp::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const GetSingleChatHistoryResp& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:msg.GetSingleChatHistoryResp)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // uint64 peerUserID = 1;
+          if (this_._internal_peeruserid() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteUInt64ToArray(
+                1, this_._internal_peeruserid(), target);
+          }
+
+          // repeated .sdkws.MsgData messages = 2;
+          for (unsigned i = 0, n = static_cast<unsigned>(
+                                   this_._internal_messages_size());
+               i < n; i++) {
+            const auto& repfield = this_._internal_messages().Get(i);
+            target =
+                ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+                    2, repfield, repfield.GetCachedSize(),
+                    target, stream);
+          }
+
+          // bool hasMore = 3;
+          if (this_._internal_hasmore() != 0) {
+            target = stream->EnsureSpace(target);
+            target = ::_pbi::WireFormatLite::WriteBoolToArray(
+                3, this_._internal_hasmore(), target);
+          }
+
+          // int64 nextSeq = 4;
+          if (this_._internal_nextseq() != 0) {
+            target = ::google::protobuf::internal::WireFormatLite::
+                WriteInt64ToArrayWithField<4>(
+                    stream, this_._internal_nextseq(), target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:msg.GetSingleChatHistoryResp)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t GetSingleChatHistoryResp::ByteSizeLong(const MessageLite& base) {
+          const GetSingleChatHistoryResp& this_ = static_cast<const GetSingleChatHistoryResp&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t GetSingleChatHistoryResp::ByteSizeLong() const {
+          const GetSingleChatHistoryResp& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:msg.GetSingleChatHistoryResp)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // repeated .sdkws.MsgData messages = 2;
+            {
+              total_size += 1UL * this_._internal_messages_size();
+              for (const auto& msg : this_._internal_messages()) {
+                total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
+              }
+            }
+          }
+           {
+            // uint64 peerUserID = 1;
+            if (this_._internal_peeruserid() != 0) {
+              total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(
+                  this_._internal_peeruserid());
+            }
+            // int64 nextSeq = 4;
+            if (this_._internal_nextseq() != 0) {
+              total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+                  this_._internal_nextseq());
+            }
+            // bool hasMore = 3;
+            if (this_._internal_hasmore() != 0) {
+              total_size += 2;
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void GetSingleChatHistoryResp::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<GetSingleChatHistoryResp*>(&to_msg);
+  auto& from = static_cast<const GetSingleChatHistoryResp&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:msg.GetSingleChatHistoryResp)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  _this->_internal_mutable_messages()->MergeFrom(
+      from._internal_messages());
+  if (from._internal_peeruserid() != 0) {
+    _this->_impl_.peeruserid_ = from._impl_.peeruserid_;
+  }
+  if (from._internal_nextseq() != 0) {
+    _this->_impl_.nextseq_ = from._impl_.nextseq_;
+  }
+  if (from._internal_hasmore() != 0) {
+    _this->_impl_.hasmore_ = from._impl_.hasmore_;
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void GetSingleChatHistoryResp::CopyFrom(const GetSingleChatHistoryResp& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:msg.GetSingleChatHistoryResp)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void GetSingleChatHistoryResp::InternalSwap(GetSingleChatHistoryResp* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _impl_.messages_.InternalSwap(&other->_impl_.messages_);
+  ::google::protobuf::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.hasmore_)
+      + sizeof(GetSingleChatHistoryResp::_impl_.hasmore_)
+      - PROTOBUF_FIELD_OFFSET(GetSingleChatHistoryResp, _impl_.peeruserid_)>(
+          reinterpret_cast<char*>(&_impl_.peeruserid_),
+          reinterpret_cast<char*>(&other->_impl_.peeruserid_));
+}
+
+::google::protobuf::Metadata GetSingleChatHistoryResp::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // @@protoc_insertion_point(namespace_scope)

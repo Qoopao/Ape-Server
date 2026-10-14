@@ -386,7 +386,22 @@ message GetLastMessageResp {
   map<string,sdkws.MsgData> msgs = 1;
 }
 
+message GetSingleChatHistoryReq {
+  uint64 ownerUserID = 1;
+  uint64 peerUserID = 2;
+  int64 afterSeq = 3;
+  int32 limit = 4;
+}
+
+message GetSingleChatHistoryResp {
+  uint64 peerUserID = 1;
+  repeated sdkws.MsgData messages = 2;
+  bool hasMore = 3;
+  int64 nextSeq = 4;
+}
+
 service MessageService {
+  rpc GetSingleChatHistory(GetSingleChatHistoryReq) returns (GetSingleChatHistoryResp);
   //获取最小最大seq（包括用户的，以及指定群组的）
   rpc GetMaxSeq(sdkws.GetMaxSeqReq) returns (sdkws.GetMaxSeqResp);
   //获取会话列表的最大seq

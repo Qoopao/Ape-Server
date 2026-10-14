@@ -1,7 +1,25 @@
 #include "messagequeue/kafkaproducer.h"
 #include <librdkafka/rdkafkacpp.h>
+#include <boost/asio/steady_timer.hpp>
+#include <boost/asio/this_coro.hpp>
+#include <boost/asio/use_awaitable.hpp>
+#include <atomic>
+#include <memory>
+#include <chrono>
+#include <stdexcept>
+
+namespace {
+struct DeliveryState
+{
+    std::atomic<int> status{0};
+};
+}
 
 void ProducerDeliveryReportCb::dr_cb(RdKafka::Message& message) {
+    if (auto* opaque = static_cast<std::shared_ptr<DeliveryState>*>(message.msg_opaque())) {
+        (*opaque)->status.store(message.err() == RdKafka::ERR_NO_ERROR ? 1 : 2);
+        delete opaque;
+    }
     // 处理生产者投递回调
     if(message.err() != RdKafka::ERR_NO_ERROR){
         spdlog::error("Producer delivery failed: {}", message.errstr());
@@ -42,6 +60,8 @@ int32_t ProducerPartitionStrategyCb::partitioner_cb(const RdKafka::Topic *topic,
 }
 
 KafkaProducer::KafkaProducer( std::string topicName, std::string brokerList)
+    : globalConfig(nullptr), topicConfig(nullptr), drCb(nullptr), eventCb(nullptr),
+      partitionerCb(nullptr), producerInstance(nullptr), topic(nullptr)
 {
     this->brokerList = brokerList;
     this->topicName = topicName;
@@ -72,6 +92,9 @@ KafkaProducer::KafkaProducer( std::string topicName, std::string brokerList)
         spdlog::error("KafkaProducer: Failed to set bootstrap.servers: {}", errorStr);
         return;
     }
+    if (globalConfig->set("enable.idempotence", "true", errorStr) != RdKafka::Conf::CONF_OK ||
+        globalConfig->set("delivery.timeout.ms", "10000", errorStr) != RdKafka::Conf::CONF_OK)
+        throw std::runtime_error("Kafka reliability configuration failed: " + errorStr);
 
     //设置生产者投递回调
     errCode = globalConfig->set("dr_cb", drCb, errorStr);
@@ -112,6 +135,8 @@ KafkaProducer::KafkaProducer( std::string topicName, std::string brokerList)
 
 bool KafkaProducer::deliver(std::string& key, void* payload, size_t payloadSize)
 {
+    if (!producerInstance || !topic)
+        return false;
     // 投递消息
     RdKafka::ErrorCode errCode = producerInstance->produce(
         topic,
@@ -133,6 +158,30 @@ bool KafkaProducer::deliver(std::string& key, void* payload, size_t payloadSize)
     }
     return true;
 
+}
+
+boost::asio::awaitable<bool> KafkaProducer::deliverConfirmed(std::string key, std::string payload)
+{
+    if (!producerInstance || !topic)
+        co_return false;
+    auto state = std::make_shared<DeliveryState>();
+    auto* opaque = new std::shared_ptr<DeliveryState>(state);
+    const auto error = producerInstance->produce(topic, RdKafka::Topic::PARTITION_UA,
+        RdKafka::Producer::RK_MSG_COPY, payload.data(), payload.size(), &key, opaque);
+    if (error != RdKafka::ERR_NO_ERROR) {
+        delete opaque;
+        co_return false;
+    }
+    boost::asio::steady_timer timer(co_await boost::asio::this_coro::executor);
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(12);
+    while (state->status.load() == 0 && std::chrono::steady_clock::now() < deadline) {
+        producerInstance->poll(0);
+        if (state->status.load() != 0)
+            break;
+        timer.expires_after(std::chrono::milliseconds(50));
+        co_await timer.async_wait(boost::asio::use_awaitable);
+    }
+    co_return state->status.load() == 1;
 }
 
 

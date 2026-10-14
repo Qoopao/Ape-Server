@@ -1,6 +1,6 @@
 #include "util/account_pool.h"
 #include "storage/mysqlconnector.h"
-#include "storage/registration_store.h"
+#include "storage/mysqlhandler.h"
 std::vector<uint64_t>
 AccountPoolAllocator::generate_shuffled_batch(uint64_t start, uint64_t end) {
   std::vector<uint64_t> batch;
@@ -20,7 +20,7 @@ AccountPoolAllocator::generate_shuffled_batch(uint64_t start, uint64_t end) {
 
 boost::asio::awaitable<void> AccountPoolTool::refill(uint64_t batch_size) {
     // Callers must run on get_pool_executor(0).
-    co_await registration::refill(MySQLConnector::instance().get_pool(0), batch_size);
+    co_await MySQLHandler::refill_accounts(MySQLConnector::instance().get_pool(0), batch_size);
 }
 boost::asio::awaitable<void> AccountPoolTool::ensure_pool_not_low() {
     co_await refill(AccountPoolAllocator::kRefillBatch);

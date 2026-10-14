@@ -1,0 +1,57 @@
+syntax = "proto3";
+package friendpb;
+import "sdkws.proto";
+
+enum Operation {
+  LookupUser = 0;
+  Apply = 1;
+  ListFriends = 2;
+  ListApplications = 3;
+  HandleApplication = 4;
+  DeleteFriend = 5;
+}
+enum ApplicationStatus {
+  Pending = 0;
+  Accepted = 1;
+  Rejected = 2;
+}
+message Application {
+  uint64 id = 1;
+  sdkws.PublicUserInfo sender = 2;
+  sdkws.PublicUserInfo recipient = 3;
+  string message = 4;
+  ApplicationStatus status = 5;
+  int64 createdTime = 6;
+  int64 handledTime = 7;
+}
+message Command {
+  uint64 actor = 1;
+  Operation operation = 2;
+  uint64 target = 3;
+  uint64 applicationID = 4;
+  string message = 5;
+  bool accept = 6;
+  uint64 after = 7;
+  uint32 limit = 8;
+  uint64 snapshot = 9;
+}
+message ClearedConversation {
+  uint64 peer = 1;
+  int64 deletedTime = 2;
+  int64 deletedSeq = 3;
+}
+message Reply {
+  string errorCode = 1;
+  string errorMessage = 2;
+  sdkws.PublicUserInfo user = 3;
+  repeated sdkws.FriendInfo friends = 4;
+  repeated Application applications = 5;
+  bool hasMore = 6;
+  uint64 cursor = 7;
+  uint64 snapshot = 8;
+  repeated uint64 changedAccounts = 9;
+  repeated ClearedConversation clearedConversations = 10;
+}
+service FriendService {
+  rpc Execute(Command) returns (Reply);
+}

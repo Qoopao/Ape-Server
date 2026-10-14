@@ -25,6 +25,13 @@ class MongoHandler{
 private:
     mongocxx::collection get_collection(const std::string db_name, const std::string collection_name);
 public:
+    static sdkws::MsgData DecodeMessage(bsoncxx::document::view document);
+    static boost::asio::awaitable<std::vector<std::string>> DeleteSingleChatHistoryAsync(
+        std::string conversation, int64_t cutoff = INT64_MAX);
+    static boost::asio::awaitable<std::vector<std::string>> GetSingleChatMessageIDsAsync(
+        std::string conversation, int64_t cutoff = INT64_MAX);
+    static boost::asio::awaitable<std::vector<sdkws::MsgData>> GetSingleChatHistoryAsync(
+        std::string conversation, int64_t afterSeq, int limit);
 
     int64_t	AppendMsgToConvMsgList(std::string conversationid, std::string msgid);
 	std::vector<sdkws::MsgData> GetConvMessageList(std::string conversationid, int64_t cursor, int64_t limit, bool forward);
@@ -35,7 +42,8 @@ public:
 	bool SaveConversationInfo(std::string conversationid, sdkws::ConversationInfo conversation);
 	std::optional<sdkws::ConversationInfo> GetConversationInfo(std::string conversationid);
 
-	static bool SaveMsgToMongo(const sdkws::MsgData& msg);
+	static bool SaveMsgToMongo(const sdkws::MsgData& msg, bool committed = true);
+    static boost::asio::awaitable<void> PublishMessage(std::string serverId);
 	static bool GetMsgByServerMsgID(const std::string& serverMsgID, sdkws::MsgData& outMsg);
 
 	// 按 seq 范围拉取用户消息（从 IM-System.msg，统一在线/离线）
@@ -44,47 +52,12 @@ public:
 	static bool MarkMsgsAsDelivered(const uint64_t userId, const std::vector<std::string>& msgIds);
 
 	// ── 异步版本（IOCPool worker 卸载，co_await 调用） ──
-	static boost::asio::awaitable<bool> SaveMsgToMongoAsync(sdkws::MsgData msg);
+	static boost::asio::awaitable<bool> SaveMsgToMongoAsync(sdkws::MsgData msg, bool committed = true);
 	static boost::asio::awaitable<std::optional<sdkws::MsgData>> GetMsgByServerMsgIDAsync(
       std::string serverMsgID);
 	static boost::asio::awaitable<std::vector<sdkws::MsgData>> GetMsgsBySeqFromMongoAsync(uint64_t userId, int64_t afterSeq, int limit = 100);
 	static boost::asio::awaitable<bool> MarkMsgsAsDeliveredAsync(uint64_t userId, std::vector<std::string> msgIds);
 
-	// 单条消息状态更新（对应 sdkws.MsgData.status / dStatus）
-	static bool MarkMsgAsDelivered(const std::string &serverMsgID);         // status=2  在线推送成功
-	static bool MarkMsgAsPushFailed(const std::string &serverMsgID);        // status=3, dStatus|=1  在线推送失败降级
-	static bool MarkMsgAsOffline(const std::string &serverMsgID);           // dStatus|=1  接收者离线
-	static boost::asio::awaitable<bool> MarkMsgAsDeliveredAsync(std::string serverMsgID);
-	static boost::asio::awaitable<bool> MarkMsgAsPushFailedAsync(std::string serverMsgID);
-	static boost::asio::awaitable<bool> MarkMsgAsOfflineAsync(std::string serverMsgID);
-
-	// 查询消息是否已被消费（幂等兜底）
-	static bool IsMsgAlreadyConsumed(const std::string &serverMsgID);
-	static boost::asio::awaitable<bool> IsMsgAlreadyConsumedAsync(std::string serverMsgID);
-
-	// 查询会话是否存在
-	static bool DoesConversationExist(const std::string &convID);
-	static boost::asio::awaitable<bool> DoesConversationExistAsync(
-	    std::string convID);
-
-	// 创建单聊会话（首次发消息时调用，为双方各创建一条 Conversation 记录）
-	static bool CreateSingleChatConversations(const uint64_t sendID,
-	                                           const uint64_t recvID,
-	                                           const std::string &convID);
-	static boost::asio::awaitable<bool> CreateSingleChatConversationsAsync(
-	    uint64_t sendID, uint64_t recvID, std::string convID);
-
-	// 创建群聊会话（为每个成员各创建一条 Conversation 记录，conversationType=2）
-	static bool CreateGroupChatConversations(const std::string &groupID,
-	                                          const std::vector<uint64_t> &userIDs);
-	static boost::asio::awaitable<bool> CreateGroupChatConversationsAsync(
-	    std::string groupID, std::vector<uint64_t> userIDs);
-
-	// 按群 ID 列表批量拉取群消息（用于 PullMessageBySeqs 冷存储回退）
-	static std::vector<sdkws::MsgData> GetGroupMsgsBySeqFromMongo(
-	    const std::vector<std::string> &groupIDs, int64_t afterSeq, int limit = 100);
-	static boost::asio::awaitable<std::vector<sdkws::MsgData>> GetGroupMsgsBySeqFromMongoAsync(
-	    std::vector<std::string> groupIDs, int64_t afterSeq, int limit = 100);
 };
 
 #endif

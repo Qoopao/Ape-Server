@@ -36,6 +36,13 @@ class MessageService final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
+    virtual ::grpc::Status GetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::msg::GetSingleChatHistoryResp* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::msg::GetSingleChatHistoryResp>> AsyncGetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::msg::GetSingleChatHistoryResp>>(AsyncGetSingleChatHistoryRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::msg::GetSingleChatHistoryResp>> PrepareAsyncGetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::msg::GetSingleChatHistoryResp>>(PrepareAsyncGetSingleChatHistoryRaw(context, request, cq));
+    }
     // 获取最小最大seq（包括用户的，以及指定群组的）
     virtual ::grpc::Status GetMaxSeq(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq& request, ::sdkws::GetMaxSeqResp* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::sdkws::GetMaxSeqResp>> AsyncGetMaxSeq(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq& request, ::grpc::CompletionQueue* cq) {
@@ -285,6 +292,8 @@ class MessageService final {
     class async_interface {
      public:
       virtual ~async_interface() {}
+      virtual void GetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq* request, ::msg::GetSingleChatHistoryResp* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq* request, ::msg::GetSingleChatHistoryResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       // 获取最小最大seq（包括用户的，以及指定群组的）
       virtual void GetMaxSeq(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq* request, ::sdkws::GetMaxSeqResp* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetMaxSeq(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq* request, ::sdkws::GetMaxSeqResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
@@ -371,6 +380,8 @@ class MessageService final {
     virtual class async_interface* async() { return nullptr; }
     class async_interface* experimental_async() { return async(); }
    private:
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::msg::GetSingleChatHistoryResp>* AsyncGetSingleChatHistoryRaw(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::msg::GetSingleChatHistoryResp>* PrepareAsyncGetSingleChatHistoryRaw(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sdkws::GetMaxSeqResp>* AsyncGetMaxSeqRaw(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::sdkws::GetMaxSeqResp>* PrepareAsyncGetMaxSeqRaw(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::msg::SeqsInfoResp>* AsyncGetMaxSeqsRaw(::grpc::ClientContext* context, const ::msg::GetMaxSeqsReq& request, ::grpc::CompletionQueue* cq) = 0;
@@ -441,6 +452,13 @@ class MessageService final {
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+    ::grpc::Status GetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::msg::GetSingleChatHistoryResp* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::msg::GetSingleChatHistoryResp>> AsyncGetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::msg::GetSingleChatHistoryResp>>(AsyncGetSingleChatHistoryRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::msg::GetSingleChatHistoryResp>> PrepareAsyncGetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::msg::GetSingleChatHistoryResp>>(PrepareAsyncGetSingleChatHistoryRaw(context, request, cq));
+    }
     ::grpc::Status GetMaxSeq(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq& request, ::sdkws::GetMaxSeqResp* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sdkws::GetMaxSeqResp>> AsyncGetMaxSeq(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::sdkws::GetMaxSeqResp>>(AsyncGetMaxSeqRaw(context, request, cq));
@@ -675,6 +693,8 @@ class MessageService final {
     class async final :
       public StubInterface::async_interface {
      public:
+      void GetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq* request, ::msg::GetSingleChatHistoryResp* response, std::function<void(::grpc::Status)>) override;
+      void GetSingleChatHistory(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq* request, ::msg::GetSingleChatHistoryResp* response, ::grpc::ClientUnaryReactor* reactor) override;
       void GetMaxSeq(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq* request, ::sdkws::GetMaxSeqResp* response, std::function<void(::grpc::Status)>) override;
       void GetMaxSeq(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq* request, ::sdkws::GetMaxSeqResp* response, ::grpc::ClientUnaryReactor* reactor) override;
       void GetMaxSeqs(::grpc::ClientContext* context, const ::msg::GetMaxSeqsReq* request, ::msg::SeqsInfoResp* response, std::function<void(::grpc::Status)>) override;
@@ -752,6 +772,8 @@ class MessageService final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class async async_stub_{this};
+    ::grpc::ClientAsyncResponseReader< ::msg::GetSingleChatHistoryResp>* AsyncGetSingleChatHistoryRaw(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::msg::GetSingleChatHistoryResp>* PrepareAsyncGetSingleChatHistoryRaw(::grpc::ClientContext* context, const ::msg::GetSingleChatHistoryReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sdkws::GetMaxSeqResp>* AsyncGetMaxSeqRaw(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::sdkws::GetMaxSeqResp>* PrepareAsyncGetMaxSeqRaw(::grpc::ClientContext* context, const ::sdkws::GetMaxSeqReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::msg::SeqsInfoResp>* AsyncGetMaxSeqsRaw(::grpc::ClientContext* context, const ::msg::GetMaxSeqsReq& request, ::grpc::CompletionQueue* cq) override;
@@ -818,6 +840,7 @@ class MessageService final {
     ::grpc::ClientAsyncResponseReader< ::msg::GetLastMessageSeqByTimeResp>* PrepareAsyncGetLastMessageSeqByTimeRaw(::grpc::ClientContext* context, const ::msg::GetLastMessageSeqByTimeReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::msg::GetLastMessageResp>* AsyncGetLastMessageRaw(::grpc::ClientContext* context, const ::msg::GetLastMessageReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::msg::GetLastMessageResp>* PrepareAsyncGetLastMessageRaw(::grpc::ClientContext* context, const ::msg::GetLastMessageReq& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_GetSingleChatHistory_;
     const ::grpc::internal::RpcMethod rpcmethod_GetMaxSeq_;
     const ::grpc::internal::RpcMethod rpcmethod_GetMaxSeqs_;
     const ::grpc::internal::RpcMethod rpcmethod_GetHasReadSeqs_;
@@ -858,6 +881,7 @@ class MessageService final {
    public:
     Service();
     virtual ~Service();
+    virtual ::grpc::Status GetSingleChatHistory(::grpc::ServerContext* context, const ::msg::GetSingleChatHistoryReq* request, ::msg::GetSingleChatHistoryResp* response);
     // 获取最小最大seq（包括用户的，以及指定群组的）
     virtual ::grpc::Status GetMaxSeq(::grpc::ServerContext* context, const ::sdkws::GetMaxSeqReq* request, ::sdkws::GetMaxSeqResp* response);
     // 获取会话列表的最大seq
@@ -908,12 +932,32 @@ class MessageService final {
     virtual ::grpc::Status GetLastMessage(::grpc::ServerContext* context, const ::msg::GetLastMessageReq* request, ::msg::GetLastMessageResp* response);
   };
   template <class BaseClass>
+  class WithAsyncMethod_GetSingleChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GetSingleChatHistory() {
+      ::grpc::Service::MarkMethodAsync(0);
+    }
+    ~WithAsyncMethod_GetSingleChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetSingleChatHistory(::grpc::ServerContext* /*context*/, const ::msg::GetSingleChatHistoryReq* /*request*/, ::msg::GetSingleChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetSingleChatHistory(::grpc::ServerContext* context, ::msg::GetSingleChatHistoryReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetSingleChatHistoryResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithAsyncMethod_GetMaxSeq : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetMaxSeq() {
-      ::grpc::Service::MarkMethodAsync(0);
+      ::grpc::Service::MarkMethodAsync(1);
     }
     ~WithAsyncMethod_GetMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -924,7 +968,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetMaxSeq(::grpc::ServerContext* context, ::sdkws::GetMaxSeqReq* request, ::grpc::ServerAsyncResponseWriter< ::sdkws::GetMaxSeqResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -933,7 +977,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetMaxSeqs() {
-      ::grpc::Service::MarkMethodAsync(1);
+      ::grpc::Service::MarkMethodAsync(2);
     }
     ~WithAsyncMethod_GetMaxSeqs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -944,7 +988,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetMaxSeqs(::grpc::ServerContext* context, ::msg::GetMaxSeqsReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::SeqsInfoResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -953,7 +997,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetHasReadSeqs() {
-      ::grpc::Service::MarkMethodAsync(2);
+      ::grpc::Service::MarkMethodAsync(3);
     }
     ~WithAsyncMethod_GetHasReadSeqs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -964,7 +1008,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetHasReadSeqs(::grpc::ServerContext* context, ::msg::GetHasReadSeqsReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::SeqsInfoResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -973,7 +1017,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetMsgByConversationIDs() {
-      ::grpc::Service::MarkMethodAsync(3);
+      ::grpc::Service::MarkMethodAsync(4);
     }
     ~WithAsyncMethod_GetMsgByConversationIDs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -984,7 +1028,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetMsgByConversationIDs(::grpc::ServerContext* context, ::msg::GetMsgByConversationIDsReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetMsgByConversationIDsResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -993,7 +1037,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetConversationMaxSeq() {
-      ::grpc::Service::MarkMethodAsync(4);
+      ::grpc::Service::MarkMethodAsync(5);
     }
     ~WithAsyncMethod_GetConversationMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1004,7 +1048,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetConversationMaxSeq(::grpc::ServerContext* context, ::msg::GetConversationMaxSeqReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetConversationMaxSeqResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1013,7 +1057,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_PullMessageBySeqs() {
-      ::grpc::Service::MarkMethodAsync(5);
+      ::grpc::Service::MarkMethodAsync(6);
     }
     ~WithAsyncMethod_PullMessageBySeqs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1024,7 +1068,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestPullMessageBySeqs(::grpc::ServerContext* context, ::sdkws::PullMessageBySeqsReq* request, ::grpc::ServerAsyncResponseWriter< ::sdkws::PullMessageBySeqsResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1033,7 +1077,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetSeqMessage() {
-      ::grpc::Service::MarkMethodAsync(6);
+      ::grpc::Service::MarkMethodAsync(7);
     }
     ~WithAsyncMethod_GetSeqMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1044,7 +1088,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetSeqMessage(::grpc::ServerContext* context, ::msg::GetSeqMessageReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetSeqMessageResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1053,7 +1097,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SearchMessage() {
-      ::grpc::Service::MarkMethodAsync(7);
+      ::grpc::Service::MarkMethodAsync(8);
     }
     ~WithAsyncMethod_SearchMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1064,7 +1108,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSearchMessage(::grpc::ServerContext* context, ::msg::SearchMessageReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::SearchMessageResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1073,7 +1117,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SendMessages() {
-      ::grpc::Service::MarkMethodAsync(8);
+      ::grpc::Service::MarkMethodAsync(9);
     }
     ~WithAsyncMethod_SendMessages() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1084,7 +1128,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSendMessages(::grpc::ServerContext* context, ::sdkws::SendMessageReq* request, ::grpc::ServerAsyncResponseWriter< ::sdkws::SendMessageResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1093,7 +1137,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SendSimpleMsg() {
-      ::grpc::Service::MarkMethodAsync(9);
+      ::grpc::Service::MarkMethodAsync(10);
     }
     ~WithAsyncMethod_SendSimpleMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1104,7 +1148,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSendSimpleMsg(::grpc::ServerContext* context, ::msg::SendSimpleMsgReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::SendSimpleMsgResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1113,7 +1157,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetUserConversationsMinSeq() {
-      ::grpc::Service::MarkMethodAsync(10);
+      ::grpc::Service::MarkMethodAsync(11);
     }
     ~WithAsyncMethod_SetUserConversationsMinSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1124,7 +1168,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetUserConversationsMinSeq(::grpc::ServerContext* context, ::msg::SetUserConversationsMinSeqReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::SetUserConversationsMinSeqResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1133,7 +1177,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ClearConversationsMsg() {
-      ::grpc::Service::MarkMethodAsync(11);
+      ::grpc::Service::MarkMethodAsync(12);
     }
     ~WithAsyncMethod_ClearConversationsMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1144,7 +1188,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestClearConversationsMsg(::grpc::ServerContext* context, ::msg::ClearConversationsMsgReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::ClearConversationsMsgResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1153,7 +1197,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_UserClearAllMsg() {
-      ::grpc::Service::MarkMethodAsync(12);
+      ::grpc::Service::MarkMethodAsync(13);
     }
     ~WithAsyncMethod_UserClearAllMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1164,7 +1208,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestUserClearAllMsg(::grpc::ServerContext* context, ::msg::UserClearAllMsgReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::UserClearAllMsgResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1173,7 +1217,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DeleteMsgs() {
-      ::grpc::Service::MarkMethodAsync(13);
+      ::grpc::Service::MarkMethodAsync(14);
     }
     ~WithAsyncMethod_DeleteMsgs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1184,7 +1228,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDeleteMsgs(::grpc::ServerContext* context, ::msg::DeleteMsgsReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::DeleteMsgsResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1193,7 +1237,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DeleteMsgPhysicalBySeq() {
-      ::grpc::Service::MarkMethodAsync(14);
+      ::grpc::Service::MarkMethodAsync(15);
     }
     ~WithAsyncMethod_DeleteMsgPhysicalBySeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1204,7 +1248,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDeleteMsgPhysicalBySeq(::grpc::ServerContext* context, ::msg::DeleteMsgPhysicalBySeqReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::DeleteMsgPhysicalBySeqResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1213,7 +1257,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DeleteMsgPhysical() {
-      ::grpc::Service::MarkMethodAsync(15);
+      ::grpc::Service::MarkMethodAsync(16);
     }
     ~WithAsyncMethod_DeleteMsgPhysical() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1224,7 +1268,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDeleteMsgPhysical(::grpc::ServerContext* context, ::msg::DeleteMsgPhysicalReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::DeleteMsgPhysicalResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1233,7 +1277,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetSendMsgStatus() {
-      ::grpc::Service::MarkMethodAsync(16);
+      ::grpc::Service::MarkMethodAsync(17);
     }
     ~WithAsyncMethod_SetSendMsgStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1244,7 +1288,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetSendMsgStatus(::grpc::ServerContext* context, ::msg::SetSendMsgStatusReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::SetSendMsgStatusResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1253,7 +1297,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetSendMsgStatus() {
-      ::grpc::Service::MarkMethodAsync(17);
+      ::grpc::Service::MarkMethodAsync(18);
     }
     ~WithAsyncMethod_GetSendMsgStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1264,7 +1308,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetSendMsgStatus(::grpc::ServerContext* context, ::msg::GetSendMsgStatusReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetSendMsgStatusResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1273,7 +1317,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_RevokeMsg() {
-      ::grpc::Service::MarkMethodAsync(18);
+      ::grpc::Service::MarkMethodAsync(19);
     }
     ~WithAsyncMethod_RevokeMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1284,7 +1328,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRevokeMsg(::grpc::ServerContext* context, ::msg::RevokeMsgReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::RevokeMsgResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1293,7 +1337,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_MarkMsgsAsRead() {
-      ::grpc::Service::MarkMethodAsync(19);
+      ::grpc::Service::MarkMethodAsync(20);
     }
     ~WithAsyncMethod_MarkMsgsAsRead() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1304,7 +1348,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestMarkMsgsAsRead(::grpc::ServerContext* context, ::msg::MarkMsgsAsReadReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::MarkMsgsAsReadResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(20, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1313,7 +1357,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_MarkConversationAsRead() {
-      ::grpc::Service::MarkMethodAsync(20);
+      ::grpc::Service::MarkMethodAsync(21);
     }
     ~WithAsyncMethod_MarkConversationAsRead() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1324,7 +1368,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestMarkConversationAsRead(::grpc::ServerContext* context, ::msg::MarkConversationAsReadReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::MarkConversationAsReadResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(20, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(21, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1333,7 +1377,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetConversationHasReadSeq() {
-      ::grpc::Service::MarkMethodAsync(21);
+      ::grpc::Service::MarkMethodAsync(22);
     }
     ~WithAsyncMethod_SetConversationHasReadSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1344,7 +1388,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetConversationHasReadSeq(::grpc::ServerContext* context, ::msg::SetConversationHasReadSeqReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::SetConversationHasReadSeqResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(21, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1353,7 +1397,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetConversationsHasReadAndMaxSeq() {
-      ::grpc::Service::MarkMethodAsync(22);
+      ::grpc::Service::MarkMethodAsync(23);
     }
     ~WithAsyncMethod_GetConversationsHasReadAndMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1364,7 +1408,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetConversationsHasReadAndMaxSeq(::grpc::ServerContext* context, ::msg::GetConversationsHasReadAndMaxSeqReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetConversationsHasReadAndMaxSeqResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1373,7 +1417,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetActiveUser() {
-      ::grpc::Service::MarkMethodAsync(23);
+      ::grpc::Service::MarkMethodAsync(24);
     }
     ~WithAsyncMethod_GetActiveUser() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1384,7 +1428,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetActiveUser(::grpc::ServerContext* context, ::msg::GetActiveUserReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetActiveUserResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1393,7 +1437,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetActiveGroup() {
-      ::grpc::Service::MarkMethodAsync(24);
+      ::grpc::Service::MarkMethodAsync(25);
     }
     ~WithAsyncMethod_GetActiveGroup() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1404,7 +1448,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetActiveGroup(::grpc::ServerContext* context, ::msg::GetActiveGroupReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetActiveGroupResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1413,7 +1457,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetServerTime() {
-      ::grpc::Service::MarkMethodAsync(25);
+      ::grpc::Service::MarkMethodAsync(26);
     }
     ~WithAsyncMethod_GetServerTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1424,7 +1468,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetServerTime(::grpc::ServerContext* context, ::msg::GetServerTimeReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetServerTimeResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1433,7 +1477,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ClearMsg() {
-      ::grpc::Service::MarkMethodAsync(26);
+      ::grpc::Service::MarkMethodAsync(27);
     }
     ~WithAsyncMethod_ClearMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1444,7 +1488,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestClearMsg(::grpc::ServerContext* context, ::msg::ClearMsgReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::ClearMsgResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1453,7 +1497,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DestructMsgs() {
-      ::grpc::Service::MarkMethodAsync(27);
+      ::grpc::Service::MarkMethodAsync(28);
     }
     ~WithAsyncMethod_DestructMsgs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1464,7 +1508,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDestructMsgs(::grpc::ServerContext* context, ::msg::DestructMsgsReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::DestructMsgsResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1473,7 +1517,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetActiveConversation() {
-      ::grpc::Service::MarkMethodAsync(28);
+      ::grpc::Service::MarkMethodAsync(29);
     }
     ~WithAsyncMethod_GetActiveConversation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1484,7 +1528,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetActiveConversation(::grpc::ServerContext* context, ::msg::GetActiveConversationReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetActiveConversationResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1493,7 +1537,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetUserConversationMaxSeq() {
-      ::grpc::Service::MarkMethodAsync(29);
+      ::grpc::Service::MarkMethodAsync(30);
     }
     ~WithAsyncMethod_SetUserConversationMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1504,7 +1548,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetUserConversationMaxSeq(::grpc::ServerContext* context, ::msg::SetUserConversationMaxSeqReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::SetUserConversationMaxSeqResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1513,7 +1557,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_SetUserConversationMinSeq() {
-      ::grpc::Service::MarkMethodAsync(30);
+      ::grpc::Service::MarkMethodAsync(31);
     }
     ~WithAsyncMethod_SetUserConversationMinSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1524,7 +1568,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetUserConversationMinSeq(::grpc::ServerContext* context, ::msg::SetUserConversationMinSeqReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::SetUserConversationMinSeqResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1533,7 +1577,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetLastMessageSeqByTime() {
-      ::grpc::Service::MarkMethodAsync(31);
+      ::grpc::Service::MarkMethodAsync(32);
     }
     ~WithAsyncMethod_GetLastMessageSeqByTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1544,7 +1588,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetLastMessageSeqByTime(::grpc::ServerContext* context, ::msg::GetLastMessageSeqByTimeReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetLastMessageSeqByTimeResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1553,7 +1597,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GetLastMessage() {
-      ::grpc::Service::MarkMethodAsync(32);
+      ::grpc::Service::MarkMethodAsync(33);
     }
     ~WithAsyncMethod_GetLastMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1564,23 +1608,50 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetLastMessage(::grpc::ServerContext* context, ::msg::GetLastMessageReq* request, ::grpc::ServerAsyncResponseWriter< ::msg::GetLastMessageResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_GetMaxSeq<WithAsyncMethod_GetMaxSeqs<WithAsyncMethod_GetHasReadSeqs<WithAsyncMethod_GetMsgByConversationIDs<WithAsyncMethod_GetConversationMaxSeq<WithAsyncMethod_PullMessageBySeqs<WithAsyncMethod_GetSeqMessage<WithAsyncMethod_SearchMessage<WithAsyncMethod_SendMessages<WithAsyncMethod_SendSimpleMsg<WithAsyncMethod_SetUserConversationsMinSeq<WithAsyncMethod_ClearConversationsMsg<WithAsyncMethod_UserClearAllMsg<WithAsyncMethod_DeleteMsgs<WithAsyncMethod_DeleteMsgPhysicalBySeq<WithAsyncMethod_DeleteMsgPhysical<WithAsyncMethod_SetSendMsgStatus<WithAsyncMethod_GetSendMsgStatus<WithAsyncMethod_RevokeMsg<WithAsyncMethod_MarkMsgsAsRead<WithAsyncMethod_MarkConversationAsRead<WithAsyncMethod_SetConversationHasReadSeq<WithAsyncMethod_GetConversationsHasReadAndMaxSeq<WithAsyncMethod_GetActiveUser<WithAsyncMethod_GetActiveGroup<WithAsyncMethod_GetServerTime<WithAsyncMethod_ClearMsg<WithAsyncMethod_DestructMsgs<WithAsyncMethod_GetActiveConversation<WithAsyncMethod_SetUserConversationMaxSeq<WithAsyncMethod_SetUserConversationMinSeq<WithAsyncMethod_GetLastMessageSeqByTime<WithAsyncMethod_GetLastMessage<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > AsyncService;
+  typedef WithAsyncMethod_GetSingleChatHistory<WithAsyncMethod_GetMaxSeq<WithAsyncMethod_GetMaxSeqs<WithAsyncMethod_GetHasReadSeqs<WithAsyncMethod_GetMsgByConversationIDs<WithAsyncMethod_GetConversationMaxSeq<WithAsyncMethod_PullMessageBySeqs<WithAsyncMethod_GetSeqMessage<WithAsyncMethod_SearchMessage<WithAsyncMethod_SendMessages<WithAsyncMethod_SendSimpleMsg<WithAsyncMethod_SetUserConversationsMinSeq<WithAsyncMethod_ClearConversationsMsg<WithAsyncMethod_UserClearAllMsg<WithAsyncMethod_DeleteMsgs<WithAsyncMethod_DeleteMsgPhysicalBySeq<WithAsyncMethod_DeleteMsgPhysical<WithAsyncMethod_SetSendMsgStatus<WithAsyncMethod_GetSendMsgStatus<WithAsyncMethod_RevokeMsg<WithAsyncMethod_MarkMsgsAsRead<WithAsyncMethod_MarkConversationAsRead<WithAsyncMethod_SetConversationHasReadSeq<WithAsyncMethod_GetConversationsHasReadAndMaxSeq<WithAsyncMethod_GetActiveUser<WithAsyncMethod_GetActiveGroup<WithAsyncMethod_GetServerTime<WithAsyncMethod_ClearMsg<WithAsyncMethod_DestructMsgs<WithAsyncMethod_GetActiveConversation<WithAsyncMethod_SetUserConversationMaxSeq<WithAsyncMethod_SetUserConversationMinSeq<WithAsyncMethod_GetLastMessageSeqByTime<WithAsyncMethod_GetLastMessage<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > AsyncService;
+  template <class BaseClass>
+  class WithCallbackMethod_GetSingleChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_GetSingleChatHistory() {
+      ::grpc::Service::MarkMethodCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::msg::GetSingleChatHistoryReq, ::msg::GetSingleChatHistoryResp>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::msg::GetSingleChatHistoryReq* request, ::msg::GetSingleChatHistoryResp* response) { return this->GetSingleChatHistory(context, request, response); }));}
+    void SetMessageAllocatorFor_GetSingleChatHistory(
+        ::grpc::MessageAllocator< ::msg::GetSingleChatHistoryReq, ::msg::GetSingleChatHistoryResp>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetSingleChatHistoryReq, ::msg::GetSingleChatHistoryResp>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_GetSingleChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetSingleChatHistory(::grpc::ServerContext* /*context*/, const ::msg::GetSingleChatHistoryReq* /*request*/, ::msg::GetSingleChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetSingleChatHistory(
+      ::grpc::CallbackServerContext* /*context*/, const ::msg::GetSingleChatHistoryReq* /*request*/, ::msg::GetSingleChatHistoryResp* /*response*/)  { return nullptr; }
+  };
   template <class BaseClass>
   class WithCallbackMethod_GetMaxSeq : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetMaxSeq() {
-      ::grpc::Service::MarkMethodCallback(0,
+      ::grpc::Service::MarkMethodCallback(1,
           new ::grpc::internal::CallbackUnaryHandler< ::sdkws::GetMaxSeqReq, ::sdkws::GetMaxSeqResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::sdkws::GetMaxSeqReq* request, ::sdkws::GetMaxSeqResp* response) { return this->GetMaxSeq(context, request, response); }));}
     void SetMessageAllocatorFor_GetMaxSeq(
         ::grpc::MessageAllocator< ::sdkws::GetMaxSeqReq, ::sdkws::GetMaxSeqResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::sdkws::GetMaxSeqReq, ::sdkws::GetMaxSeqResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1601,13 +1672,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetMaxSeqs() {
-      ::grpc::Service::MarkMethodCallback(1,
+      ::grpc::Service::MarkMethodCallback(2,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetMaxSeqsReq, ::msg::SeqsInfoResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetMaxSeqsReq* request, ::msg::SeqsInfoResp* response) { return this->GetMaxSeqs(context, request, response); }));}
     void SetMessageAllocatorFor_GetMaxSeqs(
         ::grpc::MessageAllocator< ::msg::GetMaxSeqsReq, ::msg::SeqsInfoResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetMaxSeqsReq, ::msg::SeqsInfoResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1628,13 +1699,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetHasReadSeqs() {
-      ::grpc::Service::MarkMethodCallback(2,
+      ::grpc::Service::MarkMethodCallback(3,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetHasReadSeqsReq, ::msg::SeqsInfoResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetHasReadSeqsReq* request, ::msg::SeqsInfoResp* response) { return this->GetHasReadSeqs(context, request, response); }));}
     void SetMessageAllocatorFor_GetHasReadSeqs(
         ::grpc::MessageAllocator< ::msg::GetHasReadSeqsReq, ::msg::SeqsInfoResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetHasReadSeqsReq, ::msg::SeqsInfoResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1655,13 +1726,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetMsgByConversationIDs() {
-      ::grpc::Service::MarkMethodCallback(3,
+      ::grpc::Service::MarkMethodCallback(4,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetMsgByConversationIDsReq, ::msg::GetMsgByConversationIDsResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetMsgByConversationIDsReq* request, ::msg::GetMsgByConversationIDsResp* response) { return this->GetMsgByConversationIDs(context, request, response); }));}
     void SetMessageAllocatorFor_GetMsgByConversationIDs(
         ::grpc::MessageAllocator< ::msg::GetMsgByConversationIDsReq, ::msg::GetMsgByConversationIDsResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetMsgByConversationIDsReq, ::msg::GetMsgByConversationIDsResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1682,13 +1753,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetConversationMaxSeq() {
-      ::grpc::Service::MarkMethodCallback(4,
+      ::grpc::Service::MarkMethodCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetConversationMaxSeqReq, ::msg::GetConversationMaxSeqResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetConversationMaxSeqReq* request, ::msg::GetConversationMaxSeqResp* response) { return this->GetConversationMaxSeq(context, request, response); }));}
     void SetMessageAllocatorFor_GetConversationMaxSeq(
         ::grpc::MessageAllocator< ::msg::GetConversationMaxSeqReq, ::msg::GetConversationMaxSeqResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(4);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetConversationMaxSeqReq, ::msg::GetConversationMaxSeqResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1709,13 +1780,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_PullMessageBySeqs() {
-      ::grpc::Service::MarkMethodCallback(5,
+      ::grpc::Service::MarkMethodCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::sdkws::PullMessageBySeqsReq, ::sdkws::PullMessageBySeqsResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::sdkws::PullMessageBySeqsReq* request, ::sdkws::PullMessageBySeqsResp* response) { return this->PullMessageBySeqs(context, request, response); }));}
     void SetMessageAllocatorFor_PullMessageBySeqs(
         ::grpc::MessageAllocator< ::sdkws::PullMessageBySeqsReq, ::sdkws::PullMessageBySeqsResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::sdkws::PullMessageBySeqsReq, ::sdkws::PullMessageBySeqsResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1736,13 +1807,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetSeqMessage() {
-      ::grpc::Service::MarkMethodCallback(6,
+      ::grpc::Service::MarkMethodCallback(7,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetSeqMessageReq, ::msg::GetSeqMessageResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetSeqMessageReq* request, ::msg::GetSeqMessageResp* response) { return this->GetSeqMessage(context, request, response); }));}
     void SetMessageAllocatorFor_GetSeqMessage(
         ::grpc::MessageAllocator< ::msg::GetSeqMessageReq, ::msg::GetSeqMessageResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetSeqMessageReq, ::msg::GetSeqMessageResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1763,13 +1834,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SearchMessage() {
-      ::grpc::Service::MarkMethodCallback(7,
+      ::grpc::Service::MarkMethodCallback(8,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::SearchMessageReq, ::msg::SearchMessageResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::SearchMessageReq* request, ::msg::SearchMessageResp* response) { return this->SearchMessage(context, request, response); }));}
     void SetMessageAllocatorFor_SearchMessage(
         ::grpc::MessageAllocator< ::msg::SearchMessageReq, ::msg::SearchMessageResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(8);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::SearchMessageReq, ::msg::SearchMessageResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1790,13 +1861,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SendMessages() {
-      ::grpc::Service::MarkMethodCallback(8,
+      ::grpc::Service::MarkMethodCallback(9,
           new ::grpc::internal::CallbackUnaryHandler< ::sdkws::SendMessageReq, ::sdkws::SendMessageResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::sdkws::SendMessageReq* request, ::sdkws::SendMessageResp* response) { return this->SendMessages(context, request, response); }));}
     void SetMessageAllocatorFor_SendMessages(
         ::grpc::MessageAllocator< ::sdkws::SendMessageReq, ::sdkws::SendMessageResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(8);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(9);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::sdkws::SendMessageReq, ::sdkws::SendMessageResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1817,13 +1888,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SendSimpleMsg() {
-      ::grpc::Service::MarkMethodCallback(9,
+      ::grpc::Service::MarkMethodCallback(10,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::SendSimpleMsgReq, ::msg::SendSimpleMsgResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::SendSimpleMsgReq* request, ::msg::SendSimpleMsgResp* response) { return this->SendSimpleMsg(context, request, response); }));}
     void SetMessageAllocatorFor_SendSimpleMsg(
         ::grpc::MessageAllocator< ::msg::SendSimpleMsgReq, ::msg::SendSimpleMsgResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(9);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(10);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::SendSimpleMsgReq, ::msg::SendSimpleMsgResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1844,13 +1915,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetUserConversationsMinSeq() {
-      ::grpc::Service::MarkMethodCallback(10,
+      ::grpc::Service::MarkMethodCallback(11,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::SetUserConversationsMinSeqReq, ::msg::SetUserConversationsMinSeqResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::SetUserConversationsMinSeqReq* request, ::msg::SetUserConversationsMinSeqResp* response) { return this->SetUserConversationsMinSeq(context, request, response); }));}
     void SetMessageAllocatorFor_SetUserConversationsMinSeq(
         ::grpc::MessageAllocator< ::msg::SetUserConversationsMinSeqReq, ::msg::SetUserConversationsMinSeqResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(10);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(11);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::SetUserConversationsMinSeqReq, ::msg::SetUserConversationsMinSeqResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1871,13 +1942,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ClearConversationsMsg() {
-      ::grpc::Service::MarkMethodCallback(11,
+      ::grpc::Service::MarkMethodCallback(12,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::ClearConversationsMsgReq, ::msg::ClearConversationsMsgResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::ClearConversationsMsgReq* request, ::msg::ClearConversationsMsgResp* response) { return this->ClearConversationsMsg(context, request, response); }));}
     void SetMessageAllocatorFor_ClearConversationsMsg(
         ::grpc::MessageAllocator< ::msg::ClearConversationsMsgReq, ::msg::ClearConversationsMsgResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(11);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(12);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::ClearConversationsMsgReq, ::msg::ClearConversationsMsgResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1898,13 +1969,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_UserClearAllMsg() {
-      ::grpc::Service::MarkMethodCallback(12,
+      ::grpc::Service::MarkMethodCallback(13,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::UserClearAllMsgReq, ::msg::UserClearAllMsgResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::UserClearAllMsgReq* request, ::msg::UserClearAllMsgResp* response) { return this->UserClearAllMsg(context, request, response); }));}
     void SetMessageAllocatorFor_UserClearAllMsg(
         ::grpc::MessageAllocator< ::msg::UserClearAllMsgReq, ::msg::UserClearAllMsgResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(12);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(13);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::UserClearAllMsgReq, ::msg::UserClearAllMsgResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1925,13 +1996,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_DeleteMsgs() {
-      ::grpc::Service::MarkMethodCallback(13,
+      ::grpc::Service::MarkMethodCallback(14,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::DeleteMsgsReq, ::msg::DeleteMsgsResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::DeleteMsgsReq* request, ::msg::DeleteMsgsResp* response) { return this->DeleteMsgs(context, request, response); }));}
     void SetMessageAllocatorFor_DeleteMsgs(
         ::grpc::MessageAllocator< ::msg::DeleteMsgsReq, ::msg::DeleteMsgsResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(13);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(14);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::DeleteMsgsReq, ::msg::DeleteMsgsResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1952,13 +2023,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_DeleteMsgPhysicalBySeq() {
-      ::grpc::Service::MarkMethodCallback(14,
+      ::grpc::Service::MarkMethodCallback(15,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::DeleteMsgPhysicalBySeqReq, ::msg::DeleteMsgPhysicalBySeqResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::DeleteMsgPhysicalBySeqReq* request, ::msg::DeleteMsgPhysicalBySeqResp* response) { return this->DeleteMsgPhysicalBySeq(context, request, response); }));}
     void SetMessageAllocatorFor_DeleteMsgPhysicalBySeq(
         ::grpc::MessageAllocator< ::msg::DeleteMsgPhysicalBySeqReq, ::msg::DeleteMsgPhysicalBySeqResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(14);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(15);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::DeleteMsgPhysicalBySeqReq, ::msg::DeleteMsgPhysicalBySeqResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -1979,13 +2050,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_DeleteMsgPhysical() {
-      ::grpc::Service::MarkMethodCallback(15,
+      ::grpc::Service::MarkMethodCallback(16,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::DeleteMsgPhysicalReq, ::msg::DeleteMsgPhysicalResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::DeleteMsgPhysicalReq* request, ::msg::DeleteMsgPhysicalResp* response) { return this->DeleteMsgPhysical(context, request, response); }));}
     void SetMessageAllocatorFor_DeleteMsgPhysical(
         ::grpc::MessageAllocator< ::msg::DeleteMsgPhysicalReq, ::msg::DeleteMsgPhysicalResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(15);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(16);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::DeleteMsgPhysicalReq, ::msg::DeleteMsgPhysicalResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2006,13 +2077,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetSendMsgStatus() {
-      ::grpc::Service::MarkMethodCallback(16,
+      ::grpc::Service::MarkMethodCallback(17,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::SetSendMsgStatusReq, ::msg::SetSendMsgStatusResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::SetSendMsgStatusReq* request, ::msg::SetSendMsgStatusResp* response) { return this->SetSendMsgStatus(context, request, response); }));}
     void SetMessageAllocatorFor_SetSendMsgStatus(
         ::grpc::MessageAllocator< ::msg::SetSendMsgStatusReq, ::msg::SetSendMsgStatusResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(16);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(17);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::SetSendMsgStatusReq, ::msg::SetSendMsgStatusResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2033,13 +2104,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetSendMsgStatus() {
-      ::grpc::Service::MarkMethodCallback(17,
+      ::grpc::Service::MarkMethodCallback(18,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetSendMsgStatusReq, ::msg::GetSendMsgStatusResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetSendMsgStatusReq* request, ::msg::GetSendMsgStatusResp* response) { return this->GetSendMsgStatus(context, request, response); }));}
     void SetMessageAllocatorFor_GetSendMsgStatus(
         ::grpc::MessageAllocator< ::msg::GetSendMsgStatusReq, ::msg::GetSendMsgStatusResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(17);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(18);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetSendMsgStatusReq, ::msg::GetSendMsgStatusResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2060,13 +2131,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_RevokeMsg() {
-      ::grpc::Service::MarkMethodCallback(18,
+      ::grpc::Service::MarkMethodCallback(19,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::RevokeMsgReq, ::msg::RevokeMsgResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::RevokeMsgReq* request, ::msg::RevokeMsgResp* response) { return this->RevokeMsg(context, request, response); }));}
     void SetMessageAllocatorFor_RevokeMsg(
         ::grpc::MessageAllocator< ::msg::RevokeMsgReq, ::msg::RevokeMsgResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(18);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(19);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::RevokeMsgReq, ::msg::RevokeMsgResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2087,13 +2158,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_MarkMsgsAsRead() {
-      ::grpc::Service::MarkMethodCallback(19,
+      ::grpc::Service::MarkMethodCallback(20,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::MarkMsgsAsReadReq, ::msg::MarkMsgsAsReadResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::MarkMsgsAsReadReq* request, ::msg::MarkMsgsAsReadResp* response) { return this->MarkMsgsAsRead(context, request, response); }));}
     void SetMessageAllocatorFor_MarkMsgsAsRead(
         ::grpc::MessageAllocator< ::msg::MarkMsgsAsReadReq, ::msg::MarkMsgsAsReadResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(19);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(20);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::MarkMsgsAsReadReq, ::msg::MarkMsgsAsReadResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2114,13 +2185,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_MarkConversationAsRead() {
-      ::grpc::Service::MarkMethodCallback(20,
+      ::grpc::Service::MarkMethodCallback(21,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::MarkConversationAsReadReq, ::msg::MarkConversationAsReadResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::MarkConversationAsReadReq* request, ::msg::MarkConversationAsReadResp* response) { return this->MarkConversationAsRead(context, request, response); }));}
     void SetMessageAllocatorFor_MarkConversationAsRead(
         ::grpc::MessageAllocator< ::msg::MarkConversationAsReadReq, ::msg::MarkConversationAsReadResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(20);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(21);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::MarkConversationAsReadReq, ::msg::MarkConversationAsReadResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2141,13 +2212,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetConversationHasReadSeq() {
-      ::grpc::Service::MarkMethodCallback(21,
+      ::grpc::Service::MarkMethodCallback(22,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::SetConversationHasReadSeqReq, ::msg::SetConversationHasReadSeqResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::SetConversationHasReadSeqReq* request, ::msg::SetConversationHasReadSeqResp* response) { return this->SetConversationHasReadSeq(context, request, response); }));}
     void SetMessageAllocatorFor_SetConversationHasReadSeq(
         ::grpc::MessageAllocator< ::msg::SetConversationHasReadSeqReq, ::msg::SetConversationHasReadSeqResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(21);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(22);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::SetConversationHasReadSeqReq, ::msg::SetConversationHasReadSeqResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2168,13 +2239,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetConversationsHasReadAndMaxSeq() {
-      ::grpc::Service::MarkMethodCallback(22,
+      ::grpc::Service::MarkMethodCallback(23,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetConversationsHasReadAndMaxSeqReq, ::msg::GetConversationsHasReadAndMaxSeqResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetConversationsHasReadAndMaxSeqReq* request, ::msg::GetConversationsHasReadAndMaxSeqResp* response) { return this->GetConversationsHasReadAndMaxSeq(context, request, response); }));}
     void SetMessageAllocatorFor_GetConversationsHasReadAndMaxSeq(
         ::grpc::MessageAllocator< ::msg::GetConversationsHasReadAndMaxSeqReq, ::msg::GetConversationsHasReadAndMaxSeqResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(22);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(23);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetConversationsHasReadAndMaxSeqReq, ::msg::GetConversationsHasReadAndMaxSeqResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2195,13 +2266,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetActiveUser() {
-      ::grpc::Service::MarkMethodCallback(23,
+      ::grpc::Service::MarkMethodCallback(24,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetActiveUserReq, ::msg::GetActiveUserResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetActiveUserReq* request, ::msg::GetActiveUserResp* response) { return this->GetActiveUser(context, request, response); }));}
     void SetMessageAllocatorFor_GetActiveUser(
         ::grpc::MessageAllocator< ::msg::GetActiveUserReq, ::msg::GetActiveUserResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(23);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(24);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetActiveUserReq, ::msg::GetActiveUserResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2222,13 +2293,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetActiveGroup() {
-      ::grpc::Service::MarkMethodCallback(24,
+      ::grpc::Service::MarkMethodCallback(25,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetActiveGroupReq, ::msg::GetActiveGroupResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetActiveGroupReq* request, ::msg::GetActiveGroupResp* response) { return this->GetActiveGroup(context, request, response); }));}
     void SetMessageAllocatorFor_GetActiveGroup(
         ::grpc::MessageAllocator< ::msg::GetActiveGroupReq, ::msg::GetActiveGroupResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(24);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(25);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetActiveGroupReq, ::msg::GetActiveGroupResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2249,13 +2320,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetServerTime() {
-      ::grpc::Service::MarkMethodCallback(25,
+      ::grpc::Service::MarkMethodCallback(26,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetServerTimeReq, ::msg::GetServerTimeResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetServerTimeReq* request, ::msg::GetServerTimeResp* response) { return this->GetServerTime(context, request, response); }));}
     void SetMessageAllocatorFor_GetServerTime(
         ::grpc::MessageAllocator< ::msg::GetServerTimeReq, ::msg::GetServerTimeResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(25);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(26);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetServerTimeReq, ::msg::GetServerTimeResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2276,13 +2347,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ClearMsg() {
-      ::grpc::Service::MarkMethodCallback(26,
+      ::grpc::Service::MarkMethodCallback(27,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::ClearMsgReq, ::msg::ClearMsgResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::ClearMsgReq* request, ::msg::ClearMsgResp* response) { return this->ClearMsg(context, request, response); }));}
     void SetMessageAllocatorFor_ClearMsg(
         ::grpc::MessageAllocator< ::msg::ClearMsgReq, ::msg::ClearMsgResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(26);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(27);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::ClearMsgReq, ::msg::ClearMsgResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2303,13 +2374,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_DestructMsgs() {
-      ::grpc::Service::MarkMethodCallback(27,
+      ::grpc::Service::MarkMethodCallback(28,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::DestructMsgsReq, ::msg::DestructMsgsResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::DestructMsgsReq* request, ::msg::DestructMsgsResp* response) { return this->DestructMsgs(context, request, response); }));}
     void SetMessageAllocatorFor_DestructMsgs(
         ::grpc::MessageAllocator< ::msg::DestructMsgsReq, ::msg::DestructMsgsResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(27);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(28);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::DestructMsgsReq, ::msg::DestructMsgsResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2330,13 +2401,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetActiveConversation() {
-      ::grpc::Service::MarkMethodCallback(28,
+      ::grpc::Service::MarkMethodCallback(29,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetActiveConversationReq, ::msg::GetActiveConversationResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetActiveConversationReq* request, ::msg::GetActiveConversationResp* response) { return this->GetActiveConversation(context, request, response); }));}
     void SetMessageAllocatorFor_GetActiveConversation(
         ::grpc::MessageAllocator< ::msg::GetActiveConversationReq, ::msg::GetActiveConversationResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(28);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(29);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetActiveConversationReq, ::msg::GetActiveConversationResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2357,13 +2428,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetUserConversationMaxSeq() {
-      ::grpc::Service::MarkMethodCallback(29,
+      ::grpc::Service::MarkMethodCallback(30,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::SetUserConversationMaxSeqReq, ::msg::SetUserConversationMaxSeqResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::SetUserConversationMaxSeqReq* request, ::msg::SetUserConversationMaxSeqResp* response) { return this->SetUserConversationMaxSeq(context, request, response); }));}
     void SetMessageAllocatorFor_SetUserConversationMaxSeq(
         ::grpc::MessageAllocator< ::msg::SetUserConversationMaxSeqReq, ::msg::SetUserConversationMaxSeqResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(29);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(30);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::SetUserConversationMaxSeqReq, ::msg::SetUserConversationMaxSeqResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2384,13 +2455,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_SetUserConversationMinSeq() {
-      ::grpc::Service::MarkMethodCallback(30,
+      ::grpc::Service::MarkMethodCallback(31,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::SetUserConversationMinSeqReq, ::msg::SetUserConversationMinSeqResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::SetUserConversationMinSeqReq* request, ::msg::SetUserConversationMinSeqResp* response) { return this->SetUserConversationMinSeq(context, request, response); }));}
     void SetMessageAllocatorFor_SetUserConversationMinSeq(
         ::grpc::MessageAllocator< ::msg::SetUserConversationMinSeqReq, ::msg::SetUserConversationMinSeqResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(30);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(31);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::SetUserConversationMinSeqReq, ::msg::SetUserConversationMinSeqResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2411,13 +2482,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetLastMessageSeqByTime() {
-      ::grpc::Service::MarkMethodCallback(31,
+      ::grpc::Service::MarkMethodCallback(32,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetLastMessageSeqByTimeReq, ::msg::GetLastMessageSeqByTimeResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetLastMessageSeqByTimeReq* request, ::msg::GetLastMessageSeqByTimeResp* response) { return this->GetLastMessageSeqByTime(context, request, response); }));}
     void SetMessageAllocatorFor_GetLastMessageSeqByTime(
         ::grpc::MessageAllocator< ::msg::GetLastMessageSeqByTimeReq, ::msg::GetLastMessageSeqByTimeResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(31);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(32);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetLastMessageSeqByTimeReq, ::msg::GetLastMessageSeqByTimeResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2438,13 +2509,13 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_GetLastMessage() {
-      ::grpc::Service::MarkMethodCallback(32,
+      ::grpc::Service::MarkMethodCallback(33,
           new ::grpc::internal::CallbackUnaryHandler< ::msg::GetLastMessageReq, ::msg::GetLastMessageResp>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::msg::GetLastMessageReq* request, ::msg::GetLastMessageResp* response) { return this->GetLastMessage(context, request, response); }));}
     void SetMessageAllocatorFor_GetLastMessage(
         ::grpc::MessageAllocator< ::msg::GetLastMessageReq, ::msg::GetLastMessageResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(32);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(33);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::msg::GetLastMessageReq, ::msg::GetLastMessageResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -2459,15 +2530,32 @@ class MessageService final {
     virtual ::grpc::ServerUnaryReactor* GetLastMessage(
       ::grpc::CallbackServerContext* /*context*/, const ::msg::GetLastMessageReq* /*request*/, ::msg::GetLastMessageResp* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_GetMaxSeq<WithCallbackMethod_GetMaxSeqs<WithCallbackMethod_GetHasReadSeqs<WithCallbackMethod_GetMsgByConversationIDs<WithCallbackMethod_GetConversationMaxSeq<WithCallbackMethod_PullMessageBySeqs<WithCallbackMethod_GetSeqMessage<WithCallbackMethod_SearchMessage<WithCallbackMethod_SendMessages<WithCallbackMethod_SendSimpleMsg<WithCallbackMethod_SetUserConversationsMinSeq<WithCallbackMethod_ClearConversationsMsg<WithCallbackMethod_UserClearAllMsg<WithCallbackMethod_DeleteMsgs<WithCallbackMethod_DeleteMsgPhysicalBySeq<WithCallbackMethod_DeleteMsgPhysical<WithCallbackMethod_SetSendMsgStatus<WithCallbackMethod_GetSendMsgStatus<WithCallbackMethod_RevokeMsg<WithCallbackMethod_MarkMsgsAsRead<WithCallbackMethod_MarkConversationAsRead<WithCallbackMethod_SetConversationHasReadSeq<WithCallbackMethod_GetConversationsHasReadAndMaxSeq<WithCallbackMethod_GetActiveUser<WithCallbackMethod_GetActiveGroup<WithCallbackMethod_GetServerTime<WithCallbackMethod_ClearMsg<WithCallbackMethod_DestructMsgs<WithCallbackMethod_GetActiveConversation<WithCallbackMethod_SetUserConversationMaxSeq<WithCallbackMethod_SetUserConversationMinSeq<WithCallbackMethod_GetLastMessageSeqByTime<WithCallbackMethod_GetLastMessage<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > CallbackService;
+  typedef WithCallbackMethod_GetSingleChatHistory<WithCallbackMethod_GetMaxSeq<WithCallbackMethod_GetMaxSeqs<WithCallbackMethod_GetHasReadSeqs<WithCallbackMethod_GetMsgByConversationIDs<WithCallbackMethod_GetConversationMaxSeq<WithCallbackMethod_PullMessageBySeqs<WithCallbackMethod_GetSeqMessage<WithCallbackMethod_SearchMessage<WithCallbackMethod_SendMessages<WithCallbackMethod_SendSimpleMsg<WithCallbackMethod_SetUserConversationsMinSeq<WithCallbackMethod_ClearConversationsMsg<WithCallbackMethod_UserClearAllMsg<WithCallbackMethod_DeleteMsgs<WithCallbackMethod_DeleteMsgPhysicalBySeq<WithCallbackMethod_DeleteMsgPhysical<WithCallbackMethod_SetSendMsgStatus<WithCallbackMethod_GetSendMsgStatus<WithCallbackMethod_RevokeMsg<WithCallbackMethod_MarkMsgsAsRead<WithCallbackMethod_MarkConversationAsRead<WithCallbackMethod_SetConversationHasReadSeq<WithCallbackMethod_GetConversationsHasReadAndMaxSeq<WithCallbackMethod_GetActiveUser<WithCallbackMethod_GetActiveGroup<WithCallbackMethod_GetServerTime<WithCallbackMethod_ClearMsg<WithCallbackMethod_DestructMsgs<WithCallbackMethod_GetActiveConversation<WithCallbackMethod_SetUserConversationMaxSeq<WithCallbackMethod_SetUserConversationMinSeq<WithCallbackMethod_GetLastMessageSeqByTime<WithCallbackMethod_GetLastMessage<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
+  template <class BaseClass>
+  class WithGenericMethod_GetSingleChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GetSingleChatHistory() {
+      ::grpc::Service::MarkMethodGeneric(0);
+    }
+    ~WithGenericMethod_GetSingleChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetSingleChatHistory(::grpc::ServerContext* /*context*/, const ::msg::GetSingleChatHistoryReq* /*request*/, ::msg::GetSingleChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
   template <class BaseClass>
   class WithGenericMethod_GetMaxSeq : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetMaxSeq() {
-      ::grpc::Service::MarkMethodGeneric(0);
+      ::grpc::Service::MarkMethodGeneric(1);
     }
     ~WithGenericMethod_GetMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2484,7 +2572,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetMaxSeqs() {
-      ::grpc::Service::MarkMethodGeneric(1);
+      ::grpc::Service::MarkMethodGeneric(2);
     }
     ~WithGenericMethod_GetMaxSeqs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2501,7 +2589,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetHasReadSeqs() {
-      ::grpc::Service::MarkMethodGeneric(2);
+      ::grpc::Service::MarkMethodGeneric(3);
     }
     ~WithGenericMethod_GetHasReadSeqs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2518,7 +2606,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetMsgByConversationIDs() {
-      ::grpc::Service::MarkMethodGeneric(3);
+      ::grpc::Service::MarkMethodGeneric(4);
     }
     ~WithGenericMethod_GetMsgByConversationIDs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2535,7 +2623,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetConversationMaxSeq() {
-      ::grpc::Service::MarkMethodGeneric(4);
+      ::grpc::Service::MarkMethodGeneric(5);
     }
     ~WithGenericMethod_GetConversationMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2552,7 +2640,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_PullMessageBySeqs() {
-      ::grpc::Service::MarkMethodGeneric(5);
+      ::grpc::Service::MarkMethodGeneric(6);
     }
     ~WithGenericMethod_PullMessageBySeqs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2569,7 +2657,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetSeqMessage() {
-      ::grpc::Service::MarkMethodGeneric(6);
+      ::grpc::Service::MarkMethodGeneric(7);
     }
     ~WithGenericMethod_GetSeqMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2586,7 +2674,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SearchMessage() {
-      ::grpc::Service::MarkMethodGeneric(7);
+      ::grpc::Service::MarkMethodGeneric(8);
     }
     ~WithGenericMethod_SearchMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2603,7 +2691,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SendMessages() {
-      ::grpc::Service::MarkMethodGeneric(8);
+      ::grpc::Service::MarkMethodGeneric(9);
     }
     ~WithGenericMethod_SendMessages() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2620,7 +2708,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SendSimpleMsg() {
-      ::grpc::Service::MarkMethodGeneric(9);
+      ::grpc::Service::MarkMethodGeneric(10);
     }
     ~WithGenericMethod_SendSimpleMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2637,7 +2725,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetUserConversationsMinSeq() {
-      ::grpc::Service::MarkMethodGeneric(10);
+      ::grpc::Service::MarkMethodGeneric(11);
     }
     ~WithGenericMethod_SetUserConversationsMinSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2654,7 +2742,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ClearConversationsMsg() {
-      ::grpc::Service::MarkMethodGeneric(11);
+      ::grpc::Service::MarkMethodGeneric(12);
     }
     ~WithGenericMethod_ClearConversationsMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2671,7 +2759,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_UserClearAllMsg() {
-      ::grpc::Service::MarkMethodGeneric(12);
+      ::grpc::Service::MarkMethodGeneric(13);
     }
     ~WithGenericMethod_UserClearAllMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2688,7 +2776,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DeleteMsgs() {
-      ::grpc::Service::MarkMethodGeneric(13);
+      ::grpc::Service::MarkMethodGeneric(14);
     }
     ~WithGenericMethod_DeleteMsgs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2705,7 +2793,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DeleteMsgPhysicalBySeq() {
-      ::grpc::Service::MarkMethodGeneric(14);
+      ::grpc::Service::MarkMethodGeneric(15);
     }
     ~WithGenericMethod_DeleteMsgPhysicalBySeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2722,7 +2810,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DeleteMsgPhysical() {
-      ::grpc::Service::MarkMethodGeneric(15);
+      ::grpc::Service::MarkMethodGeneric(16);
     }
     ~WithGenericMethod_DeleteMsgPhysical() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2739,7 +2827,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetSendMsgStatus() {
-      ::grpc::Service::MarkMethodGeneric(16);
+      ::grpc::Service::MarkMethodGeneric(17);
     }
     ~WithGenericMethod_SetSendMsgStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2756,7 +2844,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetSendMsgStatus() {
-      ::grpc::Service::MarkMethodGeneric(17);
+      ::grpc::Service::MarkMethodGeneric(18);
     }
     ~WithGenericMethod_GetSendMsgStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2773,7 +2861,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_RevokeMsg() {
-      ::grpc::Service::MarkMethodGeneric(18);
+      ::grpc::Service::MarkMethodGeneric(19);
     }
     ~WithGenericMethod_RevokeMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2790,7 +2878,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_MarkMsgsAsRead() {
-      ::grpc::Service::MarkMethodGeneric(19);
+      ::grpc::Service::MarkMethodGeneric(20);
     }
     ~WithGenericMethod_MarkMsgsAsRead() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2807,7 +2895,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_MarkConversationAsRead() {
-      ::grpc::Service::MarkMethodGeneric(20);
+      ::grpc::Service::MarkMethodGeneric(21);
     }
     ~WithGenericMethod_MarkConversationAsRead() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2824,7 +2912,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetConversationHasReadSeq() {
-      ::grpc::Service::MarkMethodGeneric(21);
+      ::grpc::Service::MarkMethodGeneric(22);
     }
     ~WithGenericMethod_SetConversationHasReadSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2841,7 +2929,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetConversationsHasReadAndMaxSeq() {
-      ::grpc::Service::MarkMethodGeneric(22);
+      ::grpc::Service::MarkMethodGeneric(23);
     }
     ~WithGenericMethod_GetConversationsHasReadAndMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2858,7 +2946,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetActiveUser() {
-      ::grpc::Service::MarkMethodGeneric(23);
+      ::grpc::Service::MarkMethodGeneric(24);
     }
     ~WithGenericMethod_GetActiveUser() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2875,7 +2963,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetActiveGroup() {
-      ::grpc::Service::MarkMethodGeneric(24);
+      ::grpc::Service::MarkMethodGeneric(25);
     }
     ~WithGenericMethod_GetActiveGroup() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2892,7 +2980,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetServerTime() {
-      ::grpc::Service::MarkMethodGeneric(25);
+      ::grpc::Service::MarkMethodGeneric(26);
     }
     ~WithGenericMethod_GetServerTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2909,7 +2997,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ClearMsg() {
-      ::grpc::Service::MarkMethodGeneric(26);
+      ::grpc::Service::MarkMethodGeneric(27);
     }
     ~WithGenericMethod_ClearMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2926,7 +3014,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DestructMsgs() {
-      ::grpc::Service::MarkMethodGeneric(27);
+      ::grpc::Service::MarkMethodGeneric(28);
     }
     ~WithGenericMethod_DestructMsgs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2943,7 +3031,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetActiveConversation() {
-      ::grpc::Service::MarkMethodGeneric(28);
+      ::grpc::Service::MarkMethodGeneric(29);
     }
     ~WithGenericMethod_GetActiveConversation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2960,7 +3048,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetUserConversationMaxSeq() {
-      ::grpc::Service::MarkMethodGeneric(29);
+      ::grpc::Service::MarkMethodGeneric(30);
     }
     ~WithGenericMethod_SetUserConversationMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2977,7 +3065,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_SetUserConversationMinSeq() {
-      ::grpc::Service::MarkMethodGeneric(30);
+      ::grpc::Service::MarkMethodGeneric(31);
     }
     ~WithGenericMethod_SetUserConversationMinSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -2994,7 +3082,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetLastMessageSeqByTime() {
-      ::grpc::Service::MarkMethodGeneric(31);
+      ::grpc::Service::MarkMethodGeneric(32);
     }
     ~WithGenericMethod_GetLastMessageSeqByTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3011,7 +3099,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GetLastMessage() {
-      ::grpc::Service::MarkMethodGeneric(32);
+      ::grpc::Service::MarkMethodGeneric(33);
     }
     ~WithGenericMethod_GetLastMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3023,12 +3111,32 @@ class MessageService final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_GetSingleChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GetSingleChatHistory() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_GetSingleChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetSingleChatHistory(::grpc::ServerContext* /*context*/, const ::msg::GetSingleChatHistoryReq* /*request*/, ::msg::GetSingleChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetSingleChatHistory(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawMethod_GetMaxSeq : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetMaxSeq() {
-      ::grpc::Service::MarkMethodRaw(0);
+      ::grpc::Service::MarkMethodRaw(1);
     }
     ~WithRawMethod_GetMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3039,7 +3147,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetMaxSeq(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3048,7 +3156,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetMaxSeqs() {
-      ::grpc::Service::MarkMethodRaw(1);
+      ::grpc::Service::MarkMethodRaw(2);
     }
     ~WithRawMethod_GetMaxSeqs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3059,7 +3167,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetMaxSeqs(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3068,7 +3176,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetHasReadSeqs() {
-      ::grpc::Service::MarkMethodRaw(2);
+      ::grpc::Service::MarkMethodRaw(3);
     }
     ~WithRawMethod_GetHasReadSeqs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3079,7 +3187,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetHasReadSeqs(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3088,7 +3196,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetMsgByConversationIDs() {
-      ::grpc::Service::MarkMethodRaw(3);
+      ::grpc::Service::MarkMethodRaw(4);
     }
     ~WithRawMethod_GetMsgByConversationIDs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3099,7 +3207,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetMsgByConversationIDs(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3108,7 +3216,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetConversationMaxSeq() {
-      ::grpc::Service::MarkMethodRaw(4);
+      ::grpc::Service::MarkMethodRaw(5);
     }
     ~WithRawMethod_GetConversationMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3119,7 +3227,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetConversationMaxSeq(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(4, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3128,7 +3236,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_PullMessageBySeqs() {
-      ::grpc::Service::MarkMethodRaw(5);
+      ::grpc::Service::MarkMethodRaw(6);
     }
     ~WithRawMethod_PullMessageBySeqs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3139,7 +3247,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestPullMessageBySeqs(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3148,7 +3256,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetSeqMessage() {
-      ::grpc::Service::MarkMethodRaw(6);
+      ::grpc::Service::MarkMethodRaw(7);
     }
     ~WithRawMethod_GetSeqMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3159,7 +3267,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetSeqMessage(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3168,7 +3276,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SearchMessage() {
-      ::grpc::Service::MarkMethodRaw(7);
+      ::grpc::Service::MarkMethodRaw(8);
     }
     ~WithRawMethod_SearchMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3179,7 +3287,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSearchMessage(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3188,7 +3296,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SendMessages() {
-      ::grpc::Service::MarkMethodRaw(8);
+      ::grpc::Service::MarkMethodRaw(9);
     }
     ~WithRawMethod_SendMessages() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3199,7 +3307,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSendMessages(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3208,7 +3316,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SendSimpleMsg() {
-      ::grpc::Service::MarkMethodRaw(9);
+      ::grpc::Service::MarkMethodRaw(10);
     }
     ~WithRawMethod_SendSimpleMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3219,7 +3327,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSendSimpleMsg(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(9, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3228,7 +3336,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetUserConversationsMinSeq() {
-      ::grpc::Service::MarkMethodRaw(10);
+      ::grpc::Service::MarkMethodRaw(11);
     }
     ~WithRawMethod_SetUserConversationsMinSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3239,7 +3347,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetUserConversationsMinSeq(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(10, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3248,7 +3356,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ClearConversationsMsg() {
-      ::grpc::Service::MarkMethodRaw(11);
+      ::grpc::Service::MarkMethodRaw(12);
     }
     ~WithRawMethod_ClearConversationsMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3259,7 +3367,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestClearConversationsMsg(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(11, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3268,7 +3376,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_UserClearAllMsg() {
-      ::grpc::Service::MarkMethodRaw(12);
+      ::grpc::Service::MarkMethodRaw(13);
     }
     ~WithRawMethod_UserClearAllMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3279,7 +3387,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestUserClearAllMsg(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(12, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3288,7 +3396,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DeleteMsgs() {
-      ::grpc::Service::MarkMethodRaw(13);
+      ::grpc::Service::MarkMethodRaw(14);
     }
     ~WithRawMethod_DeleteMsgs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3299,7 +3407,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDeleteMsgs(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(13, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3308,7 +3416,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DeleteMsgPhysicalBySeq() {
-      ::grpc::Service::MarkMethodRaw(14);
+      ::grpc::Service::MarkMethodRaw(15);
     }
     ~WithRawMethod_DeleteMsgPhysicalBySeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3319,7 +3427,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDeleteMsgPhysicalBySeq(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(14, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3328,7 +3436,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DeleteMsgPhysical() {
-      ::grpc::Service::MarkMethodRaw(15);
+      ::grpc::Service::MarkMethodRaw(16);
     }
     ~WithRawMethod_DeleteMsgPhysical() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3339,7 +3447,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDeleteMsgPhysical(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(15, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3348,7 +3456,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetSendMsgStatus() {
-      ::grpc::Service::MarkMethodRaw(16);
+      ::grpc::Service::MarkMethodRaw(17);
     }
     ~WithRawMethod_SetSendMsgStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3359,7 +3467,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetSendMsgStatus(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(16, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3368,7 +3476,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetSendMsgStatus() {
-      ::grpc::Service::MarkMethodRaw(17);
+      ::grpc::Service::MarkMethodRaw(18);
     }
     ~WithRawMethod_GetSendMsgStatus() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3379,7 +3487,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetSendMsgStatus(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(17, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3388,7 +3496,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_RevokeMsg() {
-      ::grpc::Service::MarkMethodRaw(18);
+      ::grpc::Service::MarkMethodRaw(19);
     }
     ~WithRawMethod_RevokeMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3399,7 +3507,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestRevokeMsg(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(18, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3408,7 +3516,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_MarkMsgsAsRead() {
-      ::grpc::Service::MarkMethodRaw(19);
+      ::grpc::Service::MarkMethodRaw(20);
     }
     ~WithRawMethod_MarkMsgsAsRead() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3419,7 +3527,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestMarkMsgsAsRead(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(19, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(20, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3428,7 +3536,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_MarkConversationAsRead() {
-      ::grpc::Service::MarkMethodRaw(20);
+      ::grpc::Service::MarkMethodRaw(21);
     }
     ~WithRawMethod_MarkConversationAsRead() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3439,7 +3547,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestMarkConversationAsRead(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(20, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(21, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3448,7 +3556,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetConversationHasReadSeq() {
-      ::grpc::Service::MarkMethodRaw(21);
+      ::grpc::Service::MarkMethodRaw(22);
     }
     ~WithRawMethod_SetConversationHasReadSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3459,7 +3567,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetConversationHasReadSeq(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(21, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3468,7 +3576,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetConversationsHasReadAndMaxSeq() {
-      ::grpc::Service::MarkMethodRaw(22);
+      ::grpc::Service::MarkMethodRaw(23);
     }
     ~WithRawMethod_GetConversationsHasReadAndMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3479,7 +3587,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetConversationsHasReadAndMaxSeq(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(22, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3488,7 +3596,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetActiveUser() {
-      ::grpc::Service::MarkMethodRaw(23);
+      ::grpc::Service::MarkMethodRaw(24);
     }
     ~WithRawMethod_GetActiveUser() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3499,7 +3607,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetActiveUser(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(23, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3508,7 +3616,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetActiveGroup() {
-      ::grpc::Service::MarkMethodRaw(24);
+      ::grpc::Service::MarkMethodRaw(25);
     }
     ~WithRawMethod_GetActiveGroup() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3519,7 +3627,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetActiveGroup(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(24, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3528,7 +3636,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetServerTime() {
-      ::grpc::Service::MarkMethodRaw(25);
+      ::grpc::Service::MarkMethodRaw(26);
     }
     ~WithRawMethod_GetServerTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3539,7 +3647,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetServerTime(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(25, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3548,7 +3656,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ClearMsg() {
-      ::grpc::Service::MarkMethodRaw(26);
+      ::grpc::Service::MarkMethodRaw(27);
     }
     ~WithRawMethod_ClearMsg() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3559,7 +3667,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestClearMsg(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(26, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3568,7 +3676,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DestructMsgs() {
-      ::grpc::Service::MarkMethodRaw(27);
+      ::grpc::Service::MarkMethodRaw(28);
     }
     ~WithRawMethod_DestructMsgs() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3579,7 +3687,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDestructMsgs(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(27, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3588,7 +3696,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetActiveConversation() {
-      ::grpc::Service::MarkMethodRaw(28);
+      ::grpc::Service::MarkMethodRaw(29);
     }
     ~WithRawMethod_GetActiveConversation() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3599,7 +3707,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetActiveConversation(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(28, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3608,7 +3716,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetUserConversationMaxSeq() {
-      ::grpc::Service::MarkMethodRaw(29);
+      ::grpc::Service::MarkMethodRaw(30);
     }
     ~WithRawMethod_SetUserConversationMaxSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3619,7 +3727,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetUserConversationMaxSeq(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(29, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3628,7 +3736,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_SetUserConversationMinSeq() {
-      ::grpc::Service::MarkMethodRaw(30);
+      ::grpc::Service::MarkMethodRaw(31);
     }
     ~WithRawMethod_SetUserConversationMinSeq() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3639,7 +3747,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestSetUserConversationMinSeq(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(30, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3648,7 +3756,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetLastMessageSeqByTime() {
-      ::grpc::Service::MarkMethodRaw(31);
+      ::grpc::Service::MarkMethodRaw(32);
     }
     ~WithRawMethod_GetLastMessageSeqByTime() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3659,7 +3767,7 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetLastMessageSeqByTime(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(31, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -3668,7 +3776,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GetLastMessage() {
-      ::grpc::Service::MarkMethodRaw(32);
+      ::grpc::Service::MarkMethodRaw(33);
     }
     ~WithRawMethod_GetLastMessage() override {
       BaseClassMustBeDerivedFromService(this);
@@ -3679,8 +3787,30 @@ class MessageService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestGetLastMessage(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(32, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(33, context, request, response, new_call_cq, notification_cq, tag);
     }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_GetSingleChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_GetSingleChatHistory() {
+      ::grpc::Service::MarkMethodRawCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetSingleChatHistory(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_GetSingleChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetSingleChatHistory(::grpc::ServerContext* /*context*/, const ::msg::GetSingleChatHistoryReq* /*request*/, ::msg::GetSingleChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetSingleChatHistory(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
   class WithRawCallbackMethod_GetMaxSeq : public BaseClass {
@@ -3688,7 +3818,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetMaxSeq() {
-      ::grpc::Service::MarkMethodRawCallback(0,
+      ::grpc::Service::MarkMethodRawCallback(1,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetMaxSeq(context, request, response); }));
@@ -3710,7 +3840,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetMaxSeqs() {
-      ::grpc::Service::MarkMethodRawCallback(1,
+      ::grpc::Service::MarkMethodRawCallback(2,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetMaxSeqs(context, request, response); }));
@@ -3732,7 +3862,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetHasReadSeqs() {
-      ::grpc::Service::MarkMethodRawCallback(2,
+      ::grpc::Service::MarkMethodRawCallback(3,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetHasReadSeqs(context, request, response); }));
@@ -3754,7 +3884,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetMsgByConversationIDs() {
-      ::grpc::Service::MarkMethodRawCallback(3,
+      ::grpc::Service::MarkMethodRawCallback(4,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetMsgByConversationIDs(context, request, response); }));
@@ -3776,7 +3906,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetConversationMaxSeq() {
-      ::grpc::Service::MarkMethodRawCallback(4,
+      ::grpc::Service::MarkMethodRawCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetConversationMaxSeq(context, request, response); }));
@@ -3798,7 +3928,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_PullMessageBySeqs() {
-      ::grpc::Service::MarkMethodRawCallback(5,
+      ::grpc::Service::MarkMethodRawCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->PullMessageBySeqs(context, request, response); }));
@@ -3820,7 +3950,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetSeqMessage() {
-      ::grpc::Service::MarkMethodRawCallback(6,
+      ::grpc::Service::MarkMethodRawCallback(7,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetSeqMessage(context, request, response); }));
@@ -3842,7 +3972,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SearchMessage() {
-      ::grpc::Service::MarkMethodRawCallback(7,
+      ::grpc::Service::MarkMethodRawCallback(8,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SearchMessage(context, request, response); }));
@@ -3864,7 +3994,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SendMessages() {
-      ::grpc::Service::MarkMethodRawCallback(8,
+      ::grpc::Service::MarkMethodRawCallback(9,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SendMessages(context, request, response); }));
@@ -3886,7 +4016,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SendSimpleMsg() {
-      ::grpc::Service::MarkMethodRawCallback(9,
+      ::grpc::Service::MarkMethodRawCallback(10,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SendSimpleMsg(context, request, response); }));
@@ -3908,7 +4038,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetUserConversationsMinSeq() {
-      ::grpc::Service::MarkMethodRawCallback(10,
+      ::grpc::Service::MarkMethodRawCallback(11,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetUserConversationsMinSeq(context, request, response); }));
@@ -3930,7 +4060,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ClearConversationsMsg() {
-      ::grpc::Service::MarkMethodRawCallback(11,
+      ::grpc::Service::MarkMethodRawCallback(12,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ClearConversationsMsg(context, request, response); }));
@@ -3952,7 +4082,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_UserClearAllMsg() {
-      ::grpc::Service::MarkMethodRawCallback(12,
+      ::grpc::Service::MarkMethodRawCallback(13,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->UserClearAllMsg(context, request, response); }));
@@ -3974,7 +4104,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_DeleteMsgs() {
-      ::grpc::Service::MarkMethodRawCallback(13,
+      ::grpc::Service::MarkMethodRawCallback(14,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->DeleteMsgs(context, request, response); }));
@@ -3996,7 +4126,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_DeleteMsgPhysicalBySeq() {
-      ::grpc::Service::MarkMethodRawCallback(14,
+      ::grpc::Service::MarkMethodRawCallback(15,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->DeleteMsgPhysicalBySeq(context, request, response); }));
@@ -4018,7 +4148,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_DeleteMsgPhysical() {
-      ::grpc::Service::MarkMethodRawCallback(15,
+      ::grpc::Service::MarkMethodRawCallback(16,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->DeleteMsgPhysical(context, request, response); }));
@@ -4040,7 +4170,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetSendMsgStatus() {
-      ::grpc::Service::MarkMethodRawCallback(16,
+      ::grpc::Service::MarkMethodRawCallback(17,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetSendMsgStatus(context, request, response); }));
@@ -4062,7 +4192,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetSendMsgStatus() {
-      ::grpc::Service::MarkMethodRawCallback(17,
+      ::grpc::Service::MarkMethodRawCallback(18,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetSendMsgStatus(context, request, response); }));
@@ -4084,7 +4214,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_RevokeMsg() {
-      ::grpc::Service::MarkMethodRawCallback(18,
+      ::grpc::Service::MarkMethodRawCallback(19,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->RevokeMsg(context, request, response); }));
@@ -4106,7 +4236,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_MarkMsgsAsRead() {
-      ::grpc::Service::MarkMethodRawCallback(19,
+      ::grpc::Service::MarkMethodRawCallback(20,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->MarkMsgsAsRead(context, request, response); }));
@@ -4128,7 +4258,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_MarkConversationAsRead() {
-      ::grpc::Service::MarkMethodRawCallback(20,
+      ::grpc::Service::MarkMethodRawCallback(21,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->MarkConversationAsRead(context, request, response); }));
@@ -4150,7 +4280,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetConversationHasReadSeq() {
-      ::grpc::Service::MarkMethodRawCallback(21,
+      ::grpc::Service::MarkMethodRawCallback(22,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetConversationHasReadSeq(context, request, response); }));
@@ -4172,7 +4302,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetConversationsHasReadAndMaxSeq() {
-      ::grpc::Service::MarkMethodRawCallback(22,
+      ::grpc::Service::MarkMethodRawCallback(23,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetConversationsHasReadAndMaxSeq(context, request, response); }));
@@ -4194,7 +4324,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetActiveUser() {
-      ::grpc::Service::MarkMethodRawCallback(23,
+      ::grpc::Service::MarkMethodRawCallback(24,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetActiveUser(context, request, response); }));
@@ -4216,7 +4346,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetActiveGroup() {
-      ::grpc::Service::MarkMethodRawCallback(24,
+      ::grpc::Service::MarkMethodRawCallback(25,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetActiveGroup(context, request, response); }));
@@ -4238,7 +4368,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetServerTime() {
-      ::grpc::Service::MarkMethodRawCallback(25,
+      ::grpc::Service::MarkMethodRawCallback(26,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetServerTime(context, request, response); }));
@@ -4260,7 +4390,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ClearMsg() {
-      ::grpc::Service::MarkMethodRawCallback(26,
+      ::grpc::Service::MarkMethodRawCallback(27,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ClearMsg(context, request, response); }));
@@ -4282,7 +4412,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_DestructMsgs() {
-      ::grpc::Service::MarkMethodRawCallback(27,
+      ::grpc::Service::MarkMethodRawCallback(28,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->DestructMsgs(context, request, response); }));
@@ -4304,7 +4434,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetActiveConversation() {
-      ::grpc::Service::MarkMethodRawCallback(28,
+      ::grpc::Service::MarkMethodRawCallback(29,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetActiveConversation(context, request, response); }));
@@ -4326,7 +4456,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetUserConversationMaxSeq() {
-      ::grpc::Service::MarkMethodRawCallback(29,
+      ::grpc::Service::MarkMethodRawCallback(30,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetUserConversationMaxSeq(context, request, response); }));
@@ -4348,7 +4478,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_SetUserConversationMinSeq() {
-      ::grpc::Service::MarkMethodRawCallback(30,
+      ::grpc::Service::MarkMethodRawCallback(31,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SetUserConversationMinSeq(context, request, response); }));
@@ -4370,7 +4500,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetLastMessageSeqByTime() {
-      ::grpc::Service::MarkMethodRawCallback(31,
+      ::grpc::Service::MarkMethodRawCallback(32,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetLastMessageSeqByTime(context, request, response); }));
@@ -4392,7 +4522,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_GetLastMessage() {
-      ::grpc::Service::MarkMethodRawCallback(32,
+      ::grpc::Service::MarkMethodRawCallback(33,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetLastMessage(context, request, response); }));
@@ -4409,12 +4539,39 @@ class MessageService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
+  class WithStreamedUnaryMethod_GetSingleChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GetSingleChatHistory() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::msg::GetSingleChatHistoryReq, ::msg::GetSingleChatHistoryResp>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::msg::GetSingleChatHistoryReq, ::msg::GetSingleChatHistoryResp>* streamer) {
+                       return this->StreamedGetSingleChatHistory(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_GetSingleChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GetSingleChatHistory(::grpc::ServerContext* /*context*/, const ::msg::GetSingleChatHistoryReq* /*request*/, ::msg::GetSingleChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGetSingleChatHistory(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::msg::GetSingleChatHistoryReq,::msg::GetSingleChatHistoryResp>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_GetMaxSeq : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetMaxSeq() {
-      ::grpc::Service::MarkMethodStreamed(0,
+      ::grpc::Service::MarkMethodStreamed(1,
         new ::grpc::internal::StreamedUnaryHandler<
           ::sdkws::GetMaxSeqReq, ::sdkws::GetMaxSeqResp>(
             [this](::grpc::ServerContext* context,
@@ -4441,7 +4598,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetMaxSeqs() {
-      ::grpc::Service::MarkMethodStreamed(1,
+      ::grpc::Service::MarkMethodStreamed(2,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetMaxSeqsReq, ::msg::SeqsInfoResp>(
             [this](::grpc::ServerContext* context,
@@ -4468,7 +4625,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetHasReadSeqs() {
-      ::grpc::Service::MarkMethodStreamed(2,
+      ::grpc::Service::MarkMethodStreamed(3,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetHasReadSeqsReq, ::msg::SeqsInfoResp>(
             [this](::grpc::ServerContext* context,
@@ -4495,7 +4652,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetMsgByConversationIDs() {
-      ::grpc::Service::MarkMethodStreamed(3,
+      ::grpc::Service::MarkMethodStreamed(4,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetMsgByConversationIDsReq, ::msg::GetMsgByConversationIDsResp>(
             [this](::grpc::ServerContext* context,
@@ -4522,7 +4679,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetConversationMaxSeq() {
-      ::grpc::Service::MarkMethodStreamed(4,
+      ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetConversationMaxSeqReq, ::msg::GetConversationMaxSeqResp>(
             [this](::grpc::ServerContext* context,
@@ -4549,7 +4706,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_PullMessageBySeqs() {
-      ::grpc::Service::MarkMethodStreamed(5,
+      ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler<
           ::sdkws::PullMessageBySeqsReq, ::sdkws::PullMessageBySeqsResp>(
             [this](::grpc::ServerContext* context,
@@ -4576,7 +4733,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetSeqMessage() {
-      ::grpc::Service::MarkMethodStreamed(6,
+      ::grpc::Service::MarkMethodStreamed(7,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetSeqMessageReq, ::msg::GetSeqMessageResp>(
             [this](::grpc::ServerContext* context,
@@ -4603,7 +4760,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SearchMessage() {
-      ::grpc::Service::MarkMethodStreamed(7,
+      ::grpc::Service::MarkMethodStreamed(8,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::SearchMessageReq, ::msg::SearchMessageResp>(
             [this](::grpc::ServerContext* context,
@@ -4630,7 +4787,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SendMessages() {
-      ::grpc::Service::MarkMethodStreamed(8,
+      ::grpc::Service::MarkMethodStreamed(9,
         new ::grpc::internal::StreamedUnaryHandler<
           ::sdkws::SendMessageReq, ::sdkws::SendMessageResp>(
             [this](::grpc::ServerContext* context,
@@ -4657,7 +4814,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SendSimpleMsg() {
-      ::grpc::Service::MarkMethodStreamed(9,
+      ::grpc::Service::MarkMethodStreamed(10,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::SendSimpleMsgReq, ::msg::SendSimpleMsgResp>(
             [this](::grpc::ServerContext* context,
@@ -4684,7 +4841,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetUserConversationsMinSeq() {
-      ::grpc::Service::MarkMethodStreamed(10,
+      ::grpc::Service::MarkMethodStreamed(11,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::SetUserConversationsMinSeqReq, ::msg::SetUserConversationsMinSeqResp>(
             [this](::grpc::ServerContext* context,
@@ -4711,7 +4868,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ClearConversationsMsg() {
-      ::grpc::Service::MarkMethodStreamed(11,
+      ::grpc::Service::MarkMethodStreamed(12,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::ClearConversationsMsgReq, ::msg::ClearConversationsMsgResp>(
             [this](::grpc::ServerContext* context,
@@ -4738,7 +4895,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_UserClearAllMsg() {
-      ::grpc::Service::MarkMethodStreamed(12,
+      ::grpc::Service::MarkMethodStreamed(13,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::UserClearAllMsgReq, ::msg::UserClearAllMsgResp>(
             [this](::grpc::ServerContext* context,
@@ -4765,7 +4922,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DeleteMsgs() {
-      ::grpc::Service::MarkMethodStreamed(13,
+      ::grpc::Service::MarkMethodStreamed(14,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::DeleteMsgsReq, ::msg::DeleteMsgsResp>(
             [this](::grpc::ServerContext* context,
@@ -4792,7 +4949,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DeleteMsgPhysicalBySeq() {
-      ::grpc::Service::MarkMethodStreamed(14,
+      ::grpc::Service::MarkMethodStreamed(15,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::DeleteMsgPhysicalBySeqReq, ::msg::DeleteMsgPhysicalBySeqResp>(
             [this](::grpc::ServerContext* context,
@@ -4819,7 +4976,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DeleteMsgPhysical() {
-      ::grpc::Service::MarkMethodStreamed(15,
+      ::grpc::Service::MarkMethodStreamed(16,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::DeleteMsgPhysicalReq, ::msg::DeleteMsgPhysicalResp>(
             [this](::grpc::ServerContext* context,
@@ -4846,7 +5003,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetSendMsgStatus() {
-      ::grpc::Service::MarkMethodStreamed(16,
+      ::grpc::Service::MarkMethodStreamed(17,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::SetSendMsgStatusReq, ::msg::SetSendMsgStatusResp>(
             [this](::grpc::ServerContext* context,
@@ -4873,7 +5030,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetSendMsgStatus() {
-      ::grpc::Service::MarkMethodStreamed(17,
+      ::grpc::Service::MarkMethodStreamed(18,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetSendMsgStatusReq, ::msg::GetSendMsgStatusResp>(
             [this](::grpc::ServerContext* context,
@@ -4900,7 +5057,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_RevokeMsg() {
-      ::grpc::Service::MarkMethodStreamed(18,
+      ::grpc::Service::MarkMethodStreamed(19,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::RevokeMsgReq, ::msg::RevokeMsgResp>(
             [this](::grpc::ServerContext* context,
@@ -4927,7 +5084,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_MarkMsgsAsRead() {
-      ::grpc::Service::MarkMethodStreamed(19,
+      ::grpc::Service::MarkMethodStreamed(20,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::MarkMsgsAsReadReq, ::msg::MarkMsgsAsReadResp>(
             [this](::grpc::ServerContext* context,
@@ -4954,7 +5111,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_MarkConversationAsRead() {
-      ::grpc::Service::MarkMethodStreamed(20,
+      ::grpc::Service::MarkMethodStreamed(21,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::MarkConversationAsReadReq, ::msg::MarkConversationAsReadResp>(
             [this](::grpc::ServerContext* context,
@@ -4981,7 +5138,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetConversationHasReadSeq() {
-      ::grpc::Service::MarkMethodStreamed(21,
+      ::grpc::Service::MarkMethodStreamed(22,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::SetConversationHasReadSeqReq, ::msg::SetConversationHasReadSeqResp>(
             [this](::grpc::ServerContext* context,
@@ -5008,7 +5165,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetConversationsHasReadAndMaxSeq() {
-      ::grpc::Service::MarkMethodStreamed(22,
+      ::grpc::Service::MarkMethodStreamed(23,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetConversationsHasReadAndMaxSeqReq, ::msg::GetConversationsHasReadAndMaxSeqResp>(
             [this](::grpc::ServerContext* context,
@@ -5035,7 +5192,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetActiveUser() {
-      ::grpc::Service::MarkMethodStreamed(23,
+      ::grpc::Service::MarkMethodStreamed(24,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetActiveUserReq, ::msg::GetActiveUserResp>(
             [this](::grpc::ServerContext* context,
@@ -5062,7 +5219,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetActiveGroup() {
-      ::grpc::Service::MarkMethodStreamed(24,
+      ::grpc::Service::MarkMethodStreamed(25,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetActiveGroupReq, ::msg::GetActiveGroupResp>(
             [this](::grpc::ServerContext* context,
@@ -5089,7 +5246,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetServerTime() {
-      ::grpc::Service::MarkMethodStreamed(25,
+      ::grpc::Service::MarkMethodStreamed(26,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetServerTimeReq, ::msg::GetServerTimeResp>(
             [this](::grpc::ServerContext* context,
@@ -5116,7 +5273,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ClearMsg() {
-      ::grpc::Service::MarkMethodStreamed(26,
+      ::grpc::Service::MarkMethodStreamed(27,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::ClearMsgReq, ::msg::ClearMsgResp>(
             [this](::grpc::ServerContext* context,
@@ -5143,7 +5300,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DestructMsgs() {
-      ::grpc::Service::MarkMethodStreamed(27,
+      ::grpc::Service::MarkMethodStreamed(28,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::DestructMsgsReq, ::msg::DestructMsgsResp>(
             [this](::grpc::ServerContext* context,
@@ -5170,7 +5327,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetActiveConversation() {
-      ::grpc::Service::MarkMethodStreamed(28,
+      ::grpc::Service::MarkMethodStreamed(29,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetActiveConversationReq, ::msg::GetActiveConversationResp>(
             [this](::grpc::ServerContext* context,
@@ -5197,7 +5354,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetUserConversationMaxSeq() {
-      ::grpc::Service::MarkMethodStreamed(29,
+      ::grpc::Service::MarkMethodStreamed(30,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::SetUserConversationMaxSeqReq, ::msg::SetUserConversationMaxSeqResp>(
             [this](::grpc::ServerContext* context,
@@ -5224,7 +5381,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_SetUserConversationMinSeq() {
-      ::grpc::Service::MarkMethodStreamed(30,
+      ::grpc::Service::MarkMethodStreamed(31,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::SetUserConversationMinSeqReq, ::msg::SetUserConversationMinSeqResp>(
             [this](::grpc::ServerContext* context,
@@ -5251,7 +5408,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetLastMessageSeqByTime() {
-      ::grpc::Service::MarkMethodStreamed(31,
+      ::grpc::Service::MarkMethodStreamed(32,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetLastMessageSeqByTimeReq, ::msg::GetLastMessageSeqByTimeResp>(
             [this](::grpc::ServerContext* context,
@@ -5278,7 +5435,7 @@ class MessageService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GetLastMessage() {
-      ::grpc::Service::MarkMethodStreamed(32,
+      ::grpc::Service::MarkMethodStreamed(33,
         new ::grpc::internal::StreamedUnaryHandler<
           ::msg::GetLastMessageReq, ::msg::GetLastMessageResp>(
             [this](::grpc::ServerContext* context,
@@ -5299,9 +5456,9 @@ class MessageService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedGetLastMessage(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::msg::GetLastMessageReq,::msg::GetLastMessageResp>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_GetMaxSeq<WithStreamedUnaryMethod_GetMaxSeqs<WithStreamedUnaryMethod_GetHasReadSeqs<WithStreamedUnaryMethod_GetMsgByConversationIDs<WithStreamedUnaryMethod_GetConversationMaxSeq<WithStreamedUnaryMethod_PullMessageBySeqs<WithStreamedUnaryMethod_GetSeqMessage<WithStreamedUnaryMethod_SearchMessage<WithStreamedUnaryMethod_SendMessages<WithStreamedUnaryMethod_SendSimpleMsg<WithStreamedUnaryMethod_SetUserConversationsMinSeq<WithStreamedUnaryMethod_ClearConversationsMsg<WithStreamedUnaryMethod_UserClearAllMsg<WithStreamedUnaryMethod_DeleteMsgs<WithStreamedUnaryMethod_DeleteMsgPhysicalBySeq<WithStreamedUnaryMethod_DeleteMsgPhysical<WithStreamedUnaryMethod_SetSendMsgStatus<WithStreamedUnaryMethod_GetSendMsgStatus<WithStreamedUnaryMethod_RevokeMsg<WithStreamedUnaryMethod_MarkMsgsAsRead<WithStreamedUnaryMethod_MarkConversationAsRead<WithStreamedUnaryMethod_SetConversationHasReadSeq<WithStreamedUnaryMethod_GetConversationsHasReadAndMaxSeq<WithStreamedUnaryMethod_GetActiveUser<WithStreamedUnaryMethod_GetActiveGroup<WithStreamedUnaryMethod_GetServerTime<WithStreamedUnaryMethod_ClearMsg<WithStreamedUnaryMethod_DestructMsgs<WithStreamedUnaryMethod_GetActiveConversation<WithStreamedUnaryMethod_SetUserConversationMaxSeq<WithStreamedUnaryMethod_SetUserConversationMinSeq<WithStreamedUnaryMethod_GetLastMessageSeqByTime<WithStreamedUnaryMethod_GetLastMessage<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_GetSingleChatHistory<WithStreamedUnaryMethod_GetMaxSeq<WithStreamedUnaryMethod_GetMaxSeqs<WithStreamedUnaryMethod_GetHasReadSeqs<WithStreamedUnaryMethod_GetMsgByConversationIDs<WithStreamedUnaryMethod_GetConversationMaxSeq<WithStreamedUnaryMethod_PullMessageBySeqs<WithStreamedUnaryMethod_GetSeqMessage<WithStreamedUnaryMethod_SearchMessage<WithStreamedUnaryMethod_SendMessages<WithStreamedUnaryMethod_SendSimpleMsg<WithStreamedUnaryMethod_SetUserConversationsMinSeq<WithStreamedUnaryMethod_ClearConversationsMsg<WithStreamedUnaryMethod_UserClearAllMsg<WithStreamedUnaryMethod_DeleteMsgs<WithStreamedUnaryMethod_DeleteMsgPhysicalBySeq<WithStreamedUnaryMethod_DeleteMsgPhysical<WithStreamedUnaryMethod_SetSendMsgStatus<WithStreamedUnaryMethod_GetSendMsgStatus<WithStreamedUnaryMethod_RevokeMsg<WithStreamedUnaryMethod_MarkMsgsAsRead<WithStreamedUnaryMethod_MarkConversationAsRead<WithStreamedUnaryMethod_SetConversationHasReadSeq<WithStreamedUnaryMethod_GetConversationsHasReadAndMaxSeq<WithStreamedUnaryMethod_GetActiveUser<WithStreamedUnaryMethod_GetActiveGroup<WithStreamedUnaryMethod_GetServerTime<WithStreamedUnaryMethod_ClearMsg<WithStreamedUnaryMethod_DestructMsgs<WithStreamedUnaryMethod_GetActiveConversation<WithStreamedUnaryMethod_SetUserConversationMaxSeq<WithStreamedUnaryMethod_SetUserConversationMinSeq<WithStreamedUnaryMethod_GetLastMessageSeqByTime<WithStreamedUnaryMethod_GetLastMessage<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_GetMaxSeq<WithStreamedUnaryMethod_GetMaxSeqs<WithStreamedUnaryMethod_GetHasReadSeqs<WithStreamedUnaryMethod_GetMsgByConversationIDs<WithStreamedUnaryMethod_GetConversationMaxSeq<WithStreamedUnaryMethod_PullMessageBySeqs<WithStreamedUnaryMethod_GetSeqMessage<WithStreamedUnaryMethod_SearchMessage<WithStreamedUnaryMethod_SendMessages<WithStreamedUnaryMethod_SendSimpleMsg<WithStreamedUnaryMethod_SetUserConversationsMinSeq<WithStreamedUnaryMethod_ClearConversationsMsg<WithStreamedUnaryMethod_UserClearAllMsg<WithStreamedUnaryMethod_DeleteMsgs<WithStreamedUnaryMethod_DeleteMsgPhysicalBySeq<WithStreamedUnaryMethod_DeleteMsgPhysical<WithStreamedUnaryMethod_SetSendMsgStatus<WithStreamedUnaryMethod_GetSendMsgStatus<WithStreamedUnaryMethod_RevokeMsg<WithStreamedUnaryMethod_MarkMsgsAsRead<WithStreamedUnaryMethod_MarkConversationAsRead<WithStreamedUnaryMethod_SetConversationHasReadSeq<WithStreamedUnaryMethod_GetConversationsHasReadAndMaxSeq<WithStreamedUnaryMethod_GetActiveUser<WithStreamedUnaryMethod_GetActiveGroup<WithStreamedUnaryMethod_GetServerTime<WithStreamedUnaryMethod_ClearMsg<WithStreamedUnaryMethod_DestructMsgs<WithStreamedUnaryMethod_GetActiveConversation<WithStreamedUnaryMethod_SetUserConversationMaxSeq<WithStreamedUnaryMethod_SetUserConversationMinSeq<WithStreamedUnaryMethod_GetLastMessageSeqByTime<WithStreamedUnaryMethod_GetLastMessage<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_GetSingleChatHistory<WithStreamedUnaryMethod_GetMaxSeq<WithStreamedUnaryMethod_GetMaxSeqs<WithStreamedUnaryMethod_GetHasReadSeqs<WithStreamedUnaryMethod_GetMsgByConversationIDs<WithStreamedUnaryMethod_GetConversationMaxSeq<WithStreamedUnaryMethod_PullMessageBySeqs<WithStreamedUnaryMethod_GetSeqMessage<WithStreamedUnaryMethod_SearchMessage<WithStreamedUnaryMethod_SendMessages<WithStreamedUnaryMethod_SendSimpleMsg<WithStreamedUnaryMethod_SetUserConversationsMinSeq<WithStreamedUnaryMethod_ClearConversationsMsg<WithStreamedUnaryMethod_UserClearAllMsg<WithStreamedUnaryMethod_DeleteMsgs<WithStreamedUnaryMethod_DeleteMsgPhysicalBySeq<WithStreamedUnaryMethod_DeleteMsgPhysical<WithStreamedUnaryMethod_SetSendMsgStatus<WithStreamedUnaryMethod_GetSendMsgStatus<WithStreamedUnaryMethod_RevokeMsg<WithStreamedUnaryMethod_MarkMsgsAsRead<WithStreamedUnaryMethod_MarkConversationAsRead<WithStreamedUnaryMethod_SetConversationHasReadSeq<WithStreamedUnaryMethod_GetConversationsHasReadAndMaxSeq<WithStreamedUnaryMethod_GetActiveUser<WithStreamedUnaryMethod_GetActiveGroup<WithStreamedUnaryMethod_GetServerTime<WithStreamedUnaryMethod_ClearMsg<WithStreamedUnaryMethod_DestructMsgs<WithStreamedUnaryMethod_GetActiveConversation<WithStreamedUnaryMethod_SetUserConversationMaxSeq<WithStreamedUnaryMethod_SetUserConversationMinSeq<WithStreamedUnaryMethod_GetLastMessageSeqByTime<WithStreamedUnaryMethod_GetLastMessage<Service > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > StreamedService;
 };
 
 }  // namespace msg

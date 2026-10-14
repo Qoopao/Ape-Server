@@ -35,12 +35,15 @@ message Conversation {
   int64 msgDestructTime = 15;
   int64 latestMsgDestructTime = 16;
   bool isMsgDestruct = 17;
+  int64 readSeq = 18;
+  int64 unreadCount = 19;
+  MsgInfo latestMsg = 20;
 }
 
 message ConversationInfo {
   string conversationID = 1;
   uint64 ownerUserID = 2;
-  int32 conversationType = 3;  // 0: 单聊 1: 群聊
+  int32 conversationType = 3;  // 1: 单聊 2: 群聊
   string conversationName = 4;
   string conversationAvatar = 5;
   repeated string participantUIDs = 6;
@@ -321,7 +324,34 @@ message UpdateConversationsByUserReq{
 
 message UpdateConversationsByUserResp{}
 
+message MarkConversationReadReq {
+  uint64 ownerUserID = 1;
+  string conversationID = 2;
+  int64 readSeq = 3;
+}
+
+message MarkConversationReadResp {}
+
+message UpdateConversationSettingsReq {
+  uint64 ownerUserID = 1;
+  string conversationID = 2;
+  optional bool isPinned = 3;
+  optional int32 recvMsgOpt = 4;
+}
+
+message UpdateConversationSettingsResp {}
+
+message DeleteConversationReq {
+  uint64 ownerUserID = 1;
+  string conversationID = 2;
+}
+
+message DeleteConversationResp {}
+
 service ConversationService {
+  rpc MarkConversationRead(MarkConversationReadReq) returns (MarkConversationReadResp);
+  rpc UpdateConversationSettings(UpdateConversationSettingsReq) returns (UpdateConversationSettingsResp);
+  rpc DeleteConversation(DeleteConversationReq) returns (DeleteConversationResp);
   rpc GetConversation(GetConversationReq) returns (GetConversationResp);
   rpc GetSortedConversationList(GetSortedConversationListReq) returns (GetSortedConversationListResp);
   rpc GetAllConversations(GetAllConversationsReq) returns (GetAllConversationsResp);
