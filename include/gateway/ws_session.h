@@ -60,7 +60,7 @@ private:
     ConversationClient* conversation_client_;
 
     // 握手后等待第一帧
-    boost::asio::awaitable<void> doRead();
+    boost::asio::awaitable<bool> doRead();  // 返回 true = 连接已转为已认证长连接，交由 doReadLoop 接管；返回 false = 本连接使命结束，由调用方清理。
     boost::asio::awaitable<void> handleReg(sdkws::SdkWSReq& req);
     boost::asio::awaitable<void> handleAuth(sdkws::SdkWSReq& req);
     boost::asio::awaitable<void> fallback(sdkws::SdkWSReq& req);
