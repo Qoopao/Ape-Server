@@ -28,11 +28,12 @@ message UserOnlineStatus {
 //---------------------------------微服务相关-------------------------------------
 // RegisterServiceReq 注册服务请求
 // 网关转发流程：接收到客户端请求(service, method) -> 检查是否注册 -> 从注册中心获取服务实例 -> 转发数据
-// 注意：ip:port 信息在注册中心中，这里只注册 service 和 method 的映射关系
+// 每个实例注册到独立 key：/services/{service}/{instanceId}
 message RegisterServiceReq {
   string service = 1; // 服务名称
-  repeated string ipport = 2; // ip:port
-  repeated string methods = 3; // 支持的方法列表（可选，如果为空则所有method都转发到此服务）
+  string instance_id = 2; // 实例ID（多实例注册时用于区分 etcd key）
+  string address = 3; // 唯一的可路由地址 ip:port
+  repeated string methods = 4; // 支持的方法列表（可选，如果为空则所有method都转发到此服务）
 }
 
 // RegisterServiceResp 注册服务响应
@@ -44,7 +45,7 @@ message RegisterServiceResp {
 // UnregisterServiceReq 注销服务请求
 message UnregisterServiceReq {
   string service = 1; // 服务名称
-  repeated string methods = 2; // 要注销的方法列表（可选，如果为空则注销该服务的所有方法）
+  string instance_id = 2; // 实例ID
 }
 
 // UnregisterServiceResp 注销服务响应
@@ -60,12 +61,18 @@ message GetServiceReq {
   string method = 2; // 方法名称（可选）
 }
 
+// ServiceInstance 单个服务实例
+message ServiceInstance {
+  string instance_id = 1; // 实例ID
+  string address = 2; // 可路由地址 ip:port
+}
+
 // GetServiceResp 获取服务响应
 message GetServiceResp {
   bool registered = 1; // 是否已注册
   string service = 2; // 服务名称（如果已注册）
-  repeated string ipport = 3; // 服务的 ip:port 列表
-  repeated string methods = 4; // 服务支持的方法列表
+  repeated string methods = 3; // 服务支持的方法列表
+  repeated ServiceInstance instances = 4; // 实例列表
 }
 //---------------------------------微服务相关-------------------------------------
 

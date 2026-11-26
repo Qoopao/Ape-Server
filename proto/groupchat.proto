@@ -1,6 +1,9 @@
 syntax = "proto3";
 package groupchat;
+import "sdkws.proto";
 
+// 群聊 v3：群消息正文在 Mongo 单副本，250 只承载成员/元数据命令。
+// 11 Send / 12 Pull / 13 Ack / 14 Read 已删除；旧值统一返回 UNSUPPORTED_OPERATION。
 enum Operation {
   List = 0;
   Create = 1;
@@ -13,12 +16,9 @@ enum Operation {
   Leave = 8;
   Kick = 9;
   Dismiss = 10;
-  Send = 11;
-  Pull = 12;
-  Ack = 13;
-  Read = 14;
   MyApplications = 15;
 }
+
 message Group {
   string id = 1;
   string name = 2;
@@ -26,19 +26,21 @@ message Group {
   uint64 memberCount = 4;
   bool dismissed = 5;
   bool joined = 6;
-  uint64 joinSeq = 7;
-  uint64 lastSeq = 8;
-  uint64 readSeq = 9;
-  uint64 unread = 10;
-  bool large = 11;
-  uint64 epoch = 12;
-  string number = 13; // Public ten-digit group number; id remains the stable conversation identifier.
+  uint64 joinSeq = 7;      // 成员可见下界
+  uint64 lastSeq = 8;      // = published_seq（已发布最大 seq，不是 next_seq）
+  bool large = 11;         // memberCount > GROUP_INLINE_MAX_MEMBERS
+  uint64 epoch = 12;       // 权威值在 im_group_stream
+  string number = 13;      // 10 位群号
+  uint64 lastMsgTime = 14;
+  // 9 readSeq / 10 unread 已删除（未读客户端本地维护）
 }
+
 message Member {
   uint64 account = 1;
   string nickname = 2;
   bool owner = 3;
 }
+
 message Application {
   uint64 id = 1;
   string groupID = 2;
@@ -50,19 +52,11 @@ message Application {
   string groupName = 8;
   string groupNumber = 9;
 }
-message Message {
-  string id = 1;
-  string clientID = 2;
-  string groupID = 3;
-  uint64 sender = 4;
-  string nickname = 5;
-  string text = 6;
-  uint64 seq = 7;
-  int64 time = 8;
-}
+
+// type 250：成员/元数据/申请命令。operation 11..14 由网关直接拒绝。
 message Command {
   Operation operation = 1;
-  uint64 actor = 2; // gateway always replaces this with authenticated account
+  uint64 actor = 2;        // 网关覆盖为已认证账号
   string groupID = 3;
   string text = 4;
   uint64 target = 5;
@@ -70,37 +64,87 @@ message Command {
   bool accept = 7;
   uint64 after = 8;
   uint32 limit = 9;
-  uint64 snapshot = 10;
   string clientID = 11;
   uint64 epoch = 12;
 }
+
 message Reply {
   string errorCode = 1;
   string errorMessage = 2;
   repeated Group groups = 3;
   repeated Member members = 4;
   repeated Application applications = 5;
-  repeated Message messages = 6;
   uint64 cursor = 7;
   bool hasMore = 8;
-  uint64 snapshot = 9;
   string groupID = 10;
   uint64 epoch = 11;
+  // 6 messages / 9 snapshot 已删除（群消息走 245）
 }
-// type 250: Command/Reply. type 251: refresh or new-message Notice.
+
+// type 251：新消息 / 同步内联 / 刷新 / 解散 / 被踢。
 message Notice {
   string groupID = 1;
   uint64 lastSeq = 2;
-  repeated Message messages = 3; // small groups only; large groups pull
+  repeated sdkws.MsgData messages = 3; // 小群内联；大群为空
   bool refresh = 4;
   uint64 epoch = 5;
-}
-message LocalState {
-  Group group = 1;
-  uint64 cursor = 2;
+  int32 reason = 6;        // 0=新消息 1=刷新 2=解散 3=被踢
+  uint64 lastMsgTime = 7;
 }
 
-// Unified group RPC; operations are selected by Command.operation.
+// type 246
+message SendGroupMessageReq {
+  string groupID = 1;
+  string clientID = 2;
+  bytes content = 3;
+  int32 contentType = 4;   // 0 视为 101
+  string ext = 5;
+  uint64 actor = 6;        // 网关覆盖
+}
+message SendGroupMessageResp {
+  string errorCode = 1;
+  string errorMsg = 2;
+  sdkws.MsgData msg = 3;
+}
+
+// type 245
+message GetGroupChatHistoryReq {
+  uint64 ownerUserID = 1;  // 网关覆盖
+  string groupID = 2;
+  int64 afterSeq = 3;      // 向后：seq > afterSeq；0=joinSeq
+  int32 limit = 4;         // 1..100，默认 20
+  int64 snapshot = 5;      // 0=请求时 published_seq
+  int64 beforeSeq = 6;     // 向前：seq < beforeSeq；与 afterSeq 互斥
+}
+message GetGroupChatHistoryResp {
+  repeated sdkws.MsgData messages = 1; // 始终升序
+  bool hasMore = 2;
+  int64 nextSeq = 3;
+  int64 minSeq = 4;        // = joinSeq
+  int64 lastSeq = 5;       // = published_seq（或 snapshot 截断）
+  uint64 epoch = 6;
+  int64 deletedSeq = 7;    // 本页最大 tombstone seq；0=无；客户端以 isDeleted 为准
+}
+
+// type 210：群同步结束信号（209 只承载单聊）。
+message GroupSyncRange {
+  string groupID = 1;
+  int64 fromSeq = 2;       // floor+1
+  int64 toSeq = 3;         // 实际内联末条；无内联=fromSeq-1
+  int64 lastSeq = 4;       // = published_seq
+  int64 joinSeq = 5;
+  uint64 epoch = 6;
+  bool hasGap = 7;
+  bool needsPull = 8;
+}
+message GroupSyncSummary {
+  repeated GroupSyncRange groups = 1;
+  uint32 messagesPushed = 2;
+  bool hasMore = 3;
+}
+
 service GroupService {
   rpc Execute(Command) returns (Reply);
+  rpc SendGroupMessages(SendGroupMessageReq) returns (SendGroupMessageResp);
+  rpc GetGroupChatHistory(GetGroupChatHistoryReq) returns (GetGroupChatHistoryResp);
 }

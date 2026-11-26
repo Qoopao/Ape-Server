@@ -9,7 +9,16 @@ message PushMsgReq {
   repeated uint64 userIDs = 3;
 }
 
-message PushMsgResp {}
+// PushDecision 单聊投递判定结果，决定消费者是否确认分发
+enum PushDecision {
+  PUSH_DISCARDED = 0;    // 已判定无需投递（非好友/过期/重复），可以确认分发
+  PUSH_DELIVERED = 1;    // 网关已接收入队，等 ACK；不确认分发
+  PUSH_NOT_ONLINE = 2;   // 所有实例都明确回答不在线，走离线恢复并确认分发
+}
+
+message PushMsgResp {
+  PushDecision decision = 1;
+}
 
 message DelUserPushTokenReq {
   uint64 userID = 1;
@@ -18,31 +27,23 @@ message DelUserPushTokenReq {
 
 message DelUserPushTokenResp {}
 
-// AckMsgReq 消息确认请求
-// Gateway / 客户端 收到推送到本地的消息后，回调 PushService 完成 ACK
-// 统一处理在线消息 ACK 和离线消息 ACK
-message AckMsgReq {
-  uint64 userID = 1;                       // 用户ID
-  string serverMsgID = 2;                  // 已确认收到消息的 serverMsgID
-  int64 seq = 3;                           // 消息 seq，用于更新 last_seq
-  int32 ackType = 4;                       // ACK 类型: 1=在线消息 2=离线消息
+// AckConversation 按会话确认到某个 seq
+message AckConversation {
+  string conversationID = 1;
+  int64 upToSeq = 2;
 }
 
-message AckMsgResp {}
-
-// AddPendingOfflineAckReq 预登记离线消息待 ACK 项
-// 用户上线拉取离线消息时调用，PushService 将该条消息记入 pending_ack 集合
-message AddPendingOfflineAckReq {
-  uint64 userID = 1;                       // 用户ID
-  string serverMsgID = 2;                  // serverMsgID
-  int64 seq = 3;                           // 消息 seq
+// AckConversationsReq 一次确认多个会话的水位
+message AckConversationsReq {
+  uint64 userID = 1;
+  repeated AckConversation conversations = 2;
+  int32 ackType = 3;                       // 1=在线消息 2=离线消息
 }
 
-message AddPendingOfflineAckResp {}
+message AckConversationsResp {}
 
 service PushService {
   rpc PushMsg(PushMsgReq) returns (PushMsgResp);
   rpc DelUserPushToken(DelUserPushTokenReq) returns (DelUserPushTokenResp);
-  rpc AckMsg(AckMsgReq) returns (AckMsgResp);
-  rpc AddPendingOfflineAck(AddPendingOfflineAckReq) returns (AddPendingOfflineAckResp);
+  rpc AckConversations(AckConversationsReq) returns (AckConversationsResp);
 }

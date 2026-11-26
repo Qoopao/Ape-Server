@@ -2,18 +2,59 @@ syntax = "proto3";
 package gateway_push;
 
 // GatewayPushService - Gateway 内部推送服务
-// 由 Gateway 进程暴露 gRPC 服务,供 PushService 等独立微服务通过 gRPC 调用
-// 将在线消息通过 WebSocket 长连接推送至指定用户
+// 由 Gateway 进程暴露 gRPC 服务,供 PushService / GroupService / MsgService 等独立微服务通过
+// gRPC 调用。调用方按 account 找到持有该连接的网关实例，再由该实例把帧写入 WebSocket 写队列。
 service GatewayPushService {
-  rpc PushToUser(PushToUserReq) returns (PushToUserResp);
+  // 通用帧推送：type 由调用方决定（104 在线消息 / 251 群通知 / 101 延迟回执 / ...）
+  rpc PushFrame(PushFrameReq) returns (PushFrameResp);
+  // 批量推送：一次推一批账号（群扇出用），返回每个账号的结果
+  rpc PushBatch(PushBatchReq) returns (PushBatchResp);
+  // 在线查询
+  rpc IsOnline(IsOnlineReq) returns (IsOnlineResp);
+  // 踢下线（跨实例互踢，账号在别处登录时使用）
+  rpc KickUser(KickUserReq) returns (KickUserResp);
 }
 
-message PushToUserReq {
+message PushFrameReq {
   uint64 account = 1;            // 目标用户ID (必填)
-  bytes msgDataBin = 2;         // sdkws.MsgData 序列化后的 bytes (必填)
-  string conversationID = 3;    // 会话ID (群聊时使用, 单聊可选)
+  int32 type = 2;                // WS 帧类型，由调用方决定
+  bytes data = 3;                // SdkWSResp.data 内容
+  string request_id = 4;         // 可选：回填 SdkWSResp.requestId（如 101 延迟回执）
+  string error_code = 5;         // 可选：回填 SdkWSResp.errorCode
 }
 
-message PushToUserResp {
-  bool success = 1;             // 推送是否成功 (找到活跃 session)
+message PushFrameResp {
+  bool success = 1;              // true = 该 account 的 session 在本实例且帧已入队
+  string instance_id = 2;        // 应答方实例，便于排障
+}
+
+message PushBatchReq {
+  repeated uint64 accounts = 1;  // 目标用户ID列表
+  int32 type = 2;                // WS 帧类型
+  bytes data = 3;                // SdkWSResp.data 内容
+}
+
+message PushBatchResp {
+  repeated bool results = 1;     // 与 accounts 一一对应
+  string instance_id = 2;        // 应答方实例
+}
+
+message IsOnlineReq {
+  uint64 account = 1;
+}
+
+message IsOnlineResp {
+  bool online = 1;               // 该 account 的 session 是否在本实例
+  string instance_id = 2;
+}
+
+message KickUserReq {
+  uint64 account = 1;
+  string reason = 2;             // "duplicate_login" / "admin" / ...
+  string except_instance_id = 3; // 发起方自己，避免误踢
+}
+
+message KickUserResp {
+  bool kicked = 1;               // 本实例是否确实踢掉了该 account 的连接
+  string instance_id = 2;
 }

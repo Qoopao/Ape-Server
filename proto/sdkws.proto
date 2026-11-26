@@ -336,6 +336,12 @@ message FetchUserMessageListResp {
 }
 // --------------------------------------------
 
+// ConversationCursor 客户端上报的单会话同步水位（PR-8 / Q-9B）
+message ConversationCursor {
+  string conversationID = 1; // 会话ID
+  int64 lastSeq = 2; // 客户端该会话已持久化的最大连续 seq；0 表示没有
+}
+
 // sdkRequest ---------------------------------
 message SdkWSReq {
   string requestId = 1; // 请求ID
@@ -345,7 +351,8 @@ message SdkWSReq {
   bytes data = 5; // 数据
   int32 type = 6; // 请求类型
   int32 trackID = 7; // 客户端追踪ID
-  int64 lastMsgSeq = 8; // 客户端最近收到的消息 seq，用于拉取离线消息的起始点
+  int64 lastMsgSeq = 8; // 已废弃：由 cursors 取代，保留字段号以兼容旧客户端
+  repeated ConversationCursor cursors = 9; // 每会话同步水位，首帧（type=101）携带
   // 100: 注册账号     101: 发送消息  102：拉取单链  103：拉取混链
   // 104: 下推用户消息  105: 下推命令消息  106: 消息确认（ACK）
 }
@@ -365,13 +372,36 @@ message SdkWSResp {
 }
 // --------------------------------------------
 
+// ConversationSyncRange 单个会话本次下发的 seq 区间（type=209 的 data）
+message ConversationSyncRange {
+  string conversationID = 1;
+  int64 fromSeq = 2; // 本次下发的第一条 seq
+  int64 toSeq = 3; // 本次下发的最后一条 seq
+  bool hasGap = 4; // 该会话在 fromSeq 之前仍有未同步消息
+}
+
+// SyncSummary 登录同步结果摘要（type=209 的 data，原为空）
+message SyncSummary {
+  uint32 conversationsTotal = 1; // 会话总数
+  uint32 conversationsSynced = 2; // 本次实际同步的会话数
+  uint32 messagesPushed = 3; // 本次推送的消息帧数
+  bool hasMore = 4; // 还有超出 K 的会话未同步
+  repeated ConversationSyncRange ranges = 5; // 每会话下发区间
+}
+
 // AckReq 消息确认请求（在线/离线通用）
 // 客户端收到推送后发送 ACK，服务端据此清理 pending_ack 集合
 // type=106
+// ConversationAck 按会话确认到某个 seq（单聊 seq 稠密、双向共用）
+message ConversationAck {
+  string conversationID = 1; // 会话ID
+  int64 upToSeq = 2;         // 已确认收到该会话 <= upToSeq 的消息
+}
+
 message AckReq {
-  uint64 userID = 1;                       // 用户ID
-  repeated string serverMsgIDs = 2;        // 已确认收到消息的 serverMsgID 列表
-  int32 ackType = 3;                       // ACK 类型: 1=在线消息 2=离线消息
+  uint64 userID = 1;                          // 用户ID
+  repeated ConversationAck conversations = 2; // 每会话确认水位
+  int32 ackType = 3;                          // ACK 类型: 1=在线消息 2=离线消息
 }
 
 // OfflinePushInfo 离线推送信息
