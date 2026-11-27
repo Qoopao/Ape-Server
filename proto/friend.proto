@@ -2,56 +2,70 @@ syntax = "proto3";
 package friendpb;
 import "sdkws.proto";
 
+// Friend 服务调用链
+// 客户端 WS 帧 type=220..225
+//   网关把 data 解析成 friendpb.Command
+//   网关覆写 command.actor = 当前登录账号
+//   网关覆写 command.operation = type - 220
+//   gRPC FriendService.Execute(Command) → Reply
+//   网关把 Reply 序列化进 SdkWSResp.data，type 原样回 220..225
+
 enum Operation {
-  LookupUser = 0;
-  Apply = 1;
-  ListFriends = 2;
-  ListApplications = 3;
-  HandleApplication = 4;
-  DeleteFriend = 5;
+  LookupUser = 0;               // 查询用户资料
+  Apply = 1;                    // 发送好友申请
+  ListFriends = 2;              // 分页拉取当前登陆用户的好友列表
+  ListApplications = 3;         // 分页拉取当前登陆用户发送/接收到的好友申请
+  HandleApplication = 4;        // 好友申请的接收者处理好友申请
+  DeleteFriend = 5;             // 删除当前登陆用户的好友
 }
-enum ApplicationStatus {
-  Pending = 0;
-  Accepted = 1;
-  Rejected = 2;
+
+enum ApplicationStatus {        // 好友申请的状态
+  Pending = 0;                  // 待处理
+  Accepted = 1;                 // 接受
+  Rejected = 2;                 // 拒绝
 }
-message Application {
-  uint64 id = 1;
-  sdkws.PublicUserInfo sender = 2;
-  sdkws.PublicUserInfo recipient = 3;
-  string message = 4;
-  ApplicationStatus status = 5;
-  int64 createdTime = 6;
-  int64 handledTime = 7;
+
+message Application {                   // 一条好友申请
+  uint64 id = 1;                        // 申请表的主键
+  sdkws.PublicUserInfo sender = 2;      // 发送方（并非完整的用户信息）
+  sdkws.PublicUserInfo recipient = 3;   // 接收方
+  string message = 4;                   // 申请附言
+  ApplicationStatus status = 5;         // 当前状态
+  int64 createdTime = 6;                // 申请时间
+  int64 handledTime = 7;                // 处理时间
 }
-message Command {
-  uint64 actor = 1;
-  Operation operation = 2;
-  uint64 target = 3;
-  uint64 applicationID = 4;
-  string message = 5;
-  bool accept = 6;
-  uint64 after = 7;
-  uint32 limit = 8;
-  uint64 snapshot = 9;
+
+message Command {             // 有些字段在某些操作不一定要用到
+  uint64 actor = 1;           // 当前登陆账号，由网关覆写
+  Operation operation = 2;    // 该命令的操作号
+  uint64 target = 3;          // 该命令的目标（如查询的用户、好友请求的接收方等）
+  uint64 applicationID = 4;   // 好友申请的ID
+  string message = 5;         // 申请附言
+  bool accept = 6;            // HandleApplication时同意还是拒绝
+  uint64 after = 7;           // 拉取消息时的分页游标，只返回id>after的数据
+  uint32 limit = 8;           // 本页最多返回多少条
+  uint64 snapshot = 9;        // 是本轮分页拉取的上界，避免拉取过程中由于数据库新增记录导致的无限拉取
 }
-message ClearedConversation {
-  uint64 peer = 1;
+
+message ClearedConversation {     // 删除好友时，服务端不会立刻同步删掉MongoDB里的全部历史消息，而是写一条删除水位，后续如果好友关系重新建立，只会返回seq>deletedSeq的消息
+  uint64 peer = 1;                // 对方账号
   int64 deletedTime = 2;
   int64 deletedSeq = 3;
 }
+
 message Reply {
-  string errorCode = 1;
+  string errorCode = 1;                       
   string errorMessage = 2;
-  sdkws.PublicUserInfo user = 3;
-  repeated sdkws.FriendInfo friends = 4;
-  repeated Application applications = 5;
-  bool hasMore = 6;
-  uint64 cursor = 7;
+  sdkws.PublicUserInfo user = 3;            // 只有LookupUser成功时填充。
+  repeated sdkws.FriendInfo friends = 4;    // 只有ListFriends填充
+  repeated Application applications = 5;    
+  bool hasMore = 6;                         // 分页查询是否还有数据
+  uint64 cursor = 7;                        // 本页最后一条消息的id，用于填充after字段
   uint64 snapshot = 8;
-  repeated uint64 changedAccounts = 9;
-  repeated ClearedConversation clearedConversations = 10;
+  repeated uint64 changedAccounts = 9;      // 关系变更涉及的账号（通常是双方），网关据此给在线用户推 230
+  repeated ClearedConversation clearedConversations = 10;       // 用于客户端清理本地历史
 }
+
 service FriendService {
   rpc Execute(Command) returns (Reply);
 }

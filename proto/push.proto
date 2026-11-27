@@ -1,49 +1,40 @@
 syntax = "proto3";
 package push;
-
 import "sdkws.proto";
 
+// PushMsg：PushService 内部单聊分发入口，由 msg_topic 消费者调用。
+// 网关不直接调用；101/244 走 MsgService。
 message PushMsgReq {
   sdkws.MsgData msgData = 1;
   string conversationID = 2;
-  repeated uint64 userIDs = 3;
 }
 
-// PushDecision 单聊投递判定结果，决定消费者是否确认分发
+// PushDecision 单聊投递判定结果，决定消费者是否确认分发。
 enum PushDecision {
-  PUSH_DISCARDED = 0;    // 已判定无需投递（非好友/过期/重复），可以确认分发
-  PUSH_DELIVERED = 1;    // 网关已接收入队，等 ACK；不确认分发
-  PUSH_NOT_ONLINE = 2;   // 所有实例都明确回答不在线，走离线恢复并确认分发
+  PUSH_DISCARDED = 0;    // 非好友/过期/重复，可以确认分发
+  PUSH_DELIVERED = 1;    // 网关已接收，等 ACK；不确认分发
+  PUSH_NOT_ONLINE = 2;   // 所有实例明确回答不在线，走离线恢复并确认
 }
 
 message PushMsgResp {
   PushDecision decision = 1;
 }
 
-message DelUserPushTokenReq {
-  uint64 userID = 1;
-  int32 platformID = 2;
-}
-
-message DelUserPushTokenResp {}
-
-// AckConversation 按会话确认到某个 seq
+// type 106：按会话确认到某个 seq。
 message AckConversation {
   string conversationID = 1;
   int64 upToSeq = 2;
 }
 
-// AckConversationsReq 一次确认多个会话的水位
 message AckConversationsReq {
   uint64 userID = 1;
   repeated AckConversation conversations = 2;
-  int32 ackType = 3;                       // 1=在线消息 2=离线消息
+  int32 ackType = 3; // 1=在线 2=离线
 }
 
 message AckConversationsResp {}
 
 service PushService {
   rpc PushMsg(PushMsgReq) returns (PushMsgResp);
-  rpc DelUserPushToken(DelUserPushTokenReq) returns (DelUserPushTokenResp);
   rpc AckConversations(AckConversationsReq) returns (AckConversationsResp);
 }
