@@ -1,0 +1,6 @@
+timestamp=2026-11-28T18:55:55+08:00
+mysql_users=254
+outbox_op1=9329
+outbox_pending=0
+mongo_msg=23161
+kafka_msg_topic_offsets=12784

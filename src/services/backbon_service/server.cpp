@@ -1,332 +1,276 @@
 #include "services/backbon_service/server.h"
+#include "storage/etcdconnector.h"
+#include "storage/redisconnector.h"
+#include "util/instance_id.h"
+
+#include <etcd/Client.hpp>
 #include <etcd/KeepAlive.hpp>
 #include <etcd/Response.hpp>
 #include <etcd/Value.hpp>
-#include <grpcpp/ext/proto_server_reflection_plugin.h>
-#include <grpcpp/grpcpp.h>
-#include <grpcpp/health_check_service_interface.h>
 #include <grpcpp/support/status.h>
+#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
-#include <storage/etcdconnector.h>
-#include <storage/mysqlconnector.h>
-#include <storage/mysqlhandler.h>
-#include <storage/redisconnector.h>
 
-#include <memory>
+#include <functional>
+#include <set>
 #include <string>
+#include <vector>
+
+namespace {
+
+struct Registration {
+  std::string instance_id;
+  std::string address;
+  std::vector<std::string> methods;
+};
+
+// etcd value 只有一种格式：{"instance_id":...,"address":...,"methods":[...]}
+Registration parse_registration(const std::string &raw) {
+  Registration out;
+  const auto parsed = nlohmann::json::parse(raw, nullptr, false);
+  if (parsed.is_discarded() || !parsed.is_object())
+    return out;
+  out.instance_id = parsed.value("instance_id", "");
+  out.address = parsed.value("address", "");
+  if (parsed.contains("methods") && parsed["methods"].is_array()) {
+    for (const auto &method : parsed["methods"]) {
+      if (method.is_string())
+        out.methods.push_back(method.get<std::string>());
+    }
+  }
+  return out;
+}
+
+} // namespace
 
 BackbonServiceImpl::BackbonServiceImpl(const std::string &service_name,
                                        const std::string &listen_address)
     : BaseServiceServer<BackbonServiceImpl>(service_name, listen_address) {}
 
-// 序列化 vector<string> 为逗号分隔的字符串
-std::string serialize_vector(const std::vector<std::string> &vec) {
-    std::ostringstream oss;
-    for (size_t i = 0; i < vec.size(); ++i) {
-        if (i > 0) {
-            oss << ",";
-        }
-        oss << vec[i];
-    }
-    return oss.str();
+void BackbonServiceImpl::ReleaseKeepAlive() {
+  std::lock_guard<std::mutex> lock(keep_alive_mutex_);
+  keep_alives_.clear();
+  leases_.clear();
 }
 
-// 反序列化逗号分隔的字符串为 vector<string>
-std::vector<std::string> deserialize_vector(const std::string &str) {
-    std::vector<std::string> vec;
-    std::istringstream iss(str);
-    std::string method;
-    while (std::getline(iss, method, ',')) {
-        if (!method.empty()) {
-            vec.push_back(method);
-        }
-    }
-    return vec;
+void BackbonServiceImpl::ForgetKeepAlive(const std::string &key) {
+  std::lock_guard<std::mutex> lock(keep_alive_mutex_);
+  keep_alives_.erase(key);
+  leases_.erase(key);
 }
 
 // ──────────────────────────────────────────
-// 检查用户是否在线
-// 对每个 userID: 先异步查 Redis，未命中再查持久化数据库
+// 检查用户是否在线：以网关写入的路由表 gw:user:{account} 为准
 // ──────────────────────────────────────────
 ::grpc::ServerUnaryReactor *BackbonServiceImpl::CheckUserOnline(
     ::grpc::CallbackServerContext *context,
     const ::backbon::CheckUserOnlineReq *request,
     ::backbon::CheckUserOnlineResp *response) {
+  grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
+  std::vector<uint64_t> user_ids(request->userids().begin(),
+                                 request->userids().end());
 
-    grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
+  auto &redis = RedisConnector::instance();
+  boost::asio::co_spawn(
+      redis.get_executor(),
+      [reactor, response, user_ids = std::move(user_ids)]()
+          -> boost::asio::awaitable<void> {
+        for (const auto userID : user_ids) {
+          auto *status = response->add_statuses();
+          status->set_userid(userID);
+          bool online = false;
+          try {
+            const auto route = co_await RedisConnector::instance().get(
+                "gw:user:" + std::to_string(userID));
+            online = route.has_value() && !route->empty();
+          } catch (const std::exception &e) {
+            spdlog::error(
+                "BackbonService::CheckUserOnline: Redis error for user {}: {}",
+                userID, e.what());
+          }
+          status->set_isonline(online);
+          status->set_connectioncount(online ? 1 : 0);
+        }
+        reactor->Finish(grpc::Status::OK);
+      },
+      boost::asio::detached);
 
-    // 拷贝 userIDs 列表到协程
-    std::vector<uint64_t> user_ids(request->userids().begin(),
-                                      request->userids().end());
-
-    auto &redis = RedisConnector::instance();
-    boost::asio::co_spawn(
-        redis.get_executor(),
-        [reactor, response, user_ids = std::move(user_ids)]()
-            -> boost::asio::awaitable<void> {
-            for (const auto &userID : user_ids) {
-                auto *status = response->add_statuses();
-                status->set_userid(userID);
-                status->set_isonline(false);
-                status->set_connectioncount(0);
-
-                // 1. 异步查 Redis 在线状态
-                try {
-                    auto onlineVal = co_await RedisConnector::instance().get(
-                        "user:" + std::to_string(userID) + ":online");
-                    if (onlineVal && *onlineVal == "1") {
-                        status->set_isonline(true);
-                        status->set_connectioncount(1);
-                        spdlog::debug(
-                            "BackbonService::CheckUserOnline: user {} is online (from Redis)",
-                            userID);
-                        continue;
-                    }
-                } catch (const std::exception &e) {
-                    spdlog::error(
-                        "BackbonService::CheckUserOnline: Redis error for user {}: {}",
-                        userID, e.what());
-                }
-
-                // 2. Redis 未命中 -> 查持久化数据库（异步）
-                try {
-                    auto userInfo = co_await MySQLHandler::find_user_by_id(userID);
-                    if (userInfo) {
-                        // 用户存在于 DB 中，缓存到 Redis 并标记离线
-                        co_await RedisConnector::instance().setex(
-                            "user:" + std::to_string(userID) + ":online", 300, "0");
-                        spdlog::debug(
-                            "BackbonService::CheckUserOnline: user {} found in DB (offline)",
-                            userID);
-                    }
-                } catch (const std::exception &e) {
-                    spdlog::error(
-                        "BackbonService::CheckUserOnline: MySQL error for user {}: {}",
-                        userID, e.what());
-                }
-
-                spdlog::debug(
-                    "BackbonService::CheckUserOnline: user {} is offline",
-                    userID);
-            }
-
-            reactor->Finish(grpc::Status::OK);
-        },
-        boost::asio::detached);
-
-    return reactor;
+  return reactor;
 }
 
 // ──────────────────────────────────────────
-// 注册服务：先存储服务信息到 etcd，再异步存 Redis
+// 注册服务：/services/{service}/{instanceId} -> JSON{instance_id,address,methods}
+// 每个实例一个 key，不再互相覆盖（C-4）；不再写 Redis methods 镜像。
 // ──────────────────────────────────────────
 ::grpc::ServerUnaryReactor *BackbonServiceImpl::RegisterService(
     ::grpc::CallbackServerContext *context,
     const ::backbon::RegisterServiceReq *request,
     ::backbon::RegisterServiceResp *response) {
+  grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
-    grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-
-    EtcdConnector &etcd_connector = EtcdConnector::GetInstance();
-    std::string service_name = "/services/" + request->service();
-    std::vector<std::string> ip_ports(request->ipport().begin(),
-                                      request->ipport().end());
-
-    etcd::Client &etcd_client = etcd_connector.get_etcd_client();
-
-    // 1. 创建租约
-    // TODO: co_spawn async — etcd leasegrant 是同步阻塞调用，后续应异步化
-    etcd::Response lease_resp =
-        etcd_client.leasegrant(etcd_connector.get_lease_ttl()).get();
-    if (!lease_resp.is_ok()) {
-        std::string error_message =
-            "创建租约失败: error_code: " +
-            std::to_string(lease_resp.error_code()) +
-            ", error_message: " + lease_resp.error_message();
-        response->set_success(false);
-        response->set_error(error_message);
-        reactor->Finish(grpc::Status::OK);
-        return reactor;
-    }
-    int64_t lease_id = lease_resp.value().lease();
-    spdlog::info("创建租约成功，lease_id: {}", lease_id);
-
-    // 2. 注册服务节点
-    // TODO: co_spawn async — etcd put 是同步阻塞调用，后续应异步化
-    etcd::Response put_resp =
-        etcd_client.put(service_name, serialize_vector(ip_ports), lease_id)
-            .get();
-    if (!put_resp.is_ok()) {
-        etcd_client.leaserevoke(lease_id).get();
-        std::string error_message =
-            "注册服务节点失败: error_code: " +
-            std::to_string(put_resp.error_code()) +
-            ", error_message: " + put_resp.error_message();
-        response->set_success(false);
-        response->set_error(error_message);
-        reactor->Finish(grpc::Status::OK);
-        return reactor;
-    }
-    spdlog::info("注册服务节点成功：{}", service_name);
-
-    // 3. 自动续约
-    std::function<void(std::exception_ptr)> handler =
-        [](std::exception_ptr eptr) {
-            spdlog::info("自动续约触发");
-            try {
-                if (eptr) {
-                    std::rethrow_exception(eptr);
-                }
-            } catch (const std::runtime_error &e) {
-                spdlog::error("连接异常: {}", e.what());
-            } catch (const std::out_of_range &e) {
-                spdlog::error("租约异常: {}", e.what());
-            }
-        };
-    this->keep_alive = std::move(std::make_unique<etcd::KeepAlive>(
-        etcd_client, handler, etcd_connector.get_lease_ttl(), lease_id));
-    spdlog::info("服务注册成功：{}", service_name);
-
-    // 4. 异步存入 Redis（服务-方法映射）
-    std::vector<std::string> methods(request->methods().begin(),
-                                     request->methods().end());
-    std::string serialized_methods = serialize_vector(methods);
-    auto &redis = RedisConnector::instance();
-    boost::asio::co_spawn(
-        redis.get_executor(),
-        [reactor, response, service_name,
-         serialized_methods]() -> boost::asio::awaitable<void> {
-            try {
-                co_await RedisConnector::instance().setex(
-                    service_name, 60, serialized_methods);
-                spdlog::info("存入redis成功：{}", service_name);
-
-                response->set_success(true);
-                response->set_error("");
-                reactor->Finish(grpc::Status::OK);
-                spdlog::info("Finish RegisterService: {}", service_name);
-            } catch (const std::exception &e) {
-                std::string error_message = "存入redis失败";
-                response->set_success(false);
-                response->set_error(error_message);
-                reactor->Finish(grpc::Status::OK);
-            }
-        },
-        boost::asio::detached);
-
+  const std::string service = request->service();
+  const std::string instance_id = request->instance_id();
+  const std::string address = request->address();
+  if (service.empty() || instance_id.empty() || address.empty()) {
+    response->set_success(false);
+    response->set_error("service, instance_id and address are required");
+    reactor->Finish(grpc::Status::OK);
     return reactor;
+  }
+
+  nlohmann::json payload;
+  payload["instance_id"] = instance_id;
+  payload["address"] = address;
+  payload["methods"] =
+      std::vector<std::string>(request->methods().begin(),
+                               request->methods().end());
+
+  const std::string key = "/services/" + service + "/" + instance_id;
+
+  EtcdConnector &etcd_connector = EtcdConnector::GetInstance();
+  etcd::Client &etcd_client = etcd_connector.get_etcd_client();
+
+  etcd::Response lease_resp =
+      etcd_client.leasegrant(etcd_connector.get_lease_ttl()).get();
+  if (!lease_resp.is_ok()) {
+    response->set_success(false);
+    response->set_error("创建租约失败: " + lease_resp.error_message());
+    reactor->Finish(grpc::Status::OK);
+    return reactor;
+  }
+  const int64_t lease_id = lease_resp.value().lease();
+
+  etcd::Response put_resp = etcd_client.put(key, payload.dump(), lease_id).get();
+  if (!put_resp.is_ok()) {
+    etcd_client.leaserevoke(lease_id).get();
+    response->set_success(false);
+    response->set_error("注册服务节点失败: " + put_resp.error_message());
+    reactor->Finish(grpc::Status::OK);
+    return reactor;
+  }
+
+  std::function<void(std::exception_ptr)> handler = [](std::exception_ptr eptr) {
+    try {
+      if (eptr)
+        std::rethrow_exception(eptr);
+    } catch (const std::exception &e) {
+      spdlog::error("etcd keepalive: {}", e.what());
+    }
+  };
+  {
+    std::lock_guard<std::mutex> lock(keep_alive_mutex_);
+    keep_alives_.erase(key);
+    keep_alives_[key] = std::make_unique<etcd::KeepAlive>(
+        etcd_client, handler, etcd_connector.get_lease_ttl(), lease_id);
+    leases_[key] = lease_id;
+  }
+
+  spdlog::info("注册服务成功：{} = {} (instance={})", key, payload.dump(),
+               instance_id);
+  response->set_success(true);
+  response->set_error("");
+  reactor->Finish(grpc::Status::OK);
+  return reactor;
 }
 
 // ──────────────────────────────────────────
-// 注销服务：从 etcd 删除服务节点，从 redis 删除方法映射
+// 注销服务：删除本实例的独立 key，并释放租约记录。
 // ──────────────────────────────────────────
 ::grpc::ServerUnaryReactor *BackbonServiceImpl::UnregisterService(
     ::grpc::CallbackServerContext *context,
     const ::backbon::UnregisterServiceReq *request,
     ::backbon::UnregisterServiceResp *response) {
+  grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
-    grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
-
-    EtcdConnector &etcd_connector = EtcdConnector::GetInstance();
-    std::string service_name = "/services/" + request->service();
-
-    // 1. 从 etcd 删除服务节点
-    // TODO: co_spawn async — etcd rm 是同步阻塞调用，后续应异步化
-    try {
-        etcd::Client &etcd_client = etcd_connector.get_etcd_client();
-        etcd::Response del_resp = etcd_client.rm(service_name).get();
-        if (del_resp.is_ok()) {
-            spdlog::info("UnregisterService: 已从 etcd 删除 {}",
-                         service_name);
-        } else {
-            spdlog::warn("UnregisterService: etcd 删除失败 {}: {}",
-                         service_name, del_resp.error_message());
-        }
-    } catch (const std::exception &e) {
-        spdlog::error("UnregisterService: etcd 异常 {}: {}", service_name,
-                      e.what());
-    }
-
-    // 2. 异步从 redis 删除方法映射
-    auto &redis = RedisConnector::instance();
-    boost::asio::co_spawn(
-        redis.get_executor(),
-        [reactor, response, service_name]()
-            -> boost::asio::awaitable<void> {
-            try {
-                co_await RedisConnector::instance().del(service_name);
-                spdlog::info("UnregisterService: 已从 redis 删除 {}",
-                             service_name);
-            } catch (const std::exception &e) {
-                spdlog::error(
-                    "UnregisterService: redis 异常 {}: {}", service_name,
-                    e.what());
-            }
-
-            response->set_success(true);
-            response->set_error("");
-            reactor->Finish(grpc::Status::OK);
-        },
-        boost::asio::detached);
-
+  const std::string service = request->service();
+  const std::string instance_id = request->instance_id();
+  if (service.empty() || instance_id.empty()) {
+    response->set_success(false);
+    response->set_error("service and instance_id are required");
+    reactor->Finish(grpc::Status::OK);
     return reactor;
+  }
+
+  const std::string key = "/services/" + service + "/" + instance_id;
+
+  try {
+    etcd::Client &etcd_client = EtcdConnector::GetInstance().get_etcd_client();
+    etcd::Response del_resp = etcd_client.rm(key).get();
+    if (del_resp.is_ok()) {
+      spdlog::info("UnregisterService: 已从 etcd 删除 {}", key);
+    } else {
+      spdlog::warn("UnregisterService: etcd 删除失败 {}: {}", key,
+                   del_resp.error_message());
+    }
+  } catch (const std::exception &e) {
+    spdlog::error("UnregisterService: etcd 异常 {}: {}", key, e.what());
+  }
+  ForgetKeepAlive(key);
+
+  response->set_success(true);
+  response->set_error("");
+  reactor->Finish(grpc::Status::OK);
+  return reactor;
 }
 
 // ──────────────────────────────────────────
-// 获取服务信息：从 etcd 查 ip:port，从 redis 异步查 methods
+// 获取服务信息：前缀列出全部实例，地址只从 instances 返回。
 // ──────────────────────────────────────────
 ::grpc::ServerUnaryReactor *BackbonServiceImpl::GetService(
     ::grpc::CallbackServerContext *context,
     const ::backbon::GetServiceReq *request,
     ::backbon::GetServiceResp *response) {
+  grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
 
-    grpc::ServerUnaryReactor *reactor = context->DefaultReactor();
+  const std::string service = request->service();
+  const std::string base = "/services/" + service;
+  EtcdConnector &etcd_connector = EtcdConnector::GetInstance();
+  etcd::Client &etcd_client = etcd_connector.get_etcd_client();
 
-    EtcdConnector &etcd_connector = EtcdConnector::GetInstance();
-    std::string service_name = "/services/" + request->service();
+  bool registered = false;
+  std::set<std::string> methods;
+  std::set<std::string> seen_instances;
 
-    bool registered = false;
-
-    // 1. 从 etcd 查询 ip:port 列表
-    // TODO: co_spawn async — etcd get 是同步阻塞调用，后续应异步化
-    etcd::Client &etcd_client = etcd_connector.get_etcd_client();
-    etcd::Response get_resp = etcd_client.get(service_name).get();
-    if (get_resp.is_ok()) {
-        std::string ipport_str = get_resp.value().as_string();
-        std::vector<std::string> ipports = deserialize_vector(ipport_str);
-        for (const auto &ip : ipports) {
-            response->add_ipport(ip);
-        }
-        registered = true;
+  auto add_instance = [&](const std::string &instance_id,
+                          const std::string &address,
+                          const std::vector<std::string> &parsed_methods) {
+    if (instance_id.empty() || address.empty() ||
+        !seen_instances.insert(instance_id).second) {
+      return;
     }
+    auto *instance = response->add_instances();
+    instance->set_instance_id(instance_id);
+    instance->set_address(address);
+    for (const auto &method : parsed_methods)
+      methods.insert(method);
+    registered = true;
+  };
 
-    // 2. 异步从 redis 查询 methods 列表
-    auto &redis = RedisConnector::instance();
-    boost::asio::co_spawn(
-        redis.get_executor(),
-        [reactor, response, service_name, registered,
-         service_str = request->service()]()
-            -> boost::asio::awaitable<void> {
-            try {
-                auto method_val =
-                    co_await RedisConnector::instance().get(service_name);
-                if (method_val) {
-                    std::vector<std::string> methods =
-                        deserialize_vector(*method_val);
-                    for (const auto &m : methods) {
-                        response->add_methods(m);
-                    }
-                }
-            } catch (const std::exception &e) {
-                spdlog::warn("GetService: redis 查询失败 {}: {}",
-                             service_name, e.what());
-            }
+  try {
+    etcd::Response ls_resp = etcd_client.ls(base + "/").get();
+    if (ls_resp.is_ok()) {
+      for (const auto &value : ls_resp.values()) {
+        const Registration parsed = parse_registration(value.as_string());
+        std::string instance_id = parsed.instance_id;
+        if (instance_id.empty()) {
+          // value 里没写 instance_id 时退回 key 后缀（同一份契约的兜底，不涉及旧格式）
+          const std::string key = value.key();
+          instance_id = key.compare(0, base.size() + 1, base + "/") == 0
+                            ? key.substr(base.size() + 1)
+                            : key;
+        }
+        add_instance(instance_id, parsed.address, parsed.methods);
+      }
+    }
+  } catch (const std::exception &e) {
+    spdlog::warn("GetService: etcd ls 失败 {}: {}", base, e.what());
+  }
 
-            response->set_registered(registered);
-            response->set_service(service_str);
-            reactor->Finish(grpc::Status::OK);
-        },
-        boost::asio::detached);
+  for (const auto &method : methods)
+    response->add_methods(method);
 
-    return reactor;
+  response->set_registered(registered);
+  response->set_service(service);
+  reactor->Finish(grpc::Status::OK);
+  return reactor;
 }

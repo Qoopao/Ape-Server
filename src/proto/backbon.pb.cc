@@ -86,8 +86,10 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr UnregisterServiceReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : methods_{},
-        service_(
+      : service_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        instance_id_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         _cached_size_{0} {}
@@ -111,6 +113,36 @@ struct UnregisterServiceReqDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UnregisterServiceReqDefaultTypeInternal _UnregisterServiceReq_default_instance_;
+
+inline constexpr ServiceInstance::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : instance_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        address_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR ServiceInstance::ServiceInstance(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct ServiceInstanceDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ServiceInstanceDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ServiceInstanceDefaultTypeInternal() {}
+  union {
+    ServiceInstance _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ServiceInstanceDefaultTypeInternal _ServiceInstance_default_instance_;
 
 inline constexpr RegisterServiceResp::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -142,9 +174,14 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 
 inline constexpr RegisterServiceReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : ipport_{},
-        methods_{},
+      : methods_{},
         service_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        instance_id_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        address_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
         _cached_size_{0} {}
@@ -168,36 +205,6 @@ struct RegisterServiceReqDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RegisterServiceReqDefaultTypeInternal _RegisterServiceReq_default_instance_;
-
-inline constexpr GetServiceResp::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : ipport_{},
-        methods_{},
-        service_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        registered_{false},
-        _cached_size_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR GetServiceResp::GetServiceResp(::_pbi::ConstantInitialized)
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-    : ::google::protobuf::Message(_class_data_.base()),
-#else   // PROTOBUF_CUSTOM_VTABLE
-    : ::google::protobuf::Message(),
-#endif  // PROTOBUF_CUSTOM_VTABLE
-      _impl_(::_pbi::ConstantInitialized()) {
-}
-struct GetServiceRespDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR GetServiceRespDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~GetServiceRespDefaultTypeInternal() {}
-  union {
-    GetServiceResp _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetServiceRespDefaultTypeInternal _GetServiceResp_default_instance_;
 
 inline constexpr GetServiceReq::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -254,6 +261,36 @@ struct CheckUserOnlineReqDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CheckUserOnlineReqDefaultTypeInternal _CheckUserOnlineReq_default_instance_;
+
+inline constexpr GetServiceResp::Impl_::Impl_(
+    ::_pbi::ConstantInitialized) noexcept
+      : methods_{},
+        instances_{},
+        service_(
+            &::google::protobuf::internal::fixed_address_empty_string,
+            ::_pbi::ConstantInitialized()),
+        registered_{false},
+        _cached_size_{0} {}
+
+template <typename>
+PROTOBUF_CONSTEXPR GetServiceResp::GetServiceResp(::_pbi::ConstantInitialized)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(_class_data_.base()),
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(),
+#endif  // PROTOBUF_CUSTOM_VTABLE
+      _impl_(::_pbi::ConstantInitialized()) {
+}
+struct GetServiceRespDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR GetServiceRespDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~GetServiceRespDefaultTypeInternal() {}
+  union {
+    GetServiceResp _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetServiceRespDefaultTypeInternal _GetServiceResp_default_instance_;
 
 inline constexpr CheckUserOnlineResp::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
@@ -327,7 +364,8 @@ const ::uint32_t
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::backbon::RegisterServiceReq, _impl_.service_),
-        PROTOBUF_FIELD_OFFSET(::backbon::RegisterServiceReq, _impl_.ipport_),
+        PROTOBUF_FIELD_OFFSET(::backbon::RegisterServiceReq, _impl_.instance_id_),
+        PROTOBUF_FIELD_OFFSET(::backbon::RegisterServiceReq, _impl_.address_),
         PROTOBUF_FIELD_OFFSET(::backbon::RegisterServiceReq, _impl_.methods_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::backbon::RegisterServiceResp, _internal_metadata_),
@@ -348,7 +386,7 @@ const ::uint32_t
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::backbon::UnregisterServiceReq, _impl_.service_),
-        PROTOBUF_FIELD_OFFSET(::backbon::UnregisterServiceReq, _impl_.methods_),
+        PROTOBUF_FIELD_OFFSET(::backbon::UnregisterServiceReq, _impl_.instance_id_),
         ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::backbon::UnregisterServiceResp, _internal_metadata_),
         ~0u,  // no _extensions_
@@ -370,6 +408,16 @@ const ::uint32_t
         PROTOBUF_FIELD_OFFSET(::backbon::GetServiceReq, _impl_.service_),
         PROTOBUF_FIELD_OFFSET(::backbon::GetServiceReq, _impl_.method_),
         ~0u,  // no _has_bits_
+        PROTOBUF_FIELD_OFFSET(::backbon::ServiceInstance, _internal_metadata_),
+        ~0u,  // no _extensions_
+        ~0u,  // no _oneof_case_
+        ~0u,  // no _weak_field_map_
+        ~0u,  // no _inlined_string_donated_
+        ~0u,  // no _split_
+        ~0u,  // no sizeof(Split)
+        PROTOBUF_FIELD_OFFSET(::backbon::ServiceInstance, _impl_.instance_id_),
+        PROTOBUF_FIELD_OFFSET(::backbon::ServiceInstance, _impl_.address_),
+        ~0u,  // no _has_bits_
         PROTOBUF_FIELD_OFFSET(::backbon::GetServiceResp, _internal_metadata_),
         ~0u,  // no _extensions_
         ~0u,  // no _oneof_case_
@@ -379,8 +427,8 @@ const ::uint32_t
         ~0u,  // no sizeof(Split)
         PROTOBUF_FIELD_OFFSET(::backbon::GetServiceResp, _impl_.registered_),
         PROTOBUF_FIELD_OFFSET(::backbon::GetServiceResp, _impl_.service_),
-        PROTOBUF_FIELD_OFFSET(::backbon::GetServiceResp, _impl_.ipport_),
         PROTOBUF_FIELD_OFFSET(::backbon::GetServiceResp, _impl_.methods_),
+        PROTOBUF_FIELD_OFFSET(::backbon::GetServiceResp, _impl_.instances_),
 };
 
 static const ::_pbi::MigrationSchema
@@ -389,11 +437,12 @@ static const ::_pbi::MigrationSchema
         {9, -1, -1, sizeof(::backbon::CheckUserOnlineResp)},
         {18, -1, -1, sizeof(::backbon::UserOnlineStatus)},
         {31, -1, -1, sizeof(::backbon::RegisterServiceReq)},
-        {42, -1, -1, sizeof(::backbon::RegisterServiceResp)},
-        {52, -1, -1, sizeof(::backbon::UnregisterServiceReq)},
-        {62, -1, -1, sizeof(::backbon::UnregisterServiceResp)},
-        {72, -1, -1, sizeof(::backbon::GetServiceReq)},
-        {82, -1, -1, sizeof(::backbon::GetServiceResp)},
+        {43, -1, -1, sizeof(::backbon::RegisterServiceResp)},
+        {53, -1, -1, sizeof(::backbon::UnregisterServiceReq)},
+        {63, -1, -1, sizeof(::backbon::UnregisterServiceResp)},
+        {73, -1, -1, sizeof(::backbon::GetServiceReq)},
+        {83, -1, -1, sizeof(::backbon::ServiceInstance)},
+        {93, -1, -1, sizeof(::backbon::GetServiceResp)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
     &::backbon::_CheckUserOnlineReq_default_instance_._instance,
@@ -404,6 +453,7 @@ static const ::_pb::Message* const file_default_instances[] = {
     &::backbon::_UnregisterServiceReq_default_instance_._instance,
     &::backbon::_UnregisterServiceResp_default_instance_._instance,
     &::backbon::_GetServiceReq_default_instance_._instance,
+    &::backbon::_ServiceInstance_default_instance_._instance,
     &::backbon::_GetServiceResp_default_instance_._instance,
 };
 const char descriptor_table_protodef_backbon_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
@@ -414,37 +464,39 @@ const char descriptor_table_protodef_backbon_2eproto[] ABSL_ATTRIBUTE_SECTION_VA
     "nlineStatus\"z\n\020UserOnlineStatus\022\016\n\006userI"
     "D\030\001 \001(\004\022\020\n\010isOnline\030\002 \001(\010\022\027\n\017connectionC"
     "ount\030\003 \001(\005\022\023\n\013platformIDs\030\004 \003(\005\022\026\n\016lastA"
-    "ctiveTime\030\005 \001(\003\"F\n\022RegisterServiceReq\022\017\n"
-    "\007service\030\001 \001(\t\022\016\n\006ipport\030\002 \003(\t\022\017\n\007method"
-    "s\030\003 \003(\t\"5\n\023RegisterServiceResp\022\017\n\007succes"
-    "s\030\001 \001(\010\022\r\n\005error\030\002 \001(\t\"8\n\024UnregisterServ"
-    "iceReq\022\017\n\007service\030\001 \001(\t\022\017\n\007methods\030\002 \003(\t"
-    "\"7\n\025UnregisterServiceResp\022\017\n\007success\030\001 \001"
-    "(\010\022\r\n\005error\030\002 \001(\t\"0\n\rGetServiceReq\022\017\n\007se"
-    "rvice\030\001 \001(\t\022\016\n\006method\030\002 \001(\t\"V\n\016GetServic"
-    "eResp\022\022\n\nregistered\030\001 \001(\010\022\017\n\007service\030\002 \001"
-    "(\t\022\016\n\006ipport\030\003 \003(\t\022\017\n\007methods\030\004 \003(\t2\277\002\n\016"
-    "BackbonService\022L\n\017CheckUserOnline\022\033.back"
-    "bon.CheckUserOnlineReq\032\034.backbon.CheckUs"
-    "erOnlineResp\022L\n\017RegisterService\022\033.backbo"
-    "n.RegisterServiceReq\032\034.backbon.RegisterS"
-    "erviceResp\022R\n\021UnregisterService\022\035.backbo"
-    "n.UnregisterServiceReq\032\036.backbon.Unregis"
-    "terServiceResp\022=\n\nGetService\022\026.backbon.G"
-    "etServiceReq\032\027.backbon.GetServiceRespb\006p"
-    "roto3"
+    "ctiveTime\030\005 \001(\003\"\\\n\022RegisterServiceReq\022\017\n"
+    "\007service\030\001 \001(\t\022\023\n\013instance_id\030\002 \001(\t\022\017\n\007a"
+    "ddress\030\003 \001(\t\022\017\n\007methods\030\004 \003(\t\"5\n\023Registe"
+    "rServiceResp\022\017\n\007success\030\001 \001(\010\022\r\n\005error\030\002"
+    " \001(\t\"<\n\024UnregisterServiceReq\022\017\n\007service\030"
+    "\001 \001(\t\022\023\n\013instance_id\030\002 \001(\t\"7\n\025Unregister"
+    "ServiceResp\022\017\n\007success\030\001 \001(\010\022\r\n\005error\030\002 "
+    "\001(\t\"0\n\rGetServiceReq\022\017\n\007service\030\001 \001(\t\022\016\n"
+    "\006method\030\002 \001(\t\"7\n\017ServiceInstance\022\023\n\013inst"
+    "ance_id\030\001 \001(\t\022\017\n\007address\030\002 \001(\t\"s\n\016GetSer"
+    "viceResp\022\022\n\nregistered\030\001 \001(\010\022\017\n\007service\030"
+    "\002 \001(\t\022\017\n\007methods\030\003 \003(\t\022+\n\tinstances\030\004 \003("
+    "\0132\030.backbon.ServiceInstance2\277\002\n\016BackbonS"
+    "ervice\022L\n\017CheckUserOnline\022\033.backbon.Chec"
+    "kUserOnlineReq\032\034.backbon.CheckUserOnline"
+    "Resp\022L\n\017RegisterService\022\033.backbon.Regist"
+    "erServiceReq\032\034.backbon.RegisterServiceRe"
+    "sp\022R\n\021UnregisterService\022\035.backbon.Unregi"
+    "sterServiceReq\032\036.backbon.UnregisterServi"
+    "ceResp\022=\n\nGetService\022\026.backbon.GetServic"
+    "eReq\032\027.backbon.GetServiceRespb\006proto3"
 };
 static ::absl::once_flag descriptor_table_backbon_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_backbon_2eproto = {
     false,
     false,
-    965,
+    1077,
     descriptor_table_protodef_backbon_2eproto,
     "backbon.proto",
     &descriptor_table_backbon_2eproto_once,
     nullptr,
     0,
-    9,
+    10,
     schemas,
     file_default_instances,
     TableStruct_backbon_2eproto::offsets,
@@ -1304,9 +1356,10 @@ RegisterServiceReq::RegisterServiceReq(::google::protobuf::Arena* arena)
 inline PROTOBUF_NDEBUG_INLINE RegisterServiceReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::backbon::RegisterServiceReq& from_msg)
-      : ipport_{visibility, arena, from.ipport_},
-        methods_{visibility, arena, from.methods_},
+      : methods_{visibility, arena, from.methods_},
         service_(arena, from.service_),
+        instance_id_(arena, from.instance_id_),
+        address_(arena, from.address_),
         _cached_size_{0} {}
 
 RegisterServiceReq::RegisterServiceReq(
@@ -1328,9 +1381,10 @@ RegisterServiceReq::RegisterServiceReq(
 inline PROTOBUF_NDEBUG_INLINE RegisterServiceReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : ipport_{visibility, arena},
-        methods_{visibility, arena},
+      : methods_{visibility, arena},
         service_(arena),
+        instance_id_(arena),
+        address_(arena),
         _cached_size_{0} {}
 
 inline void RegisterServiceReq::SharedCtor(::_pb::Arena* arena) {
@@ -1345,6 +1399,8 @@ inline void RegisterServiceReq::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.service_.Destroy();
+  this_._impl_.instance_id_.Destroy();
+  this_._impl_.address_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -1354,10 +1410,6 @@ inline void* RegisterServiceReq::PlacementNew_(const void*, void* mem,
 }
 constexpr auto RegisterServiceReq::InternalNewImpl_() {
   constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
-      PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.ipport_) +
-          decltype(RegisterServiceReq::_impl_.ipport_)::
-              InternalGetArenaOffset(
-                  ::google::protobuf::Message::internal_visibility()),
       PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.methods_) +
           decltype(RegisterServiceReq::_impl_.methods_)::
               InternalGetArenaOffset(
@@ -1400,15 +1452,15 @@ const ::google::protobuf::internal::ClassData* RegisterServiceReq::GetClassData(
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 55, 2> RegisterServiceReq::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 0, 67, 2> RegisterServiceReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    3, 24,  // max_field_number, fast_idx_mask
+    4, 24,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967288,  // skipmap
+    4294967280,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    3,  // num_field_entries
+    4,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
@@ -1418,35 +1470,41 @@ const ::_pbi::TcParseTable<2, 3, 0, 55, 2> RegisterServiceReq::_table_ = {
     ::_pbi::TcParser::GetTable<::backbon::RegisterServiceReq>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    {::_pbi::TcParser::MiniParse, {}},
+    // repeated string methods = 4;
+    {::_pbi::TcParser::FastUR1,
+     {34, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.methods_)}},
     // string service = 1;
     {::_pbi::TcParser::FastUS1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.service_)}},
-    // repeated string ipport = 2;
-    {::_pbi::TcParser::FastUR1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.ipport_)}},
-    // repeated string methods = 3;
-    {::_pbi::TcParser::FastUR1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.methods_)}},
+    // string instance_id = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.instance_id_)}},
+    // string address = 3;
+    {::_pbi::TcParser::FastUS1,
+     {26, 63, 0, PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.address_)}},
   }}, {{
     65535, 65535
   }}, {{
     // string service = 1;
     {PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.service_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // repeated string ipport = 2;
-    {PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.ipport_), 0, 0,
-    (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
-    // repeated string methods = 3;
+    // string instance_id = 2;
+    {PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.instance_id_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string address = 3;
+    {PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.address_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // repeated string methods = 4;
     {PROTOBUF_FIELD_OFFSET(RegisterServiceReq, _impl_.methods_), 0, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
   }},
   // no aux_entries
   {{
-    "\32\7\6\7\0\0\0\0"
+    "\32\7\13\7\7\0\0\0"
     "backbon.RegisterServiceReq"
     "service"
-    "ipport"
+    "instance_id"
+    "address"
     "methods"
   }},
 };
@@ -1458,9 +1516,10 @@ PROTOBUF_NOINLINE void RegisterServiceReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.ipport_.Clear();
   _impl_.methods_.Clear();
   _impl_.service_.ClearToEmpty();
+  _impl_.instance_id_.ClearToEmpty();
+  _impl_.address_.ClearToEmpty();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -1487,20 +1546,28 @@ PROTOBUF_NOINLINE void RegisterServiceReq::Clear() {
             target = stream->WriteStringMaybeAliased(1, _s, target);
           }
 
-          // repeated string ipport = 2;
-          for (int i = 0, n = this_._internal_ipport_size(); i < n; ++i) {
-            const auto& s = this_._internal_ipport().Get(i);
+          // string instance_id = 2;
+          if (!this_._internal_instance_id().empty()) {
+            const std::string& _s = this_._internal_instance_id();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.RegisterServiceReq.ipport");
-            target = stream->WriteString(2, s, target);
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.RegisterServiceReq.instance_id");
+            target = stream->WriteStringMaybeAliased(2, _s, target);
           }
 
-          // repeated string methods = 3;
+          // string address = 3;
+          if (!this_._internal_address().empty()) {
+            const std::string& _s = this_._internal_address();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.RegisterServiceReq.address");
+            target = stream->WriteStringMaybeAliased(3, _s, target);
+          }
+
+          // repeated string methods = 4;
           for (int i = 0, n = this_._internal_methods_size(); i < n; ++i) {
             const auto& s = this_._internal_methods().Get(i);
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
                 s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.RegisterServiceReq.methods");
-            target = stream->WriteString(3, s, target);
+            target = stream->WriteString(4, s, target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -1528,16 +1595,7 @@ PROTOBUF_NOINLINE void RegisterServiceReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // repeated string ipport = 2;
-            {
-              total_size +=
-                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_ipport().size());
-              for (int i = 0, n = this_._internal_ipport().size(); i < n; ++i) {
-                total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-                    this_._internal_ipport().Get(i));
-              }
-            }
-            // repeated string methods = 3;
+            // repeated string methods = 4;
             {
               total_size +=
                   1 * ::google::protobuf::internal::FromIntSize(this_._internal_methods().size());
@@ -1553,6 +1611,16 @@ PROTOBUF_NOINLINE void RegisterServiceReq::Clear() {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_service());
             }
+            // string instance_id = 2;
+            if (!this_._internal_instance_id().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_instance_id());
+            }
+            // string address = 3;
+            if (!this_._internal_address().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_address());
+            }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
                                                      &this_._impl_._cached_size_);
@@ -1566,10 +1634,15 @@ void RegisterServiceReq::MergeImpl(::google::protobuf::MessageLite& to_msg, cons
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_internal_mutable_ipport()->MergeFrom(from._internal_ipport());
   _this->_internal_mutable_methods()->MergeFrom(from._internal_methods());
   if (!from._internal_service().empty()) {
     _this->_internal_set_service(from._internal_service());
+  }
+  if (!from._internal_instance_id().empty()) {
+    _this->_internal_set_instance_id(from._internal_instance_id());
+  }
+  if (!from._internal_address().empty()) {
+    _this->_internal_set_address(from._internal_address());
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1587,9 +1660,10 @@ void RegisterServiceReq::InternalSwap(RegisterServiceReq* PROTOBUF_RESTRICT othe
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.ipport_.InternalSwap(&other->_impl_.ipport_);
   _impl_.methods_.InternalSwap(&other->_impl_.methods_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.service_, &other->_impl_.service_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.instance_id_, &other->_impl_.instance_id_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.address_, &other->_impl_.address_, arena);
 }
 
 ::google::protobuf::Metadata RegisterServiceReq::GetMetadata() const {
@@ -1869,8 +1943,8 @@ UnregisterServiceReq::UnregisterServiceReq(::google::protobuf::Arena* arena)
 inline PROTOBUF_NDEBUG_INLINE UnregisterServiceReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::backbon::UnregisterServiceReq& from_msg)
-      : methods_{visibility, arena, from.methods_},
-        service_(arena, from.service_),
+      : service_(arena, from.service_),
+        instance_id_(arena, from.instance_id_),
         _cached_size_{0} {}
 
 UnregisterServiceReq::UnregisterServiceReq(
@@ -1892,8 +1966,8 @@ UnregisterServiceReq::UnregisterServiceReq(
 inline PROTOBUF_NDEBUG_INLINE UnregisterServiceReq::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : methods_{visibility, arena},
-        service_(arena),
+      : service_(arena),
+        instance_id_(arena),
         _cached_size_{0} {}
 
 inline void UnregisterServiceReq::SharedCtor(::_pb::Arena* arena) {
@@ -1908,6 +1982,7 @@ inline void UnregisterServiceReq::SharedDtor(MessageLite& self) {
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.service_.Destroy();
+  this_._impl_.instance_id_.Destroy();
   this_._impl_.~Impl_();
 }
 
@@ -1916,20 +1991,8 @@ inline void* UnregisterServiceReq::PlacementNew_(const void*, void* mem,
   return ::new (mem) UnregisterServiceReq(arena);
 }
 constexpr auto UnregisterServiceReq::InternalNewImpl_() {
-  constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
-      PROTOBUF_FIELD_OFFSET(UnregisterServiceReq, _impl_.methods_) +
-          decltype(UnregisterServiceReq::_impl_.methods_)::
-              InternalGetArenaOffset(
-                  ::google::protobuf::Message::internal_visibility()),
-  });
-  if (arena_bits.has_value()) {
-    return ::google::protobuf::internal::MessageCreator::CopyInit(
-        sizeof(UnregisterServiceReq), alignof(UnregisterServiceReq), *arena_bits);
-  } else {
-    return ::google::protobuf::internal::MessageCreator(&UnregisterServiceReq::PlacementNew_,
-                                 sizeof(UnregisterServiceReq),
-                                 alignof(UnregisterServiceReq));
-  }
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(UnregisterServiceReq),
+                                            alignof(UnregisterServiceReq));
 }
 PROTOBUF_CONSTINIT
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
@@ -1959,7 +2022,7 @@ const ::google::protobuf::internal::ClassData* UnregisterServiceReq::GetClassDat
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 51, 2> UnregisterServiceReq::_table_ = {
+const ::_pbi::TcParseTable<1, 2, 0, 55, 2> UnregisterServiceReq::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -1977,9 +2040,9 @@ const ::_pbi::TcParseTable<1, 2, 0, 51, 2> UnregisterServiceReq::_table_ = {
     ::_pbi::TcParser::GetTable<::backbon::UnregisterServiceReq>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // repeated string methods = 2;
-    {::_pbi::TcParser::FastUR1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(UnregisterServiceReq, _impl_.methods_)}},
+    // string instance_id = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(UnregisterServiceReq, _impl_.instance_id_)}},
     // string service = 1;
     {::_pbi::TcParser::FastUS1,
      {10, 63, 0, PROTOBUF_FIELD_OFFSET(UnregisterServiceReq, _impl_.service_)}},
@@ -1989,16 +2052,16 @@ const ::_pbi::TcParseTable<1, 2, 0, 51, 2> UnregisterServiceReq::_table_ = {
     // string service = 1;
     {PROTOBUF_FIELD_OFFSET(UnregisterServiceReq, _impl_.service_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // repeated string methods = 2;
-    {PROTOBUF_FIELD_OFFSET(UnregisterServiceReq, _impl_.methods_), 0, 0,
-    (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
+    // string instance_id = 2;
+    {PROTOBUF_FIELD_OFFSET(UnregisterServiceReq, _impl_.instance_id_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\34\7\7\0\0\0\0\0"
+    "\34\7\13\0\0\0\0\0"
     "backbon.UnregisterServiceReq"
     "service"
-    "methods"
+    "instance_id"
   }},
 };
 
@@ -2009,8 +2072,8 @@ PROTOBUF_NOINLINE void UnregisterServiceReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.methods_.Clear();
   _impl_.service_.ClearToEmpty();
+  _impl_.instance_id_.ClearToEmpty();
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -2037,12 +2100,12 @@ PROTOBUF_NOINLINE void UnregisterServiceReq::Clear() {
             target = stream->WriteStringMaybeAliased(1, _s, target);
           }
 
-          // repeated string methods = 2;
-          for (int i = 0, n = this_._internal_methods_size(); i < n; ++i) {
-            const auto& s = this_._internal_methods().Get(i);
+          // string instance_id = 2;
+          if (!this_._internal_instance_id().empty()) {
+            const std::string& _s = this_._internal_instance_id();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.UnregisterServiceReq.methods");
-            target = stream->WriteString(2, s, target);
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.UnregisterServiceReq.instance_id");
+            target = stream->WriteStringMaybeAliased(2, _s, target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -2070,21 +2133,15 @@ PROTOBUF_NOINLINE void UnregisterServiceReq::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // repeated string methods = 2;
-            {
-              total_size +=
-                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_methods().size());
-              for (int i = 0, n = this_._internal_methods().size(); i < n; ++i) {
-                total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-                    this_._internal_methods().Get(i));
-              }
-            }
-          }
-           {
             // string service = 1;
             if (!this_._internal_service().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_service());
+            }
+            // string instance_id = 2;
+            if (!this_._internal_instance_id().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_instance_id());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
@@ -2099,9 +2156,11 @@ void UnregisterServiceReq::MergeImpl(::google::protobuf::MessageLite& to_msg, co
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_internal_mutable_methods()->MergeFrom(from._internal_methods());
   if (!from._internal_service().empty()) {
     _this->_internal_set_service(from._internal_service());
+  }
+  if (!from._internal_instance_id().empty()) {
+    _this->_internal_set_instance_id(from._internal_instance_id());
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -2119,8 +2178,8 @@ void UnregisterServiceReq::InternalSwap(UnregisterServiceReq* PROTOBUF_RESTRICT 
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.methods_.InternalSwap(&other->_impl_.methods_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.service_, &other->_impl_.service_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.instance_id_, &other->_impl_.instance_id_, arena);
 }
 
 ::google::protobuf::Metadata UnregisterServiceReq::GetMetadata() const {
@@ -2644,6 +2703,266 @@ void GetServiceReq::InternalSwap(GetServiceReq* PROTOBUF_RESTRICT other) {
 }
 // ===================================================================
 
+class ServiceInstance::_Internal {
+ public:
+};
+
+ServiceInstance::ServiceInstance(::google::protobuf::Arena* arena)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:backbon.ServiceInstance)
+}
+inline PROTOBUF_NDEBUG_INLINE ServiceInstance::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
+    const Impl_& from, const ::backbon::ServiceInstance& from_msg)
+      : instance_id_(arena, from.instance_id_),
+        address_(arena, from.address_),
+        _cached_size_{0} {}
+
+ServiceInstance::ServiceInstance(
+    ::google::protobuf::Arena* arena,
+    const ServiceInstance& from)
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+    : ::google::protobuf::Message(arena, _class_data_.base()) {
+#else   // PROTOBUF_CUSTOM_VTABLE
+    : ::google::protobuf::Message(arena) {
+#endif  // PROTOBUF_CUSTOM_VTABLE
+  ServiceInstance* const _this = this;
+  (void)_this;
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
+  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+
+  // @@protoc_insertion_point(copy_constructor:backbon.ServiceInstance)
+}
+inline PROTOBUF_NDEBUG_INLINE ServiceInstance::Impl_::Impl_(
+    ::google::protobuf::internal::InternalVisibility visibility,
+    ::google::protobuf::Arena* arena)
+      : instance_id_(arena),
+        address_(arena),
+        _cached_size_{0} {}
+
+inline void ServiceInstance::SharedCtor(::_pb::Arena* arena) {
+  new (&_impl_) Impl_(internal_visibility(), arena);
+}
+ServiceInstance::~ServiceInstance() {
+  // @@protoc_insertion_point(destructor:backbon.ServiceInstance)
+  SharedDtor(*this);
+}
+inline void ServiceInstance::SharedDtor(MessageLite& self) {
+  ServiceInstance& this_ = static_cast<ServiceInstance&>(self);
+  this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
+  ABSL_DCHECK(this_.GetArena() == nullptr);
+  this_._impl_.instance_id_.Destroy();
+  this_._impl_.address_.Destroy();
+  this_._impl_.~Impl_();
+}
+
+inline void* ServiceInstance::PlacementNew_(const void*, void* mem,
+                                        ::google::protobuf::Arena* arena) {
+  return ::new (mem) ServiceInstance(arena);
+}
+constexpr auto ServiceInstance::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(ServiceInstance),
+                                            alignof(ServiceInstance));
+}
+PROTOBUF_CONSTINIT
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::google::protobuf::internal::ClassDataFull ServiceInstance::_class_data_ = {
+    ::google::protobuf::internal::ClassData{
+        &_ServiceInstance_default_instance_._instance,
+        &_table_.header,
+        nullptr,  // OnDemandRegisterArenaDtor
+        nullptr,  // IsInitialized
+        &ServiceInstance::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<ServiceInstance>(),
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        &ServiceInstance::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<ServiceInstance>(), &ServiceInstance::ByteSizeLong,
+            &ServiceInstance::_InternalSerialize,
+#endif  // PROTOBUF_CUSTOM_VTABLE
+        PROTOBUF_FIELD_OFFSET(ServiceInstance, _impl_._cached_size_),
+        false,
+    },
+    &ServiceInstance::kDescriptorMethods,
+    &descriptor_table_backbon_2eproto,
+    nullptr,  // tracker
+};
+const ::google::protobuf::internal::ClassData* ServiceInstance::GetClassData() const {
+  ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
+  ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
+  return _class_data_.base();
+}
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<1, 2, 0, 50, 2> ServiceInstance::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    2, 8,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967292,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    2,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    _class_data_.base(),
+    nullptr,  // post_loop_handler
+    ::_pbi::TcParser::GenericFallback,  // fallback
+    #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
+    ::_pbi::TcParser::GetTable<::backbon::ServiceInstance>(),  // to_prefetch
+    #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
+  }, {{
+    // string address = 2;
+    {::_pbi::TcParser::FastUS1,
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(ServiceInstance, _impl_.address_)}},
+    // string instance_id = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(ServiceInstance, _impl_.instance_id_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string instance_id = 1;
+    {PROTOBUF_FIELD_OFFSET(ServiceInstance, _impl_.instance_id_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // string address = 2;
+    {PROTOBUF_FIELD_OFFSET(ServiceInstance, _impl_.address_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\27\13\7\0\0\0\0\0"
+    "backbon.ServiceInstance"
+    "instance_id"
+    "address"
+  }},
+};
+
+PROTOBUF_NOINLINE void ServiceInstance::Clear() {
+// @@protoc_insertion_point(message_clear_start:backbon.ServiceInstance)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.instance_id_.ClearToEmpty();
+  _impl_.address_.ClearToEmpty();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
+}
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::uint8_t* ServiceInstance::_InternalSerialize(
+            const MessageLite& base, ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) {
+          const ServiceInstance& this_ = static_cast<const ServiceInstance&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::uint8_t* ServiceInstance::_InternalSerialize(
+            ::uint8_t* target,
+            ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+          const ServiceInstance& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(serialize_to_array_start:backbon.ServiceInstance)
+          ::uint32_t cached_has_bits = 0;
+          (void)cached_has_bits;
+
+          // string instance_id = 1;
+          if (!this_._internal_instance_id().empty()) {
+            const std::string& _s = this_._internal_instance_id();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.ServiceInstance.instance_id");
+            target = stream->WriteStringMaybeAliased(1, _s, target);
+          }
+
+          // string address = 2;
+          if (!this_._internal_address().empty()) {
+            const std::string& _s = this_._internal_address();
+            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.ServiceInstance.address");
+            target = stream->WriteStringMaybeAliased(2, _s, target);
+          }
+
+          if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
+            target =
+                ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+                    this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
+          }
+          // @@protoc_insertion_point(serialize_to_array_end:backbon.ServiceInstance)
+          return target;
+        }
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+        ::size_t ServiceInstance::ByteSizeLong(const MessageLite& base) {
+          const ServiceInstance& this_ = static_cast<const ServiceInstance&>(base);
+#else   // PROTOBUF_CUSTOM_VTABLE
+        ::size_t ServiceInstance::ByteSizeLong() const {
+          const ServiceInstance& this_ = *this;
+#endif  // PROTOBUF_CUSTOM_VTABLE
+          // @@protoc_insertion_point(message_byte_size_start:backbon.ServiceInstance)
+          ::size_t total_size = 0;
+
+          ::uint32_t cached_has_bits = 0;
+          // Prevent compiler warnings about cached_has_bits being unused
+          (void)cached_has_bits;
+
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
+           {
+            // string instance_id = 1;
+            if (!this_._internal_instance_id().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_instance_id());
+            }
+            // string address = 2;
+            if (!this_._internal_address().empty()) {
+              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                              this_._internal_address());
+            }
+          }
+          return this_.MaybeComputeUnknownFieldsSize(total_size,
+                                                     &this_._impl_._cached_size_);
+        }
+
+void ServiceInstance::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<ServiceInstance*>(&to_msg);
+  auto& from = static_cast<const ServiceInstance&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:backbon.ServiceInstance)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_instance_id().empty()) {
+    _this->_internal_set_instance_id(from._internal_instance_id());
+  }
+  if (!from._internal_address().empty()) {
+    _this->_internal_set_address(from._internal_address());
+  }
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ServiceInstance::CopyFrom(const ServiceInstance& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:backbon.ServiceInstance)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+
+void ServiceInstance::InternalSwap(ServiceInstance* PROTOBUF_RESTRICT other) {
+  using std::swap;
+  auto* arena = GetArena();
+  ABSL_DCHECK_EQ(arena, other->GetArena());
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.instance_id_, &other->_impl_.instance_id_, arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.address_, &other->_impl_.address_, arena);
+}
+
+::google::protobuf::Metadata ServiceInstance::GetMetadata() const {
+  return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
+}
+// ===================================================================
+
 class GetServiceResp::_Internal {
  public:
 };
@@ -2660,8 +2979,8 @@ GetServiceResp::GetServiceResp(::google::protobuf::Arena* arena)
 inline PROTOBUF_NDEBUG_INLINE GetServiceResp::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from, const ::backbon::GetServiceResp& from_msg)
-      : ipport_{visibility, arena, from.ipport_},
-        methods_{visibility, arena, from.methods_},
+      : methods_{visibility, arena, from.methods_},
+        instances_{visibility, arena, from.instances_},
         service_(arena, from.service_),
         _cached_size_{0} {}
 
@@ -2685,8 +3004,8 @@ GetServiceResp::GetServiceResp(
 inline PROTOBUF_NDEBUG_INLINE GetServiceResp::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : ipport_{visibility, arena},
-        methods_{visibility, arena},
+      : methods_{visibility, arena},
+        instances_{visibility, arena},
         service_(arena),
         _cached_size_{0} {}
 
@@ -2712,12 +3031,12 @@ inline void* GetServiceResp::PlacementNew_(const void*, void* mem,
 }
 constexpr auto GetServiceResp::InternalNewImpl_() {
   constexpr auto arena_bits = ::google::protobuf::internal::EncodePlacementArenaOffsets({
-      PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.ipport_) +
-          decltype(GetServiceResp::_impl_.ipport_)::
-              InternalGetArenaOffset(
-                  ::google::protobuf::Message::internal_visibility()),
       PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.methods_) +
           decltype(GetServiceResp::_impl_.methods_)::
+              InternalGetArenaOffset(
+                  ::google::protobuf::Message::internal_visibility()),
+      PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.instances_) +
+          decltype(GetServiceResp::_impl_.instances_)::
               InternalGetArenaOffset(
                   ::google::protobuf::Message::internal_visibility()),
   });
@@ -2758,7 +3077,7 @@ const ::google::protobuf::internal::ClassData* GetServiceResp::GetClassData() co
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 4, 0, 51, 2> GetServiceResp::_table_ = {
+const ::_pbi::TcParseTable<2, 4, 1, 45, 2> GetServiceResp::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -2767,8 +3086,8 @@ const ::_pbi::TcParseTable<2, 4, 0, 51, 2> GetServiceResp::_table_ = {
     4294967280,  // skipmap
     offsetof(decltype(_table_), field_entries),
     4,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
+    1,  // num_aux_entries
+    offsetof(decltype(_table_), aux_entries),
     _class_data_.base(),
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
@@ -2776,18 +3095,18 @@ const ::_pbi::TcParseTable<2, 4, 0, 51, 2> GetServiceResp::_table_ = {
     ::_pbi::TcParser::GetTable<::backbon::GetServiceResp>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // repeated string methods = 4;
-    {::_pbi::TcParser::FastUR1,
-     {34, 63, 0, PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.methods_)}},
+    // repeated .backbon.ServiceInstance instances = 4;
+    {::_pbi::TcParser::FastMtR1,
+     {34, 63, 0, PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.instances_)}},
     // bool registered = 1;
     {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(GetServiceResp, _impl_.registered_), 63>(),
      {8, 63, 0, PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.registered_)}},
     // string service = 2;
     {::_pbi::TcParser::FastUS1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.service_)}},
-    // repeated string ipport = 3;
+    // repeated string methods = 3;
     {::_pbi::TcParser::FastUR1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.ipport_)}},
+     {26, 63, 0, PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.methods_)}},
   }}, {{
     65535, 65535
   }}, {{
@@ -2797,19 +3116,18 @@ const ::_pbi::TcParseTable<2, 4, 0, 51, 2> GetServiceResp::_table_ = {
     // string service = 2;
     {PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.service_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // repeated string ipport = 3;
-    {PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.ipport_), 0, 0,
-    (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
-    // repeated string methods = 4;
+    // repeated string methods = 3;
     {PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.methods_), 0, 0,
     (0 | ::_fl::kFcRepeated | ::_fl::kUtf8String | ::_fl::kRepSString)},
-  }},
-  // no aux_entries
-  {{
-    "\26\0\7\6\7\0\0\0"
+    // repeated .backbon.ServiceInstance instances = 4;
+    {PROTOBUF_FIELD_OFFSET(GetServiceResp, _impl_.instances_), 0, 0,
+    (0 | ::_fl::kFcRepeated | ::_fl::kMessage | ::_fl::kTvTable)},
+  }}, {{
+    {::_pbi::TcParser::GetTable<::backbon::ServiceInstance>()},
+  }}, {{
+    "\26\0\7\7\0\0\0\0"
     "backbon.GetServiceResp"
     "service"
-    "ipport"
     "methods"
   }},
 };
@@ -2821,8 +3139,8 @@ PROTOBUF_NOINLINE void GetServiceResp::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.ipport_.Clear();
   _impl_.methods_.Clear();
+  _impl_.instances_.Clear();
   _impl_.service_.ClearToEmpty();
   _impl_.registered_ = false;
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
@@ -2858,20 +3176,23 @@ PROTOBUF_NOINLINE void GetServiceResp::Clear() {
             target = stream->WriteStringMaybeAliased(2, _s, target);
           }
 
-          // repeated string ipport = 3;
-          for (int i = 0, n = this_._internal_ipport_size(); i < n; ++i) {
-            const auto& s = this_._internal_ipport().Get(i);
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.GetServiceResp.ipport");
-            target = stream->WriteString(3, s, target);
-          }
-
-          // repeated string methods = 4;
+          // repeated string methods = 3;
           for (int i = 0, n = this_._internal_methods_size(); i < n; ++i) {
             const auto& s = this_._internal_methods().Get(i);
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
                 s.data(), static_cast<int>(s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "backbon.GetServiceResp.methods");
-            target = stream->WriteString(4, s, target);
+            target = stream->WriteString(3, s, target);
+          }
+
+          // repeated .backbon.ServiceInstance instances = 4;
+          for (unsigned i = 0, n = static_cast<unsigned>(
+                                   this_._internal_instances_size());
+               i < n; i++) {
+            const auto& repfield = this_._internal_instances().Get(i);
+            target =
+                ::google::protobuf::internal::WireFormatLite::InternalWriteMessage(
+                    4, repfield, repfield.GetCachedSize(),
+                    target, stream);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -2899,22 +3220,20 @@ PROTOBUF_NOINLINE void GetServiceResp::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // repeated string ipport = 3;
-            {
-              total_size +=
-                  1 * ::google::protobuf::internal::FromIntSize(this_._internal_ipport().size());
-              for (int i = 0, n = this_._internal_ipport().size(); i < n; ++i) {
-                total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-                    this_._internal_ipport().Get(i));
-              }
-            }
-            // repeated string methods = 4;
+            // repeated string methods = 3;
             {
               total_size +=
                   1 * ::google::protobuf::internal::FromIntSize(this_._internal_methods().size());
               for (int i = 0, n = this_._internal_methods().size(); i < n; ++i) {
                 total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
                     this_._internal_methods().Get(i));
+              }
+            }
+            // repeated .backbon.ServiceInstance instances = 4;
+            {
+              total_size += 1UL * this_._internal_instances_size();
+              for (const auto& msg : this_._internal_instances()) {
+                total_size += ::google::protobuf::internal::WireFormatLite::MessageSize(msg);
               }
             }
           }
@@ -2941,8 +3260,9 @@ void GetServiceResp::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_internal_mutable_ipport()->MergeFrom(from._internal_ipport());
   _this->_internal_mutable_methods()->MergeFrom(from._internal_methods());
+  _this->_internal_mutable_instances()->MergeFrom(
+      from._internal_instances());
   if (!from._internal_service().empty()) {
     _this->_internal_set_service(from._internal_service());
   }
@@ -2965,8 +3285,8 @@ void GetServiceResp::InternalSwap(GetServiceResp* PROTOBUF_RESTRICT other) {
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.ipport_.InternalSwap(&other->_impl_.ipport_);
   _impl_.methods_.InternalSwap(&other->_impl_.methods_);
+  _impl_.instances_.InternalSwap(&other->_impl_.instances_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.service_, &other->_impl_.service_, arena);
         swap(_impl_.registered_, other->_impl_.registered_);
 }

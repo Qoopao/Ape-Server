@@ -1,5 +1,8 @@
 #include "om/spdlog_otel_sink.h"
 
+#include "om/obs_log.h"
+#include "om/trace_context.h"
+
 #include <opentelemetry/context/runtime_context.h>
 #include <opentelemetry/logs/logger.h>
 #include <opentelemetry/logs/severity.h>
@@ -10,7 +13,7 @@
 void SpdlogOtelSink::SetOtelLogger(
     opentelemetry::nostd::shared_ptr<opentelemetry::logs::Logger> otel_logger)
 {
-    otel_logger_ = otel_logger;
+    otel_logger_ = std::move(otel_logger);
 }
 
 void SpdlogOtelSink::sink_it_(const spdlog::details::log_msg &msg)
@@ -18,7 +21,7 @@ void SpdlogOtelSink::sink_it_(const spdlog::details::log_msg &msg)
     if (!otel_logger_)
         return;
 
-    // ── 1. 从 spdlog level 转换为 OTel Severity ──
+    // ── 1. spdlog level → OTel Severity ──
     auto severity = [](spdlog::level::level_enum lv) {
         switch (lv)
         {
@@ -32,35 +35,44 @@ void SpdlogOtelSink::sink_it_(const spdlog::details::log_msg &msg)
         }
     }(msg.level);
 
-    // ── 2. 创建 LogRecord ──
     auto record = otel_logger_->CreateLogRecord();
     if (!record)
         return;
 
-    // ── 3. 设置正文: spdlog fmt 的输出文本 ──
-    record->SetBody(
-        opentelemetry::common::AttributeValue(std::string(msg.payload.data(), msg.payload.size())));
+    record->SetBody(opentelemetry::common::AttributeValue(
+        std::string(msg.payload.data(), msg.payload.size())));
 
-    // ── 4. 从当前 OTel Context 提取 trace_id / span_id ──
-    auto span = opentelemetry::trace::GetSpan(
-        opentelemetry::context::RuntimeContext::GetCurrent());
-    if (span)
+    // ── 2. 结构化字段：由 APE_LOG_* 门面在当前线程提供 ──
+    const auto *fields = ape::log::CurrentFields();
+    if (fields != nullptr)
     {
-        auto ctx = span->GetContext();
-        if (ctx.IsValid())
-        {
-            record->SetTraceId(ctx.trace_id());
-            record->SetSpanId(ctx.span_id());
-            record->SetTraceFlags(ctx.trace_flags());
-        }
+        for (const auto &field : *fields)
+            record->SetAttribute(field.key, opentelemetry::common::AttributeValue(field.value));
+        const auto &event = ape::log::CurrentEvent();
+        if (!event.empty())
+            record->SetAttribute("event", opentelemetry::common::AttributeValue(event));
     }
 
-    // ── 5. 设置时间戳和属性 ──
-    record->SetSeverity(severity);
-    std::string thread_name = std::to_string(msg.thread_id);
-    record->SetAttribute("thread.name",
-                         opentelemetry::nostd::string_view(thread_name));
+    // ── 3. trace 关联：优先显式 traceparent，其次线程本地 active span ──
+    const auto &traceparent = ape::log::CurrentTraceParent();
+    auto span_context = ape::otel::ParseTraceParent(traceparent);
+    if (!span_context.IsValid())
+    {
+        auto span = opentelemetry::trace::GetSpan(
+            opentelemetry::context::RuntimeContext::GetCurrent());
+        if (span)
+            span_context = span->GetContext();
+    }
+    if (span_context.IsValid())
+    {
+        record->SetTraceId(span_context.trace_id());
+        record->SetSpanId(span_context.span_id());
+        record->SetTraceFlags(span_context.trace_flags());
+    }
 
-    // ── 6. 发送到 OTel Logger → OTLP Exporter → Collector ──
+    record->SetSeverity(severity);
+    record->SetAttribute("thread.name",
+                         opentelemetry::nostd::string_view(std::to_string(msg.thread_id)));
+
     otel_logger_->EmitLogRecord(std::move(record));
 }

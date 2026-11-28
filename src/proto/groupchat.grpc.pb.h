@@ -28,7 +28,6 @@
 
 namespace groupchat {
 
-// Unified group RPC; operations are selected by Command.operation.
 class GroupService final {
  public:
   static constexpr char const* service_full_name() {
@@ -44,11 +43,29 @@ class GroupService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::Reply>> PrepareAsyncExecute(::grpc::ClientContext* context, const ::groupchat::Command& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::Reply>>(PrepareAsyncExecuteRaw(context, request, cq));
     }
+    virtual ::grpc::Status SendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::groupchat::SendGroupMessageResp* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::SendGroupMessageResp>> AsyncSendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::SendGroupMessageResp>>(AsyncSendGroupMessagesRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::SendGroupMessageResp>> PrepareAsyncSendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::SendGroupMessageResp>>(PrepareAsyncSendGroupMessagesRaw(context, request, cq));
+    }
+    virtual ::grpc::Status GetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::groupchat::GetGroupChatHistoryResp* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::GetGroupChatHistoryResp>> AsyncGetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::GetGroupChatHistoryResp>>(AsyncGetGroupChatHistoryRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::GetGroupChatHistoryResp>> PrepareAsyncGetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::GetGroupChatHistoryResp>>(PrepareAsyncGetGroupChatHistoryRaw(context, request, cq));
+    }
     class async_interface {
      public:
       virtual ~async_interface() {}
       virtual void Execute(::grpc::ClientContext* context, const ::groupchat::Command* request, ::groupchat::Reply* response, std::function<void(::grpc::Status)>) = 0;
       virtual void Execute(::grpc::ClientContext* context, const ::groupchat::Command* request, ::groupchat::Reply* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void SendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq* request, ::groupchat::SendGroupMessageResp* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void SendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq* request, ::groupchat::SendGroupMessageResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void GetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq* request, ::groupchat::GetGroupChatHistoryResp* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq* request, ::groupchat::GetGroupChatHistoryResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -56,6 +73,10 @@ class GroupService final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::Reply>* AsyncExecuteRaw(::grpc::ClientContext* context, const ::groupchat::Command& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::Reply>* PrepareAsyncExecuteRaw(::grpc::ClientContext* context, const ::groupchat::Command& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::SendGroupMessageResp>* AsyncSendGroupMessagesRaw(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::SendGroupMessageResp>* PrepareAsyncSendGroupMessagesRaw(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::GetGroupChatHistoryResp>* AsyncGetGroupChatHistoryRaw(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::groupchat::GetGroupChatHistoryResp>* PrepareAsyncGetGroupChatHistoryRaw(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -67,11 +88,29 @@ class GroupService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::groupchat::Reply>> PrepareAsyncExecute(::grpc::ClientContext* context, const ::groupchat::Command& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::groupchat::Reply>>(PrepareAsyncExecuteRaw(context, request, cq));
     }
+    ::grpc::Status SendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::groupchat::SendGroupMessageResp* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::groupchat::SendGroupMessageResp>> AsyncSendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::groupchat::SendGroupMessageResp>>(AsyncSendGroupMessagesRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::groupchat::SendGroupMessageResp>> PrepareAsyncSendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::groupchat::SendGroupMessageResp>>(PrepareAsyncSendGroupMessagesRaw(context, request, cq));
+    }
+    ::grpc::Status GetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::groupchat::GetGroupChatHistoryResp* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::groupchat::GetGroupChatHistoryResp>> AsyncGetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::groupchat::GetGroupChatHistoryResp>>(AsyncGetGroupChatHistoryRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::groupchat::GetGroupChatHistoryResp>> PrepareAsyncGetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::groupchat::GetGroupChatHistoryResp>>(PrepareAsyncGetGroupChatHistoryRaw(context, request, cq));
+    }
     class async final :
       public StubInterface::async_interface {
      public:
       void Execute(::grpc::ClientContext* context, const ::groupchat::Command* request, ::groupchat::Reply* response, std::function<void(::grpc::Status)>) override;
       void Execute(::grpc::ClientContext* context, const ::groupchat::Command* request, ::groupchat::Reply* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void SendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq* request, ::groupchat::SendGroupMessageResp* response, std::function<void(::grpc::Status)>) override;
+      void SendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq* request, ::groupchat::SendGroupMessageResp* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq* request, ::groupchat::GetGroupChatHistoryResp* response, std::function<void(::grpc::Status)>) override;
+      void GetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq* request, ::groupchat::GetGroupChatHistoryResp* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -85,7 +124,13 @@ class GroupService final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::groupchat::Reply>* AsyncExecuteRaw(::grpc::ClientContext* context, const ::groupchat::Command& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::groupchat::Reply>* PrepareAsyncExecuteRaw(::grpc::ClientContext* context, const ::groupchat::Command& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::groupchat::SendGroupMessageResp>* AsyncSendGroupMessagesRaw(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::groupchat::SendGroupMessageResp>* PrepareAsyncSendGroupMessagesRaw(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::groupchat::GetGroupChatHistoryResp>* AsyncGetGroupChatHistoryRaw(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::groupchat::GetGroupChatHistoryResp>* PrepareAsyncGetGroupChatHistoryRaw(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_Execute_;
+    const ::grpc::internal::RpcMethod rpcmethod_SendGroupMessages_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetGroupChatHistory_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -94,6 +139,8 @@ class GroupService final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status Execute(::grpc::ServerContext* context, const ::groupchat::Command* request, ::groupchat::Reply* response);
+    virtual ::grpc::Status SendGroupMessages(::grpc::ServerContext* context, const ::groupchat::SendGroupMessageReq* request, ::groupchat::SendGroupMessageResp* response);
+    virtual ::grpc::Status GetGroupChatHistory(::grpc::ServerContext* context, const ::groupchat::GetGroupChatHistoryReq* request, ::groupchat::GetGroupChatHistoryResp* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_Execute : public BaseClass {
@@ -115,7 +162,47 @@ class GroupService final {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_Execute<Service > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_SendGroupMessages : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_SendGroupMessages() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_SendGroupMessages() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SendGroupMessages(::grpc::ServerContext* /*context*/, const ::groupchat::SendGroupMessageReq* /*request*/, ::groupchat::SendGroupMessageResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSendGroupMessages(::grpc::ServerContext* context, ::groupchat::SendGroupMessageReq* request, ::grpc::ServerAsyncResponseWriter< ::groupchat::SendGroupMessageResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_GetGroupChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GetGroupChatHistory() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_GetGroupChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGroupChatHistory(::grpc::ServerContext* /*context*/, const ::groupchat::GetGroupChatHistoryReq* /*request*/, ::groupchat::GetGroupChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetGroupChatHistory(::grpc::ServerContext* context, ::groupchat::GetGroupChatHistoryReq* request, ::grpc::ServerAsyncResponseWriter< ::groupchat::GetGroupChatHistoryResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_Execute<WithAsyncMethod_SendGroupMessages<WithAsyncMethod_GetGroupChatHistory<Service > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_Execute : public BaseClass {
    private:
@@ -143,7 +230,61 @@ class GroupService final {
     virtual ::grpc::ServerUnaryReactor* Execute(
       ::grpc::CallbackServerContext* /*context*/, const ::groupchat::Command* /*request*/, ::groupchat::Reply* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_Execute<Service > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_SendGroupMessages : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_SendGroupMessages() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::groupchat::SendGroupMessageReq, ::groupchat::SendGroupMessageResp>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::groupchat::SendGroupMessageReq* request, ::groupchat::SendGroupMessageResp* response) { return this->SendGroupMessages(context, request, response); }));}
+    void SetMessageAllocatorFor_SendGroupMessages(
+        ::grpc::MessageAllocator< ::groupchat::SendGroupMessageReq, ::groupchat::SendGroupMessageResp>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::groupchat::SendGroupMessageReq, ::groupchat::SendGroupMessageResp>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_SendGroupMessages() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SendGroupMessages(::grpc::ServerContext* /*context*/, const ::groupchat::SendGroupMessageReq* /*request*/, ::groupchat::SendGroupMessageResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* SendGroupMessages(
+      ::grpc::CallbackServerContext* /*context*/, const ::groupchat::SendGroupMessageReq* /*request*/, ::groupchat::SendGroupMessageResp* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_GetGroupChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_GetGroupChatHistory() {
+      ::grpc::Service::MarkMethodCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::groupchat::GetGroupChatHistoryReq, ::groupchat::GetGroupChatHistoryResp>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::groupchat::GetGroupChatHistoryReq* request, ::groupchat::GetGroupChatHistoryResp* response) { return this->GetGroupChatHistory(context, request, response); }));}
+    void SetMessageAllocatorFor_GetGroupChatHistory(
+        ::grpc::MessageAllocator< ::groupchat::GetGroupChatHistoryReq, ::groupchat::GetGroupChatHistoryResp>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::groupchat::GetGroupChatHistoryReq, ::groupchat::GetGroupChatHistoryResp>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_GetGroupChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGroupChatHistory(::grpc::ServerContext* /*context*/, const ::groupchat::GetGroupChatHistoryReq* /*request*/, ::groupchat::GetGroupChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetGroupChatHistory(
+      ::grpc::CallbackServerContext* /*context*/, const ::groupchat::GetGroupChatHistoryReq* /*request*/, ::groupchat::GetGroupChatHistoryResp* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_Execute<WithCallbackMethod_SendGroupMessages<WithCallbackMethod_GetGroupChatHistory<Service > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_Execute : public BaseClass {
@@ -158,6 +299,40 @@ class GroupService final {
     }
     // disable synchronous version of this method
     ::grpc::Status Execute(::grpc::ServerContext* /*context*/, const ::groupchat::Command* /*request*/, ::groupchat::Reply* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_SendGroupMessages : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_SendGroupMessages() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_SendGroupMessages() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SendGroupMessages(::grpc::ServerContext* /*context*/, const ::groupchat::SendGroupMessageReq* /*request*/, ::groupchat::SendGroupMessageResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_GetGroupChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GetGroupChatHistory() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_GetGroupChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGroupChatHistory(::grpc::ServerContext* /*context*/, const ::groupchat::GetGroupChatHistoryReq* /*request*/, ::groupchat::GetGroupChatHistoryResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -183,6 +358,46 @@ class GroupService final {
     }
   };
   template <class BaseClass>
+  class WithRawMethod_SendGroupMessages : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_SendGroupMessages() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_SendGroupMessages() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SendGroupMessages(::grpc::ServerContext* /*context*/, const ::groupchat::SendGroupMessageReq* /*request*/, ::groupchat::SendGroupMessageResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestSendGroupMessages(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_GetGroupChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GetGroupChatHistory() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_GetGroupChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGroupChatHistory(::grpc::ServerContext* /*context*/, const ::groupchat::GetGroupChatHistoryReq* /*request*/, ::groupchat::GetGroupChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetGroupChatHistory(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
   class WithRawCallbackMethod_Execute : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
@@ -202,6 +417,50 @@ class GroupService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* Execute(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_SendGroupMessages : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_SendGroupMessages() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->SendGroupMessages(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_SendGroupMessages() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status SendGroupMessages(::grpc::ServerContext* /*context*/, const ::groupchat::SendGroupMessageReq* /*request*/, ::groupchat::SendGroupMessageResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* SendGroupMessages(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_GetGroupChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_GetGroupChatHistory() {
+      ::grpc::Service::MarkMethodRawCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetGroupChatHistory(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_GetGroupChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetGroupChatHistory(::grpc::ServerContext* /*context*/, const ::groupchat::GetGroupChatHistoryReq* /*request*/, ::groupchat::GetGroupChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetGroupChatHistory(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -231,9 +490,63 @@ class GroupService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedExecute(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::groupchat::Command,::groupchat::Reply>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_Execute<Service > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_SendGroupMessages : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_SendGroupMessages() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::groupchat::SendGroupMessageReq, ::groupchat::SendGroupMessageResp>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::groupchat::SendGroupMessageReq, ::groupchat::SendGroupMessageResp>* streamer) {
+                       return this->StreamedSendGroupMessages(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_SendGroupMessages() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status SendGroupMessages(::grpc::ServerContext* /*context*/, const ::groupchat::SendGroupMessageReq* /*request*/, ::groupchat::SendGroupMessageResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedSendGroupMessages(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::groupchat::SendGroupMessageReq,::groupchat::SendGroupMessageResp>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_GetGroupChatHistory : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GetGroupChatHistory() {
+      ::grpc::Service::MarkMethodStreamed(2,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::groupchat::GetGroupChatHistoryReq, ::groupchat::GetGroupChatHistoryResp>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::groupchat::GetGroupChatHistoryReq, ::groupchat::GetGroupChatHistoryResp>* streamer) {
+                       return this->StreamedGetGroupChatHistory(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_GetGroupChatHistory() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GetGroupChatHistory(::grpc::ServerContext* /*context*/, const ::groupchat::GetGroupChatHistoryReq* /*request*/, ::groupchat::GetGroupChatHistoryResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGetGroupChatHistory(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::groupchat::GetGroupChatHistoryReq,::groupchat::GetGroupChatHistoryResp>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_Execute<WithStreamedUnaryMethod_SendGroupMessages<WithStreamedUnaryMethod_GetGroupChatHistory<Service > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_Execute<Service > StreamedService;
+  typedef WithStreamedUnaryMethod_Execute<WithStreamedUnaryMethod_SendGroupMessages<WithStreamedUnaryMethod_GetGroupChatHistory<Service > > > StreamedService;
 };
 
 }  // namespace groupchat

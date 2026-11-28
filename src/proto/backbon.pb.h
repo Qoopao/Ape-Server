@@ -70,6 +70,9 @@ extern RegisterServiceReqDefaultTypeInternal _RegisterServiceReq_default_instanc
 class RegisterServiceResp;
 struct RegisterServiceRespDefaultTypeInternal;
 extern RegisterServiceRespDefaultTypeInternal _RegisterServiceResp_default_instance_;
+class ServiceInstance;
+struct ServiceInstanceDefaultTypeInternal;
+extern ServiceInstanceDefaultTypeInternal _ServiceInstance_default_instance_;
 class UnregisterServiceReq;
 struct UnregisterServiceReqDefaultTypeInternal;
 extern UnregisterServiceReqDefaultTypeInternal _UnregisterServiceReq_default_instance_;
@@ -693,31 +696,9 @@ class UnregisterServiceReq final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
-    kMethodsFieldNumber = 2,
     kServiceFieldNumber = 1,
+    kInstanceIdFieldNumber = 2,
   };
-  // repeated string methods = 2;
-  int methods_size() const;
-  private:
-  int _internal_methods_size() const;
-
-  public:
-  void clear_methods() ;
-  const std::string& methods(int index) const;
-  std::string* mutable_methods(int index);
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_methods(int index, Arg_&& value, Args_... args);
-  std::string* add_methods();
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void add_methods(Arg_&& value, Args_... args);
-  const ::google::protobuf::RepeatedPtrField<std::string>& methods() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* mutable_methods();
-
-  private:
-  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_methods() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_methods();
-
-  public:
   // string service = 1;
   void clear_service() ;
   const std::string& service() const;
@@ -734,13 +715,29 @@ class UnregisterServiceReq final : public ::google::protobuf::Message
   std::string* _internal_mutable_service();
 
   public:
+  // string instance_id = 2;
+  void clear_instance_id() ;
+  const std::string& instance_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_instance_id(Arg_&& arg, Args_... args);
+  std::string* mutable_instance_id();
+  PROTOBUF_NODISCARD std::string* release_instance_id();
+  void set_allocated_instance_id(std::string* value);
+
+  private:
+  const std::string& _internal_instance_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_instance_id(
+      const std::string& value);
+  std::string* _internal_mutable_instance_id();
+
+  public:
   // @@protoc_insertion_point(class_scope:backbon.UnregisterServiceReq)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       1, 2, 0,
-      51, 2>
+      55, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -757,8 +754,222 @@ class UnregisterServiceReq final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const UnregisterServiceReq& from_msg);
-    ::google::protobuf::RepeatedPtrField<std::string> methods_;
     ::google::protobuf::internal::ArenaStringPtr service_;
+    ::google::protobuf::internal::ArenaStringPtr instance_id_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_backbon_2eproto;
+};
+// -------------------------------------------------------------------
+
+class ServiceInstance final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:backbon.ServiceInstance) */ {
+ public:
+  inline ServiceInstance() : ServiceInstance(nullptr) {}
+  ~ServiceInstance() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(ServiceInstance* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ServiceInstance));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR ServiceInstance(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline ServiceInstance(const ServiceInstance& from) : ServiceInstance(nullptr, from) {}
+  inline ServiceInstance(ServiceInstance&& from) noexcept
+      : ServiceInstance(nullptr, std::move(from)) {}
+  inline ServiceInstance& operator=(const ServiceInstance& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ServiceInstance& operator=(ServiceInstance&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ServiceInstance& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ServiceInstance* internal_default_instance() {
+    return reinterpret_cast<const ServiceInstance*>(
+        &_ServiceInstance_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 8;
+  friend void swap(ServiceInstance& a, ServiceInstance& b) { a.Swap(&b); }
+  inline void Swap(ServiceInstance* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ServiceInstance* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ServiceInstance* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ServiceInstance>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ServiceInstance& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const ServiceInstance& from) { ServiceInstance::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(ServiceInstance* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "backbon.ServiceInstance"; }
+
+ protected:
+  explicit ServiceInstance(::google::protobuf::Arena* arena);
+  ServiceInstance(::google::protobuf::Arena* arena, const ServiceInstance& from);
+  ServiceInstance(::google::protobuf::Arena* arena, ServiceInstance&& from) noexcept
+      : ServiceInstance(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kInstanceIdFieldNumber = 1,
+    kAddressFieldNumber = 2,
+  };
+  // string instance_id = 1;
+  void clear_instance_id() ;
+  const std::string& instance_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_instance_id(Arg_&& arg, Args_... args);
+  std::string* mutable_instance_id();
+  PROTOBUF_NODISCARD std::string* release_instance_id();
+  void set_allocated_instance_id(std::string* value);
+
+  private:
+  const std::string& _internal_instance_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_instance_id(
+      const std::string& value);
+  std::string* _internal_mutable_instance_id();
+
+  public:
+  // string address = 2;
+  void clear_address() ;
+  const std::string& address() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_address(Arg_&& arg, Args_... args);
+  std::string* mutable_address();
+  PROTOBUF_NODISCARD std::string* release_address();
+  void set_allocated_address(std::string* value);
+
+  private:
+  const std::string& _internal_address() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_address(
+      const std::string& value);
+  std::string* _internal_mutable_address();
+
+  public:
+  // @@protoc_insertion_point(class_scope:backbon.ServiceInstance)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      1, 2, 0,
+      50, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const ServiceInstance& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr instance_id_;
+    ::google::protobuf::internal::ArenaStringPtr address_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -1121,33 +1332,12 @@ class RegisterServiceReq final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
-    kIpportFieldNumber = 2,
-    kMethodsFieldNumber = 3,
+    kMethodsFieldNumber = 4,
     kServiceFieldNumber = 1,
+    kInstanceIdFieldNumber = 2,
+    kAddressFieldNumber = 3,
   };
-  // repeated string ipport = 2;
-  int ipport_size() const;
-  private:
-  int _internal_ipport_size() const;
-
-  public:
-  void clear_ipport() ;
-  const std::string& ipport(int index) const;
-  std::string* mutable_ipport(int index);
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_ipport(int index, Arg_&& value, Args_... args);
-  std::string* add_ipport();
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void add_ipport(Arg_&& value, Args_... args);
-  const ::google::protobuf::RepeatedPtrField<std::string>& ipport() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* mutable_ipport();
-
-  private:
-  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_ipport() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_ipport();
-
-  public:
-  // repeated string methods = 3;
+  // repeated string methods = 4;
   int methods_size() const;
   private:
   int _internal_methods_size() const;
@@ -1185,13 +1375,45 @@ class RegisterServiceReq final : public ::google::protobuf::Message
   std::string* _internal_mutable_service();
 
   public:
+  // string instance_id = 2;
+  void clear_instance_id() ;
+  const std::string& instance_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_instance_id(Arg_&& arg, Args_... args);
+  std::string* mutable_instance_id();
+  PROTOBUF_NODISCARD std::string* release_instance_id();
+  void set_allocated_instance_id(std::string* value);
+
+  private:
+  const std::string& _internal_instance_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_instance_id(
+      const std::string& value);
+  std::string* _internal_mutable_instance_id();
+
+  public:
+  // string address = 3;
+  void clear_address() ;
+  const std::string& address() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_address(Arg_&& arg, Args_... args);
+  std::string* mutable_address();
+  PROTOBUF_NODISCARD std::string* release_address();
+  void set_allocated_address(std::string* value);
+
+  private:
+  const std::string& _internal_address() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_address(
+      const std::string& value);
+  std::string* _internal_mutable_address();
+
+  public:
   // @@protoc_insertion_point(class_scope:backbon.RegisterServiceReq)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      2, 3, 0,
-      55, 2>
+      2, 4, 0,
+      67, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -1208,265 +1430,10 @@ class RegisterServiceReq final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const RegisterServiceReq& from_msg);
-    ::google::protobuf::RepeatedPtrField<std::string> ipport_;
     ::google::protobuf::RepeatedPtrField<std::string> methods_;
     ::google::protobuf::internal::ArenaStringPtr service_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_backbon_2eproto;
-};
-// -------------------------------------------------------------------
-
-class GetServiceResp final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:backbon.GetServiceResp) */ {
- public:
-  inline GetServiceResp() : GetServiceResp(nullptr) {}
-  ~GetServiceResp() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(GetServiceResp* msg, std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(GetServiceResp));
-  }
-#endif
-
-  template <typename = void>
-  explicit PROTOBUF_CONSTEXPR GetServiceResp(
-      ::google::protobuf::internal::ConstantInitialized);
-
-  inline GetServiceResp(const GetServiceResp& from) : GetServiceResp(nullptr, from) {}
-  inline GetServiceResp(GetServiceResp&& from) noexcept
-      : GetServiceResp(nullptr, std::move(from)) {}
-  inline GetServiceResp& operator=(const GetServiceResp& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline GetServiceResp& operator=(GetServiceResp&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::google::protobuf::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::google::protobuf::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const GetServiceResp& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const GetServiceResp* internal_default_instance() {
-    return reinterpret_cast<const GetServiceResp*>(
-        &_GetServiceResp_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 8;
-  friend void swap(GetServiceResp& a, GetServiceResp& b) { a.Swap(&b); }
-  inline void Swap(GetServiceResp* other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(GetServiceResp* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  GetServiceResp* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<GetServiceResp>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const GetServiceResp& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const GetServiceResp& from) { GetServiceResp::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(
-      ::google::protobuf::MessageLite& to_msg,
-      const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  static ::uint8_t* _InternalSerialize(
-      const MessageLite& msg, ::uint8_t* target,
-      ::google::protobuf::io::EpsCopyOutputStream* stream);
-
-  public:
-  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target,
-      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  ::size_t ByteSizeLong() const final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target,
-      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(GetServiceResp* other);
- private:
-  template <typename T>
-  friend ::absl::string_view(
-      ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "backbon.GetServiceResp"; }
-
- protected:
-  explicit GetServiceResp(::google::protobuf::Arena* arena);
-  GetServiceResp(::google::protobuf::Arena* arena, const GetServiceResp& from);
-  GetServiceResp(::google::protobuf::Arena* arena, GetServiceResp&& from) noexcept
-      : GetServiceResp(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
-  static void* PlacementNew_(const void*, void* mem,
-                             ::google::protobuf::Arena* arena);
-  static constexpr auto InternalNewImpl_();
-  static const ::google::protobuf::internal::ClassDataFull _class_data_;
-
- public:
-  ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kIpportFieldNumber = 3,
-    kMethodsFieldNumber = 4,
-    kServiceFieldNumber = 2,
-    kRegisteredFieldNumber = 1,
-  };
-  // repeated string ipport = 3;
-  int ipport_size() const;
-  private:
-  int _internal_ipport_size() const;
-
-  public:
-  void clear_ipport() ;
-  const std::string& ipport(int index) const;
-  std::string* mutable_ipport(int index);
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_ipport(int index, Arg_&& value, Args_... args);
-  std::string* add_ipport();
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void add_ipport(Arg_&& value, Args_... args);
-  const ::google::protobuf::RepeatedPtrField<std::string>& ipport() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* mutable_ipport();
-
-  private:
-  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_ipport() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_ipport();
-
-  public:
-  // repeated string methods = 4;
-  int methods_size() const;
-  private:
-  int _internal_methods_size() const;
-
-  public:
-  void clear_methods() ;
-  const std::string& methods(int index) const;
-  std::string* mutable_methods(int index);
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_methods(int index, Arg_&& value, Args_... args);
-  std::string* add_methods();
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void add_methods(Arg_&& value, Args_... args);
-  const ::google::protobuf::RepeatedPtrField<std::string>& methods() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* mutable_methods();
-
-  private:
-  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_methods() const;
-  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_methods();
-
-  public:
-  // string service = 2;
-  void clear_service() ;
-  const std::string& service() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_service(Arg_&& arg, Args_... args);
-  std::string* mutable_service();
-  PROTOBUF_NODISCARD std::string* release_service();
-  void set_allocated_service(std::string* value);
-
-  private:
-  const std::string& _internal_service() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_service(
-      const std::string& value);
-  std::string* _internal_mutable_service();
-
-  public:
-  // bool registered = 1;
-  void clear_registered() ;
-  bool registered() const;
-  void set_registered(bool value);
-
-  private:
-  bool _internal_registered() const;
-  void _internal_set_registered(bool value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:backbon.GetServiceResp)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<
-      2, 4, 0,
-      51, 2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(
-        ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                          ::google::protobuf::Arena* arena);
-    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                          ::google::protobuf::Arena* arena, const Impl_& from,
-                          const GetServiceResp& from_msg);
-    ::google::protobuf::RepeatedPtrField<std::string> ipport_;
-    ::google::protobuf::RepeatedPtrField<std::string> methods_;
-    ::google::protobuf::internal::ArenaStringPtr service_;
-    bool registered_;
+    ::google::protobuf::internal::ArenaStringPtr instance_id_;
+    ::google::protobuf::internal::ArenaStringPtr address_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -1880,6 +1847,257 @@ class CheckUserOnlineReq final : public ::google::protobuf::Message
                           const CheckUserOnlineReq& from_msg);
     ::google::protobuf::RepeatedField<::uint64_t> userids_;
     ::google::protobuf::internal::CachedSize _userids_cached_byte_size_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_backbon_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetServiceResp final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:backbon.GetServiceResp) */ {
+ public:
+  inline GetServiceResp() : GetServiceResp(nullptr) {}
+  ~GetServiceResp() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(GetServiceResp* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(GetServiceResp));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR GetServiceResp(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline GetServiceResp(const GetServiceResp& from) : GetServiceResp(nullptr, from) {}
+  inline GetServiceResp(GetServiceResp&& from) noexcept
+      : GetServiceResp(nullptr, std::move(from)) {}
+  inline GetServiceResp& operator=(const GetServiceResp& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetServiceResp& operator=(GetServiceResp&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetServiceResp& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetServiceResp* internal_default_instance() {
+    return reinterpret_cast<const GetServiceResp*>(
+        &_GetServiceResp_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 9;
+  friend void swap(GetServiceResp& a, GetServiceResp& b) { a.Swap(&b); }
+  inline void Swap(GetServiceResp* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetServiceResp* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetServiceResp* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<GetServiceResp>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetServiceResp& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const GetServiceResp& from) { GetServiceResp::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(GetServiceResp* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "backbon.GetServiceResp"; }
+
+ protected:
+  explicit GetServiceResp(::google::protobuf::Arena* arena);
+  GetServiceResp(::google::protobuf::Arena* arena, const GetServiceResp& from);
+  GetServiceResp(::google::protobuf::Arena* arena, GetServiceResp&& from) noexcept
+      : GetServiceResp(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kMethodsFieldNumber = 3,
+    kInstancesFieldNumber = 4,
+    kServiceFieldNumber = 2,
+    kRegisteredFieldNumber = 1,
+  };
+  // repeated string methods = 3;
+  int methods_size() const;
+  private:
+  int _internal_methods_size() const;
+
+  public:
+  void clear_methods() ;
+  const std::string& methods(int index) const;
+  std::string* mutable_methods(int index);
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_methods(int index, Arg_&& value, Args_... args);
+  std::string* add_methods();
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void add_methods(Arg_&& value, Args_... args);
+  const ::google::protobuf::RepeatedPtrField<std::string>& methods() const;
+  ::google::protobuf::RepeatedPtrField<std::string>* mutable_methods();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<std::string>& _internal_methods() const;
+  ::google::protobuf::RepeatedPtrField<std::string>* _internal_mutable_methods();
+
+  public:
+  // repeated .backbon.ServiceInstance instances = 4;
+  int instances_size() const;
+  private:
+  int _internal_instances_size() const;
+
+  public:
+  void clear_instances() ;
+  ::backbon::ServiceInstance* mutable_instances(int index);
+  ::google::protobuf::RepeatedPtrField<::backbon::ServiceInstance>* mutable_instances();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::backbon::ServiceInstance>& _internal_instances() const;
+  ::google::protobuf::RepeatedPtrField<::backbon::ServiceInstance>* _internal_mutable_instances();
+  public:
+  const ::backbon::ServiceInstance& instances(int index) const;
+  ::backbon::ServiceInstance* add_instances();
+  const ::google::protobuf::RepeatedPtrField<::backbon::ServiceInstance>& instances() const;
+  // string service = 2;
+  void clear_service() ;
+  const std::string& service() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_service(Arg_&& arg, Args_... args);
+  std::string* mutable_service();
+  PROTOBUF_NODISCARD std::string* release_service();
+  void set_allocated_service(std::string* value);
+
+  private:
+  const std::string& _internal_service() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_service(
+      const std::string& value);
+  std::string* _internal_mutable_service();
+
+  public:
+  // bool registered = 1;
+  void clear_registered() ;
+  bool registered() const;
+  void set_registered(bool value);
+
+  private:
+  bool _internal_registered() const;
+  void _internal_set_registered(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:backbon.GetServiceResp)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 4, 1,
+      45, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const GetServiceResp& from_msg);
+    ::google::protobuf::RepeatedPtrField<std::string> methods_;
+    ::google::protobuf::RepeatedPtrField< ::backbon::ServiceInstance > instances_;
+    ::google::protobuf::internal::ArenaStringPtr service_;
+    bool registered_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -2387,71 +2605,103 @@ inline void RegisterServiceReq::set_allocated_service(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:backbon.RegisterServiceReq.service)
 }
 
-// repeated string ipport = 2;
-inline int RegisterServiceReq::_internal_ipport_size() const {
-  return _internal_ipport().size();
-}
-inline int RegisterServiceReq::ipport_size() const {
-  return _internal_ipport_size();
-}
-inline void RegisterServiceReq::clear_ipport() {
+// string instance_id = 2;
+inline void RegisterServiceReq::clear_instance_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.ipport_.Clear();
+  _impl_.instance_id_.ClearToEmpty();
 }
-inline std::string* RegisterServiceReq::add_ipport() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline const std::string& RegisterServiceReq::instance_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:backbon.RegisterServiceReq.instance_id)
+  return _internal_instance_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RegisterServiceReq::set_instance_id(Arg_&& arg,
+                                                     Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  std::string* _s = _internal_mutable_ipport()->Add();
-  // @@protoc_insertion_point(field_add_mutable:backbon.RegisterServiceReq.ipport)
+  _impl_.instance_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:backbon.RegisterServiceReq.instance_id)
+}
+inline std::string* RegisterServiceReq::mutable_instance_id() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_instance_id();
+  // @@protoc_insertion_point(field_mutable:backbon.RegisterServiceReq.instance_id)
   return _s;
 }
-inline const std::string& RegisterServiceReq::ipport(int index) const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:backbon.RegisterServiceReq.ipport)
-  return _internal_ipport().Get(index);
-}
-inline std::string* RegisterServiceReq::mutable_ipport(int index)
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable:backbon.RegisterServiceReq.ipport)
-  return _internal_mutable_ipport()->Mutable(index);
-}
-template <typename Arg_, typename... Args_>
-inline void RegisterServiceReq::set_ipport(int index, Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::AssignToString(
-      *_internal_mutable_ipport()->Mutable(index),
-      std::forward<Arg_>(value), args... );
-  // @@protoc_insertion_point(field_set:backbon.RegisterServiceReq.ipport)
-}
-template <typename Arg_, typename... Args_>
-inline void RegisterServiceReq::add_ipport(Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::google::protobuf::internal::AddToRepeatedPtrField(*_internal_mutable_ipport(),
-                               std::forward<Arg_>(value),
-                               args... );
-  // @@protoc_insertion_point(field_add:backbon.RegisterServiceReq.ipport)
-}
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-RegisterServiceReq::ipport() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_list:backbon.RegisterServiceReq.ipport)
-  return _internal_ipport();
-}
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-RegisterServiceReq::mutable_ipport() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable_list:backbon.RegisterServiceReq.ipport)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _internal_mutable_ipport();
-}
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-RegisterServiceReq::_internal_ipport() const {
+inline const std::string& RegisterServiceReq::_internal_instance_id() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.ipport_;
+  return _impl_.instance_id_.Get();
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-RegisterServiceReq::_internal_mutable_ipport() {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return &_impl_.ipport_;
+inline void RegisterServiceReq::_internal_set_instance_id(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.Set(value, GetArena());
+}
+inline std::string* RegisterServiceReq::_internal_mutable_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.instance_id_.Mutable( GetArena());
+}
+inline std::string* RegisterServiceReq::release_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:backbon.RegisterServiceReq.instance_id)
+  return _impl_.instance_id_.Release();
+}
+inline void RegisterServiceReq::set_allocated_instance_id(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.instance_id_.IsDefault()) {
+    _impl_.instance_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:backbon.RegisterServiceReq.instance_id)
 }
 
-// repeated string methods = 3;
+// string address = 3;
+inline void RegisterServiceReq::clear_address() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.address_.ClearToEmpty();
+}
+inline const std::string& RegisterServiceReq::address() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:backbon.RegisterServiceReq.address)
+  return _internal_address();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RegisterServiceReq::set_address(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.address_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:backbon.RegisterServiceReq.address)
+}
+inline std::string* RegisterServiceReq::mutable_address() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_address();
+  // @@protoc_insertion_point(field_mutable:backbon.RegisterServiceReq.address)
+  return _s;
+}
+inline const std::string& RegisterServiceReq::_internal_address() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.address_.Get();
+}
+inline void RegisterServiceReq::_internal_set_address(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.address_.Set(value, GetArena());
+}
+inline std::string* RegisterServiceReq::_internal_mutable_address() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.address_.Mutable( GetArena());
+}
+inline std::string* RegisterServiceReq::release_address() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:backbon.RegisterServiceReq.address)
+  return _impl_.address_.Release();
+}
+inline void RegisterServiceReq::set_allocated_address(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.address_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.address_.IsDefault()) {
+    _impl_.address_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:backbon.RegisterServiceReq.address)
+}
+
+// repeated string methods = 4;
 inline int RegisterServiceReq::_internal_methods_size() const {
   return _internal_methods().size();
 }
@@ -2641,68 +2891,52 @@ inline void UnregisterServiceReq::set_allocated_service(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:backbon.UnregisterServiceReq.service)
 }
 
-// repeated string methods = 2;
-inline int UnregisterServiceReq::_internal_methods_size() const {
-  return _internal_methods().size();
-}
-inline int UnregisterServiceReq::methods_size() const {
-  return _internal_methods_size();
-}
-inline void UnregisterServiceReq::clear_methods() {
+// string instance_id = 2;
+inline void UnregisterServiceReq::clear_instance_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.methods_.Clear();
+  _impl_.instance_id_.ClearToEmpty();
 }
-inline std::string* UnregisterServiceReq::add_methods() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline const std::string& UnregisterServiceReq::instance_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:backbon.UnregisterServiceReq.instance_id)
+  return _internal_instance_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void UnregisterServiceReq::set_instance_id(Arg_&& arg,
+                                                     Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  std::string* _s = _internal_mutable_methods()->Add();
-  // @@protoc_insertion_point(field_add_mutable:backbon.UnregisterServiceReq.methods)
+  _impl_.instance_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:backbon.UnregisterServiceReq.instance_id)
+}
+inline std::string* UnregisterServiceReq::mutable_instance_id() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_instance_id();
+  // @@protoc_insertion_point(field_mutable:backbon.UnregisterServiceReq.instance_id)
   return _s;
 }
-inline const std::string& UnregisterServiceReq::methods(int index) const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:backbon.UnregisterServiceReq.methods)
-  return _internal_methods().Get(index);
-}
-inline std::string* UnregisterServiceReq::mutable_methods(int index)
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable:backbon.UnregisterServiceReq.methods)
-  return _internal_mutable_methods()->Mutable(index);
-}
-template <typename Arg_, typename... Args_>
-inline void UnregisterServiceReq::set_methods(int index, Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::AssignToString(
-      *_internal_mutable_methods()->Mutable(index),
-      std::forward<Arg_>(value), args... );
-  // @@protoc_insertion_point(field_set:backbon.UnregisterServiceReq.methods)
-}
-template <typename Arg_, typename... Args_>
-inline void UnregisterServiceReq::add_methods(Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::google::protobuf::internal::AddToRepeatedPtrField(*_internal_mutable_methods(),
-                               std::forward<Arg_>(value),
-                               args... );
-  // @@protoc_insertion_point(field_add:backbon.UnregisterServiceReq.methods)
-}
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-UnregisterServiceReq::methods() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_list:backbon.UnregisterServiceReq.methods)
-  return _internal_methods();
-}
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-UnregisterServiceReq::mutable_methods() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable_list:backbon.UnregisterServiceReq.methods)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _internal_mutable_methods();
-}
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-UnregisterServiceReq::_internal_methods() const {
+inline const std::string& UnregisterServiceReq::_internal_instance_id() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.methods_;
+  return _impl_.instance_id_.Get();
 }
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-UnregisterServiceReq::_internal_mutable_methods() {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return &_impl_.methods_;
+inline void UnregisterServiceReq::_internal_set_instance_id(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.Set(value, GetArena());
+}
+inline std::string* UnregisterServiceReq::_internal_mutable_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.instance_id_.Mutable( GetArena());
+}
+inline std::string* UnregisterServiceReq::release_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:backbon.UnregisterServiceReq.instance_id)
+  return _impl_.instance_id_.Release();
+}
+inline void UnregisterServiceReq::set_allocated_instance_id(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.instance_id_.IsDefault()) {
+    _impl_.instance_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:backbon.UnregisterServiceReq.instance_id)
 }
 
 // -------------------------------------------------------------------
@@ -2881,6 +3115,106 @@ inline void GetServiceReq::set_allocated_method(std::string* value) {
 
 // -------------------------------------------------------------------
 
+// ServiceInstance
+
+// string instance_id = 1;
+inline void ServiceInstance::clear_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.ClearToEmpty();
+}
+inline const std::string& ServiceInstance::instance_id() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:backbon.ServiceInstance.instance_id)
+  return _internal_instance_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ServiceInstance::set_instance_id(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:backbon.ServiceInstance.instance_id)
+}
+inline std::string* ServiceInstance::mutable_instance_id() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_instance_id();
+  // @@protoc_insertion_point(field_mutable:backbon.ServiceInstance.instance_id)
+  return _s;
+}
+inline const std::string& ServiceInstance::_internal_instance_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.instance_id_.Get();
+}
+inline void ServiceInstance::_internal_set_instance_id(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.Set(value, GetArena());
+}
+inline std::string* ServiceInstance::_internal_mutable_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.instance_id_.Mutable( GetArena());
+}
+inline std::string* ServiceInstance::release_instance_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:backbon.ServiceInstance.instance_id)
+  return _impl_.instance_id_.Release();
+}
+inline void ServiceInstance::set_allocated_instance_id(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instance_id_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.instance_id_.IsDefault()) {
+    _impl_.instance_id_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:backbon.ServiceInstance.instance_id)
+}
+
+// string address = 2;
+inline void ServiceInstance::clear_address() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.address_.ClearToEmpty();
+}
+inline const std::string& ServiceInstance::address() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:backbon.ServiceInstance.address)
+  return _internal_address();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ServiceInstance::set_address(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.address_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:backbon.ServiceInstance.address)
+}
+inline std::string* ServiceInstance::mutable_address() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_address();
+  // @@protoc_insertion_point(field_mutable:backbon.ServiceInstance.address)
+  return _s;
+}
+inline const std::string& ServiceInstance::_internal_address() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.address_.Get();
+}
+inline void ServiceInstance::_internal_set_address(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.address_.Set(value, GetArena());
+}
+inline std::string* ServiceInstance::_internal_mutable_address() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.address_.Mutable( GetArena());
+}
+inline std::string* ServiceInstance::release_address() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:backbon.ServiceInstance.address)
+  return _impl_.address_.Release();
+}
+inline void ServiceInstance::set_allocated_address(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.address_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.address_.IsDefault()) {
+    _impl_.address_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:backbon.ServiceInstance.address)
+}
+
+// -------------------------------------------------------------------
+
 // GetServiceResp
 
 // bool registered = 1;
@@ -2953,71 +3287,7 @@ inline void GetServiceResp::set_allocated_service(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:backbon.GetServiceResp.service)
 }
 
-// repeated string ipport = 3;
-inline int GetServiceResp::_internal_ipport_size() const {
-  return _internal_ipport().size();
-}
-inline int GetServiceResp::ipport_size() const {
-  return _internal_ipport_size();
-}
-inline void GetServiceResp::clear_ipport() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.ipport_.Clear();
-}
-inline std::string* GetServiceResp::add_ipport() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  std::string* _s = _internal_mutable_ipport()->Add();
-  // @@protoc_insertion_point(field_add_mutable:backbon.GetServiceResp.ipport)
-  return _s;
-}
-inline const std::string& GetServiceResp::ipport(int index) const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:backbon.GetServiceResp.ipport)
-  return _internal_ipport().Get(index);
-}
-inline std::string* GetServiceResp::mutable_ipport(int index)
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable:backbon.GetServiceResp.ipport)
-  return _internal_mutable_ipport()->Mutable(index);
-}
-template <typename Arg_, typename... Args_>
-inline void GetServiceResp::set_ipport(int index, Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::AssignToString(
-      *_internal_mutable_ipport()->Mutable(index),
-      std::forward<Arg_>(value), args... );
-  // @@protoc_insertion_point(field_set:backbon.GetServiceResp.ipport)
-}
-template <typename Arg_, typename... Args_>
-inline void GetServiceResp::add_ipport(Arg_&& value, Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::google::protobuf::internal::AddToRepeatedPtrField(*_internal_mutable_ipport(),
-                               std::forward<Arg_>(value),
-                               args... );
-  // @@protoc_insertion_point(field_add:backbon.GetServiceResp.ipport)
-}
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-GetServiceResp::ipport() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_list:backbon.GetServiceResp.ipport)
-  return _internal_ipport();
-}
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-GetServiceResp::mutable_ipport() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable_list:backbon.GetServiceResp.ipport)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _internal_mutable_ipport();
-}
-inline const ::google::protobuf::RepeatedPtrField<std::string>&
-GetServiceResp::_internal_ipport() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.ipport_;
-}
-inline ::google::protobuf::RepeatedPtrField<std::string>*
-GetServiceResp::_internal_mutable_ipport() {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return &_impl_.ipport_;
-}
-
-// repeated string methods = 4;
+// repeated string methods = 3;
 inline int GetServiceResp::_internal_methods_size() const {
   return _internal_methods().size();
 }
@@ -3079,6 +3349,55 @@ inline ::google::protobuf::RepeatedPtrField<std::string>*
 GetServiceResp::_internal_mutable_methods() {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return &_impl_.methods_;
+}
+
+// repeated .backbon.ServiceInstance instances = 4;
+inline int GetServiceResp::_internal_instances_size() const {
+  return _internal_instances().size();
+}
+inline int GetServiceResp::instances_size() const {
+  return _internal_instances_size();
+}
+inline void GetServiceResp::clear_instances() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.instances_.Clear();
+}
+inline ::backbon::ServiceInstance* GetServiceResp::mutable_instances(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:backbon.GetServiceResp.instances)
+  return _internal_mutable_instances()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::backbon::ServiceInstance>* GetServiceResp::mutable_instances()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable_list:backbon.GetServiceResp.instances)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_instances();
+}
+inline const ::backbon::ServiceInstance& GetServiceResp::instances(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:backbon.GetServiceResp.instances)
+  return _internal_instances().Get(index);
+}
+inline ::backbon::ServiceInstance* GetServiceResp::add_instances() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::backbon::ServiceInstance* _add = _internal_mutable_instances()->Add();
+  // @@protoc_insertion_point(field_add:backbon.GetServiceResp.instances)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::backbon::ServiceInstance>& GetServiceResp::instances() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:backbon.GetServiceResp.instances)
+  return _internal_instances();
+}
+inline const ::google::protobuf::RepeatedPtrField<::backbon::ServiceInstance>&
+GetServiceResp::_internal_instances() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.instances_;
+}
+inline ::google::protobuf::RepeatedPtrField<::backbon::ServiceInstance>*
+GetServiceResp::_internal_mutable_instances() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.instances_;
 }
 
 #ifdef __GNUC__

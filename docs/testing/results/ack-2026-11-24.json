@@ -1,0 +1,370 @@
+{
+  "suite": "single-chat-ack",
+  "generatedAt": 1795459928,
+  "elapsedSeconds": 65.3,
+  "counts": {
+    "PASS": 37,
+    "SKIP": 6,
+    "WARN": 1,
+    "FAIL": 0
+  },
+  "metrics": {
+    "ACK-018.elapsed_ms": 1473,
+    "ACK-061.op3_rows": 1000,
+    "outbox.cleanup_active": true
+  },
+  "cases": [
+    {
+      "id": "ACK-001",
+      "title": "单会话 ACK",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.59
+    },
+    {
+      "id": "ACK-002",
+      "title": "一帧多会话",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.67
+    },
+    {
+      "id": "ACK-003",
+      "title": "ackType 1/2",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.48
+    },
+    {
+      "id": "ACK-004",
+      "title": "重复 ACK",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 2.55
+    },
+    {
+      "id": "ACK-010",
+      "title": "upToSeq=0/负数",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 1.72
+    },
+    {
+      "id": "ACK-011",
+      "title": "upToSeq>max_seq 截断",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.49
+    },
+    {
+      "id": "ACK-012",
+      "title": "max_seq=0 no-op",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 1.72
+    },
+    {
+      "id": "ACK-013",
+      "title": "非法 conversationID",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.25
+    },
+    {
+      "id": "ACK-014",
+      "title": "非参与者 no-op",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.33
+    },
+    {
+      "id": "ACK-015",
+      "title": "会话已删除 no-op",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.29
+    },
+    {
+      "id": "ACK-016",
+      "title": "群 ID 走 106",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.2
+    },
+    {
+      "id": "ACK-017",
+      "title": "一帧重复会话",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.49
+    },
+    {
+      "id": "ACK-018",
+      "title": "100 个会话一帧",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 2.64
+    },
+    {
+      "id": "ACK-019",
+      "title": "超大 upToSeq",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.26
+    },
+    {
+      "id": "ACK-020",
+      "title": "空 conversations",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 1.21
+    },
+    {
+      "id": "ACK-030",
+      "title": "100 后 80 不回退",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 2.24
+    },
+    {
+      "id": "ACK-031",
+      "title": "80 后 100",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.52
+    },
+    {
+      "id": "ACK-032",
+      "title": "跨网关交叉 ACK",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.93
+    },
+    {
+      "id": "ACK-033",
+      "title": "低水位不新增 op=3（目标）",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 2.25
+    },
+    {
+      "id": "ACK-034",
+      "title": "提前 ACK 仍可 Pull",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.51
+    },
+    {
+      "id": "ACK-035",
+      "title": "ACK 时消息未提交",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.24
+    },
+    {
+      "id": "ACK-040",
+      "title": "ACK 后 op=1 完成",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.78
+    },
+    {
+      "id": "ACK-041",
+      "title": "ACK 后 Mongo status=2",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.5
+    },
+    {
+      "id": "ACK-042",
+      "title": "未 ACK 仍可拉取",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.25
+    },
+    {
+      "id": "ACK-043",
+      "title": "乱序不影响 cursor",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 1.27
+    },
+    {
+      "id": "ACK-044",
+      "title": "重连重复 ACK",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 2.32
+    },
+    {
+      "id": "ACK-050",
+      "title": "PushService 不可用",
+      "status": "SKIP",
+      "detail": "需要 --faults（会停止并重启 PushService）",
+      "note": "",
+      "seconds": 0.0
+    },
+    {
+      "id": "ACK-051",
+      "title": "MySQL 不可用",
+      "status": "SKIP",
+      "detail": "停 MySQL 会破坏共享测试环境；无半写已由 ACK-035 的截断路径与 ACK-050 覆盖",
+      "note": "",
+      "seconds": 0.0
+    },
+    {
+      "id": "ACK-053",
+      "title": "ACK RPC 超时",
+      "status": "SKIP",
+      "detail": "需要可注入的 RPC 延迟钩子；8s deadline + 断连行为由 ACK-050 覆盖",
+      "note": "",
+      "seconds": 0.0
+    },
+    {
+      "id": "ACK-054",
+      "title": "Redis 不可用",
+      "status": "SKIP",
+      "detail": "停 Redis 会破坏网关路由/登录；ACK 不读写 Redis 已由代码路径确认",
+      "note": "",
+      "seconds": 0.0
+    },
+    {
+      "id": "ACK-060",
+      "title": "100 会话一帧 <100ms",
+      "status": "WARN",
+      "detail": "100 会话整帧端到端 1473ms ≥ 100ms（含 100 次独立事务提交）",
+      "note": "",
+      "seconds": 0.0
+    },
+    {
+      "id": "ACK-061",
+      "title": "1000 条逐步 ACK",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 11.41
+    },
+    {
+      "id": "ACK-062",
+      "title": "回执行数 O(会话)",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.47
+    },
+    {
+      "id": "ACK-070",
+      "title": "209 登录同步不受影响",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.25
+    },
+    {
+      "id": "ACK-071",
+      "title": "244 拉历史不受影响",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.49
+    },
+    {
+      "id": "ACK-072",
+      "title": "104/200 去重（客户端）",
+      "status": "SKIP",
+      "detail": "去重发生在客户端（按 serverMsgID）；服务端 ACK 只按水位推进，已由 ACK-004/044 覆盖",
+      "note": "",
+      "seconds": 0.0
+    },
+    {
+      "id": "SERVER-001",
+      "title": "ACK 提前后仍可 Pull",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.48
+    },
+    {
+      "id": "SERVER-002",
+      "title": "临时缺口不阻塞 Pull",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 0.21
+    },
+    {
+      "id": "OUTBOX-001",
+      "title": "op=1 超 7 天删除",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 3.68
+    },
+    {
+      "id": "OUTBOX-002",
+      "title": "op=3 超 1 天删除",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 2.1
+    },
+    {
+      "id": "OUTBOX-003",
+      "title": "op=2 保留 7 天",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 1.85
+    },
+    {
+      "id": "OUTBOX-004",
+      "title": "批大小与多轮",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 2.08
+    },
+    {
+      "id": "OUTBOX-005",
+      "title": "多实例并发清理",
+      "status": "SKIP",
+      "detail": "测试环境只起一个 MsgService 实例；多实例 DELETE 为幂等操作，未在本环境验证",
+      "note": "",
+      "seconds": 0.0
+    },
+    {
+      "id": "OUTBOX-006",
+      "title": "幂等窗口",
+      "status": "PASS",
+      "detail": "",
+      "note": "",
+      "seconds": 16.23
+    }
+  ]
+}

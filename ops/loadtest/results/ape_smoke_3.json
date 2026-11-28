@@ -1,0 +1,158 @@
+{
+  "meta": {
+    "runId": "ape_smoke_3",
+    "startedAt": "2026-11-28T18:41:25+0800",
+    "finishedAt": "2026-11-28T18:41:46+0800",
+    "durationSec": 21.1,
+    "clients": 10,
+    "rates": [
+      20,
+      50
+    ],
+    "phaseDurationSec": 5.0,
+    "setupSeconds": 1.62,
+    "gateway": "wss://127.0.0.1:6666",
+    "protocol": "type 90/91/101/104/106"
+  },
+  "setup": {
+    "clients": 10,
+    "registerAndLoginSeconds": 1.62,
+    "friendships": 5
+  },
+  "totals": {
+    "attempted": 352,
+    "delivered": 162,
+    "sendErrors": 0,
+    "deliveryRatePct": 46.02
+  },
+  "phases": [
+    {
+      "targetRps": 20,
+      "durationSec": 5.0,
+      "attempted": 101,
+      "accepted": 134,
+      "delivered": 60,
+      "sendErrors": 0,
+      "sentRps": 20.2,
+      "achievedRps": 12.0,
+      "errorRatePct": 0.0,
+      "latency": {
+        "count": 60,
+        "avgMs": 231.03,
+        "p50Ms": 232.05,
+        "p90Ms": 279.93,
+        "p95Ms": 292.54,
+        "p99Ms": 303.72,
+        "maxMs": 304.28
+      },
+      "errorCodes": {}
+    },
+    {
+      "targetRps": 50,
+      "durationSec": 5.0,
+      "attempted": 251,
+      "accepted": 180,
+      "delivered": 102,
+      "sendErrors": 0,
+      "sentRps": 50.2,
+      "achievedRps": 20.4,
+      "errorRatePct": 0.0,
+      "latency": {
+        "count": 102,
+        "avgMs": 1575.66,
+        "p50Ms": 1476.98,
+        "p90Ms": 2695.97,
+        "p95Ms": 2818.05,
+        "p99Ms": 2928.23,
+        "maxMs": 2976.08
+      },
+      "errorCodes": {}
+    }
+  ],
+  "series": [
+    {
+      "phase": 1,
+      "second": 0,
+      "attempted": 20,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 1,
+      "second": 1,
+      "attempted": 20,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 1,
+      "second": 2,
+      "attempted": 20,
+      "delivered": 19,
+      "p95Ms": 246.68
+    },
+    {
+      "phase": 1,
+      "second": 3,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 282.67
+    },
+    {
+      "phase": 1,
+      "second": 4,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 303.72
+    },
+    {
+      "phase": 1,
+      "second": 5,
+      "attempted": 1,
+      "delivered": 1,
+      "p95Ms": 217.15
+    },
+    {
+      "phase": 2,
+      "second": 0,
+      "attempted": 50,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 2,
+      "second": 1,
+      "attempted": 50,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 2,
+      "second": 2,
+      "attempted": 50,
+      "delivered": 49,
+      "p95Ms": 1373.25
+    },
+    {
+      "phase": 2,
+      "second": 3,
+      "attempted": 50,
+      "delivered": 50,
+      "p95Ms": 2863.0
+    },
+    {
+      "phase": 2,
+      "second": 4,
+      "attempted": 50,
+      "delivered": 3,
+      "p95Ms": 2928.23
+    },
+    {
+      "phase": 2,
+      "second": 5,
+      "attempted": 1,
+      "delivered": 0,
+      "p95Ms": 0
+    }
+  ]
+}

@@ -22,7 +22,10 @@
 namespace gateway_push {
 
 static const char* GatewayPushService_method_names[] = {
-  "/gateway_push.GatewayPushService/PushToUser",
+  "/gateway_push.GatewayPushService/PushFrame",
+  "/gateway_push.GatewayPushService/PushBatch",
+  "/gateway_push.GatewayPushService/IsOnline",
+  "/gateway_push.GatewayPushService/KickUser",
 };
 
 std::unique_ptr< GatewayPushService::Stub> GatewayPushService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -32,28 +35,100 @@ std::unique_ptr< GatewayPushService::Stub> GatewayPushService::NewStub(const std
 }
 
 GatewayPushService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
-  : channel_(channel), rpcmethod_PushToUser_(GatewayPushService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  : channel_(channel), rpcmethod_PushFrame_(GatewayPushService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_PushBatch_(GatewayPushService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_IsOnline_(GatewayPushService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_KickUser_(GatewayPushService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
-::grpc::Status GatewayPushService::Stub::PushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::gateway_push::PushToUserResp* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::gateway_push::PushToUserReq, ::gateway_push::PushToUserResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_PushToUser_, context, request, response);
+::grpc::Status GatewayPushService::Stub::PushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::gateway_push::PushFrameResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::gateway_push::PushFrameReq, ::gateway_push::PushFrameResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_PushFrame_, context, request, response);
 }
 
-void GatewayPushService::Stub::async::PushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq* request, ::gateway_push::PushToUserResp* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::gateway_push::PushToUserReq, ::gateway_push::PushToUserResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PushToUser_, context, request, response, std::move(f));
+void GatewayPushService::Stub::async::PushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq* request, ::gateway_push::PushFrameResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::gateway_push::PushFrameReq, ::gateway_push::PushFrameResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PushFrame_, context, request, response, std::move(f));
 }
 
-void GatewayPushService::Stub::async::PushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq* request, ::gateway_push::PushToUserResp* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PushToUser_, context, request, response, reactor);
+void GatewayPushService::Stub::async::PushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq* request, ::gateway_push::PushFrameResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PushFrame_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::gateway_push::PushToUserResp>* GatewayPushService::Stub::PrepareAsyncPushToUserRaw(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::gateway_push::PushToUserResp, ::gateway_push::PushToUserReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_PushToUser_, context, request);
+::grpc::ClientAsyncResponseReader< ::gateway_push::PushFrameResp>* GatewayPushService::Stub::PrepareAsyncPushFrameRaw(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::gateway_push::PushFrameResp, ::gateway_push::PushFrameReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_PushFrame_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::gateway_push::PushToUserResp>* GatewayPushService::Stub::AsyncPushToUserRaw(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::gateway_push::PushFrameResp>* GatewayPushService::Stub::AsyncPushFrameRaw(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::grpc::CompletionQueue* cq) {
   auto* result =
-    this->PrepareAsyncPushToUserRaw(context, request, cq);
+    this->PrepareAsyncPushFrameRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status GatewayPushService::Stub::PushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::gateway_push::PushBatchResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::gateway_push::PushBatchReq, ::gateway_push::PushBatchResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_PushBatch_, context, request, response);
+}
+
+void GatewayPushService::Stub::async::PushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq* request, ::gateway_push::PushBatchResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::gateway_push::PushBatchReq, ::gateway_push::PushBatchResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PushBatch_, context, request, response, std::move(f));
+}
+
+void GatewayPushService::Stub::async::PushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq* request, ::gateway_push::PushBatchResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_PushBatch_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::gateway_push::PushBatchResp>* GatewayPushService::Stub::PrepareAsyncPushBatchRaw(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::gateway_push::PushBatchResp, ::gateway_push::PushBatchReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_PushBatch_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::gateway_push::PushBatchResp>* GatewayPushService::Stub::AsyncPushBatchRaw(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncPushBatchRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status GatewayPushService::Stub::IsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::gateway_push::IsOnlineResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::gateway_push::IsOnlineReq, ::gateway_push::IsOnlineResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_IsOnline_, context, request, response);
+}
+
+void GatewayPushService::Stub::async::IsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq* request, ::gateway_push::IsOnlineResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::gateway_push::IsOnlineReq, ::gateway_push::IsOnlineResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_IsOnline_, context, request, response, std::move(f));
+}
+
+void GatewayPushService::Stub::async::IsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq* request, ::gateway_push::IsOnlineResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_IsOnline_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::gateway_push::IsOnlineResp>* GatewayPushService::Stub::PrepareAsyncIsOnlineRaw(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::gateway_push::IsOnlineResp, ::gateway_push::IsOnlineReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_IsOnline_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::gateway_push::IsOnlineResp>* GatewayPushService::Stub::AsyncIsOnlineRaw(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncIsOnlineRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status GatewayPushService::Stub::KickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::gateway_push::KickUserResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::gateway_push::KickUserReq, ::gateway_push::KickUserResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_KickUser_, context, request, response);
+}
+
+void GatewayPushService::Stub::async::KickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq* request, ::gateway_push::KickUserResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::gateway_push::KickUserReq, ::gateway_push::KickUserResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_KickUser_, context, request, response, std::move(f));
+}
+
+void GatewayPushService::Stub::async::KickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq* request, ::gateway_push::KickUserResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_KickUser_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::gateway_push::KickUserResp>* GatewayPushService::Stub::PrepareAsyncKickUserRaw(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::gateway_push::KickUserResp, ::gateway_push::KickUserReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_KickUser_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::gateway_push::KickUserResp>* GatewayPushService::Stub::AsyncKickUserRaw(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncKickUserRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -62,19 +137,70 @@ GatewayPushService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       GatewayPushService_method_names[0],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< GatewayPushService::Service, ::gateway_push::PushToUserReq, ::gateway_push::PushToUserResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      new ::grpc::internal::RpcMethodHandler< GatewayPushService::Service, ::gateway_push::PushFrameReq, ::gateway_push::PushFrameResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](GatewayPushService::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::gateway_push::PushToUserReq* req,
-             ::gateway_push::PushToUserResp* resp) {
-               return service->PushToUser(ctx, req, resp);
+             const ::gateway_push::PushFrameReq* req,
+             ::gateway_push::PushFrameResp* resp) {
+               return service->PushFrame(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      GatewayPushService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< GatewayPushService::Service, ::gateway_push::PushBatchReq, ::gateway_push::PushBatchResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](GatewayPushService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::gateway_push::PushBatchReq* req,
+             ::gateway_push::PushBatchResp* resp) {
+               return service->PushBatch(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      GatewayPushService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< GatewayPushService::Service, ::gateway_push::IsOnlineReq, ::gateway_push::IsOnlineResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](GatewayPushService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::gateway_push::IsOnlineReq* req,
+             ::gateway_push::IsOnlineResp* resp) {
+               return service->IsOnline(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      GatewayPushService_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< GatewayPushService::Service, ::gateway_push::KickUserReq, ::gateway_push::KickUserResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](GatewayPushService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::gateway_push::KickUserReq* req,
+             ::gateway_push::KickUserResp* resp) {
+               return service->KickUser(ctx, req, resp);
              }, this)));
 }
 
 GatewayPushService::Service::~Service() {
 }
 
-::grpc::Status GatewayPushService::Service::PushToUser(::grpc::ServerContext* context, const ::gateway_push::PushToUserReq* request, ::gateway_push::PushToUserResp* response) {
+::grpc::Status GatewayPushService::Service::PushFrame(::grpc::ServerContext* context, const ::gateway_push::PushFrameReq* request, ::gateway_push::PushFrameResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status GatewayPushService::Service::PushBatch(::grpc::ServerContext* context, const ::gateway_push::PushBatchReq* request, ::gateway_push::PushBatchResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status GatewayPushService::Service::IsOnline(::grpc::ServerContext* context, const ::gateway_push::IsOnlineReq* request, ::gateway_push::IsOnlineResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status GatewayPushService::Service::KickUser(::grpc::ServerContext* context, const ::gateway_push::KickUserReq* request, ::gateway_push::KickUserResp* response) {
   (void) context;
   (void) request;
   (void) response;

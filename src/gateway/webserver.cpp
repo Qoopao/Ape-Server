@@ -5,7 +5,7 @@
 #include <boost/beast.hpp>
 #include <spdlog/spdlog.h>
 
-// 简化命名空间，提升代码可读性
+// 简化命名空间
 namespace asio = boost::asio;
 using tcp = asio::ip::tcp;
 using boost::asio::awaitable;
@@ -15,22 +15,44 @@ using boost::asio::use_awaitable;
 
 #include <grpcpp/grpcpp.h>
 
+#include <algorithm>
+#include <chrono>
+#include <cstdlib>
+#include <thread>
+
 #include "gateway/webserver.h"
 #include "gateway/ws_session.h"
+#include "gateway/ws_session_manager.h"
 #include "services/auth_service/client.h"
 #include "services/backbon_service/client.h"
+#include "services/conversation_service/client.h"
+#include "services/friend_service/client.h"
+#include "services/gateway_router.h"
+#include "services/group_service/client.h"
 #include "services/msg_service/client.h"
 #include "services/push_service/client.h"
-#include "services/group_service/client.h"
-#include "services/friend_service/client.h"
-#include "services/conversation_service/client.h"
+
+namespace {
+
+int DrainGraceSeconds() {
+  const char *value = std::getenv("GATEWAY_DRAIN_GRACE_SECONDS");
+  if (value == nullptr)
+    return 30;
+  try {
+    return std::max(0, std::stoi(value));
+  } catch (const std::exception &) {
+    return 30;
+  }
+}
+
+} // namespace
 
 boost::asio::awaitable<std::string> WebServer::discover_Service(const std::string& service_name,
                                                                  const std::string& fallback) {
   try {
     auto resp = co_await backbon_client_->GetServicesList(service_name);
-    if (resp.registered() && resp.ipport_size() > 0) {
-      std::string addr = resp.ipport(0);
+    if (resp.registered() && resp.instances_size() > 0) {
+      const std::string addr = resp.instances(0).address();
       spdlog::info("WebServer: discovered {} at {}", service_name, addr);
       co_return addr;
     }
@@ -43,12 +65,15 @@ boost::asio::awaitable<std::string> WebServer::discover_Service(const std::strin
 }
 
 WebServer::WebServer(int ioc_pool_size, uint16_t port,
-                     std::unique_ptr<BackbonClient> backbon_client)
+                     std::unique_ptr<BackbonClient> backbon_client,
+                     std::string instance_id, std::string gateway_push_addr)
     : _iocPool(ioc_pool_size), _acceptor_ioc(1),
       acceptor_(_acceptor_ioc, tcp::endpoint(tcp::v4(), port)),
-      backbon_client_(std::move(backbon_client)) {
+      backbon_client_(std::move(backbon_client)),
+      instance_id_(std::move(instance_id)),
+      gateway_push_addr_(std::move(gateway_push_addr)) {
   // Clients 在 init_and_listen() 中异步初始化（需要 co_await 服务发现）
-  spdlog::info("WebServer instance created, port {}", port);
+  spdlog::info("WebServer instance {} created, port {}", instance_id_, port);
 
   // 初始化TLS
   ssl_ctx_.use_certificate_chain_file("/root/ape-server/scripts/certs/server.crt");
@@ -79,8 +104,13 @@ boost::asio::awaitable<void> WebServer::init_and_listen() {
   conversation_channel_ = grpc::CreateChannel(conversation_address, grpc::InsecureChannelCredentials());
   conversation_client_ = std::make_unique<ConversationClient>(conversation_channel_);
 
-  spdlog::info("WebServer: all downstream services discovered, starting listener on port {}",
-               acceptor_.local_endpoint().port());
+  // 本实例的推送路由（跨实例互踢 + 三态推送）
+  router_ = std::make_unique<GatewayRouter>(
+      [this]() { return backbon_client_.get(); }, gateway_push_addr_);
+
+  spdlog::info("WebServer: all downstream services discovered, starting listener on port {} "
+               "(instance {})",
+               acceptor_.local_endpoint().port(), instance_id_);
 
   co_await listener();
 }
@@ -88,7 +118,7 @@ boost::asio::awaitable<void> WebServer::init_and_listen() {
 void WebServer::start() {
   // 注册与监听 SIGINT 和 SIGTERM 信号
   boost::asio::signal_set signals(get_acceptor_ioc(), SIGINT, SIGTERM);
-  signals.async_wait([&](auto, auto) { stop(); });
+  signals.async_wait([this](auto, auto) { stop(); });
 
   // 启动IOCPool
   _iocPool.startPool();
@@ -98,11 +128,40 @@ void WebServer::start() {
   get_acceptor_ioc().run();
 }
 
-// 停止服务器
+// 优雅下线（改造方案 4.8）：顺序不能变，注销必须早于关 acceptor
 void WebServer::stop() {
+  if (stopping_.exchange(true)) {
+    return;
+  }
+  spdlog::info("WebServer: draining instance {}", instance_id_);
+
+  // 1) 从 etcd 注销本实例，新登录不再被路由到本实例
+  if (drain_handler_) {
+    drain_handler_();
+  }
+
+  // 2) 关闭 WSS acceptor，不再接受新连接
+  boost::system::error_code ec;
+  acceptor_.close(ec);
+
+  // 3) 给所有本地 session 发 SERVER_DRAINING（客户端应立即重连）
+  WSSessionManager::instance().notifyDraining();
+
+  // 4) 停止路由续期：draining 标志已置位，心跳不再 CAS
+  // 5) 等待 grace，让客户端完成重连
+  const int grace = DrainGraceSeconds();
+  if (grace > 0) {
+    spdlog::info("WebServer: waiting {}s grace before closing sessions", grace);
+    std::this_thread::sleep_for(std::chrono::seconds(grace));
+  }
+
+  // 6) 强制关闭剩余连接
+  WSSessionManager::instance().closeAll();
+
+  // 7) 停止 IO 线程
   _iocPool.stopPool();
   get_acceptor_ioc().stop();
-  acceptor_.close();
+  spdlog::info("WebServer: drained");
 }
 
 // 处理单个 WebSocket 连接：接受 TCP 后升级为 WebSocket，然后交给 WSSession 管理
@@ -110,10 +169,14 @@ awaitable<void> handle_ws_session(asio::ssl::stream<tcp::socket> stream, AuthCli
                                   MsgClient *msg_client,
                                   PushClient *push_client,
                                   GroupClient *group_client, FriendClient *friend_client,
-                                  ConversationClient *conversation_client) {
+                                  ConversationClient *conversation_client,
+                                  GatewayRouter *router,
+                                  std::string instance_id) {
   auto session = std::make_shared<WSSession>(std::move(stream), auth_client,
                                               msg_client, push_client,
-                                              group_client, friend_client, conversation_client);
+                                              group_client, friend_client,
+                                              conversation_client, router,
+                                              std::move(instance_id));
   co_await session->start();
 }
 
@@ -134,7 +197,8 @@ asio::awaitable<void> WebServer::listener() {
       asio::co_spawn(executor,
           handle_ws_session(std::move(ssl_stream), auth_client_.get(),
                             msg_client_.get(), push_client_.get(),
-                            group_client_.get(), friend_client_.get(), conversation_client_.get()),
+                            group_client_.get(), friend_client_.get(), conversation_client_.get(),
+                            router_.get(), instance_id_),
           asio::detached);
     } catch (const std::exception &e) {
       spdlog::warn("Accept error: {}", e.what());

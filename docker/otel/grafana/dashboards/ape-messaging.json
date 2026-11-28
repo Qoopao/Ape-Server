@@ -1,0 +1,87 @@
+{
+  "uid": "ape-messaging",
+  "title": "ape · Messaging",
+  "tags": ["ape-server", "messaging"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {"from": "now-3h", "to": "now"},
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Send accepted by kind/result",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (kind, result) (rate(ape_im_send_total[5m]))", "legendFormat": "{{kind}}/{{result}}"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Send p99 by kind",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "histogram_quantile(0.99, sum by (le, kind) (rate(ape_im_send_duration_milliseconds_bucket[5m])))", "legendFormat": "{{kind}}"}],
+      "fieldConfig": {"defaults": {"unit": "ms"}, "overrides": []}
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Outbox pending",
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (operation) (ape_outbox_pending)", "legendFormat": "op={{operation}}"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Outbox oldest age",
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "max by (operation) (ape_outbox_oldest_age)", "legendFormat": "op={{operation}}"}],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []}
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Outbox attempts by result",
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (operation, result) (rate(ape_outbox_attempts_total[5m]))", "legendFormat": "op{{operation}}/{{result}}"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Outbox tombstones",
+      "gridPos": {"h": 7, "w": 8, "x": 0, "y": 16},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (operation) (increase(ape_outbox_tombstones_total[1h]))", "legendFormat": "op={{operation}}"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Kafka produce / consume",
+      "gridPos": {"h": 7, "w": 8, "x": 8, "y": 16},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [
+        {"refId": "A", "expr": "sum by (topic) (rate(ape_kafka_produce_total[5m]))", "legendFormat": "produce {{topic}}"},
+        {"refId": "B", "expr": "sum by (topic) (rate(ape_kafka_consume_total[5m]))", "legendFormat": "consume {{topic}}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Push results",
+      "gridPos": {"h": 7, "w": 8, "x": 16, "y": 16},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (result) (rate(ape_push_deliveries_total[5m]))", "legendFormat": "{{result}}"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    }
+  ]
+}

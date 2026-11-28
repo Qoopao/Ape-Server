@@ -1,6 +1,8 @@
 #include "messagequeue/kafkaconsumer.h"
 #include "messagequeue/kafkahandler.h"
+#include "om/obs_metrics.h"
 #include "util/ioc_pool.h"
+#include <nlohmann/json.hpp>
 #include <exception>
 #include <librdkafka/rdkafkacpp.h>
 #include <spdlog/spdlog.h>
@@ -25,7 +27,24 @@ void ConsumerEventCb::event_cb(RdKafka::Event &event) {
     spdlog::error("KafkaConsumer Error: {}", RdKafka::err2str(event.err()));
     break;
   case RdKafka::Event::EVENT_STATS:
-    spdlog::info("KafkaConsumer Stats: {}", event.str());
+    // librdkafka 10s 一次统计：抽取 consumer lag，不再打印整段 JSON。
+    try {
+      const auto stats = nlohmann::json::parse(event.str());
+      const auto cgrp = stats.find("cgrp");
+      if (cgrp != stats.end()) {
+        const auto partition = cgrp->find("partition");
+        if (partition != cgrp->end()) {
+          for (const auto &[topic, parts] : partition->items()) {
+            for (const auto &part : parts) {
+              const auto lag = part.value("consumer_lag", static_cast<int64_t>(0));
+              ape::obs::SetKafkaLag(topic, part.value("partition", 0),
+                                    lag < 0 ? 0 : lag);
+            }
+          }
+        }
+      }
+    } catch (const std::exception &) {
+    }
     break;
   case RdKafka::Event::EVENT_LOG:
     spdlog::info("KafkaConsumer Log: {}", event.str());
@@ -133,6 +152,10 @@ KafkaConsumer::KafkaConsumer(const std::string &groupId,
   if (globalConfig->set("enable.auto.offset.store", "false", errorStr) != RdKafka::Conf::CONF_OK)
     throw std::runtime_error("Kafka offset configuration failed: " + errorStr);
 
+  // 周期性 stats 回调：用于导出 consumer lag。
+  if (globalConfig->set("statistics.interval.ms", "10000", errorStr) != RdKafka::Conf::CONF_OK)
+    spdlog::warn("KafkaConsumer: Failed to set statistics.interval.ms: {}", errorStr);
+
   // 设置消费者的起始消费偏移值
   topicConfig = RdKafka::Conf::create(RdKafka::Conf::CONF_TOPIC);
   errCode = topicConfig->set("auto.offset.reset", "earliest", errorStr);
@@ -165,10 +188,10 @@ void KafkaConsumer::consumeMsg(RdKafka::Message &msg, void *opaque) {
           : "";
   switch (msg.err()) {
   case RdKafka::ERR_NO_ERROR:
-    spdlog::info("Consume message, Topic: {}, Partition: {}, Offset: {}, Key: "
-                 "{}, Payload: {}",
-                 msg.topic_name(), msg.partition(), msg.offset(), msg.key() ? *msg.key() : std::string(),
-                 payloadStr);
+    // 不打印 payload（含消息内容/IDs，且每条一条日志会放大日志量）。
+    spdlog::debug("Kafka consume: topic={}, partition={}, offset={}",
+                  msg.topic_name(), msg.partition(), msg.offset());
+    ape::obs::RecordKafkaConsume(msg.topic_name(), "ok");
     // 调用消息处理器处理业务逻辑（异步协程方式，使用独立的 IOC_Pool）
     if (msgHandler && ioc_pool_) {
       std::lock_guard lock(lanes_mutex_);
@@ -186,6 +209,7 @@ void KafkaConsumer::consumeMsg(RdKafka::Message &msg, void *opaque) {
     spdlog::debug("Consume message timeout: {}", RdKafka::err2str(msg.err()));
     break;
   default:
+    ape::obs::RecordKafkaConsume(msg.topic_name(), "error");
     spdlog::error("Consume message error: {}", RdKafka::err2str(msg.err()));
     break;
   }

@@ -1,0 +1,75 @@
+{
+  "uid": "ape-gateway",
+  "title": "ape · Gateway",
+  "tags": ["ape-server", "gateway"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {"from": "now-3h", "to": "now"},
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Connections active",
+      "gridPos": {"h": 7, "w": 12, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum(ape_ws_connections_active)"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Auth results",
+      "gridPos": {"h": 7, "w": 12, "x": 12, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (result) (rate(ape_ws_auth_total[5m]))", "legendFormat": "{{result}}"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Frames by type",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 7},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (type) (rate(ape_ws_frames_total[5m]))", "legendFormat": "type={{type}}"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Request p99 by type",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 7},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "histogram_quantile(0.99, sum by (le, type) (rate(ape_ws_request_duration_milliseconds_bucket[5m])))", "legendFormat": "type={{type}}"}],
+      "fieldConfig": {"defaults": {"unit": "ms"}, "overrides": []}
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Write queue drops",
+      "gridPos": {"h": 7, "w": 8, "x": 0, "y": 15},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (reason) (rate(ape_ws_write_drops_total[5m]))", "legendFormat": "{{reason}}"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Kicks",
+      "gridPos": {"h": 7, "w": 8, "x": 8, "y": 15},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (reason) (rate(ape_ws_kicks_total[5m]))", "legendFormat": "{{reason}}"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Route renew failures",
+      "gridPos": {"h": 7, "w": 8, "x": 16, "y": 15},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum(rate(ape_ws_route_renew_failures_total[5m]))"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    }
+  ]
+}

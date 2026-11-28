@@ -24,7 +24,7 @@ boost::asio::awaitable<conversation::GetAllConversationsResp> ConversationClient
     co_return response;
 }
 
-boost::asio::awaitable<void> ConversationClient::MarkRead(
+boost::asio::awaitable<conversation::MarkConversationReadResp> ConversationClient::MarkRead(
     const conversation::MarkConversationReadReq& request)
 {
     grpc::ClientContext context;
@@ -36,9 +36,10 @@ boost::asio::awaitable<void> ConversationClient::MarkRead(
     });
     if (!status.ok())
         throw std::runtime_error(status.error_message());
+    co_return response;
 }
 
-boost::asio::awaitable<void> ConversationClient::UpdateSettings(
+boost::asio::awaitable<conversation::UpdateConversationSettingsResp> ConversationClient::UpdateSettings(
     const conversation::UpdateConversationSettingsReq& request)
 {
     grpc::ClientContext context;
@@ -50,9 +51,11 @@ boost::asio::awaitable<void> ConversationClient::UpdateSettings(
     });
     if (!status.ok())
         throw std::runtime_error(status.error_message());
+    co_return response;
 }
 
-boost::asio::awaitable<void> ConversationClient::Delete(const conversation::DeleteConversationReq& request)
+boost::asio::awaitable<conversation::DeleteConversationResp> ConversationClient::Delete(
+    const conversation::DeleteConversationReq& request)
 {
     grpc::ClientContext context;
     context.set_deadline(std::chrono::system_clock::now() + std::chrono::seconds(8));
@@ -63,4 +66,5 @@ boost::asio::awaitable<void> ConversationClient::Delete(const conversation::Dele
     });
     if (!status.ok())
         throw std::runtime_error(status.error_message());
+    co_return response;
 }

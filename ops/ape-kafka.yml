@@ -1,0 +1,4 @@
+services:
+  kafka-standalone:
+    environment:
+      KAFKA_HEAP_OPTS: "-Xms256m -Xmx512m"

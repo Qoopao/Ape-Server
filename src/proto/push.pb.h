@@ -29,6 +29,7 @@
 #include "google/protobuf/message_lite.h"
 #include "google/protobuf/repeated_field.h"  // IWYU pragma: export
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
+#include "google/protobuf/generated_enum_reflection.h"
 #include "google/protobuf/unknown_field_set.h"
 #include "sdkws.pb.h"
 // @@protoc_insertion_point(includes)
@@ -54,24 +55,15 @@ struct TableStruct_push_2eproto {
 extern const ::google::protobuf::internal::DescriptorTable
     descriptor_table_push_2eproto;
 namespace push {
-class AckMsgReq;
-struct AckMsgReqDefaultTypeInternal;
-extern AckMsgReqDefaultTypeInternal _AckMsgReq_default_instance_;
-class AckMsgResp;
-struct AckMsgRespDefaultTypeInternal;
-extern AckMsgRespDefaultTypeInternal _AckMsgResp_default_instance_;
-class AddPendingOfflineAckReq;
-struct AddPendingOfflineAckReqDefaultTypeInternal;
-extern AddPendingOfflineAckReqDefaultTypeInternal _AddPendingOfflineAckReq_default_instance_;
-class AddPendingOfflineAckResp;
-struct AddPendingOfflineAckRespDefaultTypeInternal;
-extern AddPendingOfflineAckRespDefaultTypeInternal _AddPendingOfflineAckResp_default_instance_;
-class DelUserPushTokenReq;
-struct DelUserPushTokenReqDefaultTypeInternal;
-extern DelUserPushTokenReqDefaultTypeInternal _DelUserPushTokenReq_default_instance_;
-class DelUserPushTokenResp;
-struct DelUserPushTokenRespDefaultTypeInternal;
-extern DelUserPushTokenRespDefaultTypeInternal _DelUserPushTokenResp_default_instance_;
+class AckConversation;
+struct AckConversationDefaultTypeInternal;
+extern AckConversationDefaultTypeInternal _AckConversation_default_instance_;
+class AckConversationsReq;
+struct AckConversationsReqDefaultTypeInternal;
+extern AckConversationsReqDefaultTypeInternal _AckConversationsReq_default_instance_;
+class AckConversationsResp;
+struct AckConversationsRespDefaultTypeInternal;
+extern AckConversationsRespDefaultTypeInternal _AckConversationsResp_default_instance_;
 class PushMsgReq;
 struct PushMsgReqDefaultTypeInternal;
 extern PushMsgReqDefaultTypeInternal _PushMsgReq_default_instance_;
@@ -85,16 +77,51 @@ namespace protobuf {
 }  // namespace google
 
 namespace push {
+enum PushDecision : int {
+  PUSH_DISCARDED = 0,
+  PUSH_DELIVERED = 1,
+  PUSH_NOT_ONLINE = 2,
+  PushDecision_INT_MIN_SENTINEL_DO_NOT_USE_ =
+      std::numeric_limits<::int32_t>::min(),
+  PushDecision_INT_MAX_SENTINEL_DO_NOT_USE_ =
+      std::numeric_limits<::int32_t>::max(),
+};
+
+bool PushDecision_IsValid(int value);
+extern const uint32_t PushDecision_internal_data_[];
+constexpr PushDecision PushDecision_MIN = static_cast<PushDecision>(0);
+constexpr PushDecision PushDecision_MAX = static_cast<PushDecision>(2);
+constexpr int PushDecision_ARRAYSIZE = 2 + 1;
+const ::google::protobuf::EnumDescriptor*
+PushDecision_descriptor();
+template <typename T>
+const std::string& PushDecision_Name(T value) {
+  static_assert(std::is_same<T, PushDecision>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to PushDecision_Name().");
+  return PushDecision_Name(static_cast<PushDecision>(value));
+}
+template <>
+inline const std::string& PushDecision_Name(PushDecision value) {
+  return ::google::protobuf::internal::NameOfDenseEnum<PushDecision_descriptor,
+                                                 0, 2>(
+      static_cast<int>(value));
+}
+inline bool PushDecision_Parse(absl::string_view name, PushDecision* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<PushDecision>(
+      PushDecision_descriptor(), name, value);
+}
 
 // ===================================================================
 
 
 // -------------------------------------------------------------------
 
-class PushMsgResp final : public ::google::protobuf::internal::ZeroFieldsBase
+class PushMsgResp final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:push.PushMsgResp) */ {
  public:
   inline PushMsgResp() : PushMsgResp(nullptr) {}
+  ~PushMsgResp() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
   void operator delete(PushMsgResp* msg, std::destroying_delete_t) {
@@ -168,21 +195,49 @@ class PushMsgResp final : public ::google::protobuf::internal::ZeroFieldsBase
   // implements Message ----------------------------------------------
 
   PushMsgResp* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::internal::ZeroFieldsBase::DefaultConstruct<PushMsgResp>(arena);
+    return ::google::protobuf::Message::DefaultConstruct<PushMsgResp>(arena);
   }
-  using ::google::protobuf::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const PushMsgResp& from) {
-    ::google::protobuf::internal::ZeroFieldsBase::CopyImpl(*this, from);
-  }
-  using ::google::protobuf::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const PushMsgResp& from) {
-    ::google::protobuf::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const PushMsgResp& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const PushMsgResp& from) { PushMsgResp::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
 
   public:
   bool IsInitialized() const {
     return true;
   }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(PushMsgResp* other);
  private:
   template <typename T>
   friend ::absl::string_view(
@@ -207,12 +262,25 @@ class PushMsgResp final : public ::google::protobuf::internal::ZeroFieldsBase
   // nested types ----------------------------------------------------
 
   // accessors -------------------------------------------------------
+  enum : int {
+    kDecisionFieldNumber = 1,
+  };
+  // .push.PushDecision decision = 1;
+  void clear_decision() ;
+  ::push::PushDecision decision() const;
+  void set_decision(::push::PushDecision value);
+
+  private:
+  ::push::PushDecision _internal_decision() const;
+  void _internal_set_decision(::push::PushDecision value);
+
+  public:
   // @@protoc_insertion_point(class_scope:push.PushMsgResp)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      0, 0, 0,
+      0, 1, 0,
       0, 2>
       _table_;
 
@@ -230,36 +298,39 @@ class PushMsgResp final : public ::google::protobuf::internal::ZeroFieldsBase
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const PushMsgResp& from_msg);
+    int decision_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_push_2eproto;
 };
 // -------------------------------------------------------------------
 
-class DelUserPushTokenResp final : public ::google::protobuf::internal::ZeroFieldsBase
-/* @@protoc_insertion_point(class_definition:push.DelUserPushTokenResp) */ {
+class AckConversationsResp final : public ::google::protobuf::internal::ZeroFieldsBase
+/* @@protoc_insertion_point(class_definition:push.AckConversationsResp) */ {
  public:
-  inline DelUserPushTokenResp() : DelUserPushTokenResp(nullptr) {}
+  inline AckConversationsResp() : AckConversationsResp(nullptr) {}
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(DelUserPushTokenResp* msg, std::destroying_delete_t) {
+  void operator delete(AckConversationsResp* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(DelUserPushTokenResp));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(AckConversationsResp));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR DelUserPushTokenResp(
+  explicit PROTOBUF_CONSTEXPR AckConversationsResp(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline DelUserPushTokenResp(const DelUserPushTokenResp& from) : DelUserPushTokenResp(nullptr, from) {}
-  inline DelUserPushTokenResp(DelUserPushTokenResp&& from) noexcept
-      : DelUserPushTokenResp(nullptr, std::move(from)) {}
-  inline DelUserPushTokenResp& operator=(const DelUserPushTokenResp& from) {
+  inline AckConversationsResp(const AckConversationsResp& from) : AckConversationsResp(nullptr, from) {}
+  inline AckConversationsResp(AckConversationsResp&& from) noexcept
+      : AckConversationsResp(nullptr, std::move(from)) {}
+  inline AckConversationsResp& operator=(const AckConversationsResp& from) {
     CopyFrom(from);
     return *this;
   }
-  inline DelUserPushTokenResp& operator=(DelUserPushTokenResp&& from) noexcept {
+  inline AckConversationsResp& operator=(AckConversationsResp&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -287,16 +358,16 @@ class DelUserPushTokenResp final : public ::google::protobuf::internal::ZeroFiel
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const DelUserPushTokenResp& default_instance() {
+  static const AckConversationsResp& default_instance() {
     return *internal_default_instance();
   }
-  static inline const DelUserPushTokenResp* internal_default_instance() {
-    return reinterpret_cast<const DelUserPushTokenResp*>(
-        &_DelUserPushTokenResp_default_instance_);
+  static inline const AckConversationsResp* internal_default_instance() {
+    return reinterpret_cast<const AckConversationsResp*>(
+        &_AckConversationsResp_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 3;
-  friend void swap(DelUserPushTokenResp& a, DelUserPushTokenResp& b) { a.Swap(&b); }
-  inline void Swap(DelUserPushTokenResp* other) {
+  static constexpr int kIndexInFileMessages = 4;
+  friend void swap(AckConversationsResp& a, AckConversationsResp& b) { a.Swap(&b); }
+  inline void Swap(AckConversationsResp* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -304,7 +375,7 @@ class DelUserPushTokenResp final : public ::google::protobuf::internal::ZeroFiel
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(DelUserPushTokenResp* other) {
+  void UnsafeArenaSwap(AckConversationsResp* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -312,15 +383,15 @@ class DelUserPushTokenResp final : public ::google::protobuf::internal::ZeroFiel
 
   // implements Message ----------------------------------------------
 
-  DelUserPushTokenResp* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::internal::ZeroFieldsBase::DefaultConstruct<DelUserPushTokenResp>(arena);
+  AckConversationsResp* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::internal::ZeroFieldsBase::DefaultConstruct<AckConversationsResp>(arena);
   }
   using ::google::protobuf::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const DelUserPushTokenResp& from) {
+  inline void CopyFrom(const AckConversationsResp& from) {
     ::google::protobuf::internal::ZeroFieldsBase::CopyImpl(*this, from);
   }
   using ::google::protobuf::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const DelUserPushTokenResp& from) {
+  void MergeFrom(const AckConversationsResp& from) {
     ::google::protobuf::internal::ZeroFieldsBase::MergeImpl(*this, from);
   }
 
@@ -332,13 +403,13 @@ class DelUserPushTokenResp final : public ::google::protobuf::internal::ZeroFiel
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "push.DelUserPushTokenResp"; }
+  static ::absl::string_view FullMessageName() { return "push.AckConversationsResp"; }
 
  protected:
-  explicit DelUserPushTokenResp(::google::protobuf::Arena* arena);
-  DelUserPushTokenResp(::google::protobuf::Arena* arena, const DelUserPushTokenResp& from);
-  DelUserPushTokenResp(::google::protobuf::Arena* arena, DelUserPushTokenResp&& from) noexcept
-      : DelUserPushTokenResp(arena) {
+  explicit AckConversationsResp(::google::protobuf::Arena* arena);
+  AckConversationsResp(::google::protobuf::Arena* arena, const AckConversationsResp& from);
+  AckConversationsResp(::google::protobuf::Arena* arena, AckConversationsResp&& from) noexcept
+      : AckConversationsResp(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -352,7 +423,7 @@ class DelUserPushTokenResp final : public ::google::protobuf::internal::ZeroFiel
   // nested types ----------------------------------------------------
 
   // accessors -------------------------------------------------------
-  // @@protoc_insertion_point(class_scope:push.DelUserPushTokenResp)
+  // @@protoc_insertion_point(class_scope:push.AckConversationsResp)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
@@ -374,38 +445,38 @@ class DelUserPushTokenResp final : public ::google::protobuf::internal::ZeroFiel
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const DelUserPushTokenResp& from_msg);
+                          const AckConversationsResp& from_msg);
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   friend struct ::TableStruct_push_2eproto;
 };
 // -------------------------------------------------------------------
 
-class DelUserPushTokenReq final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:push.DelUserPushTokenReq) */ {
+class AckConversation final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:push.AckConversation) */ {
  public:
-  inline DelUserPushTokenReq() : DelUserPushTokenReq(nullptr) {}
-  ~DelUserPushTokenReq() PROTOBUF_FINAL;
+  inline AckConversation() : AckConversation(nullptr) {}
+  ~AckConversation() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(DelUserPushTokenReq* msg, std::destroying_delete_t) {
+  void operator delete(AckConversation* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(DelUserPushTokenReq));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(AckConversation));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR DelUserPushTokenReq(
+  explicit PROTOBUF_CONSTEXPR AckConversation(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline DelUserPushTokenReq(const DelUserPushTokenReq& from) : DelUserPushTokenReq(nullptr, from) {}
-  inline DelUserPushTokenReq(DelUserPushTokenReq&& from) noexcept
-      : DelUserPushTokenReq(nullptr, std::move(from)) {}
-  inline DelUserPushTokenReq& operator=(const DelUserPushTokenReq& from) {
+  inline AckConversation(const AckConversation& from) : AckConversation(nullptr, from) {}
+  inline AckConversation(AckConversation&& from) noexcept
+      : AckConversation(nullptr, std::move(from)) {}
+  inline AckConversation& operator=(const AckConversation& from) {
     CopyFrom(from);
     return *this;
   }
-  inline DelUserPushTokenReq& operator=(DelUserPushTokenReq&& from) noexcept {
+  inline AckConversation& operator=(AckConversation&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -433,16 +504,16 @@ class DelUserPushTokenReq final : public ::google::protobuf::Message
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const DelUserPushTokenReq& default_instance() {
+  static const AckConversation& default_instance() {
     return *internal_default_instance();
   }
-  static inline const DelUserPushTokenReq* internal_default_instance() {
-    return reinterpret_cast<const DelUserPushTokenReq*>(
-        &_DelUserPushTokenReq_default_instance_);
+  static inline const AckConversation* internal_default_instance() {
+    return reinterpret_cast<const AckConversation*>(
+        &_AckConversation_default_instance_);
   }
   static constexpr int kIndexInFileMessages = 2;
-  friend void swap(DelUserPushTokenReq& a, DelUserPushTokenReq& b) { a.Swap(&b); }
-  inline void Swap(DelUserPushTokenReq* other) {
+  friend void swap(AckConversation& a, AckConversation& b) { a.Swap(&b); }
+  inline void Swap(AckConversation* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -450,7 +521,7 @@ class DelUserPushTokenReq final : public ::google::protobuf::Message
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(DelUserPushTokenReq* other) {
+  void UnsafeArenaSwap(AckConversation* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -458,13 +529,13 @@ class DelUserPushTokenReq final : public ::google::protobuf::Message
 
   // implements Message ----------------------------------------------
 
-  DelUserPushTokenReq* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<DelUserPushTokenReq>(arena);
+  AckConversation* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<AckConversation>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const DelUserPushTokenReq& from);
+  void CopyFrom(const AckConversation& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const DelUserPushTokenReq& from) { DelUserPushTokenReq::MergeImpl(*this, from); }
+  void MergeFrom(const AckConversation& from) { AckConversation::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -501,18 +572,18 @@ class DelUserPushTokenReq final : public ::google::protobuf::Message
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(DelUserPushTokenReq* other);
+  void InternalSwap(AckConversation* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "push.DelUserPushTokenReq"; }
+  static ::absl::string_view FullMessageName() { return "push.AckConversation"; }
 
  protected:
-  explicit DelUserPushTokenReq(::google::protobuf::Arena* arena);
-  DelUserPushTokenReq(::google::protobuf::Arena* arena, const DelUserPushTokenReq& from);
-  DelUserPushTokenReq(::google::protobuf::Arena* arena, DelUserPushTokenReq&& from) noexcept
-      : DelUserPushTokenReq(arena) {
+  explicit AckConversation(::google::protobuf::Arena* arena);
+  AckConversation(::google::protobuf::Arena* arena, const AckConversation& from);
+  AckConversation(::google::protobuf::Arena* arena, AckConversation&& from) noexcept
+      : AckConversation(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -527,36 +598,42 @@ class DelUserPushTokenReq final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
-    kUserIDFieldNumber = 1,
-    kPlatformIDFieldNumber = 2,
+    kConversationIDFieldNumber = 1,
+    kUpToSeqFieldNumber = 2,
   };
-  // uint64 userID = 1;
-  void clear_userid() ;
-  ::uint64_t userid() const;
-  void set_userid(::uint64_t value);
+  // string conversationID = 1;
+  void clear_conversationid() ;
+  const std::string& conversationid() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_conversationid(Arg_&& arg, Args_... args);
+  std::string* mutable_conversationid();
+  PROTOBUF_NODISCARD std::string* release_conversationid();
+  void set_allocated_conversationid(std::string* value);
 
   private:
-  ::uint64_t _internal_userid() const;
-  void _internal_set_userid(::uint64_t value);
+  const std::string& _internal_conversationid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_conversationid(
+      const std::string& value);
+  std::string* _internal_mutable_conversationid();
 
   public:
-  // int32 platformID = 2;
-  void clear_platformid() ;
-  ::int32_t platformid() const;
-  void set_platformid(::int32_t value);
+  // int64 upToSeq = 2;
+  void clear_uptoseq() ;
+  ::int64_t uptoseq() const;
+  void set_uptoseq(::int64_t value);
 
   private:
-  ::int32_t _internal_platformid() const;
-  void _internal_set_platformid(::int32_t value);
+  ::int64_t _internal_uptoseq() const;
+  void _internal_set_uptoseq(::int64_t value);
 
   public:
-  // @@protoc_insertion_point(class_scope:push.DelUserPushTokenReq)
+  // @@protoc_insertion_point(class_scope:push.AckConversation)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       1, 2, 0,
-      0, 2>
+      43, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -572,9 +649,9 @@ class DelUserPushTokenReq final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const DelUserPushTokenReq& from_msg);
-    ::uint64_t userid_;
-    ::int32_t platformid_;
+                          const AckConversation& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr conversationid_;
+    ::int64_t uptoseq_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -583,30 +660,31 @@ class DelUserPushTokenReq final : public ::google::protobuf::Message
 };
 // -------------------------------------------------------------------
 
-class AddPendingOfflineAckResp final : public ::google::protobuf::internal::ZeroFieldsBase
-/* @@protoc_insertion_point(class_definition:push.AddPendingOfflineAckResp) */ {
+class AckConversationsReq final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:push.AckConversationsReq) */ {
  public:
-  inline AddPendingOfflineAckResp() : AddPendingOfflineAckResp(nullptr) {}
+  inline AckConversationsReq() : AckConversationsReq(nullptr) {}
+  ~AckConversationsReq() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(AddPendingOfflineAckResp* msg, std::destroying_delete_t) {
+  void operator delete(AckConversationsReq* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(AddPendingOfflineAckResp));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(AckConversationsReq));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR AddPendingOfflineAckResp(
+  explicit PROTOBUF_CONSTEXPR AckConversationsReq(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline AddPendingOfflineAckResp(const AddPendingOfflineAckResp& from) : AddPendingOfflineAckResp(nullptr, from) {}
-  inline AddPendingOfflineAckResp(AddPendingOfflineAckResp&& from) noexcept
-      : AddPendingOfflineAckResp(nullptr, std::move(from)) {}
-  inline AddPendingOfflineAckResp& operator=(const AddPendingOfflineAckResp& from) {
+  inline AckConversationsReq(const AckConversationsReq& from) : AckConversationsReq(nullptr, from) {}
+  inline AckConversationsReq(AckConversationsReq&& from) noexcept
+      : AckConversationsReq(nullptr, std::move(from)) {}
+  inline AckConversationsReq& operator=(const AckConversationsReq& from) {
     CopyFrom(from);
     return *this;
   }
-  inline AddPendingOfflineAckResp& operator=(AddPendingOfflineAckResp&& from) noexcept {
+  inline AckConversationsReq& operator=(AckConversationsReq&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -634,16 +712,16 @@ class AddPendingOfflineAckResp final : public ::google::protobuf::internal::Zero
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const AddPendingOfflineAckResp& default_instance() {
+  static const AckConversationsReq& default_instance() {
     return *internal_default_instance();
   }
-  static inline const AddPendingOfflineAckResp* internal_default_instance() {
-    return reinterpret_cast<const AddPendingOfflineAckResp*>(
-        &_AddPendingOfflineAckResp_default_instance_);
+  static inline const AckConversationsReq* internal_default_instance() {
+    return reinterpret_cast<const AckConversationsReq*>(
+        &_AckConversationsReq_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 7;
-  friend void swap(AddPendingOfflineAckResp& a, AddPendingOfflineAckResp& b) { a.Swap(&b); }
-  inline void Swap(AddPendingOfflineAckResp* other) {
+  static constexpr int kIndexInFileMessages = 3;
+  friend void swap(AckConversationsReq& a, AckConversationsReq& b) { a.Swap(&b); }
+  inline void Swap(AckConversationsReq* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -651,7 +729,7 @@ class AddPendingOfflineAckResp final : public ::google::protobuf::internal::Zero
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(AddPendingOfflineAckResp* other) {
+  void UnsafeArenaSwap(AckConversationsReq* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -659,159 +737,13 @@ class AddPendingOfflineAckResp final : public ::google::protobuf::internal::Zero
 
   // implements Message ----------------------------------------------
 
-  AddPendingOfflineAckResp* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::internal::ZeroFieldsBase::DefaultConstruct<AddPendingOfflineAckResp>(arena);
-  }
-  using ::google::protobuf::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const AddPendingOfflineAckResp& from) {
-    ::google::protobuf::internal::ZeroFieldsBase::CopyImpl(*this, from);
-  }
-  using ::google::protobuf::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const AddPendingOfflineAckResp& from) {
-    ::google::protobuf::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
-
-  public:
-  bool IsInitialized() const {
-    return true;
-  }
- private:
-  template <typename T>
-  friend ::absl::string_view(
-      ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "push.AddPendingOfflineAckResp"; }
-
- protected:
-  explicit AddPendingOfflineAckResp(::google::protobuf::Arena* arena);
-  AddPendingOfflineAckResp(::google::protobuf::Arena* arena, const AddPendingOfflineAckResp& from);
-  AddPendingOfflineAckResp(::google::protobuf::Arena* arena, AddPendingOfflineAckResp&& from) noexcept
-      : AddPendingOfflineAckResp(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
-  static void* PlacementNew_(const void*, void* mem,
-                             ::google::protobuf::Arena* arena);
-  static constexpr auto InternalNewImpl_();
-  static const ::google::protobuf::internal::ClassDataFull _class_data_;
-
- public:
-  ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  // @@protoc_insertion_point(class_scope:push.AddPendingOfflineAckResp)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<
-      0, 0, 0,
-      0, 2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(
-        ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                          ::google::protobuf::Arena* arena);
-    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                          ::google::protobuf::Arena* arena, const Impl_& from,
-                          const AddPendingOfflineAckResp& from_msg);
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  friend struct ::TableStruct_push_2eproto;
-};
-// -------------------------------------------------------------------
-
-class AddPendingOfflineAckReq final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:push.AddPendingOfflineAckReq) */ {
- public:
-  inline AddPendingOfflineAckReq() : AddPendingOfflineAckReq(nullptr) {}
-  ~AddPendingOfflineAckReq() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(AddPendingOfflineAckReq* msg, std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(AddPendingOfflineAckReq));
-  }
-#endif
-
-  template <typename = void>
-  explicit PROTOBUF_CONSTEXPR AddPendingOfflineAckReq(
-      ::google::protobuf::internal::ConstantInitialized);
-
-  inline AddPendingOfflineAckReq(const AddPendingOfflineAckReq& from) : AddPendingOfflineAckReq(nullptr, from) {}
-  inline AddPendingOfflineAckReq(AddPendingOfflineAckReq&& from) noexcept
-      : AddPendingOfflineAckReq(nullptr, std::move(from)) {}
-  inline AddPendingOfflineAckReq& operator=(const AddPendingOfflineAckReq& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline AddPendingOfflineAckReq& operator=(AddPendingOfflineAckReq&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::google::protobuf::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::google::protobuf::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const AddPendingOfflineAckReq& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const AddPendingOfflineAckReq* internal_default_instance() {
-    return reinterpret_cast<const AddPendingOfflineAckReq*>(
-        &_AddPendingOfflineAckReq_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 6;
-  friend void swap(AddPendingOfflineAckReq& a, AddPendingOfflineAckReq& b) { a.Swap(&b); }
-  inline void Swap(AddPendingOfflineAckReq* other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(AddPendingOfflineAckReq* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  AddPendingOfflineAckReq* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<AddPendingOfflineAckReq>(arena);
+  AckConversationsReq* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<AckConversationsReq>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const AddPendingOfflineAckReq& from);
+  void CopyFrom(const AckConversationsReq& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const AddPendingOfflineAckReq& from) { AddPendingOfflineAckReq::MergeImpl(*this, from); }
+  void MergeFrom(const AckConversationsReq& from) { AckConversationsReq::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -848,18 +780,18 @@ class AddPendingOfflineAckReq final : public ::google::protobuf::Message
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(AddPendingOfflineAckReq* other);
+  void InternalSwap(AckConversationsReq* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "push.AddPendingOfflineAckReq"; }
+  static ::absl::string_view FullMessageName() { return "push.AckConversationsReq"; }
 
  protected:
-  explicit AddPendingOfflineAckReq(::google::protobuf::Arena* arena);
-  AddPendingOfflineAckReq(::google::protobuf::Arena* arena, const AddPendingOfflineAckReq& from);
-  AddPendingOfflineAckReq(::google::protobuf::Arena* arena, AddPendingOfflineAckReq&& from) noexcept
-      : AddPendingOfflineAckReq(arena) {
+  explicit AckConversationsReq(::google::protobuf::Arena* arena);
+  AckConversationsReq(::google::protobuf::Arena* arena, const AckConversationsReq& from);
+  AckConversationsReq(::google::protobuf::Arena* arena, AckConversationsReq&& from) noexcept
+      : AckConversationsReq(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -874,26 +806,27 @@ class AddPendingOfflineAckReq final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
-    kServerMsgIDFieldNumber = 2,
+    kConversationsFieldNumber = 2,
     kUserIDFieldNumber = 1,
-    kSeqFieldNumber = 3,
+    kAckTypeFieldNumber = 3,
   };
-  // string serverMsgID = 2;
-  void clear_servermsgid() ;
-  const std::string& servermsgid() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_servermsgid(Arg_&& arg, Args_... args);
-  std::string* mutable_servermsgid();
-  PROTOBUF_NODISCARD std::string* release_servermsgid();
-  void set_allocated_servermsgid(std::string* value);
-
+  // repeated .push.AckConversation conversations = 2;
+  int conversations_size() const;
   private:
-  const std::string& _internal_servermsgid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_servermsgid(
-      const std::string& value);
-  std::string* _internal_mutable_servermsgid();
+  int _internal_conversations_size() const;
 
   public:
+  void clear_conversations() ;
+  ::push::AckConversation* mutable_conversations(int index);
+  ::google::protobuf::RepeatedPtrField<::push::AckConversation>* mutable_conversations();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::push::AckConversation>& _internal_conversations() const;
+  ::google::protobuf::RepeatedPtrField<::push::AckConversation>* _internal_mutable_conversations();
+  public:
+  const ::push::AckConversation& conversations(int index) const;
+  ::push::AckConversation* add_conversations();
+  const ::google::protobuf::RepeatedPtrField<::push::AckConversation>& conversations() const;
   // uint64 userID = 1;
   void clear_userid() ;
   ::uint64_t userid() const;
@@ -904,383 +837,7 @@ class AddPendingOfflineAckReq final : public ::google::protobuf::Message
   void _internal_set_userid(::uint64_t value);
 
   public:
-  // int64 seq = 3;
-  void clear_seq() ;
-  ::int64_t seq() const;
-  void set_seq(::int64_t value);
-
-  private:
-  ::int64_t _internal_seq() const;
-  void _internal_set_seq(::int64_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:push.AddPendingOfflineAckReq)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<
-      2, 3, 0,
-      48, 2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(
-        ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                          ::google::protobuf::Arena* arena);
-    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                          ::google::protobuf::Arena* arena, const Impl_& from,
-                          const AddPendingOfflineAckReq& from_msg);
-    ::google::protobuf::internal::ArenaStringPtr servermsgid_;
-    ::uint64_t userid_;
-    ::int64_t seq_;
-    ::google::protobuf::internal::CachedSize _cached_size_;
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_push_2eproto;
-};
-// -------------------------------------------------------------------
-
-class AckMsgResp final : public ::google::protobuf::internal::ZeroFieldsBase
-/* @@protoc_insertion_point(class_definition:push.AckMsgResp) */ {
- public:
-  inline AckMsgResp() : AckMsgResp(nullptr) {}
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(AckMsgResp* msg, std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(AckMsgResp));
-  }
-#endif
-
-  template <typename = void>
-  explicit PROTOBUF_CONSTEXPR AckMsgResp(
-      ::google::protobuf::internal::ConstantInitialized);
-
-  inline AckMsgResp(const AckMsgResp& from) : AckMsgResp(nullptr, from) {}
-  inline AckMsgResp(AckMsgResp&& from) noexcept
-      : AckMsgResp(nullptr, std::move(from)) {}
-  inline AckMsgResp& operator=(const AckMsgResp& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline AckMsgResp& operator=(AckMsgResp&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::google::protobuf::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::google::protobuf::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const AckMsgResp& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const AckMsgResp* internal_default_instance() {
-    return reinterpret_cast<const AckMsgResp*>(
-        &_AckMsgResp_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 5;
-  friend void swap(AckMsgResp& a, AckMsgResp& b) { a.Swap(&b); }
-  inline void Swap(AckMsgResp* other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(AckMsgResp* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  AckMsgResp* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::internal::ZeroFieldsBase::DefaultConstruct<AckMsgResp>(arena);
-  }
-  using ::google::protobuf::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const AckMsgResp& from) {
-    ::google::protobuf::internal::ZeroFieldsBase::CopyImpl(*this, from);
-  }
-  using ::google::protobuf::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const AckMsgResp& from) {
-    ::google::protobuf::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
-
-  public:
-  bool IsInitialized() const {
-    return true;
-  }
- private:
-  template <typename T>
-  friend ::absl::string_view(
-      ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "push.AckMsgResp"; }
-
- protected:
-  explicit AckMsgResp(::google::protobuf::Arena* arena);
-  AckMsgResp(::google::protobuf::Arena* arena, const AckMsgResp& from);
-  AckMsgResp(::google::protobuf::Arena* arena, AckMsgResp&& from) noexcept
-      : AckMsgResp(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
-  static void* PlacementNew_(const void*, void* mem,
-                             ::google::protobuf::Arena* arena);
-  static constexpr auto InternalNewImpl_();
-  static const ::google::protobuf::internal::ClassDataFull _class_data_;
-
- public:
-  ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  // @@protoc_insertion_point(class_scope:push.AckMsgResp)
- private:
-  class _Internal;
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<
-      0, 0, 0,
-      0, 2>
-      _table_;
-
-  friend class ::google::protobuf::MessageLite;
-  friend class ::google::protobuf::Arena;
-  template <typename T>
-  friend class ::google::protobuf::Arena::InternalHelper;
-  using InternalArenaConstructable_ = void;
-  using DestructorSkippable_ = void;
-  struct Impl_ {
-    inline explicit constexpr Impl_(
-        ::google::protobuf::internal::ConstantInitialized) noexcept;
-    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                          ::google::protobuf::Arena* arena);
-    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
-                          ::google::protobuf::Arena* arena, const Impl_& from,
-                          const AckMsgResp& from_msg);
-    PROTOBUF_TSAN_DECLARE_MEMBER
-  };
-  friend struct ::TableStruct_push_2eproto;
-};
-// -------------------------------------------------------------------
-
-class AckMsgReq final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:push.AckMsgReq) */ {
- public:
-  inline AckMsgReq() : AckMsgReq(nullptr) {}
-  ~AckMsgReq() PROTOBUF_FINAL;
-
-#if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(AckMsgReq* msg, std::destroying_delete_t) {
-    SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(AckMsgReq));
-  }
-#endif
-
-  template <typename = void>
-  explicit PROTOBUF_CONSTEXPR AckMsgReq(
-      ::google::protobuf::internal::ConstantInitialized);
-
-  inline AckMsgReq(const AckMsgReq& from) : AckMsgReq(nullptr, from) {}
-  inline AckMsgReq(AckMsgReq&& from) noexcept
-      : AckMsgReq(nullptr, std::move(from)) {}
-  inline AckMsgReq& operator=(const AckMsgReq& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline AckMsgReq& operator=(AckMsgReq&& from) noexcept {
-    if (this == &from) return *this;
-    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
-  }
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
-      ABSL_ATTRIBUTE_LIFETIME_BOUND {
-    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::google::protobuf::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::google::protobuf::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const AckMsgReq& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const AckMsgReq* internal_default_instance() {
-    return reinterpret_cast<const AckMsgReq*>(
-        &_AckMsgReq_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages = 4;
-  friend void swap(AckMsgReq& a, AckMsgReq& b) { a.Swap(&b); }
-  inline void Swap(AckMsgReq* other) {
-    if (other == this) return;
-    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
-      InternalSwap(other);
-    } else {
-      ::google::protobuf::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(AckMsgReq* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetArena() == other->GetArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  AckMsgReq* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<AckMsgReq>(arena);
-  }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const AckMsgReq& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const AckMsgReq& from) { AckMsgReq::MergeImpl(*this, from); }
-
-  private:
-  static void MergeImpl(
-      ::google::protobuf::MessageLite& to_msg,
-      const ::google::protobuf::MessageLite& from_msg);
-
-  public:
-  bool IsInitialized() const {
-    return true;
-  }
-  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
-  #if defined(PROTOBUF_CUSTOM_VTABLE)
-  private:
-  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
-  static ::uint8_t* _InternalSerialize(
-      const MessageLite& msg, ::uint8_t* target,
-      ::google::protobuf::io::EpsCopyOutputStream* stream);
-
-  public:
-  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target,
-      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-    return _InternalSerialize(*this, target, stream);
-  }
-  #else   // PROTOBUF_CUSTOM_VTABLE
-  ::size_t ByteSizeLong() const final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target,
-      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
-  #endif  // PROTOBUF_CUSTOM_VTABLE
-  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::google::protobuf::Arena* arena);
-  static void SharedDtor(MessageLite& self);
-  void InternalSwap(AckMsgReq* other);
- private:
-  template <typename T>
-  friend ::absl::string_view(
-      ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "push.AckMsgReq"; }
-
- protected:
-  explicit AckMsgReq(::google::protobuf::Arena* arena);
-  AckMsgReq(::google::protobuf::Arena* arena, const AckMsgReq& from);
-  AckMsgReq(::google::protobuf::Arena* arena, AckMsgReq&& from) noexcept
-      : AckMsgReq(arena) {
-    *this = ::std::move(from);
-  }
-  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
-  static void* PlacementNew_(const void*, void* mem,
-                             ::google::protobuf::Arena* arena);
-  static constexpr auto InternalNewImpl_();
-  static const ::google::protobuf::internal::ClassDataFull _class_data_;
-
- public:
-  ::google::protobuf::Metadata GetMetadata() const;
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-  enum : int {
-    kServerMsgIDFieldNumber = 2,
-    kUserIDFieldNumber = 1,
-    kSeqFieldNumber = 3,
-    kAckTypeFieldNumber = 4,
-  };
-  // string serverMsgID = 2;
-  void clear_servermsgid() ;
-  const std::string& servermsgid() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_servermsgid(Arg_&& arg, Args_... args);
-  std::string* mutable_servermsgid();
-  PROTOBUF_NODISCARD std::string* release_servermsgid();
-  void set_allocated_servermsgid(std::string* value);
-
-  private:
-  const std::string& _internal_servermsgid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_servermsgid(
-      const std::string& value);
-  std::string* _internal_mutable_servermsgid();
-
-  public:
-  // uint64 userID = 1;
-  void clear_userid() ;
-  ::uint64_t userid() const;
-  void set_userid(::uint64_t value);
-
-  private:
-  ::uint64_t _internal_userid() const;
-  void _internal_set_userid(::uint64_t value);
-
-  public:
-  // int64 seq = 3;
-  void clear_seq() ;
-  ::int64_t seq() const;
-  void set_seq(::int64_t value);
-
-  private:
-  ::int64_t _internal_seq() const;
-  void _internal_set_seq(::int64_t value);
-
-  public:
-  // int32 ackType = 4;
+  // int32 ackType = 3;
   void clear_acktype() ;
   ::int32_t acktype() const;
   void set_acktype(::int32_t value);
@@ -1290,13 +847,13 @@ class AckMsgReq final : public ::google::protobuf::Message
   void _internal_set_acktype(::int32_t value);
 
   public:
-  // @@protoc_insertion_point(class_scope:push.AckMsgReq)
+  // @@protoc_insertion_point(class_scope:push.AckConversationsReq)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      2, 4, 0,
-      34, 2>
+      2, 3, 1,
+      0, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -1312,10 +869,9 @@ class AckMsgReq final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const AckMsgReq& from_msg);
-    ::google::protobuf::internal::ArenaStringPtr servermsgid_;
+                          const AckConversationsReq& from_msg);
+    ::google::protobuf::RepeatedPtrField< ::push::AckConversation > conversations_;
     ::uint64_t userid_;
-    ::int64_t seq_;
     ::int32_t acktype_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
@@ -1471,28 +1027,9 @@ class PushMsgReq final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
-    kUserIDsFieldNumber = 3,
     kConversationIDFieldNumber = 2,
     kMsgDataFieldNumber = 1,
   };
-  // repeated uint64 userIDs = 3;
-  int userids_size() const;
-  private:
-  int _internal_userids_size() const;
-
-  public:
-  void clear_userids() ;
-  ::uint64_t userids(int index) const;
-  void set_userids(int index, ::uint64_t value);
-  void add_userids(::uint64_t value);
-  const ::google::protobuf::RepeatedField<::uint64_t>& userids() const;
-  ::google::protobuf::RepeatedField<::uint64_t>* mutable_userids();
-
-  private:
-  const ::google::protobuf::RepeatedField<::uint64_t>& _internal_userids() const;
-  ::google::protobuf::RepeatedField<::uint64_t>* _internal_mutable_userids();
-
-  public:
   // string conversationID = 2;
   void clear_conversationid() ;
   const std::string& conversationid() const;
@@ -1529,7 +1066,7 @@ class PushMsgReq final : public ::google::protobuf::Message
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      2, 3, 1,
+      1, 2, 1,
       38, 2>
       _table_;
 
@@ -1549,8 +1086,6 @@ class PushMsgReq final : public ::google::protobuf::Message
                           const PushMsgReq& from_msg);
     ::google::protobuf::internal::HasBits<1> _has_bits_;
     ::google::protobuf::internal::CachedSize _cached_size_;
-    ::google::protobuf::RepeatedField<::uint64_t> userids_;
-    ::google::protobuf::internal::CachedSize _userids_cached_byte_size_;
     ::google::protobuf::internal::ArenaStringPtr conversationid_;
     ::sdkws::MsgData* msgdata_;
     PROTOBUF_TSAN_DECLARE_MEMBER
@@ -1714,328 +1249,206 @@ inline void PushMsgReq::set_allocated_conversationid(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:push.PushMsgReq.conversationID)
 }
 
-// repeated uint64 userIDs = 3;
-inline int PushMsgReq::_internal_userids_size() const {
-  return _internal_userids().size();
-}
-inline int PushMsgReq::userids_size() const {
-  return _internal_userids_size();
-}
-inline void PushMsgReq::clear_userids() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userids_.Clear();
-}
-inline ::uint64_t PushMsgReq::userids(int index) const {
-  // @@protoc_insertion_point(field_get:push.PushMsgReq.userIDs)
-  return _internal_userids().Get(index);
-}
-inline void PushMsgReq::set_userids(int index, ::uint64_t value) {
-  _internal_mutable_userids()->Set(index, value);
-  // @@protoc_insertion_point(field_set:push.PushMsgReq.userIDs)
-}
-inline void PushMsgReq::add_userids(::uint64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _internal_mutable_userids()->Add(value);
-  // @@protoc_insertion_point(field_add:push.PushMsgReq.userIDs)
-}
-inline const ::google::protobuf::RepeatedField<::uint64_t>& PushMsgReq::userids() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_list:push.PushMsgReq.userIDs)
-  return _internal_userids();
-}
-inline ::google::protobuf::RepeatedField<::uint64_t>* PushMsgReq::mutable_userids()
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable_list:push.PushMsgReq.userIDs)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _internal_mutable_userids();
-}
-inline const ::google::protobuf::RepeatedField<::uint64_t>&
-PushMsgReq::_internal_userids() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.userids_;
-}
-inline ::google::protobuf::RepeatedField<::uint64_t>* PushMsgReq::_internal_mutable_userids() {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return &_impl_.userids_;
-}
-
 // -------------------------------------------------------------------
 
 // PushMsgResp
 
-// -------------------------------------------------------------------
-
-// DelUserPushTokenReq
-
-// uint64 userID = 1;
-inline void DelUserPushTokenReq::clear_userid() {
+// .push.PushDecision decision = 1;
+inline void PushMsgResp::clear_decision() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_ = ::uint64_t{0u};
+  _impl_.decision_ = 0;
 }
-inline ::uint64_t DelUserPushTokenReq::userid() const {
-  // @@protoc_insertion_point(field_get:push.DelUserPushTokenReq.userID)
-  return _internal_userid();
+inline ::push::PushDecision PushMsgResp::decision() const {
+  // @@protoc_insertion_point(field_get:push.PushMsgResp.decision)
+  return _internal_decision();
 }
-inline void DelUserPushTokenReq::set_userid(::uint64_t value) {
-  _internal_set_userid(value);
-  // @@protoc_insertion_point(field_set:push.DelUserPushTokenReq.userID)
+inline void PushMsgResp::set_decision(::push::PushDecision value) {
+  _internal_set_decision(value);
+  // @@protoc_insertion_point(field_set:push.PushMsgResp.decision)
 }
-inline ::uint64_t DelUserPushTokenReq::_internal_userid() const {
+inline ::push::PushDecision PushMsgResp::_internal_decision() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.userid_;
+  return static_cast<::push::PushDecision>(_impl_.decision_);
 }
-inline void DelUserPushTokenReq::_internal_set_userid(::uint64_t value) {
+inline void PushMsgResp::_internal_set_decision(::push::PushDecision value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_ = value;
-}
-
-// int32 platformID = 2;
-inline void DelUserPushTokenReq::clear_platformid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.platformid_ = 0;
-}
-inline ::int32_t DelUserPushTokenReq::platformid() const {
-  // @@protoc_insertion_point(field_get:push.DelUserPushTokenReq.platformID)
-  return _internal_platformid();
-}
-inline void DelUserPushTokenReq::set_platformid(::int32_t value) {
-  _internal_set_platformid(value);
-  // @@protoc_insertion_point(field_set:push.DelUserPushTokenReq.platformID)
-}
-inline ::int32_t DelUserPushTokenReq::_internal_platformid() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.platformid_;
-}
-inline void DelUserPushTokenReq::_internal_set_platformid(::int32_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.platformid_ = value;
+  _impl_.decision_ = value;
 }
 
 // -------------------------------------------------------------------
 
-// DelUserPushTokenResp
+// AckConversation
 
-// -------------------------------------------------------------------
-
-// AckMsgReq
-
-// uint64 userID = 1;
-inline void AckMsgReq::clear_userid() {
+// string conversationID = 1;
+inline void AckConversation::clear_conversationid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_ = ::uint64_t{0u};
+  _impl_.conversationid_.ClearToEmpty();
 }
-inline ::uint64_t AckMsgReq::userid() const {
-  // @@protoc_insertion_point(field_get:push.AckMsgReq.userID)
-  return _internal_userid();
-}
-inline void AckMsgReq::set_userid(::uint64_t value) {
-  _internal_set_userid(value);
-  // @@protoc_insertion_point(field_set:push.AckMsgReq.userID)
-}
-inline ::uint64_t AckMsgReq::_internal_userid() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.userid_;
-}
-inline void AckMsgReq::_internal_set_userid(::uint64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_ = value;
-}
-
-// string serverMsgID = 2;
-inline void AckMsgReq::clear_servermsgid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.servermsgid_.ClearToEmpty();
-}
-inline const std::string& AckMsgReq::servermsgid() const
+inline const std::string& AckConversation::conversationid() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:push.AckMsgReq.serverMsgID)
-  return _internal_servermsgid();
+  // @@protoc_insertion_point(field_get:push.AckConversation.conversationID)
+  return _internal_conversationid();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void AckMsgReq::set_servermsgid(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void AckConversation::set_conversationid(Arg_&& arg,
                                                      Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.servermsgid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:push.AckMsgReq.serverMsgID)
+  _impl_.conversationid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:push.AckConversation.conversationID)
 }
-inline std::string* AckMsgReq::mutable_servermsgid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_servermsgid();
-  // @@protoc_insertion_point(field_mutable:push.AckMsgReq.serverMsgID)
+inline std::string* AckConversation::mutable_conversationid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_conversationid();
+  // @@protoc_insertion_point(field_mutable:push.AckConversation.conversationID)
   return _s;
 }
-inline const std::string& AckMsgReq::_internal_servermsgid() const {
+inline const std::string& AckConversation::_internal_conversationid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.servermsgid_.Get();
+  return _impl_.conversationid_.Get();
 }
-inline void AckMsgReq::_internal_set_servermsgid(const std::string& value) {
+inline void AckConversation::_internal_set_conversationid(const std::string& value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.servermsgid_.Set(value, GetArena());
+  _impl_.conversationid_.Set(value, GetArena());
 }
-inline std::string* AckMsgReq::_internal_mutable_servermsgid() {
+inline std::string* AckConversation::_internal_mutable_conversationid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.servermsgid_.Mutable( GetArena());
+  return _impl_.conversationid_.Mutable( GetArena());
 }
-inline std::string* AckMsgReq::release_servermsgid() {
+inline std::string* AckConversation::release_conversationid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:push.AckMsgReq.serverMsgID)
-  return _impl_.servermsgid_.Release();
+  // @@protoc_insertion_point(field_release:push.AckConversation.conversationID)
+  return _impl_.conversationid_.Release();
 }
-inline void AckMsgReq::set_allocated_servermsgid(std::string* value) {
+inline void AckConversation::set_allocated_conversationid(std::string* value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.servermsgid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.servermsgid_.IsDefault()) {
-    _impl_.servermsgid_.Set("", GetArena());
+  _impl_.conversationid_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.conversationid_.IsDefault()) {
+    _impl_.conversationid_.Set("", GetArena());
   }
-  // @@protoc_insertion_point(field_set_allocated:push.AckMsgReq.serverMsgID)
+  // @@protoc_insertion_point(field_set_allocated:push.AckConversation.conversationID)
 }
 
-// int64 seq = 3;
-inline void AckMsgReq::clear_seq() {
+// int64 upToSeq = 2;
+inline void AckConversation::clear_uptoseq() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.seq_ = ::int64_t{0};
+  _impl_.uptoseq_ = ::int64_t{0};
 }
-inline ::int64_t AckMsgReq::seq() const {
-  // @@protoc_insertion_point(field_get:push.AckMsgReq.seq)
-  return _internal_seq();
+inline ::int64_t AckConversation::uptoseq() const {
+  // @@protoc_insertion_point(field_get:push.AckConversation.upToSeq)
+  return _internal_uptoseq();
 }
-inline void AckMsgReq::set_seq(::int64_t value) {
-  _internal_set_seq(value);
-  // @@protoc_insertion_point(field_set:push.AckMsgReq.seq)
+inline void AckConversation::set_uptoseq(::int64_t value) {
+  _internal_set_uptoseq(value);
+  // @@protoc_insertion_point(field_set:push.AckConversation.upToSeq)
 }
-inline ::int64_t AckMsgReq::_internal_seq() const {
+inline ::int64_t AckConversation::_internal_uptoseq() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.seq_;
+  return _impl_.uptoseq_;
 }
-inline void AckMsgReq::_internal_set_seq(::int64_t value) {
+inline void AckConversation::_internal_set_uptoseq(::int64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.seq_ = value;
+  _impl_.uptoseq_ = value;
 }
 
-// int32 ackType = 4;
-inline void AckMsgReq::clear_acktype() {
+// -------------------------------------------------------------------
+
+// AckConversationsReq
+
+// uint64 userID = 1;
+inline void AckConversationsReq::clear_userid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.userid_ = ::uint64_t{0u};
+}
+inline ::uint64_t AckConversationsReq::userid() const {
+  // @@protoc_insertion_point(field_get:push.AckConversationsReq.userID)
+  return _internal_userid();
+}
+inline void AckConversationsReq::set_userid(::uint64_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:push.AckConversationsReq.userID)
+}
+inline ::uint64_t AckConversationsReq::_internal_userid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.userid_;
+}
+inline void AckConversationsReq::_internal_set_userid(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.userid_ = value;
+}
+
+// repeated .push.AckConversation conversations = 2;
+inline int AckConversationsReq::_internal_conversations_size() const {
+  return _internal_conversations().size();
+}
+inline int AckConversationsReq::conversations_size() const {
+  return _internal_conversations_size();
+}
+inline void AckConversationsReq::clear_conversations() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.conversations_.Clear();
+}
+inline ::push::AckConversation* AckConversationsReq::mutable_conversations(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:push.AckConversationsReq.conversations)
+  return _internal_mutable_conversations()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::push::AckConversation>* AckConversationsReq::mutable_conversations()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable_list:push.AckConversationsReq.conversations)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_conversations();
+}
+inline const ::push::AckConversation& AckConversationsReq::conversations(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:push.AckConversationsReq.conversations)
+  return _internal_conversations().Get(index);
+}
+inline ::push::AckConversation* AckConversationsReq::add_conversations() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::push::AckConversation* _add = _internal_mutable_conversations()->Add();
+  // @@protoc_insertion_point(field_add:push.AckConversationsReq.conversations)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::push::AckConversation>& AckConversationsReq::conversations() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:push.AckConversationsReq.conversations)
+  return _internal_conversations();
+}
+inline const ::google::protobuf::RepeatedPtrField<::push::AckConversation>&
+AckConversationsReq::_internal_conversations() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.conversations_;
+}
+inline ::google::protobuf::RepeatedPtrField<::push::AckConversation>*
+AckConversationsReq::_internal_mutable_conversations() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.conversations_;
+}
+
+// int32 ackType = 3;
+inline void AckConversationsReq::clear_acktype() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.acktype_ = 0;
 }
-inline ::int32_t AckMsgReq::acktype() const {
-  // @@protoc_insertion_point(field_get:push.AckMsgReq.ackType)
+inline ::int32_t AckConversationsReq::acktype() const {
+  // @@protoc_insertion_point(field_get:push.AckConversationsReq.ackType)
   return _internal_acktype();
 }
-inline void AckMsgReq::set_acktype(::int32_t value) {
+inline void AckConversationsReq::set_acktype(::int32_t value) {
   _internal_set_acktype(value);
-  // @@protoc_insertion_point(field_set:push.AckMsgReq.ackType)
+  // @@protoc_insertion_point(field_set:push.AckConversationsReq.ackType)
 }
-inline ::int32_t AckMsgReq::_internal_acktype() const {
+inline ::int32_t AckConversationsReq::_internal_acktype() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.acktype_;
 }
-inline void AckMsgReq::_internal_set_acktype(::int32_t value) {
+inline void AckConversationsReq::_internal_set_acktype(::int32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.acktype_ = value;
 }
 
 // -------------------------------------------------------------------
 
-// AckMsgResp
-
-// -------------------------------------------------------------------
-
-// AddPendingOfflineAckReq
-
-// uint64 userID = 1;
-inline void AddPendingOfflineAckReq::clear_userid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_ = ::uint64_t{0u};
-}
-inline ::uint64_t AddPendingOfflineAckReq::userid() const {
-  // @@protoc_insertion_point(field_get:push.AddPendingOfflineAckReq.userID)
-  return _internal_userid();
-}
-inline void AddPendingOfflineAckReq::set_userid(::uint64_t value) {
-  _internal_set_userid(value);
-  // @@protoc_insertion_point(field_set:push.AddPendingOfflineAckReq.userID)
-}
-inline ::uint64_t AddPendingOfflineAckReq::_internal_userid() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.userid_;
-}
-inline void AddPendingOfflineAckReq::_internal_set_userid(::uint64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.userid_ = value;
-}
-
-// string serverMsgID = 2;
-inline void AddPendingOfflineAckReq::clear_servermsgid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.servermsgid_.ClearToEmpty();
-}
-inline const std::string& AddPendingOfflineAckReq::servermsgid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:push.AddPendingOfflineAckReq.serverMsgID)
-  return _internal_servermsgid();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void AddPendingOfflineAckReq::set_servermsgid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.servermsgid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:push.AddPendingOfflineAckReq.serverMsgID)
-}
-inline std::string* AddPendingOfflineAckReq::mutable_servermsgid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_servermsgid();
-  // @@protoc_insertion_point(field_mutable:push.AddPendingOfflineAckReq.serverMsgID)
-  return _s;
-}
-inline const std::string& AddPendingOfflineAckReq::_internal_servermsgid() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.servermsgid_.Get();
-}
-inline void AddPendingOfflineAckReq::_internal_set_servermsgid(const std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.servermsgid_.Set(value, GetArena());
-}
-inline std::string* AddPendingOfflineAckReq::_internal_mutable_servermsgid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.servermsgid_.Mutable( GetArena());
-}
-inline std::string* AddPendingOfflineAckReq::release_servermsgid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:push.AddPendingOfflineAckReq.serverMsgID)
-  return _impl_.servermsgid_.Release();
-}
-inline void AddPendingOfflineAckReq::set_allocated_servermsgid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.servermsgid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.servermsgid_.IsDefault()) {
-    _impl_.servermsgid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:push.AddPendingOfflineAckReq.serverMsgID)
-}
-
-// int64 seq = 3;
-inline void AddPendingOfflineAckReq::clear_seq() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.seq_ = ::int64_t{0};
-}
-inline ::int64_t AddPendingOfflineAckReq::seq() const {
-  // @@protoc_insertion_point(field_get:push.AddPendingOfflineAckReq.seq)
-  return _internal_seq();
-}
-inline void AddPendingOfflineAckReq::set_seq(::int64_t value) {
-  _internal_set_seq(value);
-  // @@protoc_insertion_point(field_set:push.AddPendingOfflineAckReq.seq)
-}
-inline ::int64_t AddPendingOfflineAckReq::_internal_seq() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.seq_;
-}
-inline void AddPendingOfflineAckReq::_internal_set_seq(::int64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.seq_ = value;
-}
-
-// -------------------------------------------------------------------
-
-// AddPendingOfflineAckResp
+// AckConversationsResp
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -2044,6 +1457,19 @@ inline void AddPendingOfflineAckReq::_internal_set_seq(::int64_t value) {
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace push
 
+
+namespace google {
+namespace protobuf {
+
+template <>
+struct is_proto_enum<::push::PushDecision> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::push::PushDecision>() {
+  return ::push::PushDecision_descriptor();
+}
+
+}  // namespace protobuf
+}  // namespace google
 
 // @@protoc_insertion_point(global_scope)
 

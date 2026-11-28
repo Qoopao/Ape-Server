@@ -1,0 +1,57 @@
+{
+  "uid": "ape-group",
+  "title": "ape · Group",
+  "tags": ["ape-server", "group"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {"from": "now-3h", "to": "now"},
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Group send accepted",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum(rate(ape_im_send_total{kind=\"group\"}[5m]))"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Fanout recipients by result",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (mode, result) (rate(ape_group_fanout_recipients_total[5m]))", "legendFormat": "{{mode}}/{{result}}"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Fanout p99",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "histogram_quantile(0.99, sum by (le, mode) (rate(ape_group_fanout_duration_milliseconds_bucket[5m])))", "legendFormat": "{{mode}}"}],
+      "fieldConfig": {"defaults": {"unit": "ms"}, "overrides": []}
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Kafka lag (group topic)",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "max by (topic, partition) (ape_kafka_lag)", "legendFormat": "{{topic}}/{{partition}}"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Outbox op4 oldest age",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 16},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "max(ape_outbox_oldest_age{operation=\"4\"})"}],
+      "fieldConfig": {"defaults": {"unit": "s", "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 60}, {"color": "red", "value": 300}]}}, "overrides": []}
+    }
+  ]
+}

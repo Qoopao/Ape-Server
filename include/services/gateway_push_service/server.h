@@ -7,12 +7,11 @@
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/server_context.h>
 #include <grpcpp/support/status.h>
-#include <spdlog/spdlog.h>
 #include <string>
 
 // GatewayPushServer - Gateway 进程内部 gRPC 服务
-// 由 Gateway 进程暴露，供 PushService 等独立微服务调用
-// 负责将消息通过 WebSocket 长连接推送给指定在线用户
+// 由 Gateway 进程暴露，供 PushService / GroupService / MsgService 调用。
+// 它只是 WSSessionManager 的 RPC 门面：不持有状态，必须与网关同进程。
 class GatewayPushServer final
     : public gateway_push::GatewayPushService::CallbackService,
       public BaseServiceServer<GatewayPushServer> {
@@ -21,9 +20,24 @@ public:
                     const std::string &listen_address);
 
   ::grpc::ServerUnaryReactor *
-  PushToUser(::grpc::CallbackServerContext *context,
-             const ::gateway_push::PushToUserReq *request,
-             ::gateway_push::PushToUserResp *response) override;
+  PushFrame(::grpc::CallbackServerContext *context,
+            const ::gateway_push::PushFrameReq *request,
+            ::gateway_push::PushFrameResp *response) override;
+
+  ::grpc::ServerUnaryReactor *
+  PushBatch(::grpc::CallbackServerContext *context,
+            const ::gateway_push::PushBatchReq *request,
+            ::gateway_push::PushBatchResp *response) override;
+
+  ::grpc::ServerUnaryReactor *
+  IsOnline(::grpc::CallbackServerContext *context,
+           const ::gateway_push::IsOnlineReq *request,
+           ::gateway_push::IsOnlineResp *response) override;
+
+  ::grpc::ServerUnaryReactor *
+  KickUser(::grpc::CallbackServerContext *context,
+           const ::gateway_push::KickUserReq *request,
+           ::gateway_push::KickUserResp *response) override;
 };
 
 #endif

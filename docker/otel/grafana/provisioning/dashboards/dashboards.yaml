@@ -1,0 +1,14 @@
+apiVersion: 1
+
+providers:
+  - name: ape-server
+    orgId: 1
+    folder: ape-server
+    folderUid: ape-server
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: false

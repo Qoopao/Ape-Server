@@ -1,4 +1,5 @@
 #include "om/otel_logger.h"
+
 #include "om/spdlog_otel_sink.h"
 
 #include <opentelemetry/exporters/otlp/otlp_grpc_log_record_exporter.h>
@@ -6,61 +7,92 @@
 #include <opentelemetry/logs/provider.h>
 #include <opentelemetry/sdk/logs/logger_provider_factory.h>
 #include <opentelemetry/sdk/logs/batch_log_record_processor.h>
-#include <opentelemetry/sdk/resource/resource.h>
-#include <opentelemetry/semconv/service_attributes.h>
 
+#include <chrono>
+#include <cstdlib>
 #include <memory>
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
+#include <string>
 #include <vector>
+
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 
 namespace ape {
 namespace otel {
 
-namespace otlp     = opentelemetry::exporter::otlp;
-namespace resource = opentelemetry::sdk::resource;
-namespace logs     = opentelemetry::logs;
-namespace sdklogs  = opentelemetry::sdk::logs;
+namespace otlp = opentelemetry::exporter::otlp;
+namespace logs = opentelemetry::logs;
+namespace sdklogs = opentelemetry::sdk::logs;
 
-void InitLogger()
+namespace {
+
+spdlog::level::level_enum LevelFromEnv()
 {
-    // ── 1. OTLP gRPC Log Exporter ──
-    otlp::OtlpGrpcLogRecordExporterOptions opts;
-    opts.endpoint            = "localhost:4317";
-    opts.use_ssl_credentials = false;
-    auto exporter =
-        std::make_unique<otlp::OtlpGrpcLogRecordExporter>(opts);
+    const char *value = std::getenv("SPDLOG_LEVEL");
+    if (value == nullptr)
+        return spdlog::level::info;
+    const std::string level(value);
+    if (level == "trace")
+        return spdlog::level::trace;
+    if (level == "debug")
+        return spdlog::level::debug;
+    if (level == "warn")
+        return spdlog::level::warn;
+    if (level == "error")
+        return spdlog::level::err;
+    return spdlog::level::info;
+}
 
-    // ── 2. BatchLogRecordProcessor (异步批量发送，避免阻塞) ──
-    auto processor =
-        std::make_unique<sdklogs::BatchLogRecordProcessor>(std::move(exporter));
+} // namespace
 
-    // ── 3. Resource ──
-    auto resource_attrs = resource::ResourceAttributes{
-        {opentelemetry::semconv::service::kServiceName, "ape-server"},
-        {"service.namespace", "ape-im"},
-    };
-    auto res = resource::Resource::Create(resource_attrs);
+void InitLogger(const OtelConfig &config)
+{
+    if (config.disabled)
+    {
+        auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        auto logger = std::make_shared<spdlog::logger>("ape-server", console_sink);
+        logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%t] %v");
+        logger->set_level(LevelFromEnv());
+        spdlog::set_default_logger(logger);
+        return;
+    }
 
-    // ── 4. LoggerProvider ──
-    auto provider = sdklogs::LoggerProviderFactory::Create(
-        std::move(processor), res);
+    otlp::OtlpGrpcLogRecordExporterOptions options;
+    options.endpoint = config.endpoint;
+    options.use_ssl_credentials = !config.insecure;
+    auto exporter = std::make_unique<otlp::OtlpGrpcLogRecordExporter>(options);
+
+    auto processor = std::make_unique<sdklogs::BatchLogRecordProcessor>(std::move(exporter));
+    auto provider =
+        sdklogs::LoggerProviderFactory::Create(std::move(processor), BuildResource(config));
 
     auto otel_logger = provider->GetLogger("ape-server", "", "1.0.0");
-
-    // 转移所有权到全局 Provider
     logs::Provider::SetLoggerProvider(
         std::shared_ptr<logs::LoggerProvider>(std::move(provider)));
 
-    // ── 5. spdlog multi-sink: 终端 + OTel/ES ──
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    auto otel_sink     = std::make_shared<SpdlogOtelSink>();
+    auto otel_sink = std::make_shared<SpdlogOtelSink>();
     otel_sink->SetOtelLogger(otel_logger);
 
     std::vector<spdlog::sink_ptr> sinks = {console_sink, otel_sink};
-    auto spdlog_logger = std::make_shared<spdlog::logger>("ape-server", sinks.begin(), sinks.end());
-    spdlog::set_default_logger(spdlog_logger);
-    spdlog::info("[Otel] Logger initialized — all spdlog messages now carry trace_id");
+    auto logger = std::make_shared<spdlog::logger>("ape-server", sinks.begin(), sinks.end());
+    logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] [%t] %v");
+    logger->set_level(LevelFromEnv());
+    logger->flush_on(spdlog::level::warn);
+    spdlog::set_default_logger(logger);
+}
+
+void CleanupLogger()
+{
+    spdlog::default_logger()->flush();
+    auto provider = logs::Provider::GetLoggerProvider();
+    if (!provider)
+        return;
+    if (auto *sdk_provider = dynamic_cast<sdklogs::LoggerProvider *>(provider.get()))
+    {
+        sdk_provider->ForceFlush(std::chrono::seconds(3));
+        sdk_provider->Shutdown(std::chrono::seconds(3));
+    }
 }
 
 } // namespace otel

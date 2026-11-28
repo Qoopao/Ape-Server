@@ -14,7 +14,8 @@ class BackbonServiceImpl;
 
 struct ServiceInfo {
     std::string service;
-    std::vector<std::string> ipports;
+    std::string instance_id;
+    std::string address;
     std::vector<std::string> methods;
 };
 
@@ -25,7 +26,8 @@ class BackbonClient {
 
   boost::asio::awaitable<backbon::CheckUserOnlineResp> CheckUserOnline();
   boost::asio::awaitable<backbon::RegisterServiceResp> RegisterService(ServiceInfo service_info);
-  boost::asio::awaitable<backbon::UnregisterServiceResp> UnregisterService();
+  boost::asio::awaitable<backbon::UnregisterServiceResp> UnregisterService(const std::string &service,
+                                                                          const std::string &instance_id);
   boost::asio::awaitable<backbon::GetServiceResp> GetServicesList(const std::string &service_name);
 
  private:

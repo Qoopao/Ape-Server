@@ -1,0 +1,876 @@
+{
+  "meta": {
+    "runId": "ape_full_185220",
+    "startedAt": "2026-11-28T18:52:23+0800",
+    "finishedAt": "2026-11-28T18:54:46+0800",
+    "durationSec": 143.0,
+    "clients": 20,
+    "rates": [
+      5,
+      10,
+      20,
+      30,
+      40
+    ],
+    "phaseDurationSec": 20.0,
+    "setupSeconds": 3.24,
+    "gateway": "wss://127.0.0.1:6666",
+    "protocol": "type 90/91/101/104/106",
+    "warmupAttempted": 101
+  },
+  "setup": {
+    "clients": 20,
+    "registerAndLoginSeconds": 3.24,
+    "friendships": 10
+  },
+  "totals": {
+    "attempted": 2105,
+    "delivered": 1336,
+    "sendErrors": 0,
+    "deliveryRatePct": 63.47
+  },
+  "phases": [
+    {
+      "targetRps": 5,
+      "durationSec": 20.0,
+      "attempted": 101,
+      "accepted": 99,
+      "delivered": 101,
+      "sendErrors": 0,
+      "sentRps": 5.0,
+      "achievedRps": 5.0,
+      "errorRatePct": 0.0,
+      "latency": {
+        "count": 101,
+        "avgMs": 216.13,
+        "p50Ms": 201.72,
+        "p90Ms": 346.42,
+        "p95Ms": 375.08,
+        "p99Ms": 397.93,
+        "maxMs": 405.27
+      },
+      "errorCodes": {}
+    },
+    {
+      "targetRps": 10,
+      "durationSec": 20.0,
+      "attempted": 201,
+      "accepted": 201,
+      "delivered": 201,
+      "sendErrors": 0,
+      "sentRps": 10.0,
+      "achievedRps": 10.0,
+      "errorRatePct": 0.0,
+      "latency": {
+        "count": 201,
+        "avgMs": 168.42,
+        "p50Ms": 141.2,
+        "p90Ms": 291.51,
+        "p95Ms": 331.11,
+        "p99Ms": 349.38,
+        "maxMs": 376.53
+      },
+      "errorCodes": {}
+    },
+    {
+      "targetRps": 20,
+      "durationSec": 20.0,
+      "attempted": 401,
+      "accepted": 383,
+      "delivered": 383,
+      "sendErrors": 0,
+      "sentRps": 20.0,
+      "achievedRps": 19.1,
+      "errorRatePct": 0.0,
+      "latency": {
+        "count": 383,
+        "avgMs": 1069.94,
+        "p50Ms": 711.99,
+        "p90Ms": 2576.61,
+        "p95Ms": 2684.19,
+        "p99Ms": 2850.68,
+        "maxMs": 3032.47
+      },
+      "errorCodes": {}
+    },
+    {
+      "targetRps": 30,
+      "durationSec": 20.0,
+      "attempted": 601,
+      "accepted": 396,
+      "delivered": 397,
+      "sendErrors": 0,
+      "sentRps": 30.0,
+      "achievedRps": 19.8,
+      "errorRatePct": 0.0,
+      "latency": {
+        "count": 397,
+        "avgMs": 5649.12,
+        "p50Ms": 5694.03,
+        "p90Ms": 8221.42,
+        "p95Ms": 8497.16,
+        "p99Ms": 8839.05,
+        "maxMs": 9072.45
+      },
+      "errorCodes": {}
+    },
+    {
+      "targetRps": 40,
+      "durationSec": 20.0,
+      "attempted": 801,
+      "accepted": 253,
+      "delivered": 254,
+      "sendErrors": 0,
+      "sentRps": 40.0,
+      "achievedRps": 12.7,
+      "errorRatePct": 0.0,
+      "latency": {
+        "count": 254,
+        "avgMs": 12808.82,
+        "p50Ms": 12871.44,
+        "p90Ms": 15024.17,
+        "p95Ms": 15385.0,
+        "p99Ms": 15612.93,
+        "maxMs": 16326.07
+      },
+      "errorCodes": {}
+    }
+  ],
+  "series": [
+    {
+      "phase": 1,
+      "second": 0,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 248.71
+    },
+    {
+      "phase": 1,
+      "second": 1,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 261.4
+    },
+    {
+      "phase": 1,
+      "second": 2,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 294.15
+    },
+    {
+      "phase": 1,
+      "second": 3,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 231.86
+    },
+    {
+      "phase": 1,
+      "second": 4,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 292.6
+    },
+    {
+      "phase": 1,
+      "second": 5,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 180.59
+    },
+    {
+      "phase": 1,
+      "second": 6,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 272.48
+    },
+    {
+      "phase": 1,
+      "second": 7,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 268.97
+    },
+    {
+      "phase": 1,
+      "second": 8,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 314.79
+    },
+    {
+      "phase": 1,
+      "second": 9,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 296.19
+    },
+    {
+      "phase": 1,
+      "second": 10,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 196.66
+    },
+    {
+      "phase": 1,
+      "second": 11,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 250.82
+    },
+    {
+      "phase": 1,
+      "second": 12,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 193.02
+    },
+    {
+      "phase": 1,
+      "second": 13,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 240.26
+    },
+    {
+      "phase": 1,
+      "second": 14,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 264.94
+    },
+    {
+      "phase": 1,
+      "second": 15,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 293.81
+    },
+    {
+      "phase": 1,
+      "second": 16,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 273.48
+    },
+    {
+      "phase": 1,
+      "second": 17,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 264.0
+    },
+    {
+      "phase": 1,
+      "second": 18,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 230.72
+    },
+    {
+      "phase": 1,
+      "second": 19,
+      "attempted": 5,
+      "delivered": 5,
+      "p95Ms": 251.59
+    },
+    {
+      "phase": 1,
+      "second": 20,
+      "attempted": 1,
+      "delivered": 1,
+      "p95Ms": 395.07
+    },
+    {
+      "phase": 2,
+      "second": 0,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 239.49
+    },
+    {
+      "phase": 2,
+      "second": 1,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 191.25
+    },
+    {
+      "phase": 2,
+      "second": 2,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 268.15
+    },
+    {
+      "phase": 2,
+      "second": 3,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 344.65
+    },
+    {
+      "phase": 2,
+      "second": 4,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 308.11
+    },
+    {
+      "phase": 2,
+      "second": 5,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 143.34
+    },
+    {
+      "phase": 2,
+      "second": 6,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 203.65
+    },
+    {
+      "phase": 2,
+      "second": 7,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 266.31
+    },
+    {
+      "phase": 2,
+      "second": 8,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 278.03
+    },
+    {
+      "phase": 2,
+      "second": 9,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 239.12
+    },
+    {
+      "phase": 2,
+      "second": 10,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 146.41
+    },
+    {
+      "phase": 2,
+      "second": 11,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 252.7
+    },
+    {
+      "phase": 2,
+      "second": 12,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 135.97
+    },
+    {
+      "phase": 2,
+      "second": 13,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 333.8
+    },
+    {
+      "phase": 2,
+      "second": 14,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 289.88
+    },
+    {
+      "phase": 2,
+      "second": 15,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 204.68
+    },
+    {
+      "phase": 2,
+      "second": 16,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 331.11
+    },
+    {
+      "phase": 2,
+      "second": 17,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 299.79
+    },
+    {
+      "phase": 2,
+      "second": 18,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 336.76
+    },
+    {
+      "phase": 2,
+      "second": 19,
+      "attempted": 10,
+      "delivered": 10,
+      "p95Ms": 135.67
+    },
+    {
+      "phase": 2,
+      "second": 20,
+      "attempted": 1,
+      "delivered": 1,
+      "p95Ms": 130.02
+    },
+    {
+      "phase": 3,
+      "second": 0,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 227.36
+    },
+    {
+      "phase": 3,
+      "second": 1,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 289.29
+    },
+    {
+      "phase": 3,
+      "second": 2,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 314.3
+    },
+    {
+      "phase": 3,
+      "second": 3,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 327.71
+    },
+    {
+      "phase": 3,
+      "second": 4,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 311.82
+    },
+    {
+      "phase": 3,
+      "second": 5,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 313.66
+    },
+    {
+      "phase": 3,
+      "second": 6,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 309.17
+    },
+    {
+      "phase": 3,
+      "second": 7,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 407.92
+    },
+    {
+      "phase": 3,
+      "second": 8,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 586.51
+    },
+    {
+      "phase": 3,
+      "second": 9,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 796.6
+    },
+    {
+      "phase": 3,
+      "second": 10,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 1187.32
+    },
+    {
+      "phase": 3,
+      "second": 11,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 1323.16
+    },
+    {
+      "phase": 3,
+      "second": 12,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 1393.87
+    },
+    {
+      "phase": 3,
+      "second": 13,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 1655.7
+    },
+    {
+      "phase": 3,
+      "second": 14,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 1901.6
+    },
+    {
+      "phase": 3,
+      "second": 15,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 2330.21
+    },
+    {
+      "phase": 3,
+      "second": 16,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 2576.85
+    },
+    {
+      "phase": 3,
+      "second": 17,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 2711.84
+    },
+    {
+      "phase": 3,
+      "second": 18,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 2877.81
+    },
+    {
+      "phase": 3,
+      "second": 19,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 3212.17
+    },
+    {
+      "phase": 3,
+      "second": 20,
+      "attempted": 1,
+      "delivered": 1,
+      "p95Ms": 3065.58
+    },
+    {
+      "phase": 4,
+      "second": 0,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 2497.22
+    },
+    {
+      "phase": 4,
+      "second": 1,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 3540.47
+    },
+    {
+      "phase": 4,
+      "second": 2,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 4122.22
+    },
+    {
+      "phase": 4,
+      "second": 3,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 4516.7
+    },
+    {
+      "phase": 4,
+      "second": 4,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 5032.36
+    },
+    {
+      "phase": 4,
+      "second": 5,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 5464.91
+    },
+    {
+      "phase": 4,
+      "second": 6,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 6044.5
+    },
+    {
+      "phase": 4,
+      "second": 7,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 6456.91
+    },
+    {
+      "phase": 4,
+      "second": 8,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 7103.49
+    },
+    {
+      "phase": 4,
+      "second": 9,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 7436.93
+    },
+    {
+      "phase": 4,
+      "second": 10,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 8030.89
+    },
+    {
+      "phase": 4,
+      "second": 11,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 8498.59
+    },
+    {
+      "phase": 4,
+      "second": 12,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 8899.34
+    },
+    {
+      "phase": 4,
+      "second": 13,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 9307.45
+    },
+    {
+      "phase": 4,
+      "second": 14,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 9802.4
+    },
+    {
+      "phase": 4,
+      "second": 15,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 10104.7
+    },
+    {
+      "phase": 4,
+      "second": 16,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 10604.96
+    },
+    {
+      "phase": 4,
+      "second": 17,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 10924.83
+    },
+    {
+      "phase": 4,
+      "second": 18,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 11689.55
+    },
+    {
+      "phase": 4,
+      "second": 19,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 11944.52
+    },
+    {
+      "phase": 4,
+      "second": 20,
+      "attempted": 1,
+      "delivered": 1,
+      "p95Ms": 12814.72
+    },
+    {
+      "phase": 5,
+      "second": 0,
+      "attempted": 40,
+      "delivered": 40,
+      "p95Ms": 11371.6
+    },
+    {
+      "phase": 5,
+      "second": 1,
+      "attempted": 40,
+      "delivered": 40,
+      "p95Ms": 12060.63
+    },
+    {
+      "phase": 5,
+      "second": 2,
+      "attempted": 40,
+      "delivered": 40,
+      "p95Ms": 13025.31
+    },
+    {
+      "phase": 5,
+      "second": 3,
+      "attempted": 40,
+      "delivered": 40,
+      "p95Ms": 13822.94
+    },
+    {
+      "phase": 5,
+      "second": 4,
+      "attempted": 40,
+      "delivered": 40,
+      "p95Ms": 14756.65
+    },
+    {
+      "phase": 5,
+      "second": 5,
+      "attempted": 40,
+      "delivered": 39,
+      "p95Ms": 15525.68
+    },
+    {
+      "phase": 5,
+      "second": 6,
+      "attempted": 40,
+      "delivered": 15,
+      "p95Ms": 15612.93
+    },
+    {
+      "phase": 5,
+      "second": 7,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 8,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 9,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 10,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 11,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 12,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 13,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 14,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 15,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 16,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 17,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 18,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 19,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 5,
+      "second": 20,
+      "attempted": 1,
+      "delivered": 0,
+      "p95Ms": 0
+    }
+  ]
+}

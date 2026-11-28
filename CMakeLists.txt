@@ -98,6 +98,7 @@ target_link_libraries(main PRIVATE ape-server)
 # target_include_directories(stress_test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/src/proto)
 # target_link_libraries(stress_test PRIVATE ape-server)
 
+option(APE_OBSERVABILITY_TESTS "Build observability unit tests" OFF)
 option(APE_REGISTRATION_TESTS "Build isolated MySQL registration integration tests" OFF)
 option(APE_GROUP_TESTS "Build isolated group chat integration tests" OFF)
 option(APE_MONGO_INDEX_TESTS "Build MongoDB index compatibility tests" OFF)
@@ -120,4 +121,27 @@ endif()
 if(APE_REGISTRATION_TESTS)
     add_executable(registration_integration test/registration_integration.cpp)
     target_link_libraries(registration_integration PRIVATE ape-server)
+endif()
+
+if(APE_OBSERVABILITY_TESTS)
+    # 只编译可观测核心，不链接完整 ape-server（其静态库与 grpc/exporter 存在循环）。
+    add_executable(observability_test
+        test/observability_test.cpp
+        test/observability_tracer_stub.cpp
+        src/om/otel_config.cpp
+        src/om/trace_context.cpp
+        src/om/obs_log.cpp
+        src/om/obs_metrics.cpp
+        src/util/health_server.cpp)
+    target_include_directories(observability_test PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/proto)
+    target_link_libraries(observability_test PRIVATE
+        spdlog::spdlog
+        opentelemetry-cpp::api
+        opentelemetry-cpp::common
+        opentelemetry-cpp::trace
+        opentelemetry-cpp::resources
+        gRPC::grpc++
+        Boost::asio Boost::thread)
 endif()

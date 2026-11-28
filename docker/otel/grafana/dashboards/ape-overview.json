@@ -1,0 +1,84 @@
+{
+  "uid": "ape-overview",
+  "title": "ape · Overview",
+  "tags": ["ape-server", "slo"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {"from": "now-6h", "to": "now"},
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Active WebSocket connections",
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum(ape_ws_connections_active)", "instant": true}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Outbox oldest pending age",
+      "gridPos": {"h": 6, "w": 6, "x": 6, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "max(ape_outbox_oldest_age)", "instant": true}],
+      "fieldConfig": {"defaults": {"unit": "s", "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 30}, {"color": "red", "value": 60}]}}, "overrides": []}
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Kafka consumer lag (max)",
+      "gridPos": {"h": 6, "w": 6, "x": 12, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "max(ape_kafka_lag)", "instant": true}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Send accepted rate (5m)",
+      "gridPos": {"h": 6, "w": 6, "x": 18, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum(rate(ape_im_send_total[5m]))", "instant": true}],
+      "fieldConfig": {"defaults": {"unit": "reqps"}, "overrides": []}
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Send p99 latency",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "histogram_quantile(0.99, sum by (le, kind) (rate(ape_im_send_duration_milliseconds_bucket[5m])))", "legendFormat": "{{kind}}"}],
+      "fieldConfig": {"defaults": {"unit": "ms"}, "overrides": []}
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Push results",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (result) (rate(ape_push_deliveries_total[5m]))", "legendFormat": "{{result}}"}],
+      "fieldConfig": {"defaults": {"unit": "ops"}, "overrides": []}
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Outbox pending by operation",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 14},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "sum by (operation) (ape_outbox_pending)", "legendFormat": "op={{operation}}"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []}
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "Outbox oldest age by operation",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 14},
+      "datasource": {"type": "prometheus", "uid": "vm"},
+      "targets": [{"refId": "A", "expr": "max by (operation) (ape_outbox_oldest_age)", "legendFormat": "op={{operation}}"}],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []}
+    }
+  ]
+}

@@ -23,6 +23,8 @@ namespace groupchat {
 
 static const char* GroupService_method_names[] = {
   "/groupchat.GroupService/Execute",
+  "/groupchat.GroupService/SendGroupMessages",
+  "/groupchat.GroupService/GetGroupChatHistory",
 };
 
 std::unique_ptr< GroupService::Stub> GroupService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -33,6 +35,8 @@ std::unique_ptr< GroupService::Stub> GroupService::NewStub(const std::shared_ptr
 
 GroupService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_Execute_(GroupService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_SendGroupMessages_(GroupService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetGroupChatHistory_(GroupService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status GroupService::Stub::Execute(::grpc::ClientContext* context, const ::groupchat::Command& request, ::groupchat::Reply* response) {
@@ -58,6 +62,52 @@ void GroupService::Stub::async::Execute(::grpc::ClientContext* context, const ::
   return result;
 }
 
+::grpc::Status GroupService::Stub::SendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::groupchat::SendGroupMessageResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::groupchat::SendGroupMessageReq, ::groupchat::SendGroupMessageResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_SendGroupMessages_, context, request, response);
+}
+
+void GroupService::Stub::async::SendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq* request, ::groupchat::SendGroupMessageResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::groupchat::SendGroupMessageReq, ::groupchat::SendGroupMessageResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SendGroupMessages_, context, request, response, std::move(f));
+}
+
+void GroupService::Stub::async::SendGroupMessages(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq* request, ::groupchat::SendGroupMessageResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_SendGroupMessages_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::groupchat::SendGroupMessageResp>* GroupService::Stub::PrepareAsyncSendGroupMessagesRaw(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::groupchat::SendGroupMessageResp, ::groupchat::SendGroupMessageReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_SendGroupMessages_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::groupchat::SendGroupMessageResp>* GroupService::Stub::AsyncSendGroupMessagesRaw(::grpc::ClientContext* context, const ::groupchat::SendGroupMessageReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncSendGroupMessagesRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status GroupService::Stub::GetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::groupchat::GetGroupChatHistoryResp* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::groupchat::GetGroupChatHistoryReq, ::groupchat::GetGroupChatHistoryResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetGroupChatHistory_, context, request, response);
+}
+
+void GroupService::Stub::async::GetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq* request, ::groupchat::GetGroupChatHistoryResp* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::groupchat::GetGroupChatHistoryReq, ::groupchat::GetGroupChatHistoryResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetGroupChatHistory_, context, request, response, std::move(f));
+}
+
+void GroupService::Stub::async::GetGroupChatHistory(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq* request, ::groupchat::GetGroupChatHistoryResp* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetGroupChatHistory_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::groupchat::GetGroupChatHistoryResp>* GroupService::Stub::PrepareAsyncGetGroupChatHistoryRaw(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::groupchat::GetGroupChatHistoryResp, ::groupchat::GetGroupChatHistoryReq, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetGroupChatHistory_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::groupchat::GetGroupChatHistoryResp>* GroupService::Stub::AsyncGetGroupChatHistoryRaw(::grpc::ClientContext* context, const ::groupchat::GetGroupChatHistoryReq& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetGroupChatHistoryRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 GroupService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       GroupService_method_names[0],
@@ -69,12 +119,46 @@ GroupService::Service::Service() {
              ::groupchat::Reply* resp) {
                return service->Execute(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      GroupService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< GroupService::Service, ::groupchat::SendGroupMessageReq, ::groupchat::SendGroupMessageResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](GroupService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::groupchat::SendGroupMessageReq* req,
+             ::groupchat::SendGroupMessageResp* resp) {
+               return service->SendGroupMessages(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      GroupService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< GroupService::Service, ::groupchat::GetGroupChatHistoryReq, ::groupchat::GetGroupChatHistoryResp, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](GroupService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::groupchat::GetGroupChatHistoryReq* req,
+             ::groupchat::GetGroupChatHistoryResp* resp) {
+               return service->GetGroupChatHistory(ctx, req, resp);
+             }, this)));
 }
 
 GroupService::Service::~Service() {
 }
 
 ::grpc::Status GroupService::Service::Execute(::grpc::ServerContext* context, const ::groupchat::Command* request, ::groupchat::Reply* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status GroupService::Service::SendGroupMessages(::grpc::ServerContext* context, const ::groupchat::SendGroupMessageReq* request, ::groupchat::SendGroupMessageResp* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status GroupService::Service::GetGroupChatHistory(::grpc::ServerContext* context, const ::groupchat::GetGroupChatHistoryReq* request, ::groupchat::GetGroupChatHistoryResp* response) {
   (void) context;
   (void) request;
   (void) response;

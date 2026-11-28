@@ -2,58 +2,53 @@
 
 #include <opentelemetry/exporters/otlp/otlp_grpc_exporter.h>
 #include <opentelemetry/exporters/otlp/otlp_grpc_exporter_options.h>
-#include <opentelemetry/sdk/resource/resource.h>
 #include <opentelemetry/sdk/trace/batch_span_processor.h>
+#include <opentelemetry/sdk/trace/sampler.h>
+#include <opentelemetry/sdk/trace/samplers/trace_id_ratio.h>
 #include <opentelemetry/sdk/trace/tracer_provider.h>
-#include <opentelemetry/semconv/service_attributes.h>
 #include <opentelemetry/trace/provider.h>
 
+#include <chrono>
 #include <memory>
 
 namespace ape {
 namespace otel {
 
-namespace trace    = opentelemetry::trace;
+namespace trace = opentelemetry::trace;
 namespace sdktrace = opentelemetry::sdk::trace;
-namespace resource = opentelemetry::sdk::resource;
-namespace otlp     = opentelemetry::exporter::otlp;
+namespace otlp = opentelemetry::exporter::otlp;
 
-// 如果不加这个，两次调用Init，旧TracerProvider被动销毁时可能不会调用Shutdown，导致
-// 资源泄露，防御编程一手
+// 不加这个标记时，两次 Init 会让旧 TracerProvider 被动销毁，可能不走 Shutdown。
 static bool initialized = false;
 
-void InitTracer(const std::string &service_name)
+void InitTracer(const OtelConfig &config)
 {
-    if (initialized) return;
+    if (initialized || config.disabled)
+        return;
 
-    // ── 1. 配置 OTLP gRPC Exporter ──
-    otlp::OtlpGrpcExporterOptions opts;
-    opts.endpoint            = "localhost:4317"; // OTEL Collector
-    opts.use_ssl_credentials = false;            // 内网不需要 TLS
-    auto exporter = std::make_unique<otlp::OtlpGrpcExporter>(opts);
+    otlp::OtlpGrpcExporterOptions options;
+    options.endpoint = config.endpoint;
+    options.use_ssl_credentials = !config.insecure;
+    auto exporter = std::make_unique<otlp::OtlpGrpcExporter>(options);
 
-    // ── 2. 配置 BatchSpanProcessor ──
-    sdktrace::BatchSpanProcessorOptions bsp_opts;
-    bsp_opts.max_queue_size        = 2048;
-    bsp_opts.schedule_delay_millis = std::chrono::milliseconds(5000);
-    bsp_opts.max_export_batch_size = 512;
-    auto processor = std::make_unique<sdktrace::BatchSpanProcessor>(
-        std::move(exporter), bsp_opts);
+    sdktrace::BatchSpanProcessorOptions processor_options;
+    processor_options.max_queue_size = 2048;
+    processor_options.schedule_delay_millis = std::chrono::milliseconds(5000);
+    processor_options.max_export_batch_size = 512;
+    auto processor =
+        std::make_unique<sdktrace::BatchSpanProcessor>(std::move(exporter), processor_options);
 
-    // ── 3. 配置 Resource (服务名会显示在 Jaeger) ──
-    auto resource_attrs = resource::ResourceAttributes{
-        {opentelemetry::semconv::service::kServiceName, service_name},
-        {"service.namespace", "ape-im"},
-    };
-    auto res = resource::Resource::Create(resource_attrs);
+    std::unique_ptr<sdktrace::Sampler> sampler;
+    if (config.sample_ratio < 1.0)
+        sampler = std::make_unique<sdktrace::TraceIdRatioBasedSampler>(config.sample_ratio);
+    else
+        sampler = std::make_unique<sdktrace::AlwaysOnSampler>();
 
-    // ── 4. 创建 TracerProvider 并设为全局 ──
-    auto g_provider = std::make_unique<sdktrace::TracerProvider>(
-        std::move(processor), res);
+    auto provider = std::make_unique<sdktrace::TracerProvider>(
+        std::move(processor), BuildResource(config), std::move(sampler));
 
     trace::Provider::SetTracerProvider(
-        std::shared_ptr<trace::TracerProvider>(std::move(g_provider)));
-
+        std::shared_ptr<trace::TracerProvider>(std::move(provider)));
     initialized = true;
 }
 
@@ -61,19 +56,20 @@ opentelemetry::nostd::shared_ptr<trace::Tracer> GetTracer()
 {
     auto *provider = dynamic_cast<sdktrace::TracerProvider *>(
         trace::Provider::GetTracerProvider().get());
-    if (!provider)
+    if (provider == nullptr)
         return {};
     return provider->GetTracer("ape-server", "1.0.0");
 }
 
-void CleanupTracer() {
+void CleanupTracer()
+{
     auto provider = trace::Provider::GetTracerProvider();
-    if (provider) {
-        auto* sdk_provider = dynamic_cast<sdktrace::TracerProvider*>(provider.get());
-        if (sdk_provider) {
-            sdk_provider->ForceFlush(std::chrono::seconds(5));
-            sdk_provider->Shutdown(std::chrono::seconds(5));
-        }
+    if (!provider)
+        return;
+    if (auto *sdk_provider = dynamic_cast<sdktrace::TracerProvider *>(provider.get()))
+    {
+        sdk_provider->ForceFlush(std::chrono::seconds(3));
+        sdk_provider->Shutdown(std::chrono::seconds(3));
     }
 }
 

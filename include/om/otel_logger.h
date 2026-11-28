@@ -1,13 +1,16 @@
 #ifndef OTEL_LOGGER_H
 #define OTEL_LOGGER_H
 
+#include "om/otel_config.h"
+
 namespace ape {
 namespace otel {
 
-// 初始化 OTel LoggerProvider + spdlog OTel sink
-// 从此之后所有 spdlog::info/warn/error 都会带上 trace_id + span_id
-// 通过 OTLP → Collector → Elasticsearch → 最终在 Kibana 中查看
-void InitLogger();
+// 初始化 OTel Logs（OTLP gRPC exporter）+ spdlog 双 sink（控制台 + OTel）。
+void InitLogger(const OtelConfig &config);
+
+// 关闭前 flush：否则 BatchLogRecordProcessor 里最后几秒的日志会丢。
+void CleanupLogger();
 
 } // namespace otel
 } // namespace ape

@@ -9,10 +9,13 @@
 #include <boost/beast.hpp>
 #include <boost/asio/ssl.hpp>
 
+#include <atomic>
 #include <climits>
 #include <cstdint>
+#include <functional>
 #include <grpcpp/channel.h>
 #include <memory>
+#include <string>
 
 #include "util/ioc_pool.h"
 
@@ -23,6 +26,7 @@ class PushClient;
 class GroupClient;
 class FriendClient;
 class ConversationClient;
+class GatewayRouter;
 
 using boost::asio::awaitable;
 using boost::asio::co_spawn;
@@ -34,13 +38,24 @@ class WebServer {
 
 public:
   WebServer(int ioc_pool_size, uint16_t port,
-            std::unique_ptr<BackbonClient> backbon_client);
+            std::unique_ptr<BackbonClient> backbon_client,
+            std::string instance_id, std::string gateway_push_addr);
   ~WebServer();
 
   boost::asio::awaitable<void> listener();
 
   void start();
+
+  // 网关优雅下线链路：注销 etcd → 关 acceptor → DRAINING → grace → 强制关闭
   void stop();
+
+  // /readyz 用：进程是否已进入 draining。
+  bool isDraining() const { return stopping_.load(); }
+
+  // 第 1 步"SIGTERM 先从 etcd 注销"由 main 注入
+  void SetDrainHandler(std::function<void()> handler) {
+    drain_handler_ = std::move(handler);
+  }
 
   boost::asio::awaitable<std::string>
   discover_Service(const std::string &service_name,
@@ -53,6 +68,8 @@ public:
   MsgClient *getMsgClient() { return msg_client_.get(); }
   PushClient *getPushClient() { return push_client_.get(); }
   GroupClient *getGroupClient() { return group_client_.get(); }
+  GatewayRouter *getRouter() { return router_.get(); }
+  const std::string &instanceId() const { return instance_id_; }
 
   // 异步初始化：发现所有下游服务并启动监听循环
   boost::asio::awaitable<void> init_and_listen();
@@ -76,6 +93,12 @@ private:
   std::shared_ptr<grpc::Channel> conversation_channel_;
   std::unique_ptr<ConversationClient> conversation_client_;
   std::unique_ptr<BackbonClient> backbon_client_;
+  std::unique_ptr<GatewayRouter> router_;
+
+  std::string instance_id_;
+  std::string gateway_push_addr_;
+  std::function<void()> drain_handler_;
+  std::atomic<bool> stopping_{false};
 };
 
 #endif

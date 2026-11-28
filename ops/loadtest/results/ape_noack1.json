@@ -1,0 +1,199 @@
+{
+  "meta": {
+    "runId": "ape_noack1",
+    "startedAt": "2026-11-28T18:46:39+0800",
+    "finishedAt": "2026-11-28T18:47:24+0800",
+    "durationSec": 44.3,
+    "clients": 20,
+    "rates": [
+      30
+    ],
+    "phaseDurationSec": 20.0,
+    "setupSeconds": 4.23,
+    "gateway": "wss://127.0.0.1:6666",
+    "protocol": "type 90/91/101/104/106"
+  },
+  "setup": {
+    "clients": 20,
+    "registerAndLoginSeconds": 4.23,
+    "friendships": 10
+  },
+  "totals": {
+    "attempted": 601,
+    "delivered": 508,
+    "sendErrors": 0,
+    "deliveryRatePct": 84.53
+  },
+  "phases": [
+    {
+      "targetRps": 30,
+      "durationSec": 20.0,
+      "attempted": 601,
+      "accepted": 505,
+      "delivered": 508,
+      "sendErrors": 0,
+      "sentRps": 30.0,
+      "achievedRps": 25.4,
+      "errorRatePct": 0.0,
+      "latency": {
+        "count": 508,
+        "avgMs": 2545.02,
+        "p50Ms": 2549.09,
+        "p90Ms": 4489.58,
+        "p95Ms": 4751.59,
+        "p99Ms": 5027.98,
+        "maxMs": 5141.96
+      },
+      "errorCodes": {}
+    }
+  ],
+  "series": [
+    {
+      "phase": 1,
+      "second": 0,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 434.36
+    },
+    {
+      "phase": 1,
+      "second": 1,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 721.97
+    },
+    {
+      "phase": 1,
+      "second": 2,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 987.83
+    },
+    {
+      "phase": 1,
+      "second": 3,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 1211.63
+    },
+    {
+      "phase": 1,
+      "second": 4,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 1509.75
+    },
+    {
+      "phase": 1,
+      "second": 5,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 1846.36
+    },
+    {
+      "phase": 1,
+      "second": 6,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 2146.8
+    },
+    {
+      "phase": 1,
+      "second": 7,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 2420.45
+    },
+    {
+      "phase": 1,
+      "second": 8,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 2773.71
+    },
+    {
+      "phase": 1,
+      "second": 9,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 3067.86
+    },
+    {
+      "phase": 1,
+      "second": 10,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 3288.31
+    },
+    {
+      "phase": 1,
+      "second": 11,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 3585.81
+    },
+    {
+      "phase": 1,
+      "second": 12,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 3884.34
+    },
+    {
+      "phase": 1,
+      "second": 13,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 4200.12
+    },
+    {
+      "phase": 1,
+      "second": 14,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 4489.58
+    },
+    {
+      "phase": 1,
+      "second": 15,
+      "attempted": 30,
+      "delivered": 30,
+      "p95Ms": 4891.9
+    },
+    {
+      "phase": 1,
+      "second": 16,
+      "attempted": 30,
+      "delivered": 28,
+      "p95Ms": 5093.79
+    },
+    {
+      "phase": 1,
+      "second": 17,
+      "attempted": 30,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 1,
+      "second": 18,
+      "attempted": 30,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 1,
+      "second": 19,
+      "attempted": 30,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 1,
+      "second": 20,
+      "attempted": 1,
+      "delivered": 0,
+      "p95Ms": 0
+    }
+  ]
+}

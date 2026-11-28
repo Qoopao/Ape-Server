@@ -43,38 +43,20 @@ class PushService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::PushMsgResp>> PrepareAsyncPushMsg(::grpc::ClientContext* context, const ::push::PushMsgReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::PushMsgResp>>(PrepareAsyncPushMsgRaw(context, request, cq));
     }
-    virtual ::grpc::Status DelUserPushToken(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq& request, ::push::DelUserPushTokenResp* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::DelUserPushTokenResp>> AsyncDelUserPushToken(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::DelUserPushTokenResp>>(AsyncDelUserPushTokenRaw(context, request, cq));
+    virtual ::grpc::Status AckConversations(::grpc::ClientContext* context, const ::push::AckConversationsReq& request, ::push::AckConversationsResp* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AckConversationsResp>> AsyncAckConversations(::grpc::ClientContext* context, const ::push::AckConversationsReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AckConversationsResp>>(AsyncAckConversationsRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::DelUserPushTokenResp>> PrepareAsyncDelUserPushToken(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::DelUserPushTokenResp>>(PrepareAsyncDelUserPushTokenRaw(context, request, cq));
-    }
-    virtual ::grpc::Status AckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::push::AckMsgResp* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AckMsgResp>> AsyncAckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AckMsgResp>>(AsyncAckMsgRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AckMsgResp>> PrepareAsyncAckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AckMsgResp>>(PrepareAsyncAckMsgRaw(context, request, cq));
-    }
-    virtual ::grpc::Status AddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::push::AddPendingOfflineAckResp* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AddPendingOfflineAckResp>> AsyncAddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AddPendingOfflineAckResp>>(AsyncAddPendingOfflineAckRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AddPendingOfflineAckResp>> PrepareAsyncAddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AddPendingOfflineAckResp>>(PrepareAsyncAddPendingOfflineAckRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AckConversationsResp>> PrepareAsyncAckConversations(::grpc::ClientContext* context, const ::push::AckConversationsReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::push::AckConversationsResp>>(PrepareAsyncAckConversationsRaw(context, request, cq));
     }
     class async_interface {
      public:
       virtual ~async_interface() {}
       virtual void PushMsg(::grpc::ClientContext* context, const ::push::PushMsgReq* request, ::push::PushMsgResp* response, std::function<void(::grpc::Status)>) = 0;
       virtual void PushMsg(::grpc::ClientContext* context, const ::push::PushMsgReq* request, ::push::PushMsgResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void DelUserPushToken(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq* request, ::push::DelUserPushTokenResp* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void DelUserPushToken(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq* request, ::push::DelUserPushTokenResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void AckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq* request, ::push::AckMsgResp* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void AckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq* request, ::push::AckMsgResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void AddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq* request, ::push::AddPendingOfflineAckResp* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void AddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq* request, ::push::AddPendingOfflineAckResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void AckConversations(::grpc::ClientContext* context, const ::push::AckConversationsReq* request, ::push::AckConversationsResp* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AckConversations(::grpc::ClientContext* context, const ::push::AckConversationsReq* request, ::push::AckConversationsResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -82,12 +64,8 @@ class PushService final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::push::PushMsgResp>* AsyncPushMsgRaw(::grpc::ClientContext* context, const ::push::PushMsgReq& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::push::PushMsgResp>* PrepareAsyncPushMsgRaw(::grpc::ClientContext* context, const ::push::PushMsgReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::push::DelUserPushTokenResp>* AsyncDelUserPushTokenRaw(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::push::DelUserPushTokenResp>* PrepareAsyncDelUserPushTokenRaw(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::push::AckMsgResp>* AsyncAckMsgRaw(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::push::AckMsgResp>* PrepareAsyncAckMsgRaw(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::push::AddPendingOfflineAckResp>* AsyncAddPendingOfflineAckRaw(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::push::AddPendingOfflineAckResp>* PrepareAsyncAddPendingOfflineAckRaw(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::push::AckConversationsResp>* AsyncAckConversationsRaw(::grpc::ClientContext* context, const ::push::AckConversationsReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::push::AckConversationsResp>* PrepareAsyncAckConversationsRaw(::grpc::ClientContext* context, const ::push::AckConversationsReq& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -99,38 +77,20 @@ class PushService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::PushMsgResp>> PrepareAsyncPushMsg(::grpc::ClientContext* context, const ::push::PushMsgReq& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::PushMsgResp>>(PrepareAsyncPushMsgRaw(context, request, cq));
     }
-    ::grpc::Status DelUserPushToken(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq& request, ::push::DelUserPushTokenResp* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::DelUserPushTokenResp>> AsyncDelUserPushToken(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::DelUserPushTokenResp>>(AsyncDelUserPushTokenRaw(context, request, cq));
+    ::grpc::Status AckConversations(::grpc::ClientContext* context, const ::push::AckConversationsReq& request, ::push::AckConversationsResp* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AckConversationsResp>> AsyncAckConversations(::grpc::ClientContext* context, const ::push::AckConversationsReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AckConversationsResp>>(AsyncAckConversationsRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::DelUserPushTokenResp>> PrepareAsyncDelUserPushToken(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::DelUserPushTokenResp>>(PrepareAsyncDelUserPushTokenRaw(context, request, cq));
-    }
-    ::grpc::Status AckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::push::AckMsgResp* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AckMsgResp>> AsyncAckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AckMsgResp>>(AsyncAckMsgRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AckMsgResp>> PrepareAsyncAckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AckMsgResp>>(PrepareAsyncAckMsgRaw(context, request, cq));
-    }
-    ::grpc::Status AddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::push::AddPendingOfflineAckResp* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AddPendingOfflineAckResp>> AsyncAddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AddPendingOfflineAckResp>>(AsyncAddPendingOfflineAckRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AddPendingOfflineAckResp>> PrepareAsyncAddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AddPendingOfflineAckResp>>(PrepareAsyncAddPendingOfflineAckRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AckConversationsResp>> PrepareAsyncAckConversations(::grpc::ClientContext* context, const ::push::AckConversationsReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::push::AckConversationsResp>>(PrepareAsyncAckConversationsRaw(context, request, cq));
     }
     class async final :
       public StubInterface::async_interface {
      public:
       void PushMsg(::grpc::ClientContext* context, const ::push::PushMsgReq* request, ::push::PushMsgResp* response, std::function<void(::grpc::Status)>) override;
       void PushMsg(::grpc::ClientContext* context, const ::push::PushMsgReq* request, ::push::PushMsgResp* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void DelUserPushToken(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq* request, ::push::DelUserPushTokenResp* response, std::function<void(::grpc::Status)>) override;
-      void DelUserPushToken(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq* request, ::push::DelUserPushTokenResp* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void AckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq* request, ::push::AckMsgResp* response, std::function<void(::grpc::Status)>) override;
-      void AckMsg(::grpc::ClientContext* context, const ::push::AckMsgReq* request, ::push::AckMsgResp* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void AddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq* request, ::push::AddPendingOfflineAckResp* response, std::function<void(::grpc::Status)>) override;
-      void AddPendingOfflineAck(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq* request, ::push::AddPendingOfflineAckResp* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void AckConversations(::grpc::ClientContext* context, const ::push::AckConversationsReq* request, ::push::AckConversationsResp* response, std::function<void(::grpc::Status)>) override;
+      void AckConversations(::grpc::ClientContext* context, const ::push::AckConversationsReq* request, ::push::AckConversationsResp* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -144,16 +104,10 @@ class PushService final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::push::PushMsgResp>* AsyncPushMsgRaw(::grpc::ClientContext* context, const ::push::PushMsgReq& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::push::PushMsgResp>* PrepareAsyncPushMsgRaw(::grpc::ClientContext* context, const ::push::PushMsgReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::push::DelUserPushTokenResp>* AsyncDelUserPushTokenRaw(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::push::DelUserPushTokenResp>* PrepareAsyncDelUserPushTokenRaw(::grpc::ClientContext* context, const ::push::DelUserPushTokenReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::push::AckMsgResp>* AsyncAckMsgRaw(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::push::AckMsgResp>* PrepareAsyncAckMsgRaw(::grpc::ClientContext* context, const ::push::AckMsgReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::push::AddPendingOfflineAckResp>* AsyncAddPendingOfflineAckRaw(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::push::AddPendingOfflineAckResp>* PrepareAsyncAddPendingOfflineAckRaw(::grpc::ClientContext* context, const ::push::AddPendingOfflineAckReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::push::AckConversationsResp>* AsyncAckConversationsRaw(::grpc::ClientContext* context, const ::push::AckConversationsReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::push::AckConversationsResp>* PrepareAsyncAckConversationsRaw(::grpc::ClientContext* context, const ::push::AckConversationsReq& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_PushMsg_;
-    const ::grpc::internal::RpcMethod rpcmethod_DelUserPushToken_;
-    const ::grpc::internal::RpcMethod rpcmethod_AckMsg_;
-    const ::grpc::internal::RpcMethod rpcmethod_AddPendingOfflineAck_;
+    const ::grpc::internal::RpcMethod rpcmethod_AckConversations_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -162,9 +116,7 @@ class PushService final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status PushMsg(::grpc::ServerContext* context, const ::push::PushMsgReq* request, ::push::PushMsgResp* response);
-    virtual ::grpc::Status DelUserPushToken(::grpc::ServerContext* context, const ::push::DelUserPushTokenReq* request, ::push::DelUserPushTokenResp* response);
-    virtual ::grpc::Status AckMsg(::grpc::ServerContext* context, const ::push::AckMsgReq* request, ::push::AckMsgResp* response);
-    virtual ::grpc::Status AddPendingOfflineAck(::grpc::ServerContext* context, const ::push::AddPendingOfflineAckReq* request, ::push::AddPendingOfflineAckResp* response);
+    virtual ::grpc::Status AckConversations(::grpc::ServerContext* context, const ::push::AckConversationsReq* request, ::push::AckConversationsResp* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_PushMsg : public BaseClass {
@@ -187,66 +139,26 @@ class PushService final {
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_DelUserPushToken : public BaseClass {
+  class WithAsyncMethod_AckConversations : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod_DelUserPushToken() {
+    WithAsyncMethod_AckConversations() {
       ::grpc::Service::MarkMethodAsync(1);
     }
-    ~WithAsyncMethod_DelUserPushToken() override {
+    ~WithAsyncMethod_AckConversations() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DelUserPushToken(::grpc::ServerContext* /*context*/, const ::push::DelUserPushTokenReq* /*request*/, ::push::DelUserPushTokenResp* /*response*/) override {
+    ::grpc::Status AckConversations(::grpc::ServerContext* /*context*/, const ::push::AckConversationsReq* /*request*/, ::push::AckConversationsResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestDelUserPushToken(::grpc::ServerContext* context, ::push::DelUserPushTokenReq* request, ::grpc::ServerAsyncResponseWriter< ::push::DelUserPushTokenResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestAckConversations(::grpc::ServerContext* context, ::push::AckConversationsReq* request, ::grpc::ServerAsyncResponseWriter< ::push::AckConversationsResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  template <class BaseClass>
-  class WithAsyncMethod_AckMsg : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_AckMsg() {
-      ::grpc::Service::MarkMethodAsync(2);
-    }
-    ~WithAsyncMethod_AckMsg() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AckMsg(::grpc::ServerContext* /*context*/, const ::push::AckMsgReq* /*request*/, ::push::AckMsgResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestAckMsg(::grpc::ServerContext* context, ::push::AckMsgReq* request, ::grpc::ServerAsyncResponseWriter< ::push::AckMsgResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithAsyncMethod_AddPendingOfflineAck : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_AddPendingOfflineAck() {
-      ::grpc::Service::MarkMethodAsync(3);
-    }
-    ~WithAsyncMethod_AddPendingOfflineAck() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AddPendingOfflineAck(::grpc::ServerContext* /*context*/, const ::push::AddPendingOfflineAckReq* /*request*/, ::push::AddPendingOfflineAckResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestAddPendingOfflineAck(::grpc::ServerContext* context, ::push::AddPendingOfflineAckReq* request, ::grpc::ServerAsyncResponseWriter< ::push::AddPendingOfflineAckResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  typedef WithAsyncMethod_PushMsg<WithAsyncMethod_DelUserPushToken<WithAsyncMethod_AckMsg<WithAsyncMethod_AddPendingOfflineAck<Service > > > > AsyncService;
+  typedef WithAsyncMethod_PushMsg<WithAsyncMethod_AckConversations<Service > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_PushMsg : public BaseClass {
    private:
@@ -275,87 +187,33 @@ class PushService final {
       ::grpc::CallbackServerContext* /*context*/, const ::push::PushMsgReq* /*request*/, ::push::PushMsgResp* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithCallbackMethod_DelUserPushToken : public BaseClass {
+  class WithCallbackMethod_AckConversations : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithCallbackMethod_DelUserPushToken() {
+    WithCallbackMethod_AckConversations() {
       ::grpc::Service::MarkMethodCallback(1,
-          new ::grpc::internal::CallbackUnaryHandler< ::push::DelUserPushTokenReq, ::push::DelUserPushTokenResp>(
+          new ::grpc::internal::CallbackUnaryHandler< ::push::AckConversationsReq, ::push::AckConversationsResp>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::push::DelUserPushTokenReq* request, ::push::DelUserPushTokenResp* response) { return this->DelUserPushToken(context, request, response); }));}
-    void SetMessageAllocatorFor_DelUserPushToken(
-        ::grpc::MessageAllocator< ::push::DelUserPushTokenReq, ::push::DelUserPushTokenResp>* allocator) {
+                   ::grpc::CallbackServerContext* context, const ::push::AckConversationsReq* request, ::push::AckConversationsResp* response) { return this->AckConversations(context, request, response); }));}
+    void SetMessageAllocatorFor_AckConversations(
+        ::grpc::MessageAllocator< ::push::AckConversationsReq, ::push::AckConversationsResp>* allocator) {
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::push::DelUserPushTokenReq, ::push::DelUserPushTokenResp>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::push::AckConversationsReq, ::push::AckConversationsResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
-    ~WithCallbackMethod_DelUserPushToken() override {
+    ~WithCallbackMethod_AckConversations() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DelUserPushToken(::grpc::ServerContext* /*context*/, const ::push::DelUserPushTokenReq* /*request*/, ::push::DelUserPushTokenResp* /*response*/) override {
+    ::grpc::Status AckConversations(::grpc::ServerContext* /*context*/, const ::push::AckConversationsReq* /*request*/, ::push::AckConversationsResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* DelUserPushToken(
-      ::grpc::CallbackServerContext* /*context*/, const ::push::DelUserPushTokenReq* /*request*/, ::push::DelUserPushTokenResp* /*response*/)  { return nullptr; }
+    virtual ::grpc::ServerUnaryReactor* AckConversations(
+      ::grpc::CallbackServerContext* /*context*/, const ::push::AckConversationsReq* /*request*/, ::push::AckConversationsResp* /*response*/)  { return nullptr; }
   };
-  template <class BaseClass>
-  class WithCallbackMethod_AckMsg : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithCallbackMethod_AckMsg() {
-      ::grpc::Service::MarkMethodCallback(2,
-          new ::grpc::internal::CallbackUnaryHandler< ::push::AckMsgReq, ::push::AckMsgResp>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::push::AckMsgReq* request, ::push::AckMsgResp* response) { return this->AckMsg(context, request, response); }));}
-    void SetMessageAllocatorFor_AckMsg(
-        ::grpc::MessageAllocator< ::push::AckMsgReq, ::push::AckMsgResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::push::AckMsgReq, ::push::AckMsgResp>*>(handler)
-              ->SetMessageAllocator(allocator);
-    }
-    ~WithCallbackMethod_AckMsg() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AckMsg(::grpc::ServerContext* /*context*/, const ::push::AckMsgReq* /*request*/, ::push::AckMsgResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* AckMsg(
-      ::grpc::CallbackServerContext* /*context*/, const ::push::AckMsgReq* /*request*/, ::push::AckMsgResp* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
-  class WithCallbackMethod_AddPendingOfflineAck : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithCallbackMethod_AddPendingOfflineAck() {
-      ::grpc::Service::MarkMethodCallback(3,
-          new ::grpc::internal::CallbackUnaryHandler< ::push::AddPendingOfflineAckReq, ::push::AddPendingOfflineAckResp>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::push::AddPendingOfflineAckReq* request, ::push::AddPendingOfflineAckResp* response) { return this->AddPendingOfflineAck(context, request, response); }));}
-    void SetMessageAllocatorFor_AddPendingOfflineAck(
-        ::grpc::MessageAllocator< ::push::AddPendingOfflineAckReq, ::push::AddPendingOfflineAckResp>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::push::AddPendingOfflineAckReq, ::push::AddPendingOfflineAckResp>*>(handler)
-              ->SetMessageAllocator(allocator);
-    }
-    ~WithCallbackMethod_AddPendingOfflineAck() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AddPendingOfflineAck(::grpc::ServerContext* /*context*/, const ::push::AddPendingOfflineAckReq* /*request*/, ::push::AddPendingOfflineAckResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* AddPendingOfflineAck(
-      ::grpc::CallbackServerContext* /*context*/, const ::push::AddPendingOfflineAckReq* /*request*/, ::push::AddPendingOfflineAckResp* /*response*/)  { return nullptr; }
-  };
-  typedef WithCallbackMethod_PushMsg<WithCallbackMethod_DelUserPushToken<WithCallbackMethod_AckMsg<WithCallbackMethod_AddPendingOfflineAck<Service > > > > CallbackService;
+  typedef WithCallbackMethod_PushMsg<WithCallbackMethod_AckConversations<Service > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_PushMsg : public BaseClass {
@@ -375,52 +233,18 @@ class PushService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_DelUserPushToken : public BaseClass {
+  class WithGenericMethod_AckConversations : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod_DelUserPushToken() {
+    WithGenericMethod_AckConversations() {
       ::grpc::Service::MarkMethodGeneric(1);
     }
-    ~WithGenericMethod_DelUserPushToken() override {
+    ~WithGenericMethod_AckConversations() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DelUserPushToken(::grpc::ServerContext* /*context*/, const ::push::DelUserPushTokenReq* /*request*/, ::push::DelUserPushTokenResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_AckMsg : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_AckMsg() {
-      ::grpc::Service::MarkMethodGeneric(2);
-    }
-    ~WithGenericMethod_AckMsg() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AckMsg(::grpc::ServerContext* /*context*/, const ::push::AckMsgReq* /*request*/, ::push::AckMsgResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_AddPendingOfflineAck : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_AddPendingOfflineAck() {
-      ::grpc::Service::MarkMethodGeneric(3);
-    }
-    ~WithGenericMethod_AddPendingOfflineAck() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AddPendingOfflineAck(::grpc::ServerContext* /*context*/, const ::push::AddPendingOfflineAckReq* /*request*/, ::push::AddPendingOfflineAckResp* /*response*/) override {
+    ::grpc::Status AckConversations(::grpc::ServerContext* /*context*/, const ::push::AckConversationsReq* /*request*/, ::push::AckConversationsResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -446,63 +270,23 @@ class PushService final {
     }
   };
   template <class BaseClass>
-  class WithRawMethod_DelUserPushToken : public BaseClass {
+  class WithRawMethod_AckConversations : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod_DelUserPushToken() {
+    WithRawMethod_AckConversations() {
       ::grpc::Service::MarkMethodRaw(1);
     }
-    ~WithRawMethod_DelUserPushToken() override {
+    ~WithRawMethod_AckConversations() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DelUserPushToken(::grpc::ServerContext* /*context*/, const ::push::DelUserPushTokenReq* /*request*/, ::push::DelUserPushTokenResp* /*response*/) override {
+    ::grpc::Status AckConversations(::grpc::ServerContext* /*context*/, const ::push::AckConversationsReq* /*request*/, ::push::AckConversationsResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestDelUserPushToken(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestAckConversations(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_AckMsg : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_AckMsg() {
-      ::grpc::Service::MarkMethodRaw(2);
-    }
-    ~WithRawMethod_AckMsg() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AckMsg(::grpc::ServerContext* /*context*/, const ::push::AckMsgReq* /*request*/, ::push::AckMsgResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestAckMsg(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_AddPendingOfflineAck : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_AddPendingOfflineAck() {
-      ::grpc::Service::MarkMethodRaw(3);
-    }
-    ~WithRawMethod_AddPendingOfflineAck() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AddPendingOfflineAck(::grpc::ServerContext* /*context*/, const ::push::AddPendingOfflineAckReq* /*request*/, ::push::AddPendingOfflineAckResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestAddPendingOfflineAck(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -528,69 +312,25 @@ class PushService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_DelUserPushToken : public BaseClass {
+  class WithRawCallbackMethod_AckConversations : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawCallbackMethod_DelUserPushToken() {
+    WithRawCallbackMethod_AckConversations() {
       ::grpc::Service::MarkMethodRawCallback(1,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->DelUserPushToken(context, request, response); }));
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->AckConversations(context, request, response); }));
     }
-    ~WithRawCallbackMethod_DelUserPushToken() override {
+    ~WithRawCallbackMethod_AckConversations() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DelUserPushToken(::grpc::ServerContext* /*context*/, const ::push::DelUserPushTokenReq* /*request*/, ::push::DelUserPushTokenResp* /*response*/) override {
+    ::grpc::Status AckConversations(::grpc::ServerContext* /*context*/, const ::push::AckConversationsReq* /*request*/, ::push::AckConversationsResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* DelUserPushToken(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
-  class WithRawCallbackMethod_AckMsg : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawCallbackMethod_AckMsg() {
-      ::grpc::Service::MarkMethodRawCallback(2,
-          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->AckMsg(context, request, response); }));
-    }
-    ~WithRawCallbackMethod_AckMsg() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AckMsg(::grpc::ServerContext* /*context*/, const ::push::AckMsgReq* /*request*/, ::push::AckMsgResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* AckMsg(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
-  class WithRawCallbackMethod_AddPendingOfflineAck : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawCallbackMethod_AddPendingOfflineAck() {
-      ::grpc::Service::MarkMethodRawCallback(3,
-          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->AddPendingOfflineAck(context, request, response); }));
-    }
-    ~WithRawCallbackMethod_AddPendingOfflineAck() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status AddPendingOfflineAck(::grpc::ServerContext* /*context*/, const ::push::AddPendingOfflineAckReq* /*request*/, ::push::AddPendingOfflineAckResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* AddPendingOfflineAck(
+    virtual ::grpc::ServerUnaryReactor* AckConversations(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -621,89 +361,35 @@ class PushService final {
     virtual ::grpc::Status StreamedPushMsg(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::push::PushMsgReq,::push::PushMsgResp>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_DelUserPushToken : public BaseClass {
+  class WithStreamedUnaryMethod_AckConversations : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithStreamedUnaryMethod_DelUserPushToken() {
+    WithStreamedUnaryMethod_AckConversations() {
       ::grpc::Service::MarkMethodStreamed(1,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::push::DelUserPushTokenReq, ::push::DelUserPushTokenResp>(
+          ::push::AckConversationsReq, ::push::AckConversationsResp>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::push::DelUserPushTokenReq, ::push::DelUserPushTokenResp>* streamer) {
-                       return this->StreamedDelUserPushToken(context,
+                     ::push::AckConversationsReq, ::push::AckConversationsResp>* streamer) {
+                       return this->StreamedAckConversations(context,
                          streamer);
                   }));
     }
-    ~WithStreamedUnaryMethod_DelUserPushToken() override {
+    ~WithStreamedUnaryMethod_AckConversations() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DelUserPushToken(::grpc::ServerContext* /*context*/, const ::push::DelUserPushTokenReq* /*request*/, ::push::DelUserPushTokenResp* /*response*/) override {
+    ::grpc::Status AckConversations(::grpc::ServerContext* /*context*/, const ::push::AckConversationsReq* /*request*/, ::push::AckConversationsResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedDelUserPushToken(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::push::DelUserPushTokenReq,::push::DelUserPushTokenResp>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedAckConversations(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::push::AckConversationsReq,::push::AckConversationsResp>* server_unary_streamer) = 0;
   };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_AckMsg : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_AckMsg() {
-      ::grpc::Service::MarkMethodStreamed(2,
-        new ::grpc::internal::StreamedUnaryHandler<
-          ::push::AckMsgReq, ::push::AckMsgResp>(
-            [this](::grpc::ServerContext* context,
-                   ::grpc::ServerUnaryStreamer<
-                     ::push::AckMsgReq, ::push::AckMsgResp>* streamer) {
-                       return this->StreamedAckMsg(context,
-                         streamer);
-                  }));
-    }
-    ~WithStreamedUnaryMethod_AckMsg() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status AckMsg(::grpc::ServerContext* /*context*/, const ::push::AckMsgReq* /*request*/, ::push::AckMsgResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedAckMsg(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::push::AckMsgReq,::push::AckMsgResp>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_AddPendingOfflineAck : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_AddPendingOfflineAck() {
-      ::grpc::Service::MarkMethodStreamed(3,
-        new ::grpc::internal::StreamedUnaryHandler<
-          ::push::AddPendingOfflineAckReq, ::push::AddPendingOfflineAckResp>(
-            [this](::grpc::ServerContext* context,
-                   ::grpc::ServerUnaryStreamer<
-                     ::push::AddPendingOfflineAckReq, ::push::AddPendingOfflineAckResp>* streamer) {
-                       return this->StreamedAddPendingOfflineAck(context,
-                         streamer);
-                  }));
-    }
-    ~WithStreamedUnaryMethod_AddPendingOfflineAck() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status AddPendingOfflineAck(::grpc::ServerContext* /*context*/, const ::push::AddPendingOfflineAckReq* /*request*/, ::push::AddPendingOfflineAckResp* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedAddPendingOfflineAck(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::push::AddPendingOfflineAckReq,::push::AddPendingOfflineAckResp>* server_unary_streamer) = 0;
-  };
-  typedef WithStreamedUnaryMethod_PushMsg<WithStreamedUnaryMethod_DelUserPushToken<WithStreamedUnaryMethod_AckMsg<WithStreamedUnaryMethod_AddPendingOfflineAck<Service > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_PushMsg<WithStreamedUnaryMethod_AckConversations<Service > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_PushMsg<WithStreamedUnaryMethod_DelUserPushToken<WithStreamedUnaryMethod_AckMsg<WithStreamedUnaryMethod_AddPendingOfflineAck<Service > > > > StreamedService;
+  typedef WithStreamedUnaryMethod_PushMsg<WithStreamedUnaryMethod_AckConversations<Service > > StreamedService;
 };
 
 }  // namespace push

@@ -1,0 +1,18 @@
+run_id=ape_full_184826 clients=20 rates=[5, 10, 20, 30, 40] phase=20.0s
+  logged in 10/20
+  logged in 20/20
+setup: 3.73s
+friendships inserted
+warmup done, measurement starts
+phase 1: target 5 msg/s for 20.0s
+  attempted=101 delivered=101 accepted=101 errors=0 achieved=5.0/s p50=208.86ms p95=367.91ms p99=406.66ms
+phase 2: target 10 msg/s for 20.0s
+  attempted=201 delivered=201 accepted=198 errors=0 achieved=10.0/s p50=153.44ms p95=351.7ms p99=393.04ms
+phase 3: target 20 msg/s for 20.0s
+  attempted=401 delivered=401 accepted=401 errors=0 achieved=20.0/s p50=448.52ms p95=679.0ms p99=912.25ms
+phase 4: target 30 msg/s for 20.0s
+  attempted=601 delivered=387 accepted=385 errors=0 achieved=19.3/s p50=5278.54ms p95=8769.59ms p99=9048.16ms
+phase 5: target 40 msg/s for 20.0s
+  attempted=801 delivered=240 accepted=239 errors=0 achieved=12.0/s p50=13469.82ms p95=15776.03ms p99=15997.61ms
+report: ops/loadtest/results/ape_full_184826.json
+csv:    ops/loadtest/results/ape_full_184826.csv

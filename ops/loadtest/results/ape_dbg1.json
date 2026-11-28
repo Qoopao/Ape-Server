@@ -1,0 +1,228 @@
+{
+  "meta": {
+    "runId": "ape_dbg1",
+    "startedAt": "2026-11-28T18:43:40+0800",
+    "finishedAt": "2026-11-28T18:44:14+0800",
+    "durationSec": 34.0,
+    "clients": 10,
+    "rates": [
+      20,
+      40
+    ],
+    "phaseDurationSec": 10.0,
+    "setupSeconds": 1.7,
+    "gateway": "wss://127.0.0.1:6666",
+    "protocol": "type 90/91/101/104/106"
+  },
+  "setup": {
+    "clients": 10,
+    "registerAndLoginSeconds": 1.7,
+    "friendships": 5
+  },
+  "totals": {
+    "attempted": 602,
+    "delivered": 394,
+    "sendErrors": 0,
+    "deliveryRatePct": 65.45
+  },
+  "phases": [
+    {
+      "targetRps": 20,
+      "durationSec": 10.0,
+      "attempted": 201,
+      "accepted": 254,
+      "delivered": 201,
+      "sendErrors": 0,
+      "sentRps": 20.1,
+      "achievedRps": 20.1,
+      "errorRatePct": 0.0,
+      "latency": {
+        "count": 201,
+        "avgMs": 249.74,
+        "p50Ms": 263.13,
+        "p90Ms": 343.72,
+        "p95Ms": 351.04,
+        "p99Ms": 358.21,
+        "maxMs": 366.31
+      },
+      "errorCodes": {}
+    },
+    {
+      "targetRps": 40,
+      "durationSec": 10.0,
+      "attempted": 401,
+      "accepted": 287,
+      "delivered": 193,
+      "sendErrors": 0,
+      "sentRps": 40.1,
+      "achievedRps": 19.3,
+      "errorRatePct": 0.0,
+      "latency": {
+        "count": 193,
+        "avgMs": 2828.1,
+        "p50Ms": 2083.78,
+        "p90Ms": 6105.54,
+        "p95Ms": 6604.92,
+        "p99Ms": 6995.63,
+        "maxMs": 7217.68
+      },
+      "errorCodes": {}
+    }
+  ],
+  "series": [
+    {
+      "phase": 1,
+      "second": 0,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 220.28
+    },
+    {
+      "phase": 1,
+      "second": 1,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 197.99
+    },
+    {
+      "phase": 1,
+      "second": 2,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 213.76
+    },
+    {
+      "phase": 1,
+      "second": 3,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 231.87
+    },
+    {
+      "phase": 1,
+      "second": 4,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 295.76
+    },
+    {
+      "phase": 1,
+      "second": 5,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 336.54
+    },
+    {
+      "phase": 1,
+      "second": 6,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 352.98
+    },
+    {
+      "phase": 1,
+      "second": 7,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 353.74
+    },
+    {
+      "phase": 1,
+      "second": 8,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 362.39
+    },
+    {
+      "phase": 1,
+      "second": 9,
+      "attempted": 20,
+      "delivered": 20,
+      "p95Ms": 345.07
+    },
+    {
+      "phase": 1,
+      "second": 10,
+      "attempted": 1,
+      "delivered": 1,
+      "p95Ms": 284.79
+    },
+    {
+      "phase": 2,
+      "second": 0,
+      "attempted": 40,
+      "delivered": 40,
+      "p95Ms": 873.99
+    },
+    {
+      "phase": 2,
+      "second": 1,
+      "attempted": 40,
+      "delivered": 40,
+      "p95Ms": 1744.34
+    },
+    {
+      "phase": 2,
+      "second": 2,
+      "attempted": 40,
+      "delivered": 40,
+      "p95Ms": 2609.42
+    },
+    {
+      "phase": 2,
+      "second": 3,
+      "attempted": 40,
+      "delivered": 40,
+      "p95Ms": 5374.25
+    },
+    {
+      "phase": 2,
+      "second": 4,
+      "attempted": 40,
+      "delivered": 33,
+      "p95Ms": 6995.63
+    },
+    {
+      "phase": 2,
+      "second": 5,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 2,
+      "second": 6,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 2,
+      "second": 7,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 2,
+      "second": 8,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 2,
+      "second": 9,
+      "attempted": 40,
+      "delivered": 0,
+      "p95Ms": 0
+    },
+    {
+      "phase": 2,
+      "second": 10,
+      "attempted": 1,
+      "delivered": 0,
+      "p95Ms": 0
+    }
+  ]
+}

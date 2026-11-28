@@ -29,8 +29,8 @@
 namespace gateway_push {
 
 // GatewayPushService - Gateway 内部推送服务
-// 由 Gateway 进程暴露 gRPC 服务,供 PushService 等独立微服务通过 gRPC 调用
-// 将在线消息通过 WebSocket 长连接推送至指定用户
+// 由 Gateway 进程暴露 gRPC 服务,供 PushService / GroupService / MsgService 等独立微服务通过
+// gRPC 调用。调用方按 account 找到持有该连接的网关实例，再由该实例把帧写入 WebSocket 写队列。
 class GatewayPushService final {
  public:
   static constexpr char const* service_full_name() {
@@ -39,41 +39,109 @@ class GatewayPushService final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    virtual ::grpc::Status PushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::gateway_push::PushToUserResp* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushToUserResp>> AsyncPushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushToUserResp>>(AsyncPushToUserRaw(context, request, cq));
+    // 通用帧推送：type 由调用方决定（104 在线消息 / 251 群通知 / 101 延迟回执 / ...）
+    virtual ::grpc::Status PushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::gateway_push::PushFrameResp* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushFrameResp>> AsyncPushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushFrameResp>>(AsyncPushFrameRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushToUserResp>> PrepareAsyncPushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushToUserResp>>(PrepareAsyncPushToUserRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushFrameResp>> PrepareAsyncPushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushFrameResp>>(PrepareAsyncPushFrameRaw(context, request, cq));
+    }
+    // 批量推送：一次推一批账号（群扇出用），返回每个账号的结果
+    virtual ::grpc::Status PushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::gateway_push::PushBatchResp* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushBatchResp>> AsyncPushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushBatchResp>>(AsyncPushBatchRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushBatchResp>> PrepareAsyncPushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushBatchResp>>(PrepareAsyncPushBatchRaw(context, request, cq));
+    }
+    // 在线查询
+    virtual ::grpc::Status IsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::gateway_push::IsOnlineResp* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::IsOnlineResp>> AsyncIsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::IsOnlineResp>>(AsyncIsOnlineRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::IsOnlineResp>> PrepareAsyncIsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::IsOnlineResp>>(PrepareAsyncIsOnlineRaw(context, request, cq));
+    }
+    // 踢下线（跨实例互踢，账号在别处登录时使用）
+    virtual ::grpc::Status KickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::gateway_push::KickUserResp* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::KickUserResp>> AsyncKickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::KickUserResp>>(AsyncKickUserRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::KickUserResp>> PrepareAsyncKickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::KickUserResp>>(PrepareAsyncKickUserRaw(context, request, cq));
     }
     class async_interface {
      public:
       virtual ~async_interface() {}
-      virtual void PushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq* request, ::gateway_push::PushToUserResp* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void PushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq* request, ::gateway_push::PushToUserResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // 通用帧推送：type 由调用方决定（104 在线消息 / 251 群通知 / 101 延迟回执 / ...）
+      virtual void PushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq* request, ::gateway_push::PushFrameResp* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void PushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq* request, ::gateway_push::PushFrameResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // 批量推送：一次推一批账号（群扇出用），返回每个账号的结果
+      virtual void PushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq* request, ::gateway_push::PushBatchResp* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void PushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq* request, ::gateway_push::PushBatchResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // 在线查询
+      virtual void IsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq* request, ::gateway_push::IsOnlineResp* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void IsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq* request, ::gateway_push::IsOnlineResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // 踢下线（跨实例互踢，账号在别处登录时使用）
+      virtual void KickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq* request, ::gateway_push::KickUserResp* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void KickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq* request, ::gateway_push::KickUserResp* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
     class async_interface* experimental_async() { return async(); }
    private:
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushToUserResp>* AsyncPushToUserRaw(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushToUserResp>* PrepareAsyncPushToUserRaw(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushFrameResp>* AsyncPushFrameRaw(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushFrameResp>* PrepareAsyncPushFrameRaw(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushBatchResp>* AsyncPushBatchRaw(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::PushBatchResp>* PrepareAsyncPushBatchRaw(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::IsOnlineResp>* AsyncIsOnlineRaw(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::IsOnlineResp>* PrepareAsyncIsOnlineRaw(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::KickUserResp>* AsyncKickUserRaw(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::gateway_push::KickUserResp>* PrepareAsyncKickUserRaw(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
-    ::grpc::Status PushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::gateway_push::PushToUserResp* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushToUserResp>> AsyncPushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushToUserResp>>(AsyncPushToUserRaw(context, request, cq));
+    ::grpc::Status PushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::gateway_push::PushFrameResp* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushFrameResp>> AsyncPushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushFrameResp>>(AsyncPushFrameRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushToUserResp>> PrepareAsyncPushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushToUserResp>>(PrepareAsyncPushToUserRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushFrameResp>> PrepareAsyncPushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushFrameResp>>(PrepareAsyncPushFrameRaw(context, request, cq));
+    }
+    ::grpc::Status PushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::gateway_push::PushBatchResp* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushBatchResp>> AsyncPushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushBatchResp>>(AsyncPushBatchRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushBatchResp>> PrepareAsyncPushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::PushBatchResp>>(PrepareAsyncPushBatchRaw(context, request, cq));
+    }
+    ::grpc::Status IsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::gateway_push::IsOnlineResp* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::IsOnlineResp>> AsyncIsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::IsOnlineResp>>(AsyncIsOnlineRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::IsOnlineResp>> PrepareAsyncIsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::IsOnlineResp>>(PrepareAsyncIsOnlineRaw(context, request, cq));
+    }
+    ::grpc::Status KickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::gateway_push::KickUserResp* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::KickUserResp>> AsyncKickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::KickUserResp>>(AsyncKickUserRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::KickUserResp>> PrepareAsyncKickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::gateway_push::KickUserResp>>(PrepareAsyncKickUserRaw(context, request, cq));
     }
     class async final :
       public StubInterface::async_interface {
      public:
-      void PushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq* request, ::gateway_push::PushToUserResp* response, std::function<void(::grpc::Status)>) override;
-      void PushToUser(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq* request, ::gateway_push::PushToUserResp* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void PushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq* request, ::gateway_push::PushFrameResp* response, std::function<void(::grpc::Status)>) override;
+      void PushFrame(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq* request, ::gateway_push::PushFrameResp* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void PushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq* request, ::gateway_push::PushBatchResp* response, std::function<void(::grpc::Status)>) override;
+      void PushBatch(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq* request, ::gateway_push::PushBatchResp* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void IsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq* request, ::gateway_push::IsOnlineResp* response, std::function<void(::grpc::Status)>) override;
+      void IsOnline(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq* request, ::gateway_push::IsOnlineResp* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void KickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq* request, ::gateway_push::KickUserResp* response, std::function<void(::grpc::Status)>) override;
+      void KickUser(::grpc::ClientContext* context, const ::gateway_push::KickUserReq* request, ::gateway_push::KickUserResp* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -85,9 +153,18 @@ class GatewayPushService final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class async async_stub_{this};
-    ::grpc::ClientAsyncResponseReader< ::gateway_push::PushToUserResp>* AsyncPushToUserRaw(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::gateway_push::PushToUserResp>* PrepareAsyncPushToUserRaw(::grpc::ClientContext* context, const ::gateway_push::PushToUserReq& request, ::grpc::CompletionQueue* cq) override;
-    const ::grpc::internal::RpcMethod rpcmethod_PushToUser_;
+    ::grpc::ClientAsyncResponseReader< ::gateway_push::PushFrameResp>* AsyncPushFrameRaw(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::gateway_push::PushFrameResp>* PrepareAsyncPushFrameRaw(::grpc::ClientContext* context, const ::gateway_push::PushFrameReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::gateway_push::PushBatchResp>* AsyncPushBatchRaw(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::gateway_push::PushBatchResp>* PrepareAsyncPushBatchRaw(::grpc::ClientContext* context, const ::gateway_push::PushBatchReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::gateway_push::IsOnlineResp>* AsyncIsOnlineRaw(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::gateway_push::IsOnlineResp>* PrepareAsyncIsOnlineRaw(::grpc::ClientContext* context, const ::gateway_push::IsOnlineReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::gateway_push::KickUserResp>* AsyncKickUserRaw(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::gateway_push::KickUserResp>* PrepareAsyncKickUserRaw(::grpc::ClientContext* context, const ::gateway_push::KickUserReq& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_PushFrame_;
+    const ::grpc::internal::RpcMethod rpcmethod_PushBatch_;
+    const ::grpc::internal::RpcMethod rpcmethod_IsOnline_;
+    const ::grpc::internal::RpcMethod rpcmethod_KickUser_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -95,147 +172,553 @@ class GatewayPushService final {
    public:
     Service();
     virtual ~Service();
-    virtual ::grpc::Status PushToUser(::grpc::ServerContext* context, const ::gateway_push::PushToUserReq* request, ::gateway_push::PushToUserResp* response);
+    // 通用帧推送：type 由调用方决定（104 在线消息 / 251 群通知 / 101 延迟回执 / ...）
+    virtual ::grpc::Status PushFrame(::grpc::ServerContext* context, const ::gateway_push::PushFrameReq* request, ::gateway_push::PushFrameResp* response);
+    // 批量推送：一次推一批账号（群扇出用），返回每个账号的结果
+    virtual ::grpc::Status PushBatch(::grpc::ServerContext* context, const ::gateway_push::PushBatchReq* request, ::gateway_push::PushBatchResp* response);
+    // 在线查询
+    virtual ::grpc::Status IsOnline(::grpc::ServerContext* context, const ::gateway_push::IsOnlineReq* request, ::gateway_push::IsOnlineResp* response);
+    // 踢下线（跨实例互踢，账号在别处登录时使用）
+    virtual ::grpc::Status KickUser(::grpc::ServerContext* context, const ::gateway_push::KickUserReq* request, ::gateway_push::KickUserResp* response);
   };
   template <class BaseClass>
-  class WithAsyncMethod_PushToUser : public BaseClass {
+  class WithAsyncMethod_PushFrame : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod_PushToUser() {
+    WithAsyncMethod_PushFrame() {
       ::grpc::Service::MarkMethodAsync(0);
     }
-    ~WithAsyncMethod_PushToUser() override {
+    ~WithAsyncMethod_PushFrame() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status PushToUser(::grpc::ServerContext* /*context*/, const ::gateway_push::PushToUserReq* /*request*/, ::gateway_push::PushToUserResp* /*response*/) override {
+    ::grpc::Status PushFrame(::grpc::ServerContext* /*context*/, const ::gateway_push::PushFrameReq* /*request*/, ::gateway_push::PushFrameResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestPushToUser(::grpc::ServerContext* context, ::gateway_push::PushToUserReq* request, ::grpc::ServerAsyncResponseWriter< ::gateway_push::PushToUserResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestPushFrame(::grpc::ServerContext* context, ::gateway_push::PushFrameReq* request, ::grpc::ServerAsyncResponseWriter< ::gateway_push::PushFrameResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_PushToUser<Service > AsyncService;
   template <class BaseClass>
-  class WithCallbackMethod_PushToUser : public BaseClass {
+  class WithAsyncMethod_PushBatch : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithCallbackMethod_PushToUser() {
+    WithAsyncMethod_PushBatch() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_PushBatch() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PushBatch(::grpc::ServerContext* /*context*/, const ::gateway_push::PushBatchReq* /*request*/, ::gateway_push::PushBatchResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestPushBatch(::grpc::ServerContext* context, ::gateway_push::PushBatchReq* request, ::grpc::ServerAsyncResponseWriter< ::gateway_push::PushBatchResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_IsOnline : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_IsOnline() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_IsOnline() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status IsOnline(::grpc::ServerContext* /*context*/, const ::gateway_push::IsOnlineReq* /*request*/, ::gateway_push::IsOnlineResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestIsOnline(::grpc::ServerContext* context, ::gateway_push::IsOnlineReq* request, ::grpc::ServerAsyncResponseWriter< ::gateway_push::IsOnlineResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_KickUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_KickUser() {
+      ::grpc::Service::MarkMethodAsync(3);
+    }
+    ~WithAsyncMethod_KickUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status KickUser(::grpc::ServerContext* /*context*/, const ::gateway_push::KickUserReq* /*request*/, ::gateway_push::KickUserResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestKickUser(::grpc::ServerContext* context, ::gateway_push::KickUserReq* request, ::grpc::ServerAsyncResponseWriter< ::gateway_push::KickUserResp>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_PushFrame<WithAsyncMethod_PushBatch<WithAsyncMethod_IsOnline<WithAsyncMethod_KickUser<Service > > > > AsyncService;
+  template <class BaseClass>
+  class WithCallbackMethod_PushFrame : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_PushFrame() {
       ::grpc::Service::MarkMethodCallback(0,
-          new ::grpc::internal::CallbackUnaryHandler< ::gateway_push::PushToUserReq, ::gateway_push::PushToUserResp>(
+          new ::grpc::internal::CallbackUnaryHandler< ::gateway_push::PushFrameReq, ::gateway_push::PushFrameResp>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::gateway_push::PushToUserReq* request, ::gateway_push::PushToUserResp* response) { return this->PushToUser(context, request, response); }));}
-    void SetMessageAllocatorFor_PushToUser(
-        ::grpc::MessageAllocator< ::gateway_push::PushToUserReq, ::gateway_push::PushToUserResp>* allocator) {
+                   ::grpc::CallbackServerContext* context, const ::gateway_push::PushFrameReq* request, ::gateway_push::PushFrameResp* response) { return this->PushFrame(context, request, response); }));}
+    void SetMessageAllocatorFor_PushFrame(
+        ::grpc::MessageAllocator< ::gateway_push::PushFrameReq, ::gateway_push::PushFrameResp>* allocator) {
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::gateway_push::PushToUserReq, ::gateway_push::PushToUserResp>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::gateway_push::PushFrameReq, ::gateway_push::PushFrameResp>*>(handler)
               ->SetMessageAllocator(allocator);
     }
-    ~WithCallbackMethod_PushToUser() override {
+    ~WithCallbackMethod_PushFrame() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status PushToUser(::grpc::ServerContext* /*context*/, const ::gateway_push::PushToUserReq* /*request*/, ::gateway_push::PushToUserResp* /*response*/) override {
+    ::grpc::Status PushFrame(::grpc::ServerContext* /*context*/, const ::gateway_push::PushFrameReq* /*request*/, ::gateway_push::PushFrameResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* PushToUser(
-      ::grpc::CallbackServerContext* /*context*/, const ::gateway_push::PushToUserReq* /*request*/, ::gateway_push::PushToUserResp* /*response*/)  { return nullptr; }
+    virtual ::grpc::ServerUnaryReactor* PushFrame(
+      ::grpc::CallbackServerContext* /*context*/, const ::gateway_push::PushFrameReq* /*request*/, ::gateway_push::PushFrameResp* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_PushToUser<Service > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_PushBatch : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_PushBatch() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::gateway_push::PushBatchReq, ::gateway_push::PushBatchResp>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::gateway_push::PushBatchReq* request, ::gateway_push::PushBatchResp* response) { return this->PushBatch(context, request, response); }));}
+    void SetMessageAllocatorFor_PushBatch(
+        ::grpc::MessageAllocator< ::gateway_push::PushBatchReq, ::gateway_push::PushBatchResp>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::gateway_push::PushBatchReq, ::gateway_push::PushBatchResp>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_PushBatch() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PushBatch(::grpc::ServerContext* /*context*/, const ::gateway_push::PushBatchReq* /*request*/, ::gateway_push::PushBatchResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* PushBatch(
+      ::grpc::CallbackServerContext* /*context*/, const ::gateway_push::PushBatchReq* /*request*/, ::gateway_push::PushBatchResp* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_IsOnline : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_IsOnline() {
+      ::grpc::Service::MarkMethodCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::gateway_push::IsOnlineReq, ::gateway_push::IsOnlineResp>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::gateway_push::IsOnlineReq* request, ::gateway_push::IsOnlineResp* response) { return this->IsOnline(context, request, response); }));}
+    void SetMessageAllocatorFor_IsOnline(
+        ::grpc::MessageAllocator< ::gateway_push::IsOnlineReq, ::gateway_push::IsOnlineResp>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::gateway_push::IsOnlineReq, ::gateway_push::IsOnlineResp>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_IsOnline() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status IsOnline(::grpc::ServerContext* /*context*/, const ::gateway_push::IsOnlineReq* /*request*/, ::gateway_push::IsOnlineResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* IsOnline(
+      ::grpc::CallbackServerContext* /*context*/, const ::gateway_push::IsOnlineReq* /*request*/, ::gateway_push::IsOnlineResp* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_KickUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_KickUser() {
+      ::grpc::Service::MarkMethodCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::gateway_push::KickUserReq, ::gateway_push::KickUserResp>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::gateway_push::KickUserReq* request, ::gateway_push::KickUserResp* response) { return this->KickUser(context, request, response); }));}
+    void SetMessageAllocatorFor_KickUser(
+        ::grpc::MessageAllocator< ::gateway_push::KickUserReq, ::gateway_push::KickUserResp>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(3);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::gateway_push::KickUserReq, ::gateway_push::KickUserResp>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_KickUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status KickUser(::grpc::ServerContext* /*context*/, const ::gateway_push::KickUserReq* /*request*/, ::gateway_push::KickUserResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* KickUser(
+      ::grpc::CallbackServerContext* /*context*/, const ::gateway_push::KickUserReq* /*request*/, ::gateway_push::KickUserResp* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_PushFrame<WithCallbackMethod_PushBatch<WithCallbackMethod_IsOnline<WithCallbackMethod_KickUser<Service > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
-  class WithGenericMethod_PushToUser : public BaseClass {
+  class WithGenericMethod_PushFrame : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod_PushToUser() {
+    WithGenericMethod_PushFrame() {
       ::grpc::Service::MarkMethodGeneric(0);
     }
-    ~WithGenericMethod_PushToUser() override {
+    ~WithGenericMethod_PushFrame() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status PushToUser(::grpc::ServerContext* /*context*/, const ::gateway_push::PushToUserReq* /*request*/, ::gateway_push::PushToUserResp* /*response*/) override {
+    ::grpc::Status PushFrame(::grpc::ServerContext* /*context*/, const ::gateway_push::PushFrameReq* /*request*/, ::gateway_push::PushFrameResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
   };
   template <class BaseClass>
-  class WithRawMethod_PushToUser : public BaseClass {
+  class WithGenericMethod_PushBatch : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod_PushToUser() {
-      ::grpc::Service::MarkMethodRaw(0);
+    WithGenericMethod_PushBatch() {
+      ::grpc::Service::MarkMethodGeneric(1);
     }
-    ~WithRawMethod_PushToUser() override {
+    ~WithGenericMethod_PushBatch() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status PushToUser(::grpc::ServerContext* /*context*/, const ::gateway_push::PushToUserReq* /*request*/, ::gateway_push::PushToUserResp* /*response*/) override {
+    ::grpc::Status PushBatch(::grpc::ServerContext* /*context*/, const ::gateway_push::PushBatchReq* /*request*/, ::gateway_push::PushBatchResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestPushToUser(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+  };
+  template <class BaseClass>
+  class WithGenericMethod_IsOnline : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_IsOnline() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_IsOnline() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status IsOnline(::grpc::ServerContext* /*context*/, const ::gateway_push::IsOnlineReq* /*request*/, ::gateway_push::IsOnlineResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_KickUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_KickUser() {
+      ::grpc::Service::MarkMethodGeneric(3);
+    }
+    ~WithGenericMethod_KickUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status KickUser(::grpc::ServerContext* /*context*/, const ::gateway_push::KickUserReq* /*request*/, ::gateway_push::KickUserResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_PushFrame : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_PushFrame() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_PushFrame() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PushFrame(::grpc::ServerContext* /*context*/, const ::gateway_push::PushFrameReq* /*request*/, ::gateway_push::PushFrameResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestPushFrame(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_PushToUser : public BaseClass {
+  class WithRawMethod_PushBatch : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawCallbackMethod_PushToUser() {
+    WithRawMethod_PushBatch() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_PushBatch() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PushBatch(::grpc::ServerContext* /*context*/, const ::gateway_push::PushBatchReq* /*request*/, ::gateway_push::PushBatchResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestPushBatch(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_IsOnline : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_IsOnline() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_IsOnline() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status IsOnline(::grpc::ServerContext* /*context*/, const ::gateway_push::IsOnlineReq* /*request*/, ::gateway_push::IsOnlineResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestIsOnline(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_KickUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_KickUser() {
+      ::grpc::Service::MarkMethodRaw(3);
+    }
+    ~WithRawMethod_KickUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status KickUser(::grpc::ServerContext* /*context*/, const ::gateway_push::KickUserReq* /*request*/, ::gateway_push::KickUserResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestKickUser(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(3, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_PushFrame : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_PushFrame() {
       ::grpc::Service::MarkMethodRawCallback(0,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->PushToUser(context, request, response); }));
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->PushFrame(context, request, response); }));
     }
-    ~WithRawCallbackMethod_PushToUser() override {
+    ~WithRawCallbackMethod_PushFrame() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status PushToUser(::grpc::ServerContext* /*context*/, const ::gateway_push::PushToUserReq* /*request*/, ::gateway_push::PushToUserResp* /*response*/) override {
+    ::grpc::Status PushFrame(::grpc::ServerContext* /*context*/, const ::gateway_push::PushFrameReq* /*request*/, ::gateway_push::PushFrameResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* PushToUser(
+    virtual ::grpc::ServerUnaryReactor* PushFrame(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_PushToUser : public BaseClass {
+  class WithRawCallbackMethod_PushBatch : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithStreamedUnaryMethod_PushToUser() {
+    WithRawCallbackMethod_PushBatch() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->PushBatch(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_PushBatch() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status PushBatch(::grpc::ServerContext* /*context*/, const ::gateway_push::PushBatchReq* /*request*/, ::gateway_push::PushBatchResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* PushBatch(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_IsOnline : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_IsOnline() {
+      ::grpc::Service::MarkMethodRawCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->IsOnline(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_IsOnline() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status IsOnline(::grpc::ServerContext* /*context*/, const ::gateway_push::IsOnlineReq* /*request*/, ::gateway_push::IsOnlineResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* IsOnline(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_KickUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_KickUser() {
+      ::grpc::Service::MarkMethodRawCallback(3,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->KickUser(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_KickUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status KickUser(::grpc::ServerContext* /*context*/, const ::gateway_push::KickUserReq* /*request*/, ::gateway_push::KickUserResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* KickUser(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_PushFrame : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_PushFrame() {
       ::grpc::Service::MarkMethodStreamed(0,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::gateway_push::PushToUserReq, ::gateway_push::PushToUserResp>(
+          ::gateway_push::PushFrameReq, ::gateway_push::PushFrameResp>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::gateway_push::PushToUserReq, ::gateway_push::PushToUserResp>* streamer) {
-                       return this->StreamedPushToUser(context,
+                     ::gateway_push::PushFrameReq, ::gateway_push::PushFrameResp>* streamer) {
+                       return this->StreamedPushFrame(context,
                          streamer);
                   }));
     }
-    ~WithStreamedUnaryMethod_PushToUser() override {
+    ~WithStreamedUnaryMethod_PushFrame() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status PushToUser(::grpc::ServerContext* /*context*/, const ::gateway_push::PushToUserReq* /*request*/, ::gateway_push::PushToUserResp* /*response*/) override {
+    ::grpc::Status PushFrame(::grpc::ServerContext* /*context*/, const ::gateway_push::PushFrameReq* /*request*/, ::gateway_push::PushFrameResp* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedPushToUser(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::gateway_push::PushToUserReq,::gateway_push::PushToUserResp>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedPushFrame(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::gateway_push::PushFrameReq,::gateway_push::PushFrameResp>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_PushToUser<Service > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_PushBatch : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_PushBatch() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::gateway_push::PushBatchReq, ::gateway_push::PushBatchResp>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::gateway_push::PushBatchReq, ::gateway_push::PushBatchResp>* streamer) {
+                       return this->StreamedPushBatch(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_PushBatch() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status PushBatch(::grpc::ServerContext* /*context*/, const ::gateway_push::PushBatchReq* /*request*/, ::gateway_push::PushBatchResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedPushBatch(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::gateway_push::PushBatchReq,::gateway_push::PushBatchResp>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_IsOnline : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_IsOnline() {
+      ::grpc::Service::MarkMethodStreamed(2,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::gateway_push::IsOnlineReq, ::gateway_push::IsOnlineResp>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::gateway_push::IsOnlineReq, ::gateway_push::IsOnlineResp>* streamer) {
+                       return this->StreamedIsOnline(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_IsOnline() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status IsOnline(::grpc::ServerContext* /*context*/, const ::gateway_push::IsOnlineReq* /*request*/, ::gateway_push::IsOnlineResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedIsOnline(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::gateway_push::IsOnlineReq,::gateway_push::IsOnlineResp>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_KickUser : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_KickUser() {
+      ::grpc::Service::MarkMethodStreamed(3,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::gateway_push::KickUserReq, ::gateway_push::KickUserResp>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::gateway_push::KickUserReq, ::gateway_push::KickUserResp>* streamer) {
+                       return this->StreamedKickUser(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_KickUser() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status KickUser(::grpc::ServerContext* /*context*/, const ::gateway_push::KickUserReq* /*request*/, ::gateway_push::KickUserResp* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedKickUser(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::gateway_push::KickUserReq,::gateway_push::KickUserResp>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_PushFrame<WithStreamedUnaryMethod_PushBatch<WithStreamedUnaryMethod_IsOnline<WithStreamedUnaryMethod_KickUser<Service > > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_PushToUser<Service > StreamedService;
+  typedef WithStreamedUnaryMethod_PushFrame<WithStreamedUnaryMethod_PushBatch<WithStreamedUnaryMethod_IsOnline<WithStreamedUnaryMethod_KickUser<Service > > > > StreamedService;
 };
 
 }  // namespace gateway_push

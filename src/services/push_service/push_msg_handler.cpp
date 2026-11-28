@@ -2,8 +2,10 @@
 #include "sdkws.pb.h"
 #include "util/grpc_async_util.h"
 #include "storage/mongohandler.h"
+#include "om/obs_log.h"
 #include "om/otel_trace_propagation.h"
 #include "om/otel_tracer.h"
+#include "om/trace_context.h"
 #include "storage/redisconnector.h"
 #include "storage/redishandler.h"
 #include "storage/mysqlhandler.h"
@@ -20,14 +22,9 @@ PushHandler::PushHandler(std::shared_ptr<grpc::Channel> pushChannel)
 boost::asio::awaitable<void> PushHandler::handle(const std::string topic,
                                                  const std::string msgID) {
   // 解析 Kafka 消息: "traceparent|servermsgid" 或 仅 "servermsgid"
-  std::string traceparent, serverMsgID;
-  auto sep = msgID.find('|');
-  if (sep != std::string::npos) {
-    traceparent = msgID.substr(0, sep);
-    serverMsgID = msgID.substr(sep + 1);
-  } else {
-    serverMsgID = msgID;
-  }
+  std::string traceparent;
+  std::string serverMsgID;
+  ape::otel::DecodeKafkaValue(msgID, traceparent, serverMsgID);
 
   spdlog::info("PushHandler: received msgid from Kafka, topic={}, "
                "serverMsgID={}, has_tp={}",
@@ -49,24 +46,18 @@ boost::asio::awaitable<void> PushHandler::handle(const std::string topic,
   sdkws::MsgData msgData = msgDataOpt.value();
   // New groups have their own delivery loop; never route retired group events here.
   if (msgData.isgroupmsg()) co_return;
-  if (co_await MySQLHandler::MessageDispatchDone(msgData.recvid(),serverMsgID)) co_return;
+  if (co_await MySQLHandler::MessageDispatchDone(
+          msgData.recvid(), serverMsgID, msgData.convid(), msgData.seq()))
+    co_return;
 
-  // ── OTel: 从 traceparent 恢复父上下文，创建 Kafka Consumer Span ──
-  auto tracer = ape::otel::GetTracer();
-  opentelemetry::nostd::shared_ptr<opentelemetry::trace::Span> kafkaSpan;
-  std::unique_ptr<opentelemetry::trace::Scope> kafkaScope;
-
-  if (tracer && !traceparent.empty()) {
-    std::vector<std::pair<std::string, std::string>> kafkaAttrs = {
-        {"messaging.system", "kafka"},
-        {"messaging.destination", topic},
-        {"messaging.message_id", serverMsgID}};
-    kafkaSpan = ape::otel::StartSpanFromEncodedTraceParent(
-        traceparent, "Kafka Consume " + topic, kafkaAttrs, tracer);
-    if (kafkaSpan) {
-      kafkaScope = std::make_unique<opentelemetry::trace::Scope>(kafkaSpan);
-    }
-  }
+  // ── 消费 span：父 = outbox 发布 span（Kafka value 携带），跨线程显式传递 ──
+  auto kafka_span = ape::otel::StartChildSpan(
+      ape::otel::TraceContext::FromTraceParent(traceparent),
+      "Kafka Consume " + topic,
+      {{"messaging.system", "kafka"},
+       {"messaging.destination", topic},
+       {"messaging.message_id", serverMsgID}},
+      opentelemetry::trace::SpanKind::kConsumer);
 
   // 2. 构造PushMsgReq并调用PushService
   push::PushMsgReq req;
@@ -76,7 +67,7 @@ boost::asio::awaitable<void> PushHandler::handle(const std::string topic,
   push::PushMsgResp resp;
   grpc::ClientContext ctx;
   ctx.set_deadline(std::chrono::system_clock::now() + std::chrono::seconds(8));
-  ape::otel::InjectTraceContextToGrpcMetadata(ctx);
+  ape::otel::InjectTraceContext(ctx, kafka_span.context());
 
   auto status = co_await ape::grpc_util::GrpcAwait([&](auto &&handler) {
     pushStub_->async()->PushMsg(&ctx, &req, &resp,
@@ -88,15 +79,17 @@ boost::asio::awaitable<void> PushHandler::handle(const std::string topic,
     throw std::runtime_error(
         std::format("PushHandler: gRPC PushMsg failed: {}, serverMsgID={}",
                   status.error_message(), serverMsgID));
+  } else if (resp.decision() == push::PUSH_DELIVERED) {
+    // 网关已入队，等客户端 ACK；ACK 会推进 outbox，这里不提前确认分发
+    spdlog::info("PushHandler: delivered, awaiting ACK, serverMsgID={}",
+                 serverMsgID);
   } else {
-    spdlog::info("PushHandler: PushMsg success, serverMsgID={}", serverMsgID);
+    spdlog::info("PushHandler: PushMsg success, decision={}, serverMsgID={}",
+                 static_cast<int>(resp.decision()), serverMsgID);
     co_await MySQLHandler::ConfirmMessageDispatch(serverMsgID);
   }
 
-  if (kafkaSpan) {
-    kafkaScope.reset(); // 恢复之前的 context
-    kafkaSpan->End();
-  }
+  kafka_span.EndOk();
 
   co_return;
 }

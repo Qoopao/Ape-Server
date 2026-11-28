@@ -1,4 +1,6 @@
 #include "storage/mysqlhandler.h"
+#include "om/obs_metrics.h"
+#include "om/trace_context.h"
 #include "messagequeue/message_producer.h"
 #include "util/uuid.h"
 #include <google/protobuf/util/json_util.h>
@@ -33,6 +35,14 @@
 #include <atomic>
 #include <stdexcept>
 #include <unordered_set>
+#include <string_view>
+
+
+namespace {
+// 定义在下方匿名 namespace；这里先声明，供较前的好友删除逻辑使用。
+boost::asio::awaitable<int64_t> currentConversationSeq(
+    boost::mysql::any_connection& connection, const std::string& conversation);
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 辅助：将 results.rows() 的第一行解析为 userInfo
@@ -805,7 +815,9 @@ awaitable<void> mutate(any_connection& connection, const friendpb::Command& comm
                 command.actor(), target, target, command.actor()), r, use_awaitable);
             if (r.affected_rows() > 0) {
                 const auto deletedTime = now();
-                const auto deletedSeq = Snowflake::instance().nextId();
+                const auto conversation = std::to_string(std::min(command.actor(), target)) + "_" +
+                    std::to_string(std::max(command.actor(), target));
+                const auto deletedSeq = co_await currentConversationSeq(connection, conversation);
                 co_await connection.async_execute(boost::mysql::format_sql(connection.format_opts().value(),
                     "INSERT INTO friend_chat_deletions(owner_account,peer_account,deleted_time,deleted_seq) VALUES ({},{},{},{}),({},{},{},{}) "
                     "ON DUPLICATE KEY UPDATE deleted_time=VALUES(deleted_time),deleted_seq=VALUES(deleted_seq)",
@@ -968,8 +980,9 @@ boost::asio::awaitable<bool> MySQLHandler::WithFriendMessage(const sdkws::MsgDat
                 allowed = r.rows().empty() || (number(r.rows()[0][0]) >= 1 && number(r.rows()[0][1]) != 3);
                 if (allowed && requireUndelivered) {
                     co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
-                        "SELECT 1 FROM im_message_receipts WHERE owner_account={} AND server_msg_id={}",
-                        message.recvid(), message.servermsgid()), r, use_awaitable);
+                        "SELECT 1 FROM im_conversation_receipts WHERE owner_account={} "
+                        "AND conversation_id={} AND delivered_seq>={}",
+                        message.recvid(), message.convid(), message.seq()), r, use_awaitable);
                     allowed = r.rows().empty();
                 }
             }
@@ -1040,6 +1053,11 @@ template <class Action>
 boost::asio::awaitable<bool> conversationTransaction(boost::mysql::any_connection& connection, Action action)
 {
     results r;
+    // REPEATABLE READ 下，缺失行的 SELECT ... FOR UPDATE 会取 gap lock；
+    // 发送/ACK 并发时会在 im_outbox 唯一索引上互相死锁。
+    // 这里统一用 READ COMMITTED：不取 gap lock，幂等仍由唯一键保证。
+    co_await connection.async_execute(
+        "SET TRANSACTION ISOLATION LEVEL READ COMMITTED", r, use_awaitable);
     co_await connection.async_execute("START TRANSACTION", r, use_awaitable);
     std::exception_ptr failure;
     bool result = false;
@@ -1088,6 +1106,11 @@ boost::asio::awaitable<void> MySQLHandler::InitializeConversations()
         CONSTRAINT conversation_unread_owner FOREIGN KEY(owner_account,conversation_id)
             REFERENCES im_conversations(owner_account,conversation_id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4)sql", r, use_awaitable);
+    // 单聊会话级 seq 计数器：双向共用，删除会话时也保留（避免重建会话后 seq 回退）
+    co_await connection->async_execute(R"sql(CREATE TABLE IF NOT EXISTS im_conversation_seq (
+        conversation_id VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL PRIMARY KEY,
+        next_seq BIGINT UNSIGNED NOT NULL DEFAULT 0
+    ) ENGINE=InnoDB DEFAULT CHARSET=ascii)sql", r, use_awaitable);
 }
 
 boost::asio::awaitable<void> MySQLHandler::RecordConversationMessage(
@@ -1158,72 +1181,23 @@ boost::asio::awaitable<std::vector<conversation::Conversation>> MySQLHandler::Li
         }, use_awaitable);
 }
 
-boost::asio::awaitable<std::optional<conversation::Conversation>> MySQLHandler::FindConversation(
-    uint64_t owner, std::string id)
+boost::asio::awaitable<std::vector<conversation::Conversation>>
+MySQLHandler::ListRecentConversations(uint64_t owner, uint32_t limit)
 {
     co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(1),
-        [owner, id = std::move(id)]() -> boost::asio::awaitable<std::optional<conversation::Conversation>> {
+        [owner, limit]() -> boost::asio::awaitable<std::vector<conversation::Conversation>> {
             auto connection = co_await MySQLConnector::instance().get_pool(1).async_get_connection(use_awaitable);
             results r;
             const auto sql = "SELECT " + conversationColumns + " FROM im_conversations" +
                 boost::mysql::format_sql(connection->format_opts().value(),
-                    " WHERE owner_account={} AND conversation_id={} AND is_hidden=0", owner, id);
+                    " WHERE owner_account={} AND is_hidden=0 ORDER BY latest_time DESC,conversation_id DESC LIMIT {}",
+                    owner, limit);
             co_await connection->async_execute(sql, r, use_awaitable);
-            if (r.rows().empty())
-                co_return std::nullopt;
-            co_return conversationRow(r.rows()[0]);
-        }, use_awaitable);
-}
-
-boost::asio::awaitable<conversation::GetSortedConversationListResp> MySQLHandler::SortedConversations(
-    conversation::GetSortedConversationListReq query)
-{
-    co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(1),
-        [query = std::move(query)]() -> boost::asio::awaitable<conversation::GetSortedConversationListResp> {
-            if (!query.userid() || query.conversationids_size() > 1000)
-                throw std::invalid_argument("Invalid conversation list request");
-            auto connection = co_await MySQLConnector::instance().get_pool(1).async_get_connection(use_awaitable);
-            std::string filter = boost::mysql::format_sql(connection->format_opts().value(),
-                " WHERE owner_account={} AND is_hidden=0", query.userid());
-            if (query.conversationids_size()) {
-                filter += " AND conversation_id IN (";
-                for (int i = 0; i < query.conversationids_size(); ++i) {
-                    if (i)
-                        filter += ',';
-                    filter += boost::mysql::format_sql(connection->format_opts().value(), "{}", query.conversationids(i));
-                }
-                filter += ')';
-            }
-            conversation::GetSortedConversationListResp response;
-            results isolation;
-            co_await connection->async_execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ", isolation, use_awaitable);
-            co_await conversationTransaction(*connection.operator->(), [&]() -> boost::asio::awaitable<bool> {
-                results r;
-                co_await connection->async_execute("SELECT COUNT(*),COALESCE(SUM(unread_count),0) FROM im_conversations" + filter,
-                    r, use_awaitable);
-                response.set_conversationtotal(static_cast<int64_t>(conversationNumber(r.rows()[0][0])));
-                const auto sum = r.rows()[0][1];
-                response.set_unreadtotal(sum.is_string() ? std::stoll(std::string(sum.as_string()))
-                    : static_cast<int64_t>(conversationNumber(sum)));
-                const auto page = std::max(1, query.pagination().pagenumber());
-                const auto size = std::clamp(query.pagination().shownumber(), 1, 100);
-                const auto offset = static_cast<int64_t>(page - 1) * size;
-                auto sql = "SELECT " + conversationColumns + " FROM im_conversations" + filter +
-                    boost::mysql::format_sql(connection->format_opts().value(),
-                        " ORDER BY is_pinned DESC,latest_time DESC,conversation_id DESC LIMIT {} OFFSET {}", size, offset);
-                co_await connection->async_execute(sql, r, use_awaitable);
-                for (auto row : r.rows()) {
-                    auto item = conversationRow(row);
-                    auto* entry = response.add_conversationelems();
-                    entry->set_conversationid(item.conversationid());
-                    entry->set_recvmsgopt(item.recvmsgopt());
-                    entry->set_unreadcount(item.unreadcount());
-                    entry->set_ispinned(item.ispinned());
-                    *entry->mutable_msginfo() = item.latestmsg();
-                }
-                co_return true;
-            });
-            co_return response;
+            std::vector<conversation::Conversation> items;
+            items.reserve(r.rows().size());
+            for (auto row : r.rows())
+                items.push_back(conversationRow(row));
+            co_return items;
         }, use_awaitable);
 }
 
@@ -1300,7 +1274,7 @@ boost::asio::awaitable<bool> MySQLHandler::DeleteConversation(uint64_t owner, st
 namespace {
 
 const std::string outboxColumns =
-    "id,operation,actor_account,peer_account,conversation_id,server_msg_id,seq,payload,state,stage,attempts,lease_token,dispatch_done";
+    "id,operation,actor_account,peer_account,conversation_id,server_msg_id,seq,payload,state,stage,attempts,lease_token,dispatch_done,traceparent";
 
 MySQLHandler::OutboxTask outboxRow(boost::mysql::row_view row)
 {
@@ -1318,6 +1292,7 @@ MySQLHandler::OutboxTask outboxRow(boost::mysql::row_view row)
     task.attempts = static_cast<int>(unsigned_field(row[10], "outbox.attempts"));
     task.leaseToken = std::string(row[11].as_string());
     task.dispatchDone = unsigned_field(row[12], "outbox.dispatch_done") != 0;
+    task.traceparent = std::string(row[13].as_string());
     return task;
 }
 
@@ -1330,24 +1305,85 @@ sdkws::MsgData outboxMessage(const MySQLHandler::OutboxTask& task)
 }
 
 // 当前好友关系和历史删除状态，是否允许这条消息继续处理。
-boost::asio::awaitable<bool> friendAllows(boost::mysql::any_connection& connection,
-    uint64_t actor, uint64_t peer, int64_t seq)
+boost::asio::awaitable<bool> areFriends(boost::mysql::any_connection& connection,
+    uint64_t actor, uint64_t peer)
 {
     results r;
-    // 从friends表中查关系行数
     co_await connection.async_execute(boost::mysql::format_sql(connection.format_opts().value(),
         "SELECT COUNT(*) FROM friends WHERE (owner_account={} AND friend_account={}) "
         "OR (owner_account={} AND friend_account={})", actor, peer, peer, actor), r, use_awaitable);
-    
-    // 正常的好友关系有两条记录:A-B,B-A
-    if (actor == peer || unsigned_field(r.rows()[0][0], "friends.count") != 2)
-        co_return false;
+    co_return actor != peer && unsigned_field(r.rows()[0][0], "friends.count") == 2;
+}
 
-    // friend_chat_deletions记录了好友关系删除时消息的最高水位，以后好友关系恢复后旧消息也不能返回
+// 好友删除水位（会话 seq 空间）
+boost::asio::awaitable<int64_t> deletionSeq(boost::mysql::any_connection& connection,
+    uint64_t actor, uint64_t peer)
+{
+    results r;
     co_await connection.async_execute(boost::mysql::format_sql(connection.format_opts().value(),
         "SELECT deleted_seq FROM friend_chat_deletions WHERE owner_account={} AND peer_account={}",
         actor, peer), r, use_awaitable);
-    co_return r.rows().empty() || seq > static_cast<int64_t>(unsigned_field(r.rows()[0][0], "deletion.seq"));
+    co_return r.rows().empty() ? 0 : static_cast<int64_t>(number(r.rows()[0][0]));
+}
+
+boost::asio::awaitable<bool> friendAllows(boost::mysql::any_connection& connection,
+    uint64_t actor, uint64_t peer, int64_t seq)
+{
+    if (!co_await areFriends(connection, actor, peer))
+        co_return false;
+    const auto cutoff = co_await deletionSeq(connection, actor, peer);
+    co_return seq > cutoff;
+}
+
+// 单聊每个会话一个稠密 seq：双向共用，严格 +1。分配必须与消息落库在同一事务。
+boost::asio::awaitable<int64_t> allocateConversationSeq(
+    boost::mysql::any_connection& connection, const std::string& conversation)
+{
+    results r;
+    co_await connection.async_execute(boost::mysql::format_sql(connection.format_opts().value(),
+        "INSERT IGNORE INTO im_conversation_seq(conversation_id,next_seq) VALUES({},0)",
+        conversation), r, use_awaitable);
+    co_await connection.async_execute(boost::mysql::format_sql(connection.format_opts().value(),
+        "UPDATE im_conversation_seq SET next_seq=LAST_INSERT_ID(next_seq+1) "
+        "WHERE conversation_id={}", conversation), r, use_awaitable);
+    co_await connection.async_execute("SELECT LAST_INSERT_ID()", r, use_awaitable);
+    co_return static_cast<int64_t>(number(r.rows()[0][0]));
+}
+
+// 当前会话已分配到的最后一个 seq（未分配过则为 0）
+boost::asio::awaitable<int64_t> currentConversationSeq(
+    boost::mysql::any_connection& connection, const std::string& conversation)
+{
+    results r;
+    co_await connection.async_execute(boost::mysql::format_sql(connection.format_opts().value(),
+        "SELECT next_seq FROM im_conversation_seq WHERE conversation_id={}",
+        conversation), r, use_awaitable);
+    co_return r.rows().empty() ? 0 : static_cast<int64_t>(number(r.rows()[0][0]));
+}
+
+// 单聊 conversationID 必须是 "digits_digits"（min(uid)_max(uid)）。
+// 只接受 ASCII 数字：std::stoull 会宽松接受前导空格/符号和尾随字符，
+// 不能直接用来判定协议是否合法（"1_2_3"、"_"、"abc"、" 1_2" 都必须拒绝）。
+bool parseConversationID(const std::string& conversation, uint64_t& first, uint64_t& second)
+{
+    const auto sep = conversation.find('_');
+    if (sep == std::string::npos || sep == 0 || sep + 1 >= conversation.size() ||
+        conversation.find('_', sep + 1) != std::string::npos)
+        return false;
+    const auto digits = [](std::string_view text) {
+        return !text.empty() && std::all_of(text.begin(), text.end(),
+            [](unsigned char c) { return c >= '0' && c <= '9'; });
+    };
+    const std::string_view text(conversation);
+    if (!digits(text.substr(0, sep)) || !digits(text.substr(sep + 1)))
+        return false;
+    try {
+        first = std::stoull(std::string(text.substr(0, sep)));
+        second = std::stoull(std::string(text.substr(sep + 1)));
+    } catch (const std::exception&) {
+        return false;
+    }
+    return first > 0 && second > 0;
 }
 
 }
@@ -1375,51 +1411,96 @@ boost::asio::awaitable<void> MySQLHandler::InitializeOutbox()
         lease_until BIGINT NOT NULL DEFAULT 0,
         lease_token VARCHAR(64) CHARACTER SET ascii NOT NULL DEFAULT '',
         last_error VARCHAR(2048) NOT NULL DEFAULT '',
+        traceparent VARCHAR(96) CHARACTER SET ascii NOT NULL DEFAULT '',
         created_at BIGINT NOT NULL,
         updated_at BIGINT NOT NULL,
         UNIQUE KEY outbox_dedupe(operation,dedupe_key),
         KEY outbox_ready(state,available_at,id),
         KEY outbox_lease(state,lease_until,id),
         KEY outbox_message(server_msg_id,operation),
-        KEY outbox_pair(conversation_id,operation,seq)
+        KEY outbox_pair(conversation_id,operation,seq),
+        KEY outbox_retention(state,operation,updated_at,id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4)sql", r, use_awaitable);
-    co_await connection->async_execute(R"sql(CREATE TABLE IF NOT EXISTS im_message_receipts (
+
+    // 老库补 traceparent 列：异步投递链路的 origin trace（可空、默认空串）。
+    co_await connection->async_execute(
+        "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema=DATABASE() "
+        "AND table_name='im_outbox' AND column_name='traceparent'", r, use_awaitable);
+    if (number(r.rows()[0][0]) == 0)
+        co_await connection->async_execute(
+            "ALTER TABLE im_outbox ADD COLUMN traceparent VARCHAR(96) CHARACTER SET ascii "
+            "NOT NULL DEFAULT '' AFTER last_error", r, use_awaitable);
+
+    // 清理线程按 (state,operation,updated_at,id) 扫描，避免全表扫描（11.1）。
+    // CREATE TABLE 里已带该索引（新库直接生效）；老库在启动时幂等补建。
+    co_await connection->async_execute(
+        "SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() "
+        "AND table_name='im_outbox' AND index_name='outbox_retention'", r, use_awaitable);
+    if (number(r.rows()[0][0]) == 0)
+        co_await connection->async_execute(
+            "ALTER TABLE im_outbox ADD KEY outbox_retention(state,operation,updated_at,id)", r, use_awaitable);
+    // 领取按 operation 过滤：MsgService/GroupService 各扫自己的任务（outbox_op_ready）。
+    co_await connection->async_execute(
+        "SELECT COUNT(*) FROM information_schema.statistics WHERE table_schema=DATABASE() "
+        "AND table_name='im_outbox' AND index_name='outbox_op_ready'", r, use_awaitable);
+    if (number(r.rows()[0][0]) == 0)
+        co_await connection->async_execute(
+            "ALTER TABLE im_outbox ADD KEY outbox_op_ready(operation,state,available_at,id)", r, use_awaitable);
+    co_await connection->async_execute(R"sql(CREATE TABLE IF NOT EXISTS im_conversation_receipts (
         owner_account BIGINT UNSIGNED NOT NULL,
-        server_msg_id VARCHAR(128) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
         conversation_id VARCHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
-        seq BIGINT NOT NULL,
-        delivered_at BIGINT NOT NULL,
-        PRIMARY KEY(owner_account,server_msg_id),
-        KEY receipt_conversation(owner_account,conversation_id,seq)
+        delivered_seq BIGINT NOT NULL DEFAULT 0,
+        updated_at BIGINT NOT NULL,
+        PRIMARY KEY(owner_account, conversation_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4)sql", r, use_awaitable);
 }
 
-boost::asio::awaitable<MySQLHandler::OutboxTask> MySQLHandler::QueueSingleMessage(sdkws::MsgData message)
+boost::asio::awaitable<std::vector<MySQLHandler::OutboxBacklog>>
+MySQLHandler::CollectOutboxBacklog(int pool)
 {
-    // 这里可以优化，随机取得一个执行器
-    co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),
-        [message = std::move(message)]() -> boost::asio::awaitable<OutboxTask> {
+    co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(pool),
+        []() -> boost::asio::awaitable<std::vector<MySQLHandler::OutboxBacklog>> {
+            auto connection = co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
+            results r;
+            co_await connection->async_execute(
+                "SELECT operation,COUNT(*),"
+                "CAST(IFNULL(TIMESTAMPDIFF(SECOND,FROM_UNIXTIME(MIN(created_at)/1000),NOW()),0) AS SIGNED) "
+                "FROM im_outbox WHERE state IN (0,1) GROUP BY operation", r, use_awaitable);
+            std::vector<MySQLHandler::OutboxBacklog> result;
+            result.reserve(r.rows().size());
+            for (auto row : r.rows())
+            {
+                MySQLHandler::OutboxBacklog item;
+                item.operation = static_cast<int>(unsigned_field(row[0], "outbox.operation"));
+                item.pending = static_cast<int64_t>(unsigned_field(row[1], "outbox.pending"));
+                item.oldest_age_seconds = static_cast<int64_t>(number(row[2]));
+                result.push_back(item);
+            }
+            co_return result;
+        }, use_awaitable);
+}
 
-            // 检验单聊消息的合法性
+boost::asio::awaitable<MySQLHandler::OutboxTask> MySQLHandler::QueueSingleMessage(
+    sdkws::MsgData message, std::string traceparent)
+{
+    co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),
+        [message = std::move(message), traceparent = std::move(traceparent)]() mutable -> boost::asio::awaitable<OutboxTask> {
+            // 单聊消息合法性（seq 由服务端分配，不读取调用方的 seq）
             if (!message.sendid() || !message.recvid() || message.sendid() == message.recvid() ||
-                message.isgroupmsg() || message.sessiontype() != 1 || message.clientmsgid().empty() ||
+                message.isgroupmsg() || message.sessiontype() != 1 ||
+                message.convid().empty() || message.clientmsgid().empty() ||
                 message.clientmsgid().size() > 128 || message.content().size() > 64 * 1024 ||
                 std::any_of(message.clientmsgid().begin(), message.clientmsgid().end(),
-                    [](unsigned char c) { return c < 33 || c > 126; })){
+                    [](unsigned char c) { return c < 33 || c > 126; })) {
                 throw std::invalid_argument("Invalid single-chat message");
             }
-                
-            // 从池中取得一条连接
+
             auto connection = co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
             OutboxTask task;
             co_await conversationTransaction(*connection.operator->(), [&]() -> boost::asio::awaitable<bool> {
-                
-                // 先取得好友关系的锁，避免当前事务执行过程中受到好友关系变更的影响
                 co_await lockPair(*connection.operator->(), message.sendid(), message.recvid());
-                // 判断一下当前好友关系、这条消息的序号能不能被继续处理
-                if (!co_await friendAllows(*connection.operator->(), message.sendid(), message.recvid(), message.seq()))
-                    throw std::invalid_argument("Only friends may exchange messages");
 
+                // 幂等：同一 (发送方, clientMsgID) 只分配一次 seq
                 const auto key = std::to_string(message.sendid()) + ":" + message.clientmsgid();
                 results r;
                 auto query = "SELECT " + outboxColumns + " FROM im_outbox" +
@@ -1436,25 +1517,33 @@ boost::asio::awaitable<MySQLHandler::OutboxTask> MySQLHandler::QueueSingleMessag
                     if (original.recvid() != message.recvid() || original.content() != message.content() ||
                         original.contenttype() != message.contenttype() || original.sessiontype() != message.sessiontype())
                         throw std::invalid_argument("clientMsgID was reused for a different message");
-                    if (task.state == 3)
-                        throw std::invalid_argument("This message was cancelled by a friend deletion");
                     co_return true;
                 }
+
+                // 先确认好友关系（不含删除水位），避免给非法消息消耗 seq
+                if (!co_await areFriends(*connection.operator->(), message.sendid(), message.recvid()))
+                    throw std::invalid_argument("Only friends may exchange messages");
+
+                const auto seq = co_await allocateConversationSeq(*connection.operator->(), message.convid());
+                message.set_seq(seq);
+                if (seq <= co_await deletionSeq(*connection.operator->(), message.sendid(), message.recvid()))
+                    throw std::invalid_argument("Message is older than the friend deletion boundary");
+
                 std::string payload;
                 if (!google::protobuf::util::MessageToJsonString(message, &payload).ok())
                     throw std::invalid_argument("Invalid message payload");
                 co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
                     "INSERT INTO im_outbox(operation,dedupe_key,actor_account,peer_account,conversation_id,server_msg_id,"
-                    "seq,payload,created_at,updated_at) VALUES(1,{},{},{},{},{},{},{},{},{})",
+                    "seq,payload,traceparent,created_at,updated_at) VALUES(1,{},{},{},{},{},{},{},{},{},{})",
                     key, message.sendid(), message.recvid(), message.convid(), message.servermsgid(), message.seq(),
-                    payload, now(), now()), r, use_awaitable);
+                    payload, traceparent, now(), now()), r, use_awaitable);
                 task.id = r.last_insert_id();
-                task.actor = message.sendid(); 
-                task.peer = message.recvid(); 
+                task.actor = message.sendid();
+                task.peer = message.recvid();
                 task.seq = message.seq();
-                task.conversation = message.convid(); 
+                task.conversation = message.convid();
                 task.serverId = message.servermsgid();
-                task.payload = std::move(payload); 
+                task.payload = std::move(payload);
                 task.operation = 1;
                 co_return true;
             });
@@ -1476,11 +1565,11 @@ boost::asio::awaitable<void> MySQLHandler::QueueConversationCleanup(boost::mysql
         "WHERE conversation_id={} AND operation=1 AND seq<={} AND state IN (0,1)", now(), id, cutoff), r, use_awaitable);
 }
 
-boost::asio::awaitable<MySQLHandler::OutboxTask> MySQLHandler::GetOutboxTask(uint64_t id)
+boost::asio::awaitable<MySQLHandler::OutboxTask> MySQLHandler::GetOutboxTask(uint64_t id, int pool)
 {
-    co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(1),
-        [id]() -> boost::asio::awaitable<OutboxTask> {
-            auto connection = co_await MySQLConnector::instance().get_pool(1).async_get_connection(use_awaitable);
+    co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(pool),
+        [id, pool]() -> boost::asio::awaitable<OutboxTask> {
+            auto connection = co_await MySQLConnector::instance().get_pool(pool).async_get_connection(use_awaitable);
             results r;
             auto query = "SELECT " + outboxColumns + " FROM im_outbox" +
                 boost::mysql::format_sql(connection->format_opts().value(), " WHERE id={}", id);
@@ -1491,21 +1580,34 @@ boost::asio::awaitable<MySQLHandler::OutboxTask> MySQLHandler::GetOutboxTask(uin
         }, use_awaitable);
 }
 
-// 从数据库里面取任务
-boost::asio::awaitable<std::optional<MySQLHandler::OutboxTask>> MySQLHandler::ClaimOutboxTask()
+// 从数据库里面取任务。operations 限定本服务负责的任务类型：
+// MsgService {1,2,3}，GroupService {4}；互不领取对方的行。
+boost::asio::awaitable<std::optional<MySQLHandler::OutboxTask>> MySQLHandler::ClaimOutboxTask(
+    const std::vector<int>& operations, int pool)
 {
-    auto connection = co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
+    std::string operationFilter;
+    for (const auto operation : operations) {
+        if (!operationFilter.empty())
+            operationFilter += ',';
+        operationFilter += std::to_string(operation);
+    }
+    if (operationFilter.empty())
+        co_return std::nullopt;
+    const std::string scope = "operation IN (" + operationFilter + ") AND ";
+    auto connection = co_await MySQLConnector::instance().get_pool(pool).async_get_connection(use_awaitable);
     std::optional<OutboxTask> task;
     co_await conversationTransaction(*connection.operator->(), [&]() -> boost::asio::awaitable<bool> {
         results r;
-        const auto query = "SELECT " + outboxColumns + " FROM im_outbox" +
-            boost::mysql::format_sql(connection->format_opts().value(),
-                " WHERE state=0 AND available_at<={} ORDER BY available_at,id LIMIT 1 FOR UPDATE SKIP LOCKED", now());
+        // operation/now() 都是本进程生成的整数；直接拼接避免 format_sql 的常量 SQL 限制。
+        const auto timestamp = now();
+        const auto query = "SELECT " + outboxColumns + " FROM im_outbox WHERE " + scope +
+            "state=0 AND available_at<=" + std::to_string(timestamp) +
+            " ORDER BY available_at,id LIMIT 1 FOR UPDATE SKIP LOCKED";
         co_await connection->async_execute(query, r, use_awaitable);
         if (r.rows().empty()) {
-            const auto expired = "SELECT " + outboxColumns + " FROM im_outbox" +
-                boost::mysql::format_sql(connection->format_opts().value(),
-                    " WHERE state=1 AND lease_until<={} ORDER BY lease_until,id LIMIT 1 FOR UPDATE SKIP LOCKED", now());
+            const auto expired = "SELECT " + outboxColumns + " FROM im_outbox WHERE " + scope +
+                "state=1 AND lease_until<=" + std::to_string(timestamp) +
+                " ORDER BY lease_until,id LIMIT 1 FOR UPDATE SKIP LOCKED";
             co_await connection->async_execute(expired, r, use_awaitable);
             if (r.rows().empty())
                 co_return false;
@@ -1522,70 +1624,98 @@ boost::asio::awaitable<std::optional<MySQLHandler::OutboxTask>> MySQLHandler::Cl
     co_return task;
 }
 
-boost::asio::awaitable<void> MySQLHandler::RetryOutboxTask(OutboxTask task, std::string error)
+boost::asio::awaitable<void> MySQLHandler::RetryOutboxTask(OutboxTask task, std::string error,
+    int pool, int64_t delayMs)
 {
-    auto connection = co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
+    auto connection = co_await MySQLConnector::instance().get_pool(pool).async_get_connection(use_awaitable);
     results r;
-    const auto delay = std::min<int64_t>(60000, int64_t{1000} << std::min(task.attempts, 6));
+    const auto delay = delayMs > 0
+        ? delayMs
+        : std::min<int64_t>(60000, int64_t{1000} << std::min(task.attempts, 6));
     co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
         "UPDATE im_outbox SET state=0,available_at={},lease_token='',last_error={},updated_at={} "
         "WHERE id={} AND state=1 AND lease_token={}", now() + delay, error.substr(0, 1500), now(),
         task.id, task.leaseToken), r, use_awaitable);
 }
 
-boost::asio::awaitable<bool> MySQLHandler::QueueMessageAck(uint64_t owner, std::string serverId)
+boost::asio::awaitable<bool> MySQLHandler::AckConversation(uint64_t owner,
+    std::string conversation, int64_t upToSeq)
 {
-    if (!owner || serverId.empty() || serverId.size() > 128)
-        throw std::invalid_argument("Invalid message acknowledgement");
-    sdkws::MsgData message;
-    {
-        auto connection = co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
-        results r;
-        co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
-            "SELECT payload,stage,peer_account,state FROM im_outbox WHERE operation=1 AND server_msg_id={}", serverId), r, use_awaitable);
-        if (!r.rows().empty()) {
-            if (unsigned_field(r.rows()[0][2], "outbox.recipient") != owner)
-                throw std::invalid_argument("Acknowledgement owner does not match recipient");
-            if (unsigned_field(r.rows()[0][3], "outbox.state") == 3)
-                co_return true;
-            if (unsigned_field(r.rows()[0][1], "outbox.stage") == 0 ||
-                !google::protobuf::util::JsonStringToMessage(std::string(r.rows()[0][0].as_string()), &message).ok())
-                throw std::invalid_argument("Message has not been committed");
-        }
-    }
-    if (message.servermsgid().empty()) {
-        auto found = co_await MongoHandler::GetMsgByServerMsgIDAsync(serverId);
-        if (!found)
-            co_return true;
-        message = std::move(*found);
-    }
-    if (message.isgroupmsg())
-        co_return false;
-    if (message.recvid() != owner)
-        throw std::invalid_argument("Acknowledgement owner does not match recipient");
+    if (!owner || conversation.empty() || upToSeq <= 0)
+        throw std::invalid_argument("Invalid conversation acknowledgement");
+
+    // conversation = "min_max"；owner 必须是会话中的一方。
+    // 格式非法是协议错误（INVALID_ARGUMENT → 网关断连）；
+    // 非参与者、会话已删除属于过期 ACK，按 no-op 成功处理，不断连（7.4）。
+    uint64_t first = 0, second = 0;
+    if (!parseConversationID(conversation, first, second))
+        throw std::invalid_argument("Invalid conversation identifier");
+    if (owner != first && owner != second)
+        co_return true;
+
     auto connection = co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
     co_await conversationTransaction(*connection.operator->(), [&]() -> boost::asio::awaitable<bool> {
-        co_await lockPair(*connection.operator->(), message.sendid(), message.recvid());
         results r;
+        // 先裁剪到已提交 max_seq；会话不存在/未提交消息时 no-op。
         co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
-            "INSERT INTO im_message_receipts(owner_account,server_msg_id,conversation_id,seq,delivered_at) "
-            "VALUES({},{},{},{},{}) ON DUPLICATE KEY UPDATE server_msg_id=im_message_receipts.server_msg_id",
-            owner, serverId, message.convid(), message.seq(), now()), r, use_awaitable);
+            "SELECT max_seq FROM im_conversations WHERE owner_account={} AND conversation_id={}",
+            owner, conversation), r, use_awaitable);
+        if (r.rows().empty())
+            co_return true;
+        const int64_t maxSeq = static_cast<int64_t>(number(r.rows()[0][0]));
+        const int64_t seq = std::min(upToSeq, maxSeq);
+        if (seq <= 0)
+            co_return true;
+
+        // 原子推进水位：不再对“不存在的回执行”做 SELECT ... FOR UPDATE。
+        // affected_rows: 1=新插入，2=水位推进，0=低水位/重复 ACK。
+        results tx;
         co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
-            "INSERT INTO im_outbox(operation,dedupe_key,actor_account,peer_account,conversation_id,server_msg_id,seq,"
-            "payload,created_at,updated_at) VALUES(3,{},{},{},{},{},{},'',{},{}) ON DUPLICATE KEY UPDATE id=im_outbox.id",
-            std::to_string(owner) + ":" + serverId, message.sendid(), owner, message.convid(), serverId,
-            message.seq(), now(), now()), r, use_awaitable);
+            "INSERT INTO im_conversation_receipts(owner_account,conversation_id,delivered_seq,updated_at) "
+            "VALUES({},{},{},{}) ON DUPLICATE KEY UPDATE "
+            "delivered_seq=GREATEST(delivered_seq,VALUES(delivered_seq)),updated_at=VALUES(updated_at)",
+            owner, conversation, seq, now()), tx, use_awaitable);
+        if (tx.affected_rows() == 0)
+            co_return true;
+
+        co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
+            "INSERT INTO im_outbox(operation,dedupe_key,actor_account,peer_account,conversation_id,"
+            "server_msg_id,seq,payload,created_at,updated_at) "
+            "VALUES(3,{},{},{},{},'',{},'',{},{}) ON DUPLICATE KEY UPDATE id=im_outbox.id",
+            "ack:" + std::to_string(owner) + ":" + conversation + ":" + std::to_string(seq),
+            owner, owner, conversation, seq, now(), now()), tx, use_awaitable);
         co_return true;
     });
     co_return true;
 }
 
+// 按 operation 分批删除已完成的 outbox 行（11.1）：每批一条 DELETE ... LIMIT，
+// 避免长事务与全表扫描。多实例同时删除同一行是幂等的（同一行只会被一个实例删到）。
+boost::asio::awaitable<uint64_t> MySQLHandler::PurgeCompletedOutbox(int operation,
+    int64_t cutoff, int batchLimit, int maxBatches)
+{
+    if (operation <= 0 || batchLimit <= 0 || maxBatches <= 0)
+        co_return 0;
+    auto connection = co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
+    uint64_t deleted = 0;
+    for (int batch = 0; batch < maxBatches; ++batch) {
+        results r;
+        co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
+            "DELETE FROM im_outbox WHERE state IN (2,3) AND operation={} AND updated_at<{} "
+            "ORDER BY id LIMIT {}", operation, cutoff, batchLimit), r, use_awaitable);
+        const auto affected = r.affected_rows();
+        deleted += affected;
+        if (affected < static_cast<uint64_t>(batchLimit))
+            break;      // 本轮已经没有更多可删的行
+    }
+    co_return deleted;
+}
+
 // 这个设计是为了把请求的执行变成数据库里面可恢复的流程
 // 如果请求的流程（如redis写失败）因为某个环节中断了，可以通过各个流程组件的幂等性和task的状态进行恢复（重复执行）
-boost::asio::awaitable<void> MySQLHandler::ProcessOutboxTask(OutboxTask task, IMessageProducer& producer)
+boost::asio::awaitable<void> MySQLHandler::ProcessOutboxTask(OutboxTask task, IMessageProducer& producer, int pool)
 {
-    auto connection = co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
+    auto connection = co_await MySQLConnector::instance().get_pool(pool).async_get_connection(use_awaitable);
     auto phase = [&](bool persist) -> boost::asio::awaitable<bool> {
         co_return co_await conversationTransaction(*connection.operator->(), [&]() -> boost::asio::awaitable<bool> {
             co_await lockPair(*connection.operator->(), task.actor, task.peer);
@@ -1599,6 +1729,7 @@ boost::asio::awaitable<void> MySQLHandler::ProcessOutboxTask(OutboxTask task, IM
             if (current.state != 1 || current.leaseToken != task.leaseToken)
                 co_return false;
             task.stage = current.stage;
+            task.traceparent = current.traceparent;
             // 单聊消息的保存和分发
             if (task.operation == 1) {  
                 // 再次检查
@@ -1623,22 +1754,40 @@ boost::asio::awaitable<void> MySQLHandler::ProcessOutboxTask(OutboxTask task, IM
                     co_return true;
                 }
 
+                // 异步投递尝试：新 trace + link 指回受理 span（traceparent 随 outbox 行落库）。
+                ape::otel::SpanHandle publish_span;
+                if (!persist)
+                {
+                    publish_span = ape::otel::StartLinkedSpan(
+                        ape::otel::TraceContext::FromTraceParent(task.traceparent),
+                        "outbox.publish.op1",
+                        {{"im.operation", std::to_string(task.operation)},
+                         {"im.server_msg_id", task.serverId},
+                         {"im.conversation_id", task.conversation},
+                         {"outbox.attempts", std::to_string(task.attempts)}},
+                        opentelemetry::trace::SpanKind::kProducer);
+                }
+
                 // 设置消息为可投递
                 co_await MongoHandler::PublishMessage(task.serverId);
                 // 查询客户端是否已经发送这条消息的ACK
                 co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
-                    "SELECT 1 FROM im_message_receipts WHERE owner_account={} AND server_msg_id={}", task.peer, task.serverId),
-                    r, use_awaitable);
+                    "SELECT 1 FROM im_conversation_receipts WHERE owner_account={} "
+                    "AND conversation_id={} AND delivered_seq>={}",
+                    task.peer, task.conversation, task.seq), r, use_awaitable);
                 if (r.rows().empty()) {
                     if (!co_await RedisHandler::SaveMsg(message))
                         throw std::runtime_error("Redis message caching failed");
-                    // 带确认投递成功状态的投递
-                    if (!co_await producer.deliverConfirmed(task.conversation, task.serverId))
+                    // 带确认投递成功状态的投递；Kafka value 携带投递尝试的 traceparent。
+                    const auto kafka_value =
+                        ape::otel::EncodeKafkaValue(publish_span.context(), task.serverId);
+                    if (!co_await producer.deliverConfirmed(task.conversation, kafka_value))
                         throw std::runtime_error("Kafka broker did not confirm delivery");
                     // 更新任务状态为待执行（可以被worker领取），因为还没确认消息是否完成分发（进入离线流程/收到ACK），保留重试的能力
                     co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
                         "UPDATE im_outbox SET state=0,available_at={},lease_token='',last_error='',updated_at={} WHERE id={}",
                         now() + 5000, now(), task.id), r, use_awaitable);
+                    publish_span.EndOk();
                     co_return true;
                 }
             } else if (task.operation == 2) {       // 删除好友后的历史清理
@@ -1648,12 +1797,10 @@ boost::asio::awaitable<void> MySQLHandler::ProcessOutboxTask(OutboxTask task, IM
                 auto ids = co_await MongoHandler::GetSingleChatMessageIDsAsync(task.conversation, task.seq);
                 co_await RedisHandler::DeleteSingleChatHistory(task.actor, task.peer, std::move(ids));
                 co_await MongoHandler::DeleteSingleChatHistoryAsync(task.conversation, task.seq);
-            } else if (task.operation == 3) {       // 客户端ACK后的投递状态与缓存清理
-                if (!co_await MongoHandler::MarkMsgsAsDeliveredAsync(task.peer, {task.serverId}))
+            } else if (task.operation == 3) {       // 客户端 ACK 后的投递状态清理
+                if (!co_await MongoHandler::MarkConversationDeliveredUpTo(
+                        task.peer, task.conversation, task.seq))
                     throw std::runtime_error("MongoDB acknowledgement update failed");
-                // ACK cleanup deletes the realtime cache. No ZSET or max-ACK watermarks
-                // are produced; legacy per-message metadata is removed during migration.
-                co_await RedisHandler::CleanupAcknowledgedMessage(task.peer,task.serverId);
             } else {
                 throw std::runtime_error("Unknown outbox operation");
             }
@@ -1712,16 +1859,19 @@ boost::asio::awaitable<int64_t> MySQLHandler::FriendDeletionSeq(uint64_t owner, 
         }, use_awaitable);
 }
 
-boost::asio::awaitable<bool> MySQLHandler::MessageDispatchDone(uint64_t owner, std::string serverId)
+boost::asio::awaitable<bool> MySQLHandler::MessageDispatchDone(uint64_t owner,
+    std::string serverId, std::string conversationID, int64_t seq)
 {
     co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(1),
-        [owner, serverId = std::move(serverId)]() -> boost::asio::awaitable<bool> {
+        [owner, serverId = std::move(serverId), conversationID = std::move(conversationID),
+         seq]() -> boost::asio::awaitable<bool> {
             auto connection = co_await MySQLConnector::instance().get_pool(1).async_get_connection(use_awaitable);
             results r;
             co_await connection->async_execute(boost::mysql::format_sql(connection->format_opts().value(),
                 "SELECT 1 FROM im_outbox WHERE operation=1 AND server_msg_id={} AND (state=3 OR dispatch_done=1) "
-                "UNION ALL SELECT 1 FROM im_message_receipts WHERE owner_account={} AND server_msg_id={} LIMIT 1",
-                serverId, owner, serverId), r, use_awaitable);
+                "UNION ALL SELECT 1 FROM im_conversation_receipts WHERE owner_account={} "
+                "AND conversation_id={} AND delivered_seq>={} LIMIT 1",
+                serverId, owner, conversationID, seq), r, use_awaitable);
             co_return !r.rows().empty();
         }, use_awaitable);
 }
@@ -1736,380 +1886,4 @@ boost::asio::awaitable<void> MySQLHandler::ConfirmMessageDispatch(std::string se
                 "UPDATE im_outbox SET state=2,dispatch_done=1,lease_token='',last_error='',updated_at={} "
                 "WHERE operation=1 AND server_msg_id={} AND stage=1 AND state<>3", now(), serverId), r, use_awaitable);
         }, use_awaitable);
-}
-
-// Group persistence: all SQL stays in the storage handler.
-namespace group_storage {
-using boost::asio::awaitable;
-using boost::asio::use_awaitable;
-using boost::mysql::results;
-using Connection = boost::mysql::any_connection;
-namespace {
-struct Error : std::runtime_error {
-    std::string code;
-    Error(std::string c, std::string message) : std::runtime_error(message), code(std::move(c)) {}
-};
-uint64_t number(boost::mysql::field_view f) {
-    return f.is_uint64() ? f.as_uint64() : static_cast<uint64_t>(f.as_int64());
-}
-std::string str(boost::mysql::field_view f) { return std::string(f.as_string()); }
-int64_t now() {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(
-        std::chrono::system_clock::now().time_since_epoch()).count();
-}
-std::string hex(const std::string& bytes) {
-    const char* digits = "0123456789abcdef";
-    std::string result;
-    for (unsigned char c : bytes) { result += digits[c >> 4]; result += digits[c & 15]; }
-    return result;
-}
-std::string unhex(const std::string& s) {
-    std::string result;
-    auto digit = [](char c) { return c <= '9' ? c - '0' : c - 'a' + 10; };
-    if (s.size() % 2) throw Error("CACHE_ERROR", "Invalid saved request");
-    for (size_t i = 0; i < s.size(); i += 2) result += char(digit(s[i]) * 16 + digit(s[i+1]));
-    return result;
-}
-template<class... Args>
-awaitable<results> query(Connection& c, boost::mysql::constant_string_view sql, Args&&... args) {
-    results r;
-    co_await c.async_execute(boost::mysql::format_sql(c.format_opts().value(), sql,
-        std::forward<Args>(args)...), r, use_awaitable);
-    co_return r;
-}
-awaitable<void> finish(Connection& c, bool commit) {
-    results r;
-    co_await c.async_execute(commit ? "COMMIT" : "ROLLBACK", r, use_awaitable);
-}
-groupchat::Group groupRow(boost::mysql::row_view row) {
-    groupchat::Group g;
-    g.set_id(std::to_string(number(row[0]))); g.set_name(str(row[1]));
-    g.set_owner(number(row[2])); g.set_membercount(number(row[3]));
-    g.set_dismissed(number(row[4]) != 0); g.set_lastseq(number(row[5]));
-    g.set_large(g.membercount() > 200);
-    return g;
-}
-groupchat::Message messageRow(boost::mysql::row_view row) {
-    groupchat::Message m;
-    m.set_groupid(std::to_string(number(row[0]))); m.set_seq(number(row[1]));
-    m.set_id(str(row[2])); m.set_clientid(str(row[3])); m.set_sender(number(row[4]));
-    m.set_nickname(str(row[5])); m.set_text(str(row[6])); m.set_time(number(row[7]));
-    return m;
-}
-uint64_t groupId(const std::string& s) {
-    if (s.empty() || s.size() > 20 || s.find_first_not_of("0123456789") != std::string::npos)
-        throw Error("INVALID_GROUP", "请输入有效的数字群号");
-    try { auto id = std::stoull(s); if (id) return id; } catch (...) {}
-    throw Error("INVALID_GROUP", "请输入有效的数字群号");
-}
-awaitable<uint64_t> allocateGroupNumber(Connection& c,uint64_t id) {
-    auto cursor=co_await query(c,"SELECT next_number FROM im_group_number_cursor WHERE id=1 FOR UPDATE");
-    const auto value=number(cursor.rows()[0][0]);
-    if(value>AccountPoolAllocator::kMaxAccount) throw Error("GROUP_NUMBER_EXHAUSTED","群号已用尽");
-    co_await query(c,"INSERT INTO im_group_numbers(group_id,number) VALUES({},{})",id,value);
-    co_await query(c,"UPDATE im_group_number_cursor SET next_number={} WHERE id=1",value+1);
-    co_return value;
-}
-awaitable<void> memberState(Connection& c, groupchat::Group& g, uint64_t actor) {
-    auto publicNumber=co_await query(c,"SELECT number FROM im_group_numbers WHERE group_id={}",groupId(g.id()));
-    if(!publicNumber.rows().empty()) g.set_number(std::to_string(number(publicNumber.rows()[0][0])));
-
-    auto r = co_await query(c, "SELECT active,join_seq,read_seq,epoch FROM im_group_members WHERE group_id={} AND account={}", groupId(g.id()), actor);
-    if (r.rows().empty()) co_return;
-    auto row = r.rows()[0];
-    g.set_joined(number(row[0]) != 0 && !g.dismissed());
-    g.set_joinseq(number(row[1])); g.set_readseq(number(row[2])); g.set_epoch(number(row[3]));
-    if (g.joined()) {
-        // Snowflake/global progress is not used: every group has contiguous sequence numbers.
-        const auto first = std::max(g.joinseq(), g.readseq());
-        auto count = co_await query(c, "SELECT COUNT(*) FROM im_group_messages WHERE group_id={} AND seq>{} AND sender<>{}", groupId(g.id()), first, actor);
-        g.set_unread(number(count.rows()[0][0]));
-    }
-}
-awaitable<groupchat::Reply> perform(Connection& c, const groupchat::Command& cmd) {
-    groupchat::Reply reply; reply.set_errorcode("0"); reply.set_groupid(cmd.groupid());
-    auto op = cmd.operation(); const uint64_t actor = cmd.actor();
-    if (!actor || op < groupchat::List || op > groupchat::MyApplications)
-        throw Error("INVALID_PARAM", "无效群操作");
-    if (cmd.text().size() > (op == groupchat::Send ? 65536u : 512u))
-        throw Error("INVALID_PARAM", "内容过长");
-    const auto limit = std::clamp<uint32_t>(cmd.limit(), 1, op == groupchat::Pull ? 50 : 100);
-    auto user = co_await query(c, "SELECT nickname FROM users WHERE account={}", actor);
-    if (user.rows().empty()) throw Error("INVALID_ACCOUNT", "账号不存在");
-    const auto nickname = str(user.rows()[0][0]);
-    if(op==groupchat::MyApplications) {
-        auto r=co_await query(c,"SELECT a.id,a.group_id,g.name,a.reason,a.status,a.created_time,n.number FROM im_group_applications a JOIN im_groups g ON a.group_id=g.id JOIN im_group_numbers n ON n.group_id=g.id WHERE a.account={} AND a.id>{} ORDER BY a.id LIMIT {}",actor,cmd.after(),limit+1);
-        reply.set_hasmore(r.rows().size()>limit);
-        for(size_t i=0;i<std::min<size_t>(limit,r.rows().size());++i) {
-            auto row=r.rows()[i]; auto* a=reply.add_applications(); a->set_id(number(row[0]));
-            a->set_groupid(std::to_string(number(row[1]))); a->set_groupname(str(row[2]));
-            a->set_groupnumber(std::to_string(number(row[6])));
-            a->set_account(actor); a->set_nickname(nickname); a->set_reason(str(row[3])); a->set_status(number(row[4])); a->set_time(number(row[5])); reply.set_cursor(a->id());
-        }
-        co_return reply;
-    }
-    if (op == groupchat::List) {
-        auto r = co_await query(c, "SELECT g.id,g.name,g.owner,g.member_count,g.dismissed,g.last_seq FROM im_groups g JOIN im_group_members m ON m.group_id=g.id WHERE m.account={} AND g.id>{} ORDER BY g.id LIMIT {}", actor, cmd.after(), limit+1);
-        reply.set_hasmore(r.rows().size() > limit);
-        for (size_t i=0; i<std::min<size_t>(limit,r.rows().size()); ++i) {
-            auto g = groupRow(r.rows()[i]);
-            co_await memberState(c,g,actor); reply.set_cursor(groupId(g.id()));
-            *reply.add_groups() = g;
-        }
-        co_return reply;
-    }
-    if (op == groupchat::Create) {
-        if (cmd.text().empty() || cmd.text().size() > 256) throw Error("INVALID_NAME", "群名不能为空且不能超过256字节");
-        const auto id = static_cast<uint64_t>(Snowflake::instance().nextId());
-        co_await query(c,"INSERT INTO im_groups(id,name,owner) VALUES({},{},{})",id,cmd.text(),actor);
-        co_await allocateGroupNumber(c,id);
-        co_await query(c,"INSERT INTO im_group_members(group_id,account) VALUES({},{})",id,actor);
-        auto r = co_await query(c,"SELECT id,name,owner,member_count,dismissed,last_seq FROM im_groups WHERE id={}",id);
-        auto g=groupRow(r.rows()[0]); co_await memberState(c,g,actor); *reply.add_groups()=g;
-        reply.set_groupid(g.id()); co_return reply;
-    }
-    auto id=groupId(cmd.groupid());
-
-    if(op==groupchat::Search) {
-        auto lookup=co_await query(c,"SELECT group_id FROM im_group_numbers WHERE number={}",id);
-        if(!lookup.rows().empty()) id=number(lookup.rows()[0][0]);
-        else if(cmd.groupid().size()<=10) throw Error("GROUP_NOT_FOUND","未找到该群号");
-        // Longer identifiers remain accepted for old clients and persisted requests.
-    }
-    auto r=co_await query(c,"SELECT id,name,owner,member_count,dismissed,last_seq FROM im_groups WHERE id={} FOR UPDATE",id);
-    if(r.rows().empty()) throw Error("GROUP_NOT_FOUND","群不存在");
-    auto g=groupRow(r.rows()[0]); co_await memberState(c,g,actor); reply.set_epoch(g.epoch());
-    if(op==groupchat::Search) { reply.set_groupid(g.id()); *reply.add_groups()=g; co_return reply; }
-    if(g.dismissed()) {
-        if(op==groupchat::Dismiss && g.owner()==actor) co_return reply;
-        throw Error("GROUP_DISMISSED","群已解散");
-    }
-    if(op==groupchat::Apply) {
-        if(g.joined()) throw Error("ALREADY_JOINED","你已在群内");
-        r=co_await query(c,"SELECT id FROM im_group_applications WHERE group_id={} AND account={} AND status=0 ORDER BY id DESC LIMIT 1",id,actor);
-        if(r.rows().empty()) co_await query(c,"INSERT INTO im_group_applications(group_id,account,reason,created_time) VALUES({},{},{},{})",id,actor,cmd.text(),now());
-        co_return reply;
-    }
-    if(!g.joined()) {
-        if(op==groupchat::Leave) co_return reply;
-        throw Error("NOT_MEMBER","你已不在群内");
-    }
-    if(cmd.epoch() && cmd.epoch()!=g.epoch()) throw Error("MEMBERSHIP_CHANGED","成员身份已变化，请刷新");
-    if(op==groupchat::Applications || op==groupchat::Review || op==groupchat::Rename || op==groupchat::Kick || op==groupchat::Dismiss)
-        if(g.owner()!=actor) throw Error("OWNER_REQUIRED","仅群主可以执行此操作");
-    if(op==groupchat::Members) {
-        r=co_await query(c,"SELECT m.account,u.nickname FROM im_group_members m JOIN users u ON u.account=m.account WHERE m.group_id={} AND m.active=1 AND m.account>{} ORDER BY m.account LIMIT {}",id,cmd.after(),limit+1);
-        reply.set_hasmore(r.rows().size()>limit);
-        for(size_t i=0;i<std::min<size_t>(limit,r.rows().size());++i) {
-            auto* m=reply.add_members(); m->set_account(number(r.rows()[i][0])); m->set_nickname(str(r.rows()[i][1]));
-            m->set_owner(m->account()==g.owner()); reply.set_cursor(m->account());
-        }
-    } else if(op==groupchat::Applications) {
-        r=co_await query(c,"SELECT a.id,a.account,u.nickname,a.reason,a.status,a.created_time FROM im_group_applications a JOIN users u ON u.account=a.account WHERE a.group_id={} AND a.id>{} AND a.status=0 ORDER BY a.id LIMIT {}",id,cmd.after(),limit+1);
-        reply.set_hasmore(r.rows().size()>limit);
-        for(size_t i=0;i<std::min<size_t>(limit,r.rows().size());++i) {
-            auto row=r.rows()[i]; auto* a=reply.add_applications();
-            a->set_id(number(row[0])); a->set_groupid(g.id()); a->set_account(number(row[1]));
-            a->set_nickname(str(row[2])); a->set_reason(str(row[3])); a->set_status(number(row[4])); a->set_time(number(row[5])); reply.set_cursor(a->id());
-        }
-    } else if(op==groupchat::Review) {
-        r=co_await query(c,"SELECT account,status FROM im_group_applications WHERE id={} AND group_id={} FOR UPDATE",cmd.applicationid(),id);
-        if(r.rows().empty()) throw Error("APPLICATION_NOT_FOUND","申请不存在");
-        auto target=number(r.rows()[0][0]); const auto status=number(r.rows()[0][1]);
-        if(status && status!=uint64_t(cmd.accept()?1:2)) throw Error("APPLICATION_HANDLED","申请已处理");
-        if(!status) {
-            if(cmd.accept()) {
-                // Group row serializes all joins, exits and sends, including re-joins.
-                co_await query(c,"INSERT INTO im_group_members(group_id,account,join_seq,ack_seq,read_seq) VALUES({},{},{},{},{}) ON DUPLICATE KEY UPDATE epoch=IF(active=0,epoch+1,epoch),join_seq=IF(active=0,VALUES(join_seq),join_seq),ack_seq=IF(active=0,VALUES(ack_seq),ack_seq),read_seq=IF(active=0,VALUES(read_seq),read_seq),active=1",id,target,g.lastseq(),g.lastseq(),g.lastseq());
-                co_await query(c,"UPDATE im_groups SET member_count=(SELECT COUNT(*) FROM im_group_members WHERE group_id={} AND active=1) WHERE id={}",id,id);
-            }
-            co_await query(c,"UPDATE im_group_applications SET status={} WHERE id={}",cmd.accept()?1:2,cmd.applicationid());
-        }
-    } else if(op==groupchat::Rename) {
-        if(cmd.text().empty() || cmd.text().size()>256) throw Error("INVALID_NAME","群名不能为空且不能超过256字节");
-        if(cmd.text()==g.name()) throw Error("NAME_UNCHANGED","新群名称不能与当前名称相同");
-        co_await query(c,"UPDATE im_groups SET name={} WHERE id={}",cmd.text(),id);
-    } else if(op==groupchat::Leave || op==groupchat::Kick) {
-        auto target=op==groupchat::Leave?actor:cmd.target();
-        if(target==g.owner()) throw Error("OWNER_CANNOT_LEAVE","群主不能退出或被踢出，请解散群");
-        co_await query(c,"UPDATE im_group_members SET active=0 WHERE group_id={} AND account={}",id,target);
-        co_await query(c,"UPDATE im_groups SET member_count=(SELECT COUNT(*) FROM im_group_members WHERE group_id={} AND active=1) WHERE id={}",id,id);
-    } else if(op==groupchat::Dismiss) {
-        co_await query(c,"UPDATE im_groups SET dismissed=1 WHERE id={}",id);
-        co_await query(c,"UPDATE im_group_applications SET status=3 WHERE group_id={} AND status=0",id);
-    } else if(op==groupchat::Send) {
-        if(cmd.text().empty()) throw Error("EMPTY_MESSAGE","消息不能为空");
-        r=co_await query(c,"SELECT group_id,seq,id,client_id,sender,nickname,text,created_time FROM im_group_messages WHERE group_id={} AND sender={} AND client_id={}",id,actor,cmd.clientid());
-        if(!r.rows().empty()) {
-            auto m=messageRow(r.rows()[0]);
-            if(m.text()!=cmd.text()) throw Error("IDEMPOTENCY_CONFLICT","消息标识重复且内容不同");
-            *reply.add_messages()=m;
-        } else {
-            auto seq=g.lastseq()+1; const auto serverId=uuid::newone_str(); auto time=now();
-            co_await query(c,"INSERT INTO im_group_messages(group_id,seq,id,client_id,sender,nickname,text,created_time) VALUES({},{},{},{},{},{},{},{})",id,seq,serverId,cmd.clientid(),actor,nickname,cmd.text(),time);
-            co_await query(c,"UPDATE im_groups SET last_seq={} WHERE id={}",seq,id);
-            groupchat::Message m; m.set_id(serverId); m.set_clientid(cmd.clientid()); m.set_groupid(g.id()); m.set_sender(actor); m.set_nickname(nickname); m.set_text(cmd.text()); m.set_seq(seq); m.set_time(time); *reply.add_messages()=m;
-        }
-    } else if(op==groupchat::Pull) {
-        const auto snapshot=cmd.snapshot()?std::min(cmd.snapshot(),g.lastseq()):g.lastseq();
-        const auto after=std::max(cmd.after(),g.joinseq());
-        r=co_await query(c,"SELECT group_id,seq,id,client_id,sender,nickname,text,created_time FROM im_group_messages WHERE group_id={} AND seq>{} AND seq<={} ORDER BY seq LIMIT {}",id,after,snapshot,limit+1);
-        reply.set_snapshot(snapshot); reply.set_cursor(after); reply.set_hasmore(r.rows().size()>limit);
-        for(size_t i=0;i<std::min<size_t>(limit,r.rows().size());++i) { auto m=messageRow(r.rows()[i]); reply.set_cursor(m.seq()); *reply.add_messages()=m; }
-    } else if(op==groupchat::Ack || op==groupchat::Read) {
-        if(cmd.after()>g.lastseq()) throw Error("INVALID_SEQ","无效消息进度");
-        const auto seq=std::max(cmd.after(),g.joinseq());
-        if(op==groupchat::Ack) co_await query(c,"UPDATE im_group_members SET ack_seq=GREATEST(ack_seq,{}) WHERE group_id={} AND account={}",seq,id,actor);
-        else co_await query(c,"UPDATE im_group_members SET read_seq=GREATEST(read_seq,{}) WHERE group_id={} AND account={}",seq,id,actor);
-    }
-    co_return reply;
-}
-awaitable<groupchat::Reply> executeOnPool(groupchat::Command cmd) {
-    auto connection=co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
-    auto& c=*connection.operator->(); results r; std::exception_ptr failure;
-    groupchat::Reply reply;
-    const bool mutation=cmd.operation()==groupchat::Create || cmd.operation()==groupchat::Apply || cmd.operation()==groupchat::Review || cmd.operation()==groupchat::Rename || cmd.operation()==groupchat::Leave || cmd.operation()==groupchat::Kick || cmd.operation()==groupchat::Dismiss || cmd.operation()==groupchat::Send;
-    // Permission reads after waiting for the group lock must see newly committed kicks/joins.
-    co_await c.async_execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED",r,use_awaitable);
-    co_await c.async_execute("START TRANSACTION",r,use_awaitable);
-    try {
-        if(mutation) {
-            if(!cmd.actor() || cmd.clientid().empty() || cmd.clientid().size()>64) throw Error("INVALID_REQUEST_ID","缺少有效请求标识");
-            // Persist request and response atomically. Hex encoding avoids binary charset conversion.
-            auto payload=hex(cmd.SerializeAsString());
-            co_await query(c,"INSERT INTO im_group_requests(actor,client_id,payload,reply) VALUES({},{},{},'') ON DUPLICATE KEY UPDATE client_id=im_group_requests.client_id",cmd.actor(),cmd.clientid(),payload);
-            auto old=co_await query(c,"SELECT payload,reply FROM im_group_requests WHERE actor={} AND client_id={} FOR UPDATE",cmd.actor(),cmd.clientid());
-            if(str(old.rows()[0][0])!=payload) throw Error("IDEMPOTENCY_CONFLICT","请求标识重复且内容不同");
-            if(!str(old.rows()[0][1]).empty()) {
-                if(!reply.ParseFromString(unhex(str(old.rows()[0][1])))) throw Error("CACHE_ERROR","无法恢复请求结果");
-                co_await finish(c,true); co_return reply;
-            }
-        }
-        reply=co_await perform(c,cmd);
-        if(mutation) co_await query(c,"UPDATE im_group_requests SET reply={} WHERE actor={} AND client_id={}",hex(reply.SerializeAsString()),cmd.actor(),cmd.clientid());
-        co_await finish(c,true); co_return reply;
-    } catch(...) { failure=std::current_exception(); }
-    co_await finish(c,false);
-    std::rethrow_exception(failure);
-}
-awaitable<groupchat::Notice> buildDelivery(Connection& c,uint64_t actor,uint64_t id) {
-    groupchat::Notice notice;
-    auto state=co_await query(c,"SELECT g.last_seq,g.member_count,m.ack_seq,m.epoch FROM im_groups g JOIN im_group_members m ON g.id=m.group_id WHERE g.id={} AND m.account={} AND m.active=1 AND g.dismissed=0 FOR UPDATE",id,actor);
-    if(state.rows().empty()) co_return notice;
-    notice.set_groupid(std::to_string(id)); notice.set_lastseq(number(state.rows()[0][0])); notice.set_epoch(number(state.rows()[0][3]));
-    if(number(state.rows()[0][1])<=200) {
-        auto messages=co_await query(c,"SELECT group_id,seq,id,client_id,sender,nickname,text,created_time FROM im_group_messages WHERE group_id={} AND seq>{} ORDER BY seq LIMIT 20",id,number(state.rows()[0][2]));
-        for(auto row:messages.rows()) *notice.add_messages()=messageRow(row);
-    }
-    co_return notice;
-}
-}
-}
-boost::asio::awaitable<void> MySQLHandler::InitializeGroups() {
-    using namespace group_storage;
-    {
-    auto c=co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
-    // Embedded schema allows startup from any working directory; standalone SQL is provided too.
-    const std::vector<std::string> statements={
-        "CREATE TABLE IF NOT EXISTS im_groups(id BIGINT UNSIGNED PRIMARY KEY,name VARCHAR(256) NOT NULL,owner BIGINT UNSIGNED NOT NULL,member_count BIGINT UNSIGNED NOT NULL DEFAULT 1,dismissed TINYINT NOT NULL DEFAULT 0,last_seq BIGINT UNSIGNED NOT NULL DEFAULT 0) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
-        "CREATE TABLE IF NOT EXISTS im_group_members(group_id BIGINT UNSIGNED NOT NULL,account BIGINT UNSIGNED NOT NULL,active TINYINT NOT NULL DEFAULT 1,epoch BIGINT UNSIGNED NOT NULL DEFAULT 1,join_seq BIGINT UNSIGNED NOT NULL DEFAULT 0,ack_seq BIGINT UNSIGNED NOT NULL DEFAULT 0,read_seq BIGINT UNSIGNED NOT NULL DEFAULT 0,PRIMARY KEY(group_id,account),KEY account_groups(account,group_id),FOREIGN KEY(group_id) REFERENCES im_groups(id)) ENGINE=InnoDB",
-        "CREATE TABLE IF NOT EXISTS im_group_applications(id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,group_id BIGINT UNSIGNED NOT NULL,account BIGINT UNSIGNED NOT NULL,reason VARCHAR(512) NOT NULL,status TINYINT NOT NULL DEFAULT 0,created_time BIGINT NOT NULL,KEY group_page(group_id,id),KEY applicant(account,id),FOREIGN KEY(group_id) REFERENCES im_groups(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
-        "CREATE TABLE IF NOT EXISTS im_group_messages(group_id BIGINT UNSIGNED NOT NULL,seq BIGINT UNSIGNED NOT NULL,id VARCHAR(64) NOT NULL,client_id VARCHAR(64) NOT NULL,sender BIGINT UNSIGNED NOT NULL,nickname VARCHAR(256) NOT NULL,text MEDIUMTEXT NOT NULL,created_time BIGINT NOT NULL,PRIMARY KEY(group_id,seq),UNIQUE KEY message_id(id),UNIQUE KEY sender_request(group_id,sender,client_id),KEY sender_progress(group_id,sender,seq),FOREIGN KEY(group_id) REFERENCES im_groups(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4",
-        "CREATE TABLE IF NOT EXISTS im_group_requests(actor BIGINT UNSIGNED NOT NULL,client_id VARCHAR(64) NOT NULL,payload MEDIUMTEXT NOT NULL,reply MEDIUMTEXT NOT NULL,PRIMARY KEY(actor,client_id)) ENGINE=InnoDB DEFAULT CHARSET=ascii"
-    };
-    results r;
-    for(const auto& sql:statements) co_await c->async_execute(sql,r,use_awaitable);
-    co_await c->async_execute("CREATE TABLE IF NOT EXISTS im_group_numbers(group_id BIGINT UNSIGNED PRIMARY KEY,number BIGINT UNSIGNED NOT NULL UNIQUE,FOREIGN KEY(group_id) REFERENCES im_groups(id)) ENGINE=InnoDB",r,use_awaitable);
-    co_await c->async_execute("CREATE TABLE IF NOT EXISTS im_group_number_cursor(id TINYINT PRIMARY KEY,next_number BIGINT UNSIGNED NOT NULL) ENGINE=InnoDB",r,use_awaitable);
-    co_await c->async_execute("INSERT IGNORE INTO im_group_number_cursor VALUES(1,1000000000)",r,use_awaitable);
-    }
-    co_await EnsureGroupNumbers();
-}
-boost::asio::awaitable<groupchat::Reply> MySQLHandler::ExecuteGroupCommand(groupchat::Command cmd) {
-    using namespace group_storage;
-    try { 
-        co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),executeOnPool(std::move(cmd)),use_awaitable); 
-    } catch(const Error& e) { 
-        groupchat::Reply reply; 
-        reply.set_errorcode(e.code); 
-        reply.set_errormessage(e.what()); 
-        co_return reply; 
-    } catch(const std::exception& e) { 
-        spdlog::error("group command: {}",e.what()); 
-        groupchat::Reply reply; reply.set_errorcode("DB_ERROR"); 
-        reply.set_errormessage("群服务暂时不可用，请稍后重试"); 
-        co_return reply; 
-    }
-}
-boost::asio::awaitable<groupchat::Notice> MySQLHandler::WithGroupDelivery(uint64_t actor,std::string id,
-    std::function<void(const groupchat::Notice&)> action) {
-    using namespace group_storage;
-    co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),
-        [](uint64_t account,std::string group,std::function<void(const groupchat::Notice&)> push)->awaitable<groupchat::Notice> {
-
-            auto c=co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
-            results r; 
-            co_await c->async_execute("START TRANSACTION",r,use_awaitable);
-            std::exception_ptr failure; groupchat::Notice notice;
-            try { 
-                notice=co_await buildDelivery(*c.operator->(),account,groupId(group)); 
-                if(push && !notice.groupid().empty()) {
-                    push(notice);
-                }
-                co_await finish(*c.operator->(),true); 
-            } catch(...) { 
-                failure=std::current_exception(); 
-            }
-            if(failure) { 
-                co_await finish(*c.operator->(),false); std::rethrow_exception(failure); 
-            }
-            co_return notice;
-        }(actor,std::move(id),std::move(action)),use_awaitable);
-}
-
-boost::asio::awaitable<groupchat::Notice> MySQLHandler::GroupDeliveryBatch(uint64_t actor,std::string id) {
-    co_return co_await WithGroupDelivery(actor,std::move(id),{});
-}
-
-boost::asio::awaitable<std::vector<uint64_t>> MySQLHandler::GroupNotificationAccounts(std::string id) {
-    using namespace group_storage;
-    co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),
-        [](std::string group)->awaitable<std::vector<uint64_t>> {
-            auto c=co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
-            auto rows=co_await query(*c.operator->(),"SELECT account FROM im_group_members WHERE group_id={} UNION SELECT owner FROM im_groups WHERE id={}",groupId(group),groupId(group));
-            std::vector<uint64_t> accounts;
-            for(auto row:rows.rows()) accounts.push_back(group_storage::number(row[0]));
-            co_return accounts;
-        }(std::move(id)),use_awaitable);
-}
-boost::asio::awaitable<std::vector<std::string>> MySQLHandler::PendingGroupsForDelivery(uint64_t actor) {
-    using namespace group_storage;
-    co_return co_await boost::asio::co_spawn(MySQLConnector::instance().get_pool_executor(0),
-        [](uint64_t account)->awaitable<std::vector<std::string>> {
-            auto c=co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
-            auto rows=co_await query(*c.operator->(),"SELECT g.id FROM im_groups g JOIN im_group_members m ON g.id=m.group_id WHERE m.account={} AND m.active=1 AND g.dismissed=0 AND g.last_seq>m.ack_seq",account);
-            std::vector<std::string> ids;
-            for(auto row:rows.rows()) ids.push_back(std::to_string(group_storage::number(row[0])));
-            co_return ids;
-        }(actor),use_awaitable);
-}
-
-boost::asio::awaitable<void> MySQLHandler::EnsureGroupNumbers() {
-    using namespace group_storage;
-    auto c=co_await MySQLConnector::instance().get_pool(0).async_get_connection(use_awaitable);
-    auto missing=co_await query(*c.operator->(),"SELECT g.id FROM im_groups g LEFT JOIN im_group_numbers n ON g.id=n.group_id WHERE n.group_id IS NULL ORDER BY g.id");
-    std::vector<uint64_t> ids;
-    for(auto row:missing.rows()) ids.push_back(group_storage::number(row[0]));
-    for(auto id:ids) {
-        results r; std::exception_ptr failure;
-        co_await c->async_execute("SET TRANSACTION ISOLATION LEVEL READ COMMITTED",r,use_awaitable);
-        co_await c->async_execute("START TRANSACTION",r,use_awaitable);
-        try {
-            co_await query(*c.operator->(),"SELECT next_number FROM im_group_number_cursor WHERE id=1 FOR UPDATE");
-            auto exists=co_await query(*c.operator->(),"SELECT number FROM im_group_numbers WHERE group_id={}",id);
-            if(exists.rows().empty()) co_await allocateGroupNumber(*c.operator->(),id);
-            co_await finish(*c.operator->(),true);
-        } catch(...) { failure=std::current_exception(); }
-        if(failure) { co_await finish(*c.operator->(),false); std::rethrow_exception(failure); }
-    }
 }

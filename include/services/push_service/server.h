@@ -2,6 +2,7 @@
 #define PUSH_SERVICE_SERVER_H
 
 #include "messagequeue/message_consumer.h"
+#include "messagequeue/message_handler.h"
 #include "push.grpc.pb.h"
 #include "push.pb.h"
 #include "services/base_service.h"
@@ -14,10 +15,9 @@
 #include <thread>
 #include <vector>
 
-// 前向声明
 class IOC_Pool;
 class RedisHandler;
-class GatewayPushClient;
+class GatewayRouter;
 
 class PushServer final : public push::PushService::CallbackService,
                          public BaseServiceServer<PushServer> {
@@ -26,41 +26,30 @@ public:
              const std::string &listen_address);
   ~PushServer() override;
 
-  // 依赖注入：设置消息消费者和 IOC_Pool（在 Start() 之前调用）
   void SetConsumer(std::unique_ptr<IMessageConsumer> consumer);
+  void SetGroupConsumer(std::unique_ptr<IMessageConsumer> consumer);
   void SetIOCPool(IOC_Pool *ioc_pool);
-
-  // 启动 gRPC 服务器和消息消费
   void Start();
 
-  ::grpc::ServerUnaryReactor * PushMsg(::grpc::CallbackServerContext *context,
-                         const ::push::PushMsgReq *request,
-                         ::push::PushMsgResp *response) override;
-  ::grpc::ServerUnaryReactor * DelUserPushToken(::grpc::CallbackServerContext *context,
-                                  const ::push::DelUserPushTokenReq *request,
-                                  ::push::DelUserPushTokenResp *response) override;
-  ::grpc::ServerUnaryReactor * AckMsg(::grpc::CallbackServerContext *context,
-                        const ::push::AckMsgReq *request,
-                        ::push::AckMsgResp *response) override;
-  ::grpc::ServerUnaryReactor * AddPendingOfflineAck(::grpc::CallbackServerContext *context,
-                                      const ::push::AddPendingOfflineAckReq *request,
-                                      ::push::AddPendingOfflineAckResp *response) override;
+  ::grpc::ServerUnaryReactor *PushMsg(
+      ::grpc::CallbackServerContext *context,
+      const ::push::PushMsgReq *request,
+      ::push::PushMsgResp *response) override;
+  ::grpc::ServerUnaryReactor *AckConversations(
+      ::grpc::CallbackServerContext *context,
+      const ::push::AckConversationsReq *request,
+      ::push::AckConversationsResp *response) override;
 
 private:
-  // 延迟初始化 GatewayPushClient（通过 etcd 服务发现 GatewayPushService 地址）
-  GatewayPushClient& getGatewayPushClient();
-
-
-
-
   std::unique_ptr<IMessageConsumer> consumer_;
   std::thread consumer_thread_;
+  // 群扇出：group_topic → GroupFanoutHandler → PushBatchBestEffort(251)
+  std::unique_ptr<IMessageConsumer> group_consumer_;
+  std::thread group_consumer_thread_;
+  std::shared_ptr<MessageHandler> group_handler_;
 
   IOC_Pool *ioc_pool_{nullptr};
-
-  // gRPC 推送到 Gateway 的客户端
-  std::shared_ptr<grpc::Channel> gateway_channel_;
-  std::unique_ptr<GatewayPushClient> gateway_push_client_;
+  std::unique_ptr<GatewayRouter> router_;
 };
 
 #endif

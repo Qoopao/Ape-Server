@@ -12,12 +12,6 @@ public:
     grpc::ServerUnaryReactor* GetAllConversations(grpc::CallbackServerContext* context,
         const conversation::GetAllConversationsReq* request,
         conversation::GetAllConversationsResp* response) override;
-    grpc::ServerUnaryReactor* GetConversation(grpc::CallbackServerContext* context,
-        const conversation::GetConversationReq* request,
-        conversation::GetConversationResp* response) override;
-    grpc::ServerUnaryReactor* GetSortedConversationList(grpc::CallbackServerContext* context,
-        const conversation::GetSortedConversationListReq* request,
-        conversation::GetSortedConversationListResp* response) override;
     grpc::ServerUnaryReactor* MarkConversationRead(grpc::CallbackServerContext* context,
         const conversation::MarkConversationReadReq* request,
         conversation::MarkConversationReadResp* response) override;

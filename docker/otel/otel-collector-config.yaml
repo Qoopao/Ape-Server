@@ -8,8 +8,9 @@ exporters:
   prometheusremotewrite:
     endpoint: "http://victoriametrics:8428/api/v1/write"
 
-  debug: # 在 Collector 控制台打印日志，用于调试和验证
-    verbosity: detailed
+  # 本地调试时可临时恢复 debug exporter；默认不把每条日志复制到 Collector 标准输出。
+  # debug:
+  #   verbosity: detailed
 
   otlp/jaeger:
     endpoint: jaeger-all-in-one:4317
@@ -31,7 +32,13 @@ exporters:
       bytes: 5242880  # 5MB
 
 processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 256
+    spike_limit_mib: 64
   batch:
+    timeout: 5s
+    send_batch_size: 1024
 
 extensions:
   health_check:
@@ -45,13 +52,13 @@ service:
   pipelines:
     traces:
       receivers: [ otlp ]
-      processors: [ batch ]
+      processors: [ memory_limiter, batch ]
       exporters: [otlp/jaeger ]
     metrics:
       receivers: [ otlp ]
-      processors: [ batch ]
+      processors: [ memory_limiter, batch ]
       exporters: [prometheusremotewrite ]
     logs:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [elasticsearch, debug]
+      processors: [memory_limiter, batch]
+      exporters: [elasticsearch]

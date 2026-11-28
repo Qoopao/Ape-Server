@@ -30,6 +30,7 @@
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
 #include "google/protobuf/generated_enum_reflection.h"
 #include "google/protobuf/unknown_field_set.h"
+#include "sdkws.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.
@@ -59,24 +60,36 @@ extern ApplicationDefaultTypeInternal _Application_default_instance_;
 class Command;
 struct CommandDefaultTypeInternal;
 extern CommandDefaultTypeInternal _Command_default_instance_;
+class GetGroupChatHistoryReq;
+struct GetGroupChatHistoryReqDefaultTypeInternal;
+extern GetGroupChatHistoryReqDefaultTypeInternal _GetGroupChatHistoryReq_default_instance_;
+class GetGroupChatHistoryResp;
+struct GetGroupChatHistoryRespDefaultTypeInternal;
+extern GetGroupChatHistoryRespDefaultTypeInternal _GetGroupChatHistoryResp_default_instance_;
 class Group;
 struct GroupDefaultTypeInternal;
 extern GroupDefaultTypeInternal _Group_default_instance_;
-class LocalState;
-struct LocalStateDefaultTypeInternal;
-extern LocalStateDefaultTypeInternal _LocalState_default_instance_;
+class GroupSyncRange;
+struct GroupSyncRangeDefaultTypeInternal;
+extern GroupSyncRangeDefaultTypeInternal _GroupSyncRange_default_instance_;
+class GroupSyncSummary;
+struct GroupSyncSummaryDefaultTypeInternal;
+extern GroupSyncSummaryDefaultTypeInternal _GroupSyncSummary_default_instance_;
 class Member;
 struct MemberDefaultTypeInternal;
 extern MemberDefaultTypeInternal _Member_default_instance_;
-class Message;
-struct MessageDefaultTypeInternal;
-extern MessageDefaultTypeInternal _Message_default_instance_;
 class Notice;
 struct NoticeDefaultTypeInternal;
 extern NoticeDefaultTypeInternal _Notice_default_instance_;
 class Reply;
 struct ReplyDefaultTypeInternal;
 extern ReplyDefaultTypeInternal _Reply_default_instance_;
+class SendGroupMessageReq;
+struct SendGroupMessageReqDefaultTypeInternal;
+extern SendGroupMessageReqDefaultTypeInternal _SendGroupMessageReq_default_instance_;
+class SendGroupMessageResp;
+struct SendGroupMessageRespDefaultTypeInternal;
+extern SendGroupMessageRespDefaultTypeInternal _SendGroupMessageResp_default_instance_;
 }  // namespace groupchat
 namespace google {
 namespace protobuf {
@@ -96,10 +109,6 @@ enum Operation : int {
   Leave = 8,
   Kick = 9,
   Dismiss = 10,
-  Send = 11,
-  Pull = 12,
-  Ack = 13,
-  Read = 14,
   MyApplications = 15,
   Operation_INT_MIN_SENTINEL_DO_NOT_USE_ =
       std::numeric_limits<::int32_t>::min(),
@@ -137,31 +146,31 @@ inline bool Operation_Parse(absl::string_view name, Operation* value) {
 
 // -------------------------------------------------------------------
 
-class Message final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:groupchat.Message) */ {
+class SendGroupMessageReq final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:groupchat.SendGroupMessageReq) */ {
  public:
-  inline Message() : Message(nullptr) {}
-  ~Message() PROTOBUF_FINAL;
+  inline SendGroupMessageReq() : SendGroupMessageReq(nullptr) {}
+  ~SendGroupMessageReq() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(Message* msg, std::destroying_delete_t) {
+  void operator delete(SendGroupMessageReq* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(Message));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(SendGroupMessageReq));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR Message(
+  explicit PROTOBUF_CONSTEXPR SendGroupMessageReq(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline Message(const Message& from) : Message(nullptr, from) {}
-  inline Message(Message&& from) noexcept
-      : Message(nullptr, std::move(from)) {}
-  inline Message& operator=(const Message& from) {
+  inline SendGroupMessageReq(const SendGroupMessageReq& from) : SendGroupMessageReq(nullptr, from) {}
+  inline SendGroupMessageReq(SendGroupMessageReq&& from) noexcept
+      : SendGroupMessageReq(nullptr, std::move(from)) {}
+  inline SendGroupMessageReq& operator=(const SendGroupMessageReq& from) {
     CopyFrom(from);
     return *this;
   }
-  inline Message& operator=(Message&& from) noexcept {
+  inline SendGroupMessageReq& operator=(SendGroupMessageReq&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -189,16 +198,16 @@ class Message final : public ::google::protobuf::Message
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const Message& default_instance() {
+  static const SendGroupMessageReq& default_instance() {
     return *internal_default_instance();
   }
-  static inline const Message* internal_default_instance() {
-    return reinterpret_cast<const Message*>(
-        &_Message_default_instance_);
+  static inline const SendGroupMessageReq* internal_default_instance() {
+    return reinterpret_cast<const SendGroupMessageReq*>(
+        &_SendGroupMessageReq_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 3;
-  friend void swap(Message& a, Message& b) { a.Swap(&b); }
-  inline void Swap(Message* other) {
+  static constexpr int kIndexInFileMessages = 6;
+  friend void swap(SendGroupMessageReq& a, SendGroupMessageReq& b) { a.Swap(&b); }
+  inline void Swap(SendGroupMessageReq* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -206,7 +215,7 @@ class Message final : public ::google::protobuf::Message
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(Message* other) {
+  void UnsafeArenaSwap(SendGroupMessageReq* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -214,13 +223,13 @@ class Message final : public ::google::protobuf::Message
 
   // implements Message ----------------------------------------------
 
-  Message* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<Message>(arena);
+  SendGroupMessageReq* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<SendGroupMessageReq>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const Message& from);
+  void CopyFrom(const SendGroupMessageReq& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const Message& from) { Message::MergeImpl(*this, from); }
+  void MergeFrom(const SendGroupMessageReq& from) { SendGroupMessageReq::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -257,18 +266,18 @@ class Message final : public ::google::protobuf::Message
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(Message* other);
+  void InternalSwap(SendGroupMessageReq* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "groupchat.Message"; }
+  static ::absl::string_view FullMessageName() { return "groupchat.SendGroupMessageReq"; }
 
  protected:
-  explicit Message(::google::protobuf::Arena* arena);
-  Message(::google::protobuf::Arena* arena, const Message& from);
-  Message(::google::protobuf::Arena* arena, Message&& from) noexcept
-      : Message(arena) {
+  explicit SendGroupMessageReq(::google::protobuf::Arena* arena);
+  SendGroupMessageReq(::google::protobuf::Arena* arena, const SendGroupMessageReq& from);
+  SendGroupMessageReq(::google::protobuf::Arena* arena, SendGroupMessageReq&& from) noexcept
+      : SendGroupMessageReq(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -283,29 +292,27 @@ class Message final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
-    kIdFieldNumber = 1,
+    kGroupIDFieldNumber = 1,
     kClientIDFieldNumber = 2,
-    kGroupIDFieldNumber = 3,
-    kNicknameFieldNumber = 5,
-    kTextFieldNumber = 6,
-    kSenderFieldNumber = 4,
-    kSeqFieldNumber = 7,
-    kTimeFieldNumber = 8,
+    kContentFieldNumber = 3,
+    kExtFieldNumber = 5,
+    kActorFieldNumber = 6,
+    kContentTypeFieldNumber = 4,
   };
-  // string id = 1;
-  void clear_id() ;
-  const std::string& id() const;
+  // string groupID = 1;
+  void clear_groupid() ;
+  const std::string& groupid() const;
   template <typename Arg_ = const std::string&, typename... Args_>
-  void set_id(Arg_&& arg, Args_... args);
-  std::string* mutable_id();
-  PROTOBUF_NODISCARD std::string* release_id();
-  void set_allocated_id(std::string* value);
+  void set_groupid(Arg_&& arg, Args_... args);
+  std::string* mutable_groupid();
+  PROTOBUF_NODISCARD std::string* release_groupid();
+  void set_allocated_groupid(std::string* value);
 
   private:
-  const std::string& _internal_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(
+  const std::string& _internal_groupid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_groupid(
       const std::string& value);
-  std::string* _internal_mutable_id();
+  std::string* _internal_mutable_groupid();
 
   public:
   // string clientID = 2;
@@ -324,91 +331,65 @@ class Message final : public ::google::protobuf::Message
   std::string* _internal_mutable_clientid();
 
   public:
-  // string groupID = 3;
-  void clear_groupid() ;
-  const std::string& groupid() const;
+  // bytes content = 3;
+  void clear_content() ;
+  const std::string& content() const;
   template <typename Arg_ = const std::string&, typename... Args_>
-  void set_groupid(Arg_&& arg, Args_... args);
-  std::string* mutable_groupid();
-  PROTOBUF_NODISCARD std::string* release_groupid();
-  void set_allocated_groupid(std::string* value);
+  void set_content(Arg_&& arg, Args_... args);
+  std::string* mutable_content();
+  PROTOBUF_NODISCARD std::string* release_content();
+  void set_allocated_content(std::string* value);
 
   private:
-  const std::string& _internal_groupid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_groupid(
+  const std::string& _internal_content() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_content(
       const std::string& value);
-  std::string* _internal_mutable_groupid();
+  std::string* _internal_mutable_content();
 
   public:
-  // string nickname = 5;
-  void clear_nickname() ;
-  const std::string& nickname() const;
+  // string ext = 5;
+  void clear_ext() ;
+  const std::string& ext() const;
   template <typename Arg_ = const std::string&, typename... Args_>
-  void set_nickname(Arg_&& arg, Args_... args);
-  std::string* mutable_nickname();
-  PROTOBUF_NODISCARD std::string* release_nickname();
-  void set_allocated_nickname(std::string* value);
+  void set_ext(Arg_&& arg, Args_... args);
+  std::string* mutable_ext();
+  PROTOBUF_NODISCARD std::string* release_ext();
+  void set_allocated_ext(std::string* value);
 
   private:
-  const std::string& _internal_nickname() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_nickname(
+  const std::string& _internal_ext() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_ext(
       const std::string& value);
-  std::string* _internal_mutable_nickname();
+  std::string* _internal_mutable_ext();
 
   public:
-  // string text = 6;
-  void clear_text() ;
-  const std::string& text() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_text(Arg_&& arg, Args_... args);
-  std::string* mutable_text();
-  PROTOBUF_NODISCARD std::string* release_text();
-  void set_allocated_text(std::string* value);
+  // uint64 actor = 6;
+  void clear_actor() ;
+  ::uint64_t actor() const;
+  void set_actor(::uint64_t value);
 
   private:
-  const std::string& _internal_text() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_text(
-      const std::string& value);
-  std::string* _internal_mutable_text();
+  ::uint64_t _internal_actor() const;
+  void _internal_set_actor(::uint64_t value);
 
   public:
-  // uint64 sender = 4;
-  void clear_sender() ;
-  ::uint64_t sender() const;
-  void set_sender(::uint64_t value);
+  // int32 contentType = 4;
+  void clear_contenttype() ;
+  ::int32_t contenttype() const;
+  void set_contenttype(::int32_t value);
 
   private:
-  ::uint64_t _internal_sender() const;
-  void _internal_set_sender(::uint64_t value);
+  ::int32_t _internal_contenttype() const;
+  void _internal_set_contenttype(::int32_t value);
 
   public:
-  // uint64 seq = 7;
-  void clear_seq() ;
-  ::uint64_t seq() const;
-  void set_seq(::uint64_t value);
-
-  private:
-  ::uint64_t _internal_seq() const;
-  void _internal_set_seq(::uint64_t value);
-
-  public:
-  // int64 time = 8;
-  void clear_time() ;
-  ::int64_t time() const;
-  void set_time(::int64_t value);
-
-  private:
-  ::int64_t _internal_time() const;
-  void _internal_set_time(::int64_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:groupchat.Message)
+  // @@protoc_insertion_point(class_scope:groupchat.SendGroupMessageReq)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      3, 8, 0,
-      63, 2>
+      3, 6, 0,
+      56, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -424,15 +405,13 @@ class Message final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const Message& from_msg);
-    ::google::protobuf::internal::ArenaStringPtr id_;
-    ::google::protobuf::internal::ArenaStringPtr clientid_;
+                          const SendGroupMessageReq& from_msg);
     ::google::protobuf::internal::ArenaStringPtr groupid_;
-    ::google::protobuf::internal::ArenaStringPtr nickname_;
-    ::google::protobuf::internal::ArenaStringPtr text_;
-    ::uint64_t sender_;
-    ::uint64_t seq_;
-    ::int64_t time_;
+    ::google::protobuf::internal::ArenaStringPtr clientid_;
+    ::google::protobuf::internal::ArenaStringPtr content_;
+    ::google::protobuf::internal::ArenaStringPtr ext_;
+    ::uint64_t actor_;
+    ::int32_t contenttype_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -661,6 +640,286 @@ class Member final : public ::google::protobuf::Message
 };
 // -------------------------------------------------------------------
 
+class GroupSyncRange final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:groupchat.GroupSyncRange) */ {
+ public:
+  inline GroupSyncRange() : GroupSyncRange(nullptr) {}
+  ~GroupSyncRange() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(GroupSyncRange* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(GroupSyncRange));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR GroupSyncRange(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline GroupSyncRange(const GroupSyncRange& from) : GroupSyncRange(nullptr, from) {}
+  inline GroupSyncRange(GroupSyncRange&& from) noexcept
+      : GroupSyncRange(nullptr, std::move(from)) {}
+  inline GroupSyncRange& operator=(const GroupSyncRange& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GroupSyncRange& operator=(GroupSyncRange&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GroupSyncRange& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GroupSyncRange* internal_default_instance() {
+    return reinterpret_cast<const GroupSyncRange*>(
+        &_GroupSyncRange_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 10;
+  friend void swap(GroupSyncRange& a, GroupSyncRange& b) { a.Swap(&b); }
+  inline void Swap(GroupSyncRange* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GroupSyncRange* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GroupSyncRange* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<GroupSyncRange>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GroupSyncRange& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const GroupSyncRange& from) { GroupSyncRange::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(GroupSyncRange* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "groupchat.GroupSyncRange"; }
+
+ protected:
+  explicit GroupSyncRange(::google::protobuf::Arena* arena);
+  GroupSyncRange(::google::protobuf::Arena* arena, const GroupSyncRange& from);
+  GroupSyncRange(::google::protobuf::Arena* arena, GroupSyncRange&& from) noexcept
+      : GroupSyncRange(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kGroupIDFieldNumber = 1,
+    kFromSeqFieldNumber = 2,
+    kToSeqFieldNumber = 3,
+    kLastSeqFieldNumber = 4,
+    kJoinSeqFieldNumber = 5,
+    kEpochFieldNumber = 6,
+    kHasGapFieldNumber = 7,
+    kNeedsPullFieldNumber = 8,
+  };
+  // string groupID = 1;
+  void clear_groupid() ;
+  const std::string& groupid() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_groupid(Arg_&& arg, Args_... args);
+  std::string* mutable_groupid();
+  PROTOBUF_NODISCARD std::string* release_groupid();
+  void set_allocated_groupid(std::string* value);
+
+  private:
+  const std::string& _internal_groupid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_groupid(
+      const std::string& value);
+  std::string* _internal_mutable_groupid();
+
+  public:
+  // int64 fromSeq = 2;
+  void clear_fromseq() ;
+  ::int64_t fromseq() const;
+  void set_fromseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_fromseq() const;
+  void _internal_set_fromseq(::int64_t value);
+
+  public:
+  // int64 toSeq = 3;
+  void clear_toseq() ;
+  ::int64_t toseq() const;
+  void set_toseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_toseq() const;
+  void _internal_set_toseq(::int64_t value);
+
+  public:
+  // int64 lastSeq = 4;
+  void clear_lastseq() ;
+  ::int64_t lastseq() const;
+  void set_lastseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_lastseq() const;
+  void _internal_set_lastseq(::int64_t value);
+
+  public:
+  // int64 joinSeq = 5;
+  void clear_joinseq() ;
+  ::int64_t joinseq() const;
+  void set_joinseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_joinseq() const;
+  void _internal_set_joinseq(::int64_t value);
+
+  public:
+  // uint64 epoch = 6;
+  void clear_epoch() ;
+  ::uint64_t epoch() const;
+  void set_epoch(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_epoch() const;
+  void _internal_set_epoch(::uint64_t value);
+
+  public:
+  // bool hasGap = 7;
+  void clear_hasgap() ;
+  bool hasgap() const;
+  void set_hasgap(bool value);
+
+  private:
+  bool _internal_hasgap() const;
+  void _internal_set_hasgap(bool value);
+
+  public:
+  // bool needsPull = 8;
+  void clear_needspull() ;
+  bool needspull() const;
+  void set_needspull(bool value);
+
+  private:
+  bool _internal_needspull() const;
+  void _internal_set_needspull(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:groupchat.GroupSyncRange)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      3, 8, 0,
+      48, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const GroupSyncRange& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr groupid_;
+    ::int64_t fromseq_;
+    ::int64_t toseq_;
+    ::int64_t lastseq_;
+    ::int64_t joinseq_;
+    ::uint64_t epoch_;
+    bool hasgap_;
+    bool needspull_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_groupchat_2eproto;
+};
+// -------------------------------------------------------------------
+
 class Group final : public ::google::protobuf::Message
 /* @@protoc_insertion_point(class_definition:groupchat.Group) */ {
  public:
@@ -814,9 +1073,8 @@ class Group final : public ::google::protobuf::Message
     kMemberCountFieldNumber = 4,
     kJoinSeqFieldNumber = 7,
     kLastSeqFieldNumber = 8,
-    kReadSeqFieldNumber = 9,
-    kUnreadFieldNumber = 10,
     kEpochFieldNumber = 12,
+    kLastMsgTimeFieldNumber = 14,
     kDismissedFieldNumber = 5,
     kJoinedFieldNumber = 6,
     kLargeFieldNumber = 11,
@@ -909,26 +1167,6 @@ class Group final : public ::google::protobuf::Message
   void _internal_set_lastseq(::uint64_t value);
 
   public:
-  // uint64 readSeq = 9;
-  void clear_readseq() ;
-  ::uint64_t readseq() const;
-  void set_readseq(::uint64_t value);
-
-  private:
-  ::uint64_t _internal_readseq() const;
-  void _internal_set_readseq(::uint64_t value);
-
-  public:
-  // uint64 unread = 10;
-  void clear_unread() ;
-  ::uint64_t unread() const;
-  void set_unread(::uint64_t value);
-
-  private:
-  ::uint64_t _internal_unread() const;
-  void _internal_set_unread(::uint64_t value);
-
-  public:
   // uint64 epoch = 12;
   void clear_epoch() ;
   ::uint64_t epoch() const;
@@ -937,6 +1175,16 @@ class Group final : public ::google::protobuf::Message
   private:
   ::uint64_t _internal_epoch() const;
   void _internal_set_epoch(::uint64_t value);
+
+  public:
+  // uint64 lastMsgTime = 14;
+  void clear_lastmsgtime() ;
+  ::uint64_t lastmsgtime() const;
+  void set_lastmsgtime(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_lastmsgtime() const;
+  void _internal_set_lastmsgtime(::uint64_t value);
 
   public:
   // bool dismissed = 5;
@@ -974,7 +1222,7 @@ class Group final : public ::google::protobuf::Message
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      4, 13, 0,
+      4, 12, 0,
       44, 2>
       _table_;
 
@@ -999,12 +1247,267 @@ class Group final : public ::google::protobuf::Message
     ::uint64_t membercount_;
     ::uint64_t joinseq_;
     ::uint64_t lastseq_;
-    ::uint64_t readseq_;
-    ::uint64_t unread_;
     ::uint64_t epoch_;
+    ::uint64_t lastmsgtime_;
     bool dismissed_;
     bool joined_;
     bool large_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_groupchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GetGroupChatHistoryReq final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:groupchat.GetGroupChatHistoryReq) */ {
+ public:
+  inline GetGroupChatHistoryReq() : GetGroupChatHistoryReq(nullptr) {}
+  ~GetGroupChatHistoryReq() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(GetGroupChatHistoryReq* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(GetGroupChatHistoryReq));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR GetGroupChatHistoryReq(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline GetGroupChatHistoryReq(const GetGroupChatHistoryReq& from) : GetGroupChatHistoryReq(nullptr, from) {}
+  inline GetGroupChatHistoryReq(GetGroupChatHistoryReq&& from) noexcept
+      : GetGroupChatHistoryReq(nullptr, std::move(from)) {}
+  inline GetGroupChatHistoryReq& operator=(const GetGroupChatHistoryReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetGroupChatHistoryReq& operator=(GetGroupChatHistoryReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetGroupChatHistoryReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetGroupChatHistoryReq* internal_default_instance() {
+    return reinterpret_cast<const GetGroupChatHistoryReq*>(
+        &_GetGroupChatHistoryReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 8;
+  friend void swap(GetGroupChatHistoryReq& a, GetGroupChatHistoryReq& b) { a.Swap(&b); }
+  inline void Swap(GetGroupChatHistoryReq* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetGroupChatHistoryReq* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetGroupChatHistoryReq* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<GetGroupChatHistoryReq>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetGroupChatHistoryReq& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const GetGroupChatHistoryReq& from) { GetGroupChatHistoryReq::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(GetGroupChatHistoryReq* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "groupchat.GetGroupChatHistoryReq"; }
+
+ protected:
+  explicit GetGroupChatHistoryReq(::google::protobuf::Arena* arena);
+  GetGroupChatHistoryReq(::google::protobuf::Arena* arena, const GetGroupChatHistoryReq& from);
+  GetGroupChatHistoryReq(::google::protobuf::Arena* arena, GetGroupChatHistoryReq&& from) noexcept
+      : GetGroupChatHistoryReq(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kGroupIDFieldNumber = 2,
+    kOwnerUserIDFieldNumber = 1,
+    kAfterSeqFieldNumber = 3,
+    kSnapshotFieldNumber = 5,
+    kBeforeSeqFieldNumber = 6,
+    kLimitFieldNumber = 4,
+  };
+  // string groupID = 2;
+  void clear_groupid() ;
+  const std::string& groupid() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_groupid(Arg_&& arg, Args_... args);
+  std::string* mutable_groupid();
+  PROTOBUF_NODISCARD std::string* release_groupid();
+  void set_allocated_groupid(std::string* value);
+
+  private:
+  const std::string& _internal_groupid() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_groupid(
+      const std::string& value);
+  std::string* _internal_mutable_groupid();
+
+  public:
+  // uint64 ownerUserID = 1;
+  void clear_owneruserid() ;
+  ::uint64_t owneruserid() const;
+  void set_owneruserid(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_owneruserid() const;
+  void _internal_set_owneruserid(::uint64_t value);
+
+  public:
+  // int64 afterSeq = 3;
+  void clear_afterseq() ;
+  ::int64_t afterseq() const;
+  void set_afterseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_afterseq() const;
+  void _internal_set_afterseq(::int64_t value);
+
+  public:
+  // int64 snapshot = 5;
+  void clear_snapshot() ;
+  ::int64_t snapshot() const;
+  void set_snapshot(::int64_t value);
+
+  private:
+  ::int64_t _internal_snapshot() const;
+  void _internal_set_snapshot(::int64_t value);
+
+  public:
+  // int64 beforeSeq = 6;
+  void clear_beforeseq() ;
+  ::int64_t beforeseq() const;
+  void set_beforeseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_beforeseq() const;
+  void _internal_set_beforeseq(::int64_t value);
+
+  public:
+  // int32 limit = 4;
+  void clear_limit() ;
+  ::int32_t limit() const;
+  void set_limit(::int32_t value);
+
+  private:
+  ::int32_t _internal_limit() const;
+  void _internal_set_limit(::int32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:groupchat.GetGroupChatHistoryReq)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      3, 6, 0,
+      48, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const GetGroupChatHistoryReq& from_msg);
+    ::google::protobuf::internal::ArenaStringPtr groupid_;
+    ::uint64_t owneruserid_;
+    ::int64_t afterseq_;
+    ::int64_t snapshot_;
+    ::int64_t beforeseq_;
+    ::int32_t limit_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -1072,7 +1575,7 @@ class Command final : public ::google::protobuf::Message
     return reinterpret_cast<const Command*>(
         &_Command_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 4;
+  static constexpr int kIndexInFileMessages = 3;
   friend void swap(Command& a, Command& b) { a.Swap(&b); }
   inline void Swap(Command* other) {
     if (other == this) return;
@@ -1168,7 +1671,6 @@ class Command final : public ::google::protobuf::Message
     kTargetFieldNumber = 5,
     kApplicationIDFieldNumber = 6,
     kAfterFieldNumber = 8,
-    kSnapshotFieldNumber = 10,
     kEpochFieldNumber = 12,
     kLimitFieldNumber = 9,
   };
@@ -1280,16 +1782,6 @@ class Command final : public ::google::protobuf::Message
   void _internal_set_after(::uint64_t value);
 
   public:
-  // uint64 snapshot = 10;
-  void clear_snapshot() ;
-  ::uint64_t snapshot() const;
-  void set_snapshot(::uint64_t value);
-
-  private:
-  ::uint64_t _internal_snapshot() const;
-  void _internal_set_snapshot(::uint64_t value);
-
-  public:
   // uint64 epoch = 12;
   void clear_epoch() ;
   ::uint64_t epoch() const;
@@ -1315,7 +1807,7 @@ class Command final : public ::google::protobuf::Message
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      4, 12, 0,
+      4, 11, 0,
       53, 2>
       _table_;
 
@@ -1342,7 +1834,6 @@ class Command final : public ::google::protobuf::Message
     ::uint64_t target_;
     ::uint64_t applicationid_;
     ::uint64_t after_;
-    ::uint64_t snapshot_;
     ::uint64_t epoch_;
     ::uint32_t limit_;
     ::google::protobuf::internal::CachedSize _cached_size_;
@@ -1728,7 +2219,7 @@ class Reply final : public ::google::protobuf::Message
     return reinterpret_cast<const Reply*>(
         &_Reply_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 5;
+  static constexpr int kIndexInFileMessages = 4;
   friend void swap(Reply& a, Reply& b) { a.Swap(&b); }
   inline void Swap(Reply* other) {
     if (other == this) return;
@@ -1818,12 +2309,10 @@ class Reply final : public ::google::protobuf::Message
     kGroupsFieldNumber = 3,
     kMembersFieldNumber = 4,
     kApplicationsFieldNumber = 5,
-    kMessagesFieldNumber = 6,
     kErrorCodeFieldNumber = 1,
     kErrorMessageFieldNumber = 2,
     kGroupIDFieldNumber = 10,
     kCursorFieldNumber = 7,
-    kSnapshotFieldNumber = 9,
     kEpochFieldNumber = 11,
     kHasMoreFieldNumber = 8,
   };
@@ -1878,23 +2367,6 @@ class Reply final : public ::google::protobuf::Message
   const ::groupchat::Application& applications(int index) const;
   ::groupchat::Application* add_applications();
   const ::google::protobuf::RepeatedPtrField<::groupchat::Application>& applications() const;
-  // repeated .groupchat.Message messages = 6;
-  int messages_size() const;
-  private:
-  int _internal_messages_size() const;
-
-  public:
-  void clear_messages() ;
-  ::groupchat::Message* mutable_messages(int index);
-  ::google::protobuf::RepeatedPtrField<::groupchat::Message>* mutable_messages();
-
-  private:
-  const ::google::protobuf::RepeatedPtrField<::groupchat::Message>& _internal_messages() const;
-  ::google::protobuf::RepeatedPtrField<::groupchat::Message>* _internal_mutable_messages();
-  public:
-  const ::groupchat::Message& messages(int index) const;
-  ::groupchat::Message* add_messages();
-  const ::google::protobuf::RepeatedPtrField<::groupchat::Message>& messages() const;
   // string errorCode = 1;
   void clear_errorcode() ;
   const std::string& errorcode() const;
@@ -1953,16 +2425,6 @@ class Reply final : public ::google::protobuf::Message
   void _internal_set_cursor(::uint64_t value);
 
   public:
-  // uint64 snapshot = 9;
-  void clear_snapshot() ;
-  ::uint64_t snapshot() const;
-  void set_snapshot(::uint64_t value);
-
-  private:
-  ::uint64_t _internal_snapshot() const;
-  void _internal_set_snapshot(::uint64_t value);
-
-  public:
   // uint64 epoch = 11;
   void clear_epoch() ;
   ::uint64_t epoch() const;
@@ -1988,7 +2450,7 @@ class Reply final : public ::google::protobuf::Message
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      4, 11, 4,
+      4, 9, 3,
       60, 2>
       _table_;
 
@@ -2009,15 +2471,466 @@ class Reply final : public ::google::protobuf::Message
     ::google::protobuf::RepeatedPtrField< ::groupchat::Group > groups_;
     ::google::protobuf::RepeatedPtrField< ::groupchat::Member > members_;
     ::google::protobuf::RepeatedPtrField< ::groupchat::Application > applications_;
-    ::google::protobuf::RepeatedPtrField< ::groupchat::Message > messages_;
     ::google::protobuf::internal::ArenaStringPtr errorcode_;
     ::google::protobuf::internal::ArenaStringPtr errormessage_;
     ::google::protobuf::internal::ArenaStringPtr groupid_;
     ::uint64_t cursor_;
-    ::uint64_t snapshot_;
     ::uint64_t epoch_;
     bool hasmore_;
     ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_groupchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GroupSyncSummary final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:groupchat.GroupSyncSummary) */ {
+ public:
+  inline GroupSyncSummary() : GroupSyncSummary(nullptr) {}
+  ~GroupSyncSummary() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(GroupSyncSummary* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(GroupSyncSummary));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR GroupSyncSummary(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline GroupSyncSummary(const GroupSyncSummary& from) : GroupSyncSummary(nullptr, from) {}
+  inline GroupSyncSummary(GroupSyncSummary&& from) noexcept
+      : GroupSyncSummary(nullptr, std::move(from)) {}
+  inline GroupSyncSummary& operator=(const GroupSyncSummary& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GroupSyncSummary& operator=(GroupSyncSummary&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GroupSyncSummary& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GroupSyncSummary* internal_default_instance() {
+    return reinterpret_cast<const GroupSyncSummary*>(
+        &_GroupSyncSummary_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 11;
+  friend void swap(GroupSyncSummary& a, GroupSyncSummary& b) { a.Swap(&b); }
+  inline void Swap(GroupSyncSummary* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GroupSyncSummary* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GroupSyncSummary* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<GroupSyncSummary>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GroupSyncSummary& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const GroupSyncSummary& from) { GroupSyncSummary::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(GroupSyncSummary* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "groupchat.GroupSyncSummary"; }
+
+ protected:
+  explicit GroupSyncSummary(::google::protobuf::Arena* arena);
+  GroupSyncSummary(::google::protobuf::Arena* arena, const GroupSyncSummary& from);
+  GroupSyncSummary(::google::protobuf::Arena* arena, GroupSyncSummary&& from) noexcept
+      : GroupSyncSummary(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kGroupsFieldNumber = 1,
+    kMessagesPushedFieldNumber = 2,
+    kHasMoreFieldNumber = 3,
+  };
+  // repeated .groupchat.GroupSyncRange groups = 1;
+  int groups_size() const;
+  private:
+  int _internal_groups_size() const;
+
+  public:
+  void clear_groups() ;
+  ::groupchat::GroupSyncRange* mutable_groups(int index);
+  ::google::protobuf::RepeatedPtrField<::groupchat::GroupSyncRange>* mutable_groups();
+
+  private:
+  const ::google::protobuf::RepeatedPtrField<::groupchat::GroupSyncRange>& _internal_groups() const;
+  ::google::protobuf::RepeatedPtrField<::groupchat::GroupSyncRange>* _internal_mutable_groups();
+  public:
+  const ::groupchat::GroupSyncRange& groups(int index) const;
+  ::groupchat::GroupSyncRange* add_groups();
+  const ::google::protobuf::RepeatedPtrField<::groupchat::GroupSyncRange>& groups() const;
+  // uint32 messagesPushed = 2;
+  void clear_messagespushed() ;
+  ::uint32_t messagespushed() const;
+  void set_messagespushed(::uint32_t value);
+
+  private:
+  ::uint32_t _internal_messagespushed() const;
+  void _internal_set_messagespushed(::uint32_t value);
+
+  public:
+  // bool hasMore = 3;
+  void clear_hasmore() ;
+  bool hasmore() const;
+  void set_hasmore(bool value);
+
+  private:
+  bool _internal_hasmore() const;
+  void _internal_set_hasmore(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:groupchat.GroupSyncSummary)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 3, 1,
+      0, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const GroupSyncSummary& from_msg);
+    ::google::protobuf::RepeatedPtrField< ::groupchat::GroupSyncRange > groups_;
+    ::uint32_t messagespushed_;
+    bool hasmore_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_groupchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class SendGroupMessageResp final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:groupchat.SendGroupMessageResp) */ {
+ public:
+  inline SendGroupMessageResp() : SendGroupMessageResp(nullptr) {}
+  ~SendGroupMessageResp() PROTOBUF_FINAL;
+
+#if defined(PROTOBUF_CUSTOM_VTABLE)
+  void operator delete(SendGroupMessageResp* msg, std::destroying_delete_t) {
+    SharedDtor(*msg);
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(SendGroupMessageResp));
+  }
+#endif
+
+  template <typename = void>
+  explicit PROTOBUF_CONSTEXPR SendGroupMessageResp(
+      ::google::protobuf::internal::ConstantInitialized);
+
+  inline SendGroupMessageResp(const SendGroupMessageResp& from) : SendGroupMessageResp(nullptr, from) {}
+  inline SendGroupMessageResp(SendGroupMessageResp&& from) noexcept
+      : SendGroupMessageResp(nullptr, std::move(from)) {}
+  inline SendGroupMessageResp& operator=(const SendGroupMessageResp& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SendGroupMessageResp& operator=(SendGroupMessageResp&& from) noexcept {
+    if (this == &from) return *this;
+    if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields()
+      ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SendGroupMessageResp& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const SendGroupMessageResp* internal_default_instance() {
+    return reinterpret_cast<const SendGroupMessageResp*>(
+        &_SendGroupMessageResp_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages = 7;
+  friend void swap(SendGroupMessageResp& a, SendGroupMessageResp& b) { a.Swap(&b); }
+  inline void Swap(SendGroupMessageResp* other) {
+    if (other == this) return;
+    if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SendGroupMessageResp* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetArena() == other->GetArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  SendGroupMessageResp* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<SendGroupMessageResp>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const SendGroupMessageResp& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom(const SendGroupMessageResp& from) { SendGroupMessageResp::MergeImpl(*this, from); }
+
+  private:
+  static void MergeImpl(
+      ::google::protobuf::MessageLite& to_msg,
+      const ::google::protobuf::MessageLite& from_msg);
+
+  public:
+  bool IsInitialized() const {
+    return true;
+  }
+  ABSL_ATTRIBUTE_REINITIALIZES void Clear() PROTOBUF_FINAL;
+  #if defined(PROTOBUF_CUSTOM_VTABLE)
+  private:
+  static ::size_t ByteSizeLong(const ::google::protobuf::MessageLite& msg);
+  static ::uint8_t* _InternalSerialize(
+      const MessageLite& msg, ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream);
+
+  public:
+  ::size_t ByteSizeLong() const { return ByteSizeLong(*this); }
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const {
+    return _InternalSerialize(*this, target, stream);
+  }
+  #else   // PROTOBUF_CUSTOM_VTABLE
+  ::size_t ByteSizeLong() const final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target,
+      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  #endif  // PROTOBUF_CUSTOM_VTABLE
+  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  static void SharedDtor(MessageLite& self);
+  void InternalSwap(SendGroupMessageResp* other);
+ private:
+  template <typename T>
+  friend ::absl::string_view(
+      ::google::protobuf::internal::GetAnyMessageName)();
+  static ::absl::string_view FullMessageName() { return "groupchat.SendGroupMessageResp"; }
+
+ protected:
+  explicit SendGroupMessageResp(::google::protobuf::Arena* arena);
+  SendGroupMessageResp(::google::protobuf::Arena* arena, const SendGroupMessageResp& from);
+  SendGroupMessageResp(::google::protobuf::Arena* arena, SendGroupMessageResp&& from) noexcept
+      : SendGroupMessageResp(arena) {
+    *this = ::std::move(from);
+  }
+  const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
+  static void* PlacementNew_(const void*, void* mem,
+                             ::google::protobuf::Arena* arena);
+  static constexpr auto InternalNewImpl_();
+  static const ::google::protobuf::internal::ClassDataFull _class_data_;
+
+ public:
+  ::google::protobuf::Metadata GetMetadata() const;
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+  enum : int {
+    kErrorCodeFieldNumber = 1,
+    kErrorMsgFieldNumber = 2,
+    kMsgFieldNumber = 3,
+  };
+  // string errorCode = 1;
+  void clear_errorcode() ;
+  const std::string& errorcode() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_errorcode(Arg_&& arg, Args_... args);
+  std::string* mutable_errorcode();
+  PROTOBUF_NODISCARD std::string* release_errorcode();
+  void set_allocated_errorcode(std::string* value);
+
+  private:
+  const std::string& _internal_errorcode() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_errorcode(
+      const std::string& value);
+  std::string* _internal_mutable_errorcode();
+
+  public:
+  // string errorMsg = 2;
+  void clear_errormsg() ;
+  const std::string& errormsg() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_errormsg(Arg_&& arg, Args_... args);
+  std::string* mutable_errormsg();
+  PROTOBUF_NODISCARD std::string* release_errormsg();
+  void set_allocated_errormsg(std::string* value);
+
+  private:
+  const std::string& _internal_errormsg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_errormsg(
+      const std::string& value);
+  std::string* _internal_mutable_errormsg();
+
+  public:
+  // .sdkws.MsgData msg = 3;
+  bool has_msg() const;
+  void clear_msg() ;
+  const ::sdkws::MsgData& msg() const;
+  PROTOBUF_NODISCARD ::sdkws::MsgData* release_msg();
+  ::sdkws::MsgData* mutable_msg();
+  void set_allocated_msg(::sdkws::MsgData* value);
+  void unsafe_arena_set_allocated_msg(::sdkws::MsgData* value);
+  ::sdkws::MsgData* unsafe_arena_release_msg();
+
+  private:
+  const ::sdkws::MsgData& _internal_msg() const;
+  ::sdkws::MsgData* _internal_mutable_msg();
+
+  public:
+  // @@protoc_insertion_point(class_scope:groupchat.SendGroupMessageResp)
+ private:
+  class _Internal;
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<
+      2, 3, 1,
+      56, 2>
+      _table_;
+
+  friend class ::google::protobuf::MessageLite;
+  friend class ::google::protobuf::Arena;
+  template <typename T>
+  friend class ::google::protobuf::Arena::InternalHelper;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  struct Impl_ {
+    inline explicit constexpr Impl_(
+        ::google::protobuf::internal::ConstantInitialized) noexcept;
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena);
+    inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
+                          ::google::protobuf::Arena* arena, const Impl_& from,
+                          const SendGroupMessageResp& from_msg);
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr errorcode_;
+    ::google::protobuf::internal::ArenaStringPtr errormsg_;
+    ::sdkws::MsgData* msg_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -2084,7 +2997,7 @@ class Notice final : public ::google::protobuf::Message
     return reinterpret_cast<const Notice*>(
         &_Notice_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 6;
+  static constexpr int kIndexInFileMessages = 5;
   friend void swap(Notice& a, Notice& b) { a.Swap(&b); }
   inline void Swap(Notice* other) {
     if (other == this) return;
@@ -2176,24 +3089,26 @@ class Notice final : public ::google::protobuf::Message
     kLastSeqFieldNumber = 2,
     kEpochFieldNumber = 5,
     kRefreshFieldNumber = 4,
+    kReasonFieldNumber = 6,
+    kLastMsgTimeFieldNumber = 7,
   };
-  // repeated .groupchat.Message messages = 3;
+  // repeated .sdkws.MsgData messages = 3;
   int messages_size() const;
   private:
   int _internal_messages_size() const;
 
   public:
   void clear_messages() ;
-  ::groupchat::Message* mutable_messages(int index);
-  ::google::protobuf::RepeatedPtrField<::groupchat::Message>* mutable_messages();
+  ::sdkws::MsgData* mutable_messages(int index);
+  ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>* mutable_messages();
 
   private:
-  const ::google::protobuf::RepeatedPtrField<::groupchat::Message>& _internal_messages() const;
-  ::google::protobuf::RepeatedPtrField<::groupchat::Message>* _internal_mutable_messages();
+  const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>& _internal_messages() const;
+  ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>* _internal_mutable_messages();
   public:
-  const ::groupchat::Message& messages(int index) const;
-  ::groupchat::Message* add_messages();
-  const ::google::protobuf::RepeatedPtrField<::groupchat::Message>& messages() const;
+  const ::sdkws::MsgData& messages(int index) const;
+  ::sdkws::MsgData* add_messages();
+  const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>& messages() const;
   // string groupID = 1;
   void clear_groupid() ;
   const std::string& groupid() const;
@@ -2240,12 +3155,32 @@ class Notice final : public ::google::protobuf::Message
   void _internal_set_refresh(bool value);
 
   public:
+  // int32 reason = 6;
+  void clear_reason() ;
+  ::int32_t reason() const;
+  void set_reason(::int32_t value);
+
+  private:
+  ::int32_t _internal_reason() const;
+  void _internal_set_reason(::int32_t value);
+
+  public:
+  // uint64 lastMsgTime = 7;
+  void clear_lastmsgtime() ;
+  ::uint64_t lastmsgtime() const;
+  void set_lastmsgtime(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_lastmsgtime() const;
+  void _internal_set_lastmsgtime(::uint64_t value);
+
+  public:
   // @@protoc_insertion_point(class_scope:groupchat.Notice)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      3, 5, 1,
+      3, 7, 1,
       32, 2>
       _table_;
 
@@ -2263,11 +3198,13 @@ class Notice final : public ::google::protobuf::Message
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
                           const Notice& from_msg);
-    ::google::protobuf::RepeatedPtrField< ::groupchat::Message > messages_;
+    ::google::protobuf::RepeatedPtrField< ::sdkws::MsgData > messages_;
     ::google::protobuf::internal::ArenaStringPtr groupid_;
     ::uint64_t lastseq_;
     ::uint64_t epoch_;
     bool refresh_;
+    ::int32_t reason_;
+    ::uint64_t lastmsgtime_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -2276,31 +3213,31 @@ class Notice final : public ::google::protobuf::Message
 };
 // -------------------------------------------------------------------
 
-class LocalState final : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:groupchat.LocalState) */ {
+class GetGroupChatHistoryResp final : public ::google::protobuf::Message
+/* @@protoc_insertion_point(class_definition:groupchat.GetGroupChatHistoryResp) */ {
  public:
-  inline LocalState() : LocalState(nullptr) {}
-  ~LocalState() PROTOBUF_FINAL;
+  inline GetGroupChatHistoryResp() : GetGroupChatHistoryResp(nullptr) {}
+  ~GetGroupChatHistoryResp() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(LocalState* msg, std::destroying_delete_t) {
+  void operator delete(GetGroupChatHistoryResp* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(LocalState));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(GetGroupChatHistoryResp));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR LocalState(
+  explicit PROTOBUF_CONSTEXPR GetGroupChatHistoryResp(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline LocalState(const LocalState& from) : LocalState(nullptr, from) {}
-  inline LocalState(LocalState&& from) noexcept
-      : LocalState(nullptr, std::move(from)) {}
-  inline LocalState& operator=(const LocalState& from) {
+  inline GetGroupChatHistoryResp(const GetGroupChatHistoryResp& from) : GetGroupChatHistoryResp(nullptr, from) {}
+  inline GetGroupChatHistoryResp(GetGroupChatHistoryResp&& from) noexcept
+      : GetGroupChatHistoryResp(nullptr, std::move(from)) {}
+  inline GetGroupChatHistoryResp& operator=(const GetGroupChatHistoryResp& from) {
     CopyFrom(from);
     return *this;
   }
-  inline LocalState& operator=(LocalState&& from) noexcept {
+  inline GetGroupChatHistoryResp& operator=(GetGroupChatHistoryResp&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -2328,16 +3265,16 @@ class LocalState final : public ::google::protobuf::Message
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const LocalState& default_instance() {
+  static const GetGroupChatHistoryResp& default_instance() {
     return *internal_default_instance();
   }
-  static inline const LocalState* internal_default_instance() {
-    return reinterpret_cast<const LocalState*>(
-        &_LocalState_default_instance_);
+  static inline const GetGroupChatHistoryResp* internal_default_instance() {
+    return reinterpret_cast<const GetGroupChatHistoryResp*>(
+        &_GetGroupChatHistoryResp_default_instance_);
   }
-  static constexpr int kIndexInFileMessages = 7;
-  friend void swap(LocalState& a, LocalState& b) { a.Swap(&b); }
-  inline void Swap(LocalState* other) {
+  static constexpr int kIndexInFileMessages = 9;
+  friend void swap(GetGroupChatHistoryResp& a, GetGroupChatHistoryResp& b) { a.Swap(&b); }
+  inline void Swap(GetGroupChatHistoryResp* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -2345,7 +3282,7 @@ class LocalState final : public ::google::protobuf::Message
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(LocalState* other) {
+  void UnsafeArenaSwap(GetGroupChatHistoryResp* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -2353,13 +3290,13 @@ class LocalState final : public ::google::protobuf::Message
 
   // implements Message ----------------------------------------------
 
-  LocalState* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<LocalState>(arena);
+  GetGroupChatHistoryResp* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<GetGroupChatHistoryResp>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const LocalState& from);
+  void CopyFrom(const GetGroupChatHistoryResp& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const LocalState& from) { LocalState::MergeImpl(*this, from); }
+  void MergeFrom(const GetGroupChatHistoryResp& from) { GetGroupChatHistoryResp::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -2396,18 +3333,18 @@ class LocalState final : public ::google::protobuf::Message
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(LocalState* other);
+  void InternalSwap(GetGroupChatHistoryResp* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "groupchat.LocalState"; }
+  static ::absl::string_view FullMessageName() { return "groupchat.GetGroupChatHistoryResp"; }
 
  protected:
-  explicit LocalState(::google::protobuf::Arena* arena);
-  LocalState(::google::protobuf::Arena* arena, const LocalState& from);
-  LocalState(::google::protobuf::Arena* arena, LocalState&& from) noexcept
-      : LocalState(arena) {
+  explicit GetGroupChatHistoryResp(::google::protobuf::Arena* arena);
+  GetGroupChatHistoryResp(::google::protobuf::Arena* arena, const GetGroupChatHistoryResp& from);
+  GetGroupChatHistoryResp(::google::protobuf::Arena* arena, GetGroupChatHistoryResp&& from) noexcept
+      : GetGroupChatHistoryResp(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -2422,40 +3359,97 @@ class LocalState final : public ::google::protobuf::Message
 
   // accessors -------------------------------------------------------
   enum : int {
-    kGroupFieldNumber = 1,
-    kCursorFieldNumber = 2,
+    kMessagesFieldNumber = 1,
+    kNextSeqFieldNumber = 3,
+    kMinSeqFieldNumber = 4,
+    kLastSeqFieldNumber = 5,
+    kEpochFieldNumber = 6,
+    kDeletedSeqFieldNumber = 7,
+    kHasMoreFieldNumber = 2,
   };
-  // .groupchat.Group group = 1;
-  bool has_group() const;
-  void clear_group() ;
-  const ::groupchat::Group& group() const;
-  PROTOBUF_NODISCARD ::groupchat::Group* release_group();
-  ::groupchat::Group* mutable_group();
-  void set_allocated_group(::groupchat::Group* value);
-  void unsafe_arena_set_allocated_group(::groupchat::Group* value);
-  ::groupchat::Group* unsafe_arena_release_group();
-
+  // repeated .sdkws.MsgData messages = 1;
+  int messages_size() const;
   private:
-  const ::groupchat::Group& _internal_group() const;
-  ::groupchat::Group* _internal_mutable_group();
+  int _internal_messages_size() const;
 
   public:
-  // uint64 cursor = 2;
-  void clear_cursor() ;
-  ::uint64_t cursor() const;
-  void set_cursor(::uint64_t value);
+  void clear_messages() ;
+  ::sdkws::MsgData* mutable_messages(int index);
+  ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>* mutable_messages();
 
   private:
-  ::uint64_t _internal_cursor() const;
-  void _internal_set_cursor(::uint64_t value);
+  const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>& _internal_messages() const;
+  ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>* _internal_mutable_messages();
+  public:
+  const ::sdkws::MsgData& messages(int index) const;
+  ::sdkws::MsgData* add_messages();
+  const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>& messages() const;
+  // int64 nextSeq = 3;
+  void clear_nextseq() ;
+  ::int64_t nextseq() const;
+  void set_nextseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_nextseq() const;
+  void _internal_set_nextseq(::int64_t value);
 
   public:
-  // @@protoc_insertion_point(class_scope:groupchat.LocalState)
+  // int64 minSeq = 4;
+  void clear_minseq() ;
+  ::int64_t minseq() const;
+  void set_minseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_minseq() const;
+  void _internal_set_minseq(::int64_t value);
+
+  public:
+  // int64 lastSeq = 5;
+  void clear_lastseq() ;
+  ::int64_t lastseq() const;
+  void set_lastseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_lastseq() const;
+  void _internal_set_lastseq(::int64_t value);
+
+  public:
+  // uint64 epoch = 6;
+  void clear_epoch() ;
+  ::uint64_t epoch() const;
+  void set_epoch(::uint64_t value);
+
+  private:
+  ::uint64_t _internal_epoch() const;
+  void _internal_set_epoch(::uint64_t value);
+
+  public:
+  // int64 deletedSeq = 7;
+  void clear_deletedseq() ;
+  ::int64_t deletedseq() const;
+  void set_deletedseq(::int64_t value);
+
+  private:
+  ::int64_t _internal_deletedseq() const;
+  void _internal_set_deletedseq(::int64_t value);
+
+  public:
+  // bool hasMore = 2;
+  void clear_hasmore() ;
+  bool hasmore() const;
+  void set_hasmore(bool value);
+
+  private:
+  bool _internal_hasmore() const;
+  void _internal_set_hasmore(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:groupchat.GetGroupChatHistoryResp)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      1, 2, 1,
+      3, 7, 1,
       0, 2>
       _table_;
 
@@ -2472,11 +3466,15 @@ class LocalState final : public ::google::protobuf::Message
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const LocalState& from_msg);
-    ::google::protobuf::internal::HasBits<1> _has_bits_;
+                          const GetGroupChatHistoryResp& from_msg);
+    ::google::protobuf::RepeatedPtrField< ::sdkws::MsgData > messages_;
+    ::int64_t nextseq_;
+    ::int64_t minseq_;
+    ::int64_t lastseq_;
+    ::uint64_t epoch_;
+    ::int64_t deletedseq_;
+    bool hasmore_;
     ::google::protobuf::internal::CachedSize _cached_size_;
-    ::groupchat::Group* group_;
-    ::uint64_t cursor_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -2727,50 +3725,6 @@ inline void Group::_internal_set_lastseq(::uint64_t value) {
   _impl_.lastseq_ = value;
 }
 
-// uint64 readSeq = 9;
-inline void Group::clear_readseq() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.readseq_ = ::uint64_t{0u};
-}
-inline ::uint64_t Group::readseq() const {
-  // @@protoc_insertion_point(field_get:groupchat.Group.readSeq)
-  return _internal_readseq();
-}
-inline void Group::set_readseq(::uint64_t value) {
-  _internal_set_readseq(value);
-  // @@protoc_insertion_point(field_set:groupchat.Group.readSeq)
-}
-inline ::uint64_t Group::_internal_readseq() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.readseq_;
-}
-inline void Group::_internal_set_readseq(::uint64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.readseq_ = value;
-}
-
-// uint64 unread = 10;
-inline void Group::clear_unread() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.unread_ = ::uint64_t{0u};
-}
-inline ::uint64_t Group::unread() const {
-  // @@protoc_insertion_point(field_get:groupchat.Group.unread)
-  return _internal_unread();
-}
-inline void Group::set_unread(::uint64_t value) {
-  _internal_set_unread(value);
-  // @@protoc_insertion_point(field_set:groupchat.Group.unread)
-}
-inline ::uint64_t Group::_internal_unread() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.unread_;
-}
-inline void Group::_internal_set_unread(::uint64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.unread_ = value;
-}
-
 // bool large = 11;
 inline void Group::clear_large() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
@@ -2861,6 +3815,28 @@ inline void Group::set_allocated_number(std::string* value) {
     _impl_.number_.Set("", GetArena());
   }
   // @@protoc_insertion_point(field_set_allocated:groupchat.Group.number)
+}
+
+// uint64 lastMsgTime = 14;
+inline void Group::clear_lastmsgtime() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.lastmsgtime_ = ::uint64_t{0u};
+}
+inline ::uint64_t Group::lastmsgtime() const {
+  // @@protoc_insertion_point(field_get:groupchat.Group.lastMsgTime)
+  return _internal_lastmsgtime();
+}
+inline void Group::set_lastmsgtime(::uint64_t value) {
+  _internal_set_lastmsgtime(value);
+  // @@protoc_insertion_point(field_set:groupchat.Group.lastMsgTime)
+}
+inline ::uint64_t Group::_internal_lastmsgtime() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.lastmsgtime_;
+}
+inline void Group::_internal_set_lastmsgtime(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.lastmsgtime_ = value;
 }
 
 // -------------------------------------------------------------------
@@ -3293,316 +4269,6 @@ inline void Application::set_allocated_groupnumber(std::string* value) {
 
 // -------------------------------------------------------------------
 
-// Message
-
-// string id = 1;
-inline void Message::clear_id() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.id_.ClearToEmpty();
-}
-inline const std::string& Message::id() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:groupchat.Message.id)
-  return _internal_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void Message::set_id(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:groupchat.Message.id)
-}
-inline std::string* Message::mutable_id() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_id();
-  // @@protoc_insertion_point(field_mutable:groupchat.Message.id)
-  return _s;
-}
-inline const std::string& Message::_internal_id() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.id_.Get();
-}
-inline void Message::_internal_set_id(const std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.id_.Set(value, GetArena());
-}
-inline std::string* Message::_internal_mutable_id() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.id_.Mutable( GetArena());
-}
-inline std::string* Message::release_id() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:groupchat.Message.id)
-  return _impl_.id_.Release();
-}
-inline void Message::set_allocated_id(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.id_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.id_.IsDefault()) {
-    _impl_.id_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:groupchat.Message.id)
-}
-
-// string clientID = 2;
-inline void Message::clear_clientid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.clientid_.ClearToEmpty();
-}
-inline const std::string& Message::clientid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:groupchat.Message.clientID)
-  return _internal_clientid();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void Message::set_clientid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.clientid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:groupchat.Message.clientID)
-}
-inline std::string* Message::mutable_clientid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_clientid();
-  // @@protoc_insertion_point(field_mutable:groupchat.Message.clientID)
-  return _s;
-}
-inline const std::string& Message::_internal_clientid() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.clientid_.Get();
-}
-inline void Message::_internal_set_clientid(const std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.clientid_.Set(value, GetArena());
-}
-inline std::string* Message::_internal_mutable_clientid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.clientid_.Mutable( GetArena());
-}
-inline std::string* Message::release_clientid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:groupchat.Message.clientID)
-  return _impl_.clientid_.Release();
-}
-inline void Message::set_allocated_clientid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.clientid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.clientid_.IsDefault()) {
-    _impl_.clientid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:groupchat.Message.clientID)
-}
-
-// string groupID = 3;
-inline void Message::clear_groupid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.groupid_.ClearToEmpty();
-}
-inline const std::string& Message::groupid() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:groupchat.Message.groupID)
-  return _internal_groupid();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void Message::set_groupid(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.groupid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:groupchat.Message.groupID)
-}
-inline std::string* Message::mutable_groupid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_groupid();
-  // @@protoc_insertion_point(field_mutable:groupchat.Message.groupID)
-  return _s;
-}
-inline const std::string& Message::_internal_groupid() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.groupid_.Get();
-}
-inline void Message::_internal_set_groupid(const std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.groupid_.Set(value, GetArena());
-}
-inline std::string* Message::_internal_mutable_groupid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.groupid_.Mutable( GetArena());
-}
-inline std::string* Message::release_groupid() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:groupchat.Message.groupID)
-  return _impl_.groupid_.Release();
-}
-inline void Message::set_allocated_groupid(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.groupid_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.groupid_.IsDefault()) {
-    _impl_.groupid_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:groupchat.Message.groupID)
-}
-
-// uint64 sender = 4;
-inline void Message::clear_sender() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.sender_ = ::uint64_t{0u};
-}
-inline ::uint64_t Message::sender() const {
-  // @@protoc_insertion_point(field_get:groupchat.Message.sender)
-  return _internal_sender();
-}
-inline void Message::set_sender(::uint64_t value) {
-  _internal_set_sender(value);
-  // @@protoc_insertion_point(field_set:groupchat.Message.sender)
-}
-inline ::uint64_t Message::_internal_sender() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.sender_;
-}
-inline void Message::_internal_set_sender(::uint64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.sender_ = value;
-}
-
-// string nickname = 5;
-inline void Message::clear_nickname() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.nickname_.ClearToEmpty();
-}
-inline const std::string& Message::nickname() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:groupchat.Message.nickname)
-  return _internal_nickname();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void Message::set_nickname(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.nickname_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:groupchat.Message.nickname)
-}
-inline std::string* Message::mutable_nickname() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_nickname();
-  // @@protoc_insertion_point(field_mutable:groupchat.Message.nickname)
-  return _s;
-}
-inline const std::string& Message::_internal_nickname() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.nickname_.Get();
-}
-inline void Message::_internal_set_nickname(const std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.nickname_.Set(value, GetArena());
-}
-inline std::string* Message::_internal_mutable_nickname() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.nickname_.Mutable( GetArena());
-}
-inline std::string* Message::release_nickname() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:groupchat.Message.nickname)
-  return _impl_.nickname_.Release();
-}
-inline void Message::set_allocated_nickname(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.nickname_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.nickname_.IsDefault()) {
-    _impl_.nickname_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:groupchat.Message.nickname)
-}
-
-// string text = 6;
-inline void Message::clear_text() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.text_.ClearToEmpty();
-}
-inline const std::string& Message::text() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:groupchat.Message.text)
-  return _internal_text();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void Message::set_text(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.text_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:groupchat.Message.text)
-}
-inline std::string* Message::mutable_text() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_text();
-  // @@protoc_insertion_point(field_mutable:groupchat.Message.text)
-  return _s;
-}
-inline const std::string& Message::_internal_text() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.text_.Get();
-}
-inline void Message::_internal_set_text(const std::string& value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.text_.Set(value, GetArena());
-}
-inline std::string* Message::_internal_mutable_text() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.text_.Mutable( GetArena());
-}
-inline std::string* Message::release_text() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:groupchat.Message.text)
-  return _impl_.text_.Release();
-}
-inline void Message::set_allocated_text(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.text_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.text_.IsDefault()) {
-    _impl_.text_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:groupchat.Message.text)
-}
-
-// uint64 seq = 7;
-inline void Message::clear_seq() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.seq_ = ::uint64_t{0u};
-}
-inline ::uint64_t Message::seq() const {
-  // @@protoc_insertion_point(field_get:groupchat.Message.seq)
-  return _internal_seq();
-}
-inline void Message::set_seq(::uint64_t value) {
-  _internal_set_seq(value);
-  // @@protoc_insertion_point(field_set:groupchat.Message.seq)
-}
-inline ::uint64_t Message::_internal_seq() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.seq_;
-}
-inline void Message::_internal_set_seq(::uint64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.seq_ = value;
-}
-
-// int64 time = 8;
-inline void Message::clear_time() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.time_ = ::int64_t{0};
-}
-inline ::int64_t Message::time() const {
-  // @@protoc_insertion_point(field_get:groupchat.Message.time)
-  return _internal_time();
-}
-inline void Message::set_time(::int64_t value) {
-  _internal_set_time(value);
-  // @@protoc_insertion_point(field_set:groupchat.Message.time)
-}
-inline ::int64_t Message::_internal_time() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.time_;
-}
-inline void Message::_internal_set_time(::int64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.time_ = value;
-}
-
-// -------------------------------------------------------------------
-
 // Command
 
 // .groupchat.Operation operation = 1;
@@ -3853,28 +4519,6 @@ inline ::uint32_t Command::_internal_limit() const {
 inline void Command::_internal_set_limit(::uint32_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.limit_ = value;
-}
-
-// uint64 snapshot = 10;
-inline void Command::clear_snapshot() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.snapshot_ = ::uint64_t{0u};
-}
-inline ::uint64_t Command::snapshot() const {
-  // @@protoc_insertion_point(field_get:groupchat.Command.snapshot)
-  return _internal_snapshot();
-}
-inline void Command::set_snapshot(::uint64_t value) {
-  _internal_set_snapshot(value);
-  // @@protoc_insertion_point(field_set:groupchat.Command.snapshot)
-}
-inline ::uint64_t Command::_internal_snapshot() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.snapshot_;
-}
-inline void Command::_internal_set_snapshot(::uint64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.snapshot_ = value;
 }
 
 // string clientID = 11;
@@ -4194,55 +4838,6 @@ Reply::_internal_mutable_applications() {
   return &_impl_.applications_;
 }
 
-// repeated .groupchat.Message messages = 6;
-inline int Reply::_internal_messages_size() const {
-  return _internal_messages().size();
-}
-inline int Reply::messages_size() const {
-  return _internal_messages_size();
-}
-inline void Reply::clear_messages() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.messages_.Clear();
-}
-inline ::groupchat::Message* Reply::mutable_messages(int index)
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable:groupchat.Reply.messages)
-  return _internal_mutable_messages()->Mutable(index);
-}
-inline ::google::protobuf::RepeatedPtrField<::groupchat::Message>* Reply::mutable_messages()
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_mutable_list:groupchat.Reply.messages)
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _internal_mutable_messages();
-}
-inline const ::groupchat::Message& Reply::messages(int index) const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:groupchat.Reply.messages)
-  return _internal_messages().Get(index);
-}
-inline ::groupchat::Message* Reply::add_messages() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::groupchat::Message* _add = _internal_mutable_messages()->Add();
-  // @@protoc_insertion_point(field_add:groupchat.Reply.messages)
-  return _add;
-}
-inline const ::google::protobuf::RepeatedPtrField<::groupchat::Message>& Reply::messages() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_list:groupchat.Reply.messages)
-  return _internal_messages();
-}
-inline const ::google::protobuf::RepeatedPtrField<::groupchat::Message>&
-Reply::_internal_messages() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.messages_;
-}
-inline ::google::protobuf::RepeatedPtrField<::groupchat::Message>*
-Reply::_internal_mutable_messages() {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return &_impl_.messages_;
-}
-
 // uint64 cursor = 7;
 inline void Reply::clear_cursor() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
@@ -4285,28 +4880,6 @@ inline bool Reply::_internal_hasmore() const {
 inline void Reply::_internal_set_hasmore(bool value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.hasmore_ = value;
-}
-
-// uint64 snapshot = 9;
-inline void Reply::clear_snapshot() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.snapshot_ = ::uint64_t{0u};
-}
-inline ::uint64_t Reply::snapshot() const {
-  // @@protoc_insertion_point(field_get:groupchat.Reply.snapshot)
-  return _internal_snapshot();
-}
-inline void Reply::set_snapshot(::uint64_t value) {
-  _internal_set_snapshot(value);
-  // @@protoc_insertion_point(field_set:groupchat.Reply.snapshot)
-}
-inline ::uint64_t Reply::_internal_snapshot() const {
-  ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.snapshot_;
-}
-inline void Reply::_internal_set_snapshot(::uint64_t value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.snapshot_ = value;
 }
 
 // string groupID = 10;
@@ -4453,50 +5026,46 @@ inline void Notice::_internal_set_lastseq(::uint64_t value) {
   _impl_.lastseq_ = value;
 }
 
-// repeated .groupchat.Message messages = 3;
+// repeated .sdkws.MsgData messages = 3;
 inline int Notice::_internal_messages_size() const {
   return _internal_messages().size();
 }
 inline int Notice::messages_size() const {
   return _internal_messages_size();
 }
-inline void Notice::clear_messages() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.messages_.Clear();
-}
-inline ::groupchat::Message* Notice::mutable_messages(int index)
+inline ::sdkws::MsgData* Notice::mutable_messages(int index)
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_mutable:groupchat.Notice.messages)
   return _internal_mutable_messages()->Mutable(index);
 }
-inline ::google::protobuf::RepeatedPtrField<::groupchat::Message>* Notice::mutable_messages()
+inline ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>* Notice::mutable_messages()
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_mutable_list:groupchat.Notice.messages)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _internal_mutable_messages();
 }
-inline const ::groupchat::Message& Notice::messages(int index) const
+inline const ::sdkws::MsgData& Notice::messages(int index) const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_get:groupchat.Notice.messages)
   return _internal_messages().Get(index);
 }
-inline ::groupchat::Message* Notice::add_messages() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::sdkws::MsgData* Notice::add_messages() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  ::groupchat::Message* _add = _internal_mutable_messages()->Add();
+  ::sdkws::MsgData* _add = _internal_mutable_messages()->Add();
   // @@protoc_insertion_point(field_add:groupchat.Notice.messages)
   return _add;
 }
-inline const ::google::protobuf::RepeatedPtrField<::groupchat::Message>& Notice::messages() const
+inline const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>& Notice::messages() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
   // @@protoc_insertion_point(field_list:groupchat.Notice.messages)
   return _internal_messages();
 }
-inline const ::google::protobuf::RepeatedPtrField<::groupchat::Message>&
+inline const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>&
 Notice::_internal_messages() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.messages_;
 }
-inline ::google::protobuf::RepeatedPtrField<::groupchat::Message>*
+inline ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>*
 Notice::_internal_mutable_messages() {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return &_impl_.messages_;
@@ -4546,49 +5115,424 @@ inline void Notice::_internal_set_epoch(::uint64_t value) {
   _impl_.epoch_ = value;
 }
 
+// int32 reason = 6;
+inline void Notice::clear_reason() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.reason_ = 0;
+}
+inline ::int32_t Notice::reason() const {
+  // @@protoc_insertion_point(field_get:groupchat.Notice.reason)
+  return _internal_reason();
+}
+inline void Notice::set_reason(::int32_t value) {
+  _internal_set_reason(value);
+  // @@protoc_insertion_point(field_set:groupchat.Notice.reason)
+}
+inline ::int32_t Notice::_internal_reason() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.reason_;
+}
+inline void Notice::_internal_set_reason(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.reason_ = value;
+}
+
+// uint64 lastMsgTime = 7;
+inline void Notice::clear_lastmsgtime() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.lastmsgtime_ = ::uint64_t{0u};
+}
+inline ::uint64_t Notice::lastmsgtime() const {
+  // @@protoc_insertion_point(field_get:groupchat.Notice.lastMsgTime)
+  return _internal_lastmsgtime();
+}
+inline void Notice::set_lastmsgtime(::uint64_t value) {
+  _internal_set_lastmsgtime(value);
+  // @@protoc_insertion_point(field_set:groupchat.Notice.lastMsgTime)
+}
+inline ::uint64_t Notice::_internal_lastmsgtime() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.lastmsgtime_;
+}
+inline void Notice::_internal_set_lastmsgtime(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.lastmsgtime_ = value;
+}
+
 // -------------------------------------------------------------------
 
-// LocalState
+// SendGroupMessageReq
 
-// .groupchat.Group group = 1;
-inline bool LocalState::has_group() const {
+// string groupID = 1;
+inline void SendGroupMessageReq::clear_groupid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.ClearToEmpty();
+}
+inline const std::string& SendGroupMessageReq::groupid() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.SendGroupMessageReq.groupID)
+  return _internal_groupid();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void SendGroupMessageReq::set_groupid(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:groupchat.SendGroupMessageReq.groupID)
+}
+inline std::string* SendGroupMessageReq::mutable_groupid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_groupid();
+  // @@protoc_insertion_point(field_mutable:groupchat.SendGroupMessageReq.groupID)
+  return _s;
+}
+inline const std::string& SendGroupMessageReq::_internal_groupid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.groupid_.Get();
+}
+inline void SendGroupMessageReq::_internal_set_groupid(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.Set(value, GetArena());
+}
+inline std::string* SendGroupMessageReq::_internal_mutable_groupid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.groupid_.Mutable( GetArena());
+}
+inline std::string* SendGroupMessageReq::release_groupid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:groupchat.SendGroupMessageReq.groupID)
+  return _impl_.groupid_.Release();
+}
+inline void SendGroupMessageReq::set_allocated_groupid(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.groupid_.IsDefault()) {
+    _impl_.groupid_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:groupchat.SendGroupMessageReq.groupID)
+}
+
+// string clientID = 2;
+inline void SendGroupMessageReq::clear_clientid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.clientid_.ClearToEmpty();
+}
+inline const std::string& SendGroupMessageReq::clientid() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.SendGroupMessageReq.clientID)
+  return _internal_clientid();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void SendGroupMessageReq::set_clientid(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.clientid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:groupchat.SendGroupMessageReq.clientID)
+}
+inline std::string* SendGroupMessageReq::mutable_clientid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_clientid();
+  // @@protoc_insertion_point(field_mutable:groupchat.SendGroupMessageReq.clientID)
+  return _s;
+}
+inline const std::string& SendGroupMessageReq::_internal_clientid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.clientid_.Get();
+}
+inline void SendGroupMessageReq::_internal_set_clientid(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.clientid_.Set(value, GetArena());
+}
+inline std::string* SendGroupMessageReq::_internal_mutable_clientid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.clientid_.Mutable( GetArena());
+}
+inline std::string* SendGroupMessageReq::release_clientid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:groupchat.SendGroupMessageReq.clientID)
+  return _impl_.clientid_.Release();
+}
+inline void SendGroupMessageReq::set_allocated_clientid(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.clientid_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.clientid_.IsDefault()) {
+    _impl_.clientid_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:groupchat.SendGroupMessageReq.clientID)
+}
+
+// bytes content = 3;
+inline void SendGroupMessageReq::clear_content() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.content_.ClearToEmpty();
+}
+inline const std::string& SendGroupMessageReq::content() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.SendGroupMessageReq.content)
+  return _internal_content();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void SendGroupMessageReq::set_content(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.content_.SetBytes(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:groupchat.SendGroupMessageReq.content)
+}
+inline std::string* SendGroupMessageReq::mutable_content() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_content();
+  // @@protoc_insertion_point(field_mutable:groupchat.SendGroupMessageReq.content)
+  return _s;
+}
+inline const std::string& SendGroupMessageReq::_internal_content() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.content_.Get();
+}
+inline void SendGroupMessageReq::_internal_set_content(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.content_.Set(value, GetArena());
+}
+inline std::string* SendGroupMessageReq::_internal_mutable_content() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.content_.Mutable( GetArena());
+}
+inline std::string* SendGroupMessageReq::release_content() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:groupchat.SendGroupMessageReq.content)
+  return _impl_.content_.Release();
+}
+inline void SendGroupMessageReq::set_allocated_content(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.content_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.content_.IsDefault()) {
+    _impl_.content_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:groupchat.SendGroupMessageReq.content)
+}
+
+// int32 contentType = 4;
+inline void SendGroupMessageReq::clear_contenttype() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.contenttype_ = 0;
+}
+inline ::int32_t SendGroupMessageReq::contenttype() const {
+  // @@protoc_insertion_point(field_get:groupchat.SendGroupMessageReq.contentType)
+  return _internal_contenttype();
+}
+inline void SendGroupMessageReq::set_contenttype(::int32_t value) {
+  _internal_set_contenttype(value);
+  // @@protoc_insertion_point(field_set:groupchat.SendGroupMessageReq.contentType)
+}
+inline ::int32_t SendGroupMessageReq::_internal_contenttype() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.contenttype_;
+}
+inline void SendGroupMessageReq::_internal_set_contenttype(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.contenttype_ = value;
+}
+
+// string ext = 5;
+inline void SendGroupMessageReq::clear_ext() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.ext_.ClearToEmpty();
+}
+inline const std::string& SendGroupMessageReq::ext() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.SendGroupMessageReq.ext)
+  return _internal_ext();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void SendGroupMessageReq::set_ext(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.ext_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:groupchat.SendGroupMessageReq.ext)
+}
+inline std::string* SendGroupMessageReq::mutable_ext() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_ext();
+  // @@protoc_insertion_point(field_mutable:groupchat.SendGroupMessageReq.ext)
+  return _s;
+}
+inline const std::string& SendGroupMessageReq::_internal_ext() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.ext_.Get();
+}
+inline void SendGroupMessageReq::_internal_set_ext(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.ext_.Set(value, GetArena());
+}
+inline std::string* SendGroupMessageReq::_internal_mutable_ext() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.ext_.Mutable( GetArena());
+}
+inline std::string* SendGroupMessageReq::release_ext() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:groupchat.SendGroupMessageReq.ext)
+  return _impl_.ext_.Release();
+}
+inline void SendGroupMessageReq::set_allocated_ext(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.ext_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.ext_.IsDefault()) {
+    _impl_.ext_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:groupchat.SendGroupMessageReq.ext)
+}
+
+// uint64 actor = 6;
+inline void SendGroupMessageReq::clear_actor() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.actor_ = ::uint64_t{0u};
+}
+inline ::uint64_t SendGroupMessageReq::actor() const {
+  // @@protoc_insertion_point(field_get:groupchat.SendGroupMessageReq.actor)
+  return _internal_actor();
+}
+inline void SendGroupMessageReq::set_actor(::uint64_t value) {
+  _internal_set_actor(value);
+  // @@protoc_insertion_point(field_set:groupchat.SendGroupMessageReq.actor)
+}
+inline ::uint64_t SendGroupMessageReq::_internal_actor() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.actor_;
+}
+inline void SendGroupMessageReq::_internal_set_actor(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.actor_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// SendGroupMessageResp
+
+// string errorCode = 1;
+inline void SendGroupMessageResp::clear_errorcode() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.errorcode_.ClearToEmpty();
+}
+inline const std::string& SendGroupMessageResp::errorcode() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.SendGroupMessageResp.errorCode)
+  return _internal_errorcode();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void SendGroupMessageResp::set_errorcode(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.errorcode_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:groupchat.SendGroupMessageResp.errorCode)
+}
+inline std::string* SendGroupMessageResp::mutable_errorcode() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_errorcode();
+  // @@protoc_insertion_point(field_mutable:groupchat.SendGroupMessageResp.errorCode)
+  return _s;
+}
+inline const std::string& SendGroupMessageResp::_internal_errorcode() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.errorcode_.Get();
+}
+inline void SendGroupMessageResp::_internal_set_errorcode(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.errorcode_.Set(value, GetArena());
+}
+inline std::string* SendGroupMessageResp::_internal_mutable_errorcode() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.errorcode_.Mutable( GetArena());
+}
+inline std::string* SendGroupMessageResp::release_errorcode() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:groupchat.SendGroupMessageResp.errorCode)
+  return _impl_.errorcode_.Release();
+}
+inline void SendGroupMessageResp::set_allocated_errorcode(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.errorcode_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.errorcode_.IsDefault()) {
+    _impl_.errorcode_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:groupchat.SendGroupMessageResp.errorCode)
+}
+
+// string errorMsg = 2;
+inline void SendGroupMessageResp::clear_errormsg() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.errormsg_.ClearToEmpty();
+}
+inline const std::string& SendGroupMessageResp::errormsg() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.SendGroupMessageResp.errorMsg)
+  return _internal_errormsg();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void SendGroupMessageResp::set_errormsg(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.errormsg_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:groupchat.SendGroupMessageResp.errorMsg)
+}
+inline std::string* SendGroupMessageResp::mutable_errormsg() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_errormsg();
+  // @@protoc_insertion_point(field_mutable:groupchat.SendGroupMessageResp.errorMsg)
+  return _s;
+}
+inline const std::string& SendGroupMessageResp::_internal_errormsg() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.errormsg_.Get();
+}
+inline void SendGroupMessageResp::_internal_set_errormsg(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.errormsg_.Set(value, GetArena());
+}
+inline std::string* SendGroupMessageResp::_internal_mutable_errormsg() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.errormsg_.Mutable( GetArena());
+}
+inline std::string* SendGroupMessageResp::release_errormsg() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:groupchat.SendGroupMessageResp.errorMsg)
+  return _impl_.errormsg_.Release();
+}
+inline void SendGroupMessageResp::set_allocated_errormsg(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.errormsg_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.errormsg_.IsDefault()) {
+    _impl_.errormsg_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:groupchat.SendGroupMessageResp.errorMsg)
+}
+
+// .sdkws.MsgData msg = 3;
+inline bool SendGroupMessageResp::has_msg() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
-  PROTOBUF_ASSUME(!value || _impl_.group_ != nullptr);
+  PROTOBUF_ASSUME(!value || _impl_.msg_ != nullptr);
   return value;
 }
-inline void LocalState::clear_group() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  if (_impl_.group_ != nullptr) _impl_.group_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000001u;
-}
-inline const ::groupchat::Group& LocalState::_internal_group() const {
+inline const ::sdkws::MsgData& SendGroupMessageResp::_internal_msg() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  const ::groupchat::Group* p = _impl_.group_;
-  return p != nullptr ? *p : reinterpret_cast<const ::groupchat::Group&>(::groupchat::_Group_default_instance_);
+  const ::sdkws::MsgData* p = _impl_.msg_;
+  return p != nullptr ? *p : reinterpret_cast<const ::sdkws::MsgData&>(::sdkws::_MsgData_default_instance_);
 }
-inline const ::groupchat::Group& LocalState::group() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:groupchat.LocalState.group)
-  return _internal_group();
+inline const ::sdkws::MsgData& SendGroupMessageResp::msg() const ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.SendGroupMessageResp.msg)
+  return _internal_msg();
 }
-inline void LocalState::unsafe_arena_set_allocated_group(::groupchat::Group* value) {
+inline void SendGroupMessageResp::unsafe_arena_set_allocated_msg(::sdkws::MsgData* value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (GetArena() == nullptr) {
-    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.group_);
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.msg_);
   }
-  _impl_.group_ = reinterpret_cast<::groupchat::Group*>(value);
+  _impl_.msg_ = reinterpret_cast<::sdkws::MsgData*>(value);
   if (value != nullptr) {
     _impl_._has_bits_[0] |= 0x00000001u;
   } else {
     _impl_._has_bits_[0] &= ~0x00000001u;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:groupchat.LocalState.group)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:groupchat.SendGroupMessageResp.msg)
 }
-inline ::groupchat::Group* LocalState::release_group() {
+inline ::sdkws::MsgData* SendGroupMessageResp::release_msg() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
 
   _impl_._has_bits_[0] &= ~0x00000001u;
-  ::groupchat::Group* released = _impl_.group_;
-  _impl_.group_ = nullptr;
+  ::sdkws::MsgData* released = _impl_.msg_;
+  _impl_.msg_ = nullptr;
   if (::google::protobuf::internal::DebugHardenForceCopyInRelease()) {
     auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
     released = ::google::protobuf::internal::DuplicateIfNonNull(released);
@@ -4602,38 +5546,38 @@ inline ::groupchat::Group* LocalState::release_group() {
   }
   return released;
 }
-inline ::groupchat::Group* LocalState::unsafe_arena_release_group() {
+inline ::sdkws::MsgData* SendGroupMessageResp::unsafe_arena_release_msg() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:groupchat.LocalState.group)
+  // @@protoc_insertion_point(field_release:groupchat.SendGroupMessageResp.msg)
 
   _impl_._has_bits_[0] &= ~0x00000001u;
-  ::groupchat::Group* temp = _impl_.group_;
-  _impl_.group_ = nullptr;
+  ::sdkws::MsgData* temp = _impl_.msg_;
+  _impl_.msg_ = nullptr;
   return temp;
 }
-inline ::groupchat::Group* LocalState::_internal_mutable_group() {
+inline ::sdkws::MsgData* SendGroupMessageResp::_internal_mutable_msg() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  if (_impl_.group_ == nullptr) {
-    auto* p = ::google::protobuf::Message::DefaultConstruct<::groupchat::Group>(GetArena());
-    _impl_.group_ = reinterpret_cast<::groupchat::Group*>(p);
+  if (_impl_.msg_ == nullptr) {
+    auto* p = ::google::protobuf::Message::DefaultConstruct<::sdkws::MsgData>(GetArena());
+    _impl_.msg_ = reinterpret_cast<::sdkws::MsgData*>(p);
   }
-  return _impl_.group_;
+  return _impl_.msg_;
 }
-inline ::groupchat::Group* LocalState::mutable_group() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline ::sdkws::MsgData* SendGroupMessageResp::mutable_msg() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   _impl_._has_bits_[0] |= 0x00000001u;
-  ::groupchat::Group* _msg = _internal_mutable_group();
-  // @@protoc_insertion_point(field_mutable:groupchat.LocalState.group)
+  ::sdkws::MsgData* _msg = _internal_mutable_msg();
+  // @@protoc_insertion_point(field_mutable:groupchat.SendGroupMessageResp.msg)
   return _msg;
 }
-inline void LocalState::set_allocated_group(::groupchat::Group* value) {
+inline void SendGroupMessageResp::set_allocated_msg(::sdkws::MsgData* value) {
   ::google::protobuf::Arena* message_arena = GetArena();
   ::google::protobuf::internal::TSanWrite(&_impl_);
   if (message_arena == nullptr) {
-    delete (_impl_.group_);
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.msg_);
   }
 
   if (value != nullptr) {
-    ::google::protobuf::Arena* submessage_arena = (value)->GetArena();
+    ::google::protobuf::Arena* submessage_arena = reinterpret_cast<::google::protobuf::MessageLite*>(value)->GetArena();
     if (message_arena != submessage_arena) {
       value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
     }
@@ -4642,30 +5586,654 @@ inline void LocalState::set_allocated_group(::groupchat::Group* value) {
     _impl_._has_bits_[0] &= ~0x00000001u;
   }
 
-  _impl_.group_ = reinterpret_cast<::groupchat::Group*>(value);
-  // @@protoc_insertion_point(field_set_allocated:groupchat.LocalState.group)
+  _impl_.msg_ = reinterpret_cast<::sdkws::MsgData*>(value);
+  // @@protoc_insertion_point(field_set_allocated:groupchat.SendGroupMessageResp.msg)
 }
 
-// uint64 cursor = 2;
-inline void LocalState::clear_cursor() {
+// -------------------------------------------------------------------
+
+// GetGroupChatHistoryReq
+
+// uint64 ownerUserID = 1;
+inline void GetGroupChatHistoryReq::clear_owneruserid() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.cursor_ = ::uint64_t{0u};
+  _impl_.owneruserid_ = ::uint64_t{0u};
 }
-inline ::uint64_t LocalState::cursor() const {
-  // @@protoc_insertion_point(field_get:groupchat.LocalState.cursor)
-  return _internal_cursor();
+inline ::uint64_t GetGroupChatHistoryReq::owneruserid() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryReq.ownerUserID)
+  return _internal_owneruserid();
 }
-inline void LocalState::set_cursor(::uint64_t value) {
-  _internal_set_cursor(value);
-  // @@protoc_insertion_point(field_set:groupchat.LocalState.cursor)
+inline void GetGroupChatHistoryReq::set_owneruserid(::uint64_t value) {
+  _internal_set_owneruserid(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryReq.ownerUserID)
 }
-inline ::uint64_t LocalState::_internal_cursor() const {
+inline ::uint64_t GetGroupChatHistoryReq::_internal_owneruserid() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.cursor_;
+  return _impl_.owneruserid_;
 }
-inline void LocalState::_internal_set_cursor(::uint64_t value) {
+inline void GetGroupChatHistoryReq::_internal_set_owneruserid(::uint64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.cursor_ = value;
+  _impl_.owneruserid_ = value;
+}
+
+// string groupID = 2;
+inline void GetGroupChatHistoryReq::clear_groupid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.ClearToEmpty();
+}
+inline const std::string& GetGroupChatHistoryReq::groupid() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryReq.groupID)
+  return _internal_groupid();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GetGroupChatHistoryReq::set_groupid(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryReq.groupID)
+}
+inline std::string* GetGroupChatHistoryReq::mutable_groupid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_groupid();
+  // @@protoc_insertion_point(field_mutable:groupchat.GetGroupChatHistoryReq.groupID)
+  return _s;
+}
+inline const std::string& GetGroupChatHistoryReq::_internal_groupid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.groupid_.Get();
+}
+inline void GetGroupChatHistoryReq::_internal_set_groupid(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.Set(value, GetArena());
+}
+inline std::string* GetGroupChatHistoryReq::_internal_mutable_groupid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.groupid_.Mutable( GetArena());
+}
+inline std::string* GetGroupChatHistoryReq::release_groupid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:groupchat.GetGroupChatHistoryReq.groupID)
+  return _impl_.groupid_.Release();
+}
+inline void GetGroupChatHistoryReq::set_allocated_groupid(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.groupid_.IsDefault()) {
+    _impl_.groupid_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:groupchat.GetGroupChatHistoryReq.groupID)
+}
+
+// int64 afterSeq = 3;
+inline void GetGroupChatHistoryReq::clear_afterseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.afterseq_ = ::int64_t{0};
+}
+inline ::int64_t GetGroupChatHistoryReq::afterseq() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryReq.afterSeq)
+  return _internal_afterseq();
+}
+inline void GetGroupChatHistoryReq::set_afterseq(::int64_t value) {
+  _internal_set_afterseq(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryReq.afterSeq)
+}
+inline ::int64_t GetGroupChatHistoryReq::_internal_afterseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.afterseq_;
+}
+inline void GetGroupChatHistoryReq::_internal_set_afterseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.afterseq_ = value;
+}
+
+// int32 limit = 4;
+inline void GetGroupChatHistoryReq::clear_limit() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.limit_ = 0;
+}
+inline ::int32_t GetGroupChatHistoryReq::limit() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryReq.limit)
+  return _internal_limit();
+}
+inline void GetGroupChatHistoryReq::set_limit(::int32_t value) {
+  _internal_set_limit(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryReq.limit)
+}
+inline ::int32_t GetGroupChatHistoryReq::_internal_limit() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.limit_;
+}
+inline void GetGroupChatHistoryReq::_internal_set_limit(::int32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.limit_ = value;
+}
+
+// int64 snapshot = 5;
+inline void GetGroupChatHistoryReq::clear_snapshot() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.snapshot_ = ::int64_t{0};
+}
+inline ::int64_t GetGroupChatHistoryReq::snapshot() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryReq.snapshot)
+  return _internal_snapshot();
+}
+inline void GetGroupChatHistoryReq::set_snapshot(::int64_t value) {
+  _internal_set_snapshot(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryReq.snapshot)
+}
+inline ::int64_t GetGroupChatHistoryReq::_internal_snapshot() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.snapshot_;
+}
+inline void GetGroupChatHistoryReq::_internal_set_snapshot(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.snapshot_ = value;
+}
+
+// int64 beforeSeq = 6;
+inline void GetGroupChatHistoryReq::clear_beforeseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.beforeseq_ = ::int64_t{0};
+}
+inline ::int64_t GetGroupChatHistoryReq::beforeseq() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryReq.beforeSeq)
+  return _internal_beforeseq();
+}
+inline void GetGroupChatHistoryReq::set_beforeseq(::int64_t value) {
+  _internal_set_beforeseq(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryReq.beforeSeq)
+}
+inline ::int64_t GetGroupChatHistoryReq::_internal_beforeseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.beforeseq_;
+}
+inline void GetGroupChatHistoryReq::_internal_set_beforeseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.beforeseq_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// GetGroupChatHistoryResp
+
+// repeated .sdkws.MsgData messages = 1;
+inline int GetGroupChatHistoryResp::_internal_messages_size() const {
+  return _internal_messages().size();
+}
+inline int GetGroupChatHistoryResp::messages_size() const {
+  return _internal_messages_size();
+}
+inline ::sdkws::MsgData* GetGroupChatHistoryResp::mutable_messages(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:groupchat.GetGroupChatHistoryResp.messages)
+  return _internal_mutable_messages()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>* GetGroupChatHistoryResp::mutable_messages()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable_list:groupchat.GetGroupChatHistoryResp.messages)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_messages();
+}
+inline const ::sdkws::MsgData& GetGroupChatHistoryResp::messages(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryResp.messages)
+  return _internal_messages().Get(index);
+}
+inline ::sdkws::MsgData* GetGroupChatHistoryResp::add_messages() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::sdkws::MsgData* _add = _internal_mutable_messages()->Add();
+  // @@protoc_insertion_point(field_add:groupchat.GetGroupChatHistoryResp.messages)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>& GetGroupChatHistoryResp::messages() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:groupchat.GetGroupChatHistoryResp.messages)
+  return _internal_messages();
+}
+inline const ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>&
+GetGroupChatHistoryResp::_internal_messages() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.messages_;
+}
+inline ::google::protobuf::RepeatedPtrField<::sdkws::MsgData>*
+GetGroupChatHistoryResp::_internal_mutable_messages() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.messages_;
+}
+
+// bool hasMore = 2;
+inline void GetGroupChatHistoryResp::clear_hasmore() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hasmore_ = false;
+}
+inline bool GetGroupChatHistoryResp::hasmore() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryResp.hasMore)
+  return _internal_hasmore();
+}
+inline void GetGroupChatHistoryResp::set_hasmore(bool value) {
+  _internal_set_hasmore(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryResp.hasMore)
+}
+inline bool GetGroupChatHistoryResp::_internal_hasmore() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.hasmore_;
+}
+inline void GetGroupChatHistoryResp::_internal_set_hasmore(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hasmore_ = value;
+}
+
+// int64 nextSeq = 3;
+inline void GetGroupChatHistoryResp::clear_nextseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.nextseq_ = ::int64_t{0};
+}
+inline ::int64_t GetGroupChatHistoryResp::nextseq() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryResp.nextSeq)
+  return _internal_nextseq();
+}
+inline void GetGroupChatHistoryResp::set_nextseq(::int64_t value) {
+  _internal_set_nextseq(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryResp.nextSeq)
+}
+inline ::int64_t GetGroupChatHistoryResp::_internal_nextseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.nextseq_;
+}
+inline void GetGroupChatHistoryResp::_internal_set_nextseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.nextseq_ = value;
+}
+
+// int64 minSeq = 4;
+inline void GetGroupChatHistoryResp::clear_minseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.minseq_ = ::int64_t{0};
+}
+inline ::int64_t GetGroupChatHistoryResp::minseq() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryResp.minSeq)
+  return _internal_minseq();
+}
+inline void GetGroupChatHistoryResp::set_minseq(::int64_t value) {
+  _internal_set_minseq(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryResp.minSeq)
+}
+inline ::int64_t GetGroupChatHistoryResp::_internal_minseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.minseq_;
+}
+inline void GetGroupChatHistoryResp::_internal_set_minseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.minseq_ = value;
+}
+
+// int64 lastSeq = 5;
+inline void GetGroupChatHistoryResp::clear_lastseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.lastseq_ = ::int64_t{0};
+}
+inline ::int64_t GetGroupChatHistoryResp::lastseq() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryResp.lastSeq)
+  return _internal_lastseq();
+}
+inline void GetGroupChatHistoryResp::set_lastseq(::int64_t value) {
+  _internal_set_lastseq(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryResp.lastSeq)
+}
+inline ::int64_t GetGroupChatHistoryResp::_internal_lastseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.lastseq_;
+}
+inline void GetGroupChatHistoryResp::_internal_set_lastseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.lastseq_ = value;
+}
+
+// uint64 epoch = 6;
+inline void GetGroupChatHistoryResp::clear_epoch() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.epoch_ = ::uint64_t{0u};
+}
+inline ::uint64_t GetGroupChatHistoryResp::epoch() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryResp.epoch)
+  return _internal_epoch();
+}
+inline void GetGroupChatHistoryResp::set_epoch(::uint64_t value) {
+  _internal_set_epoch(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryResp.epoch)
+}
+inline ::uint64_t GetGroupChatHistoryResp::_internal_epoch() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.epoch_;
+}
+inline void GetGroupChatHistoryResp::_internal_set_epoch(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.epoch_ = value;
+}
+
+// int64 deletedSeq = 7;
+inline void GetGroupChatHistoryResp::clear_deletedseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.deletedseq_ = ::int64_t{0};
+}
+inline ::int64_t GetGroupChatHistoryResp::deletedseq() const {
+  // @@protoc_insertion_point(field_get:groupchat.GetGroupChatHistoryResp.deletedSeq)
+  return _internal_deletedseq();
+}
+inline void GetGroupChatHistoryResp::set_deletedseq(::int64_t value) {
+  _internal_set_deletedseq(value);
+  // @@protoc_insertion_point(field_set:groupchat.GetGroupChatHistoryResp.deletedSeq)
+}
+inline ::int64_t GetGroupChatHistoryResp::_internal_deletedseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.deletedseq_;
+}
+inline void GetGroupChatHistoryResp::_internal_set_deletedseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.deletedseq_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// GroupSyncRange
+
+// string groupID = 1;
+inline void GroupSyncRange::clear_groupid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.ClearToEmpty();
+}
+inline const std::string& GroupSyncRange::groupid() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncRange.groupID)
+  return _internal_groupid();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GroupSyncRange::set_groupid(Arg_&& arg,
+                                                     Args_... args) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
+  // @@protoc_insertion_point(field_set:groupchat.GroupSyncRange.groupID)
+}
+inline std::string* GroupSyncRange::mutable_groupid() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  std::string* _s = _internal_mutable_groupid();
+  // @@protoc_insertion_point(field_mutable:groupchat.GroupSyncRange.groupID)
+  return _s;
+}
+inline const std::string& GroupSyncRange::_internal_groupid() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.groupid_.Get();
+}
+inline void GroupSyncRange::_internal_set_groupid(const std::string& value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.Set(value, GetArena());
+}
+inline std::string* GroupSyncRange::_internal_mutable_groupid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _impl_.groupid_.Mutable( GetArena());
+}
+inline std::string* GroupSyncRange::release_groupid() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  // @@protoc_insertion_point(field_release:groupchat.GroupSyncRange.groupID)
+  return _impl_.groupid_.Release();
+}
+inline void GroupSyncRange::set_allocated_groupid(std::string* value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groupid_.SetAllocated(value, GetArena());
+  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.groupid_.IsDefault()) {
+    _impl_.groupid_.Set("", GetArena());
+  }
+  // @@protoc_insertion_point(field_set_allocated:groupchat.GroupSyncRange.groupID)
+}
+
+// int64 fromSeq = 2;
+inline void GroupSyncRange::clear_fromseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.fromseq_ = ::int64_t{0};
+}
+inline ::int64_t GroupSyncRange::fromseq() const {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncRange.fromSeq)
+  return _internal_fromseq();
+}
+inline void GroupSyncRange::set_fromseq(::int64_t value) {
+  _internal_set_fromseq(value);
+  // @@protoc_insertion_point(field_set:groupchat.GroupSyncRange.fromSeq)
+}
+inline ::int64_t GroupSyncRange::_internal_fromseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.fromseq_;
+}
+inline void GroupSyncRange::_internal_set_fromseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.fromseq_ = value;
+}
+
+// int64 toSeq = 3;
+inline void GroupSyncRange::clear_toseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.toseq_ = ::int64_t{0};
+}
+inline ::int64_t GroupSyncRange::toseq() const {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncRange.toSeq)
+  return _internal_toseq();
+}
+inline void GroupSyncRange::set_toseq(::int64_t value) {
+  _internal_set_toseq(value);
+  // @@protoc_insertion_point(field_set:groupchat.GroupSyncRange.toSeq)
+}
+inline ::int64_t GroupSyncRange::_internal_toseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.toseq_;
+}
+inline void GroupSyncRange::_internal_set_toseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.toseq_ = value;
+}
+
+// int64 lastSeq = 4;
+inline void GroupSyncRange::clear_lastseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.lastseq_ = ::int64_t{0};
+}
+inline ::int64_t GroupSyncRange::lastseq() const {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncRange.lastSeq)
+  return _internal_lastseq();
+}
+inline void GroupSyncRange::set_lastseq(::int64_t value) {
+  _internal_set_lastseq(value);
+  // @@protoc_insertion_point(field_set:groupchat.GroupSyncRange.lastSeq)
+}
+inline ::int64_t GroupSyncRange::_internal_lastseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.lastseq_;
+}
+inline void GroupSyncRange::_internal_set_lastseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.lastseq_ = value;
+}
+
+// int64 joinSeq = 5;
+inline void GroupSyncRange::clear_joinseq() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.joinseq_ = ::int64_t{0};
+}
+inline ::int64_t GroupSyncRange::joinseq() const {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncRange.joinSeq)
+  return _internal_joinseq();
+}
+inline void GroupSyncRange::set_joinseq(::int64_t value) {
+  _internal_set_joinseq(value);
+  // @@protoc_insertion_point(field_set:groupchat.GroupSyncRange.joinSeq)
+}
+inline ::int64_t GroupSyncRange::_internal_joinseq() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.joinseq_;
+}
+inline void GroupSyncRange::_internal_set_joinseq(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.joinseq_ = value;
+}
+
+// uint64 epoch = 6;
+inline void GroupSyncRange::clear_epoch() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.epoch_ = ::uint64_t{0u};
+}
+inline ::uint64_t GroupSyncRange::epoch() const {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncRange.epoch)
+  return _internal_epoch();
+}
+inline void GroupSyncRange::set_epoch(::uint64_t value) {
+  _internal_set_epoch(value);
+  // @@protoc_insertion_point(field_set:groupchat.GroupSyncRange.epoch)
+}
+inline ::uint64_t GroupSyncRange::_internal_epoch() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.epoch_;
+}
+inline void GroupSyncRange::_internal_set_epoch(::uint64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.epoch_ = value;
+}
+
+// bool hasGap = 7;
+inline void GroupSyncRange::clear_hasgap() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hasgap_ = false;
+}
+inline bool GroupSyncRange::hasgap() const {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncRange.hasGap)
+  return _internal_hasgap();
+}
+inline void GroupSyncRange::set_hasgap(bool value) {
+  _internal_set_hasgap(value);
+  // @@protoc_insertion_point(field_set:groupchat.GroupSyncRange.hasGap)
+}
+inline bool GroupSyncRange::_internal_hasgap() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.hasgap_;
+}
+inline void GroupSyncRange::_internal_set_hasgap(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hasgap_ = value;
+}
+
+// bool needsPull = 8;
+inline void GroupSyncRange::clear_needspull() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.needspull_ = false;
+}
+inline bool GroupSyncRange::needspull() const {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncRange.needsPull)
+  return _internal_needspull();
+}
+inline void GroupSyncRange::set_needspull(bool value) {
+  _internal_set_needspull(value);
+  // @@protoc_insertion_point(field_set:groupchat.GroupSyncRange.needsPull)
+}
+inline bool GroupSyncRange::_internal_needspull() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.needspull_;
+}
+inline void GroupSyncRange::_internal_set_needspull(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.needspull_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// GroupSyncSummary
+
+// repeated .groupchat.GroupSyncRange groups = 1;
+inline int GroupSyncSummary::_internal_groups_size() const {
+  return _internal_groups().size();
+}
+inline int GroupSyncSummary::groups_size() const {
+  return _internal_groups_size();
+}
+inline void GroupSyncSummary::clear_groups() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.groups_.Clear();
+}
+inline ::groupchat::GroupSyncRange* GroupSyncSummary::mutable_groups(int index)
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable:groupchat.GroupSyncSummary.groups)
+  return _internal_mutable_groups()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField<::groupchat::GroupSyncRange>* GroupSyncSummary::mutable_groups()
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_mutable_list:groupchat.GroupSyncSummary.groups)
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  return _internal_mutable_groups();
+}
+inline const ::groupchat::GroupSyncRange& GroupSyncSummary::groups(int index) const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncSummary.groups)
+  return _internal_groups().Get(index);
+}
+inline ::groupchat::GroupSyncRange* GroupSyncSummary::add_groups() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  ::groupchat::GroupSyncRange* _add = _internal_mutable_groups()->Add();
+  // @@protoc_insertion_point(field_add:groupchat.GroupSyncSummary.groups)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField<::groupchat::GroupSyncRange>& GroupSyncSummary::groups() const
+    ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  // @@protoc_insertion_point(field_list:groupchat.GroupSyncSummary.groups)
+  return _internal_groups();
+}
+inline const ::google::protobuf::RepeatedPtrField<::groupchat::GroupSyncRange>&
+GroupSyncSummary::_internal_groups() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.groups_;
+}
+inline ::google::protobuf::RepeatedPtrField<::groupchat::GroupSyncRange>*
+GroupSyncSummary::_internal_mutable_groups() {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return &_impl_.groups_;
+}
+
+// uint32 messagesPushed = 2;
+inline void GroupSyncSummary::clear_messagespushed() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.messagespushed_ = 0u;
+}
+inline ::uint32_t GroupSyncSummary::messagespushed() const {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncSummary.messagesPushed)
+  return _internal_messagespushed();
+}
+inline void GroupSyncSummary::set_messagespushed(::uint32_t value) {
+  _internal_set_messagespushed(value);
+  // @@protoc_insertion_point(field_set:groupchat.GroupSyncSummary.messagesPushed)
+}
+inline ::uint32_t GroupSyncSummary::_internal_messagespushed() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.messagespushed_;
+}
+inline void GroupSyncSummary::_internal_set_messagespushed(::uint32_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.messagespushed_ = value;
+}
+
+// bool hasMore = 3;
+inline void GroupSyncSummary::clear_hasmore() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hasmore_ = false;
+}
+inline bool GroupSyncSummary::hasmore() const {
+  // @@protoc_insertion_point(field_get:groupchat.GroupSyncSummary.hasMore)
+  return _internal_hasmore();
+}
+inline void GroupSyncSummary::set_hasmore(bool value) {
+  _internal_set_hasmore(value);
+  // @@protoc_insertion_point(field_set:groupchat.GroupSyncSummary.hasMore)
+}
+inline bool GroupSyncSummary::_internal_hasmore() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.hasmore_;
+}
+inline void GroupSyncSummary::_internal_set_hasmore(bool value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.hasmore_ = value;
 }
 
 #ifdef __GNUC__

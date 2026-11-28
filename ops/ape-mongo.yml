@@ -1,0 +1,4 @@
+services:
+  mongo:
+    container_name: ape-mongo
+    command: ["--wiredTigerCacheSizeGB", "0.5"]

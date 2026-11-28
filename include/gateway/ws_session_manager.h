@@ -3,6 +3,7 @@
 
 #include "gateway/ws_session.h"
 
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <shared_mutex>
@@ -32,13 +33,27 @@ public:
     bool hasSession(const uint64_t account);
     std::vector<uint64_t> onlineAccounts();
 
+    // 踢掉某账号的本地连接（跨实例互踢 / 同实例重复登录），返回是否命中
+    bool kickUser(const uint64_t account, const std::string &reason);
+
+    // 优雅下线：给所有本地连接发 SERVER_DRAINING，之后由调用方等待 grace
+    void notifyDraining();
+    bool draining() const { return draining_.load(); }
+
+    size_t connectionCount() const;
+    // 关闭全部本地连接（grace 期满后强制下线）
+    void closeAll();
+    // GATEWAY_MAX_CONNECTIONS，缺省 20000
+    static size_t MaxConnections();
+
 private:
     WSSessionManager() = default;
     WSSessionManager(const WSSessionManager&) = delete;
     WSSessionManager& operator=(const WSSessionManager&) = delete;
 
-    std::shared_mutex mutex_;
+    mutable std::shared_mutex mutex_;
     std::unordered_map<uint64_t, std::shared_ptr<WSSession>> sessions_;
+    std::atomic<bool> draining_{false};
 };
 
 #endif

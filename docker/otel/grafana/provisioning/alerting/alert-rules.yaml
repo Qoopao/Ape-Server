@@ -1,0 +1,245 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: ape-server
+    folder: ape-server
+    interval: 1m
+    rules:
+      - uid: ape-outbox-single-age
+        title: 单聊 outbox 最老积压超过 60s
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: vm
+            model:
+              editorMode: code
+              expr: 'max(ape_outbox_oldest_age{operation="1"})'
+              instant: true
+              range: false
+              intervalMs: 60000
+              maxDataPoints: 43200
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: classic_condition
+              conditions:
+                - evaluator: {params: [60], type: gt}
+                  operator: {type: and}
+                  query: {params: [A]}
+                  reducer: {params: [], type: last}
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          component: msg
+        annotations:
+          summary: 单聊消息在 outbox 中堆积，最老一条超过 60s
+          runbook: docs/design/observability.md#告警与处置
+
+      - uid: ape-outbox-group-age
+        title: 群聊 outbox 最老积压超过 300s
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: {from: 600, to: 0}
+            datasourceUid: vm
+            model:
+              editorMode: code
+              expr: 'max(ape_outbox_oldest_age{operation="4"})'
+              instant: true
+              range: false
+              intervalMs: 60000
+              maxDataPoints: 43200
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: classic_condition
+              conditions:
+                - evaluator: {params: [300], type: gt}
+                  operator: {type: and}
+                  query: {params: [A]}
+                  reducer: {params: [], type: last}
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          component: group
+        annotations:
+          summary: 群消息发布链路阻塞，最老一条超过 300s
+          runbook: docs/design/observability.md#告警与处置
+
+      - uid: ape-outbox-tombstone
+        title: 出现群 tombstone（消息被放弃推送）
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: {from: 900, to: 0}
+            datasourceUid: vm
+            model:
+              editorMode: code
+              expr: 'sum(increase(ape_outbox_tombstones_total[15m]))'
+              instant: true
+              range: false
+              intervalMs: 60000
+              maxDataPoints: 43200
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: classic_condition
+              conditions:
+                - evaluator: {params: [0], type: gt}
+                  operator: {type: and}
+                  query: {params: [A]}
+                  reducer: {params: [], type: last}
+                  type: query
+        noDataState: OK
+        execErrState: Error
+        for: 0m
+        labels:
+          severity: critical
+          component: group
+        annotations:
+          summary: 群消息重试超限被放弃，需人工确认是否写 tombstone
+          runbook: docs/design/observability.md#告警与处置
+
+      - uid: ape-kafka-lag
+        title: Kafka 消费 lag 超过 10000
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: {from: 600, to: 0}
+            datasourceUid: vm
+            model:
+              editorMode: code
+              expr: 'max(ape_kafka_lag)'
+              instant: true
+              range: false
+              intervalMs: 60000
+              maxDataPoints: 43200
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: classic_condition
+              conditions:
+                - evaluator: {params: [10000], type: gt}
+                  operator: {type: and}
+                  query: {params: [A]}
+                  reducer: {params: [], type: last}
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 10m
+        labels:
+          severity: warning
+          component: push
+        annotations:
+          summary: PushService 消费跟不上，在线送达会延迟
+          runbook: docs/design/observability.md#告警与处置
+
+      - uid: ape-push-unknown
+        title: 推送 Unknown 比例超过 5%
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: vm
+            model:
+              editorMode: code
+              expr: 'sum(rate(ape_push_deliveries_total{result="unknown"}[5m])) / clamp_min(sum(rate(ape_push_deliveries_total[5m])), 0.001)'
+              instant: true
+              range: false
+              intervalMs: 60000
+              maxDataPoints: 43200
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: classic_condition
+              conditions:
+                - evaluator: {params: [0.05], type: gt}
+                  operator: {type: and}
+                  query: {params: [A]}
+                  reducer: {params: [], type: last}
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: critical
+          component: gateway
+        annotations:
+          summary: 网关路由大量 Unknown，消息可能无法在线送达（不得当离线）
+          runbook: docs/design/observability.md#告警与处置
+
+      - uid: ape-gateway-no-connections
+        title: 网关连接数为 0
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: vm
+            model:
+              editorMode: code
+              expr: 'sum(ape_ws_connections_active)'
+              instant: true
+              range: false
+              intervalMs: 60000
+              maxDataPoints: 43200
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: classic_condition
+              conditions:
+                - evaluator: {params: [0], type: eq}
+                  operator: {type: and}
+                  query: {params: [A]}
+                  reducer: {params: [], type: last}
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 2m
+        labels:
+          severity: critical
+          component: gateway
+        annotations:
+          summary: 网关可用连接归零，检查进程/证书/端口
+          runbook: docs/design/observability.md#告警与处置
+
+      - uid: ape-grpc-error-ratio
+        title: gRPC 错误率超过 1%
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange: {from: 300, to: 0}
+            datasourceUid: vm
+            model:
+              editorMode: code
+              expr: 'sum(rate(rpc_server_requests_total{status_code!="OK"}[5m])) / clamp_min(sum(rate(rpc_server_requests_total[5m])), 0.001)'
+              instant: true
+              range: false
+              intervalMs: 60000
+              maxDataPoints: 43200
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: classic_condition
+              conditions:
+                - evaluator: {params: [0.01], type: gt}
+                  operator: {type: and}
+                  query: {params: [A]}
+                  reducer: {params: [], type: last}
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          component: rpc
+        annotations:
+          summary: 服务端 gRPC 错误率升高
+          runbook: docs/design/observability.md#告警与处置

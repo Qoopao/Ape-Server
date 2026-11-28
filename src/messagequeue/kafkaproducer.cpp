@@ -1,4 +1,5 @@
 #include "messagequeue/kafkaproducer.h"
+#include "om/obs_metrics.h"
 #include <librdkafka/rdkafkacpp.h>
 #include <boost/asio/steady_timer.hpp>
 #include <boost/asio/this_coro.hpp>
@@ -24,7 +25,7 @@ void ProducerDeliveryReportCb::dr_cb(RdKafka::Message& message) {
     if(message.err() != RdKafka::ERR_NO_ERROR){
         spdlog::error("Producer delivery failed: {}", message.errstr());
     }else {
-        spdlog::info("Producer delivery success: topic = {}, partition = {}, offset = {}", message.topic_name(), message.partition(), message.offset());
+        spdlog::debug("Producer delivery success: topic = {}, partition = {}, offset = {}", message.topic_name(), message.partition(), message.offset());
     }
 }
 
@@ -135,6 +136,7 @@ KafkaProducer::KafkaProducer( std::string topicName, std::string brokerList)
 
 bool KafkaProducer::deliver(std::string& key, void* payload, size_t payloadSize)
 {
+    const auto started = std::chrono::steady_clock::now();
     if (!producerInstance || !topic)
         return false;
     // 投递消息
@@ -148,7 +150,10 @@ bool KafkaProducer::deliver(std::string& key, void* payload, size_t payloadSize)
         nullptr
     );
     producerInstance->poll(0);
+    const auto elapsed_ms = std::chrono::duration<double, std::milli>(
+                                std::chrono::steady_clock::now() - started).count();
     if (errCode != RdKafka::ERR_NO_ERROR) {
+        ape::obs::RecordKafkaProduce(topicName, "error", elapsed_ms);
         spdlog::error("KafkaProducer: Failed to produce message: {}", RdKafka::err2str(errCode));
         if(errCode == RdKafka::ERR__QUEUE_FULL){
             producerInstance->poll(100);
@@ -156,20 +161,26 @@ bool KafkaProducer::deliver(std::string& key, void* payload, size_t payloadSize)
         }
         return false;
     }
+    ape::obs::RecordKafkaProduce(topicName, "ok", elapsed_ms);
     return true;
 
 }
 
 boost::asio::awaitable<bool> KafkaProducer::deliverConfirmed(std::string key, std::string payload)
 {
+    const auto started = std::chrono::steady_clock::now();
     if (!producerInstance || !topic)
+    {
+        ape::obs::RecordKafkaProduce(topicName, "error", 0.0);
         co_return false;
+    }
     auto state = std::make_shared<DeliveryState>();
     auto* opaque = new std::shared_ptr<DeliveryState>(state);
     const auto error = producerInstance->produce(topic, RdKafka::Topic::PARTITION_UA,
         RdKafka::Producer::RK_MSG_COPY, payload.data(), payload.size(), &key, opaque);
     if (error != RdKafka::ERR_NO_ERROR) {
         delete opaque;
+        ape::obs::RecordKafkaProduce(topicName, "error", 0.0);
         co_return false;
     }
     boost::asio::steady_timer timer(co_await boost::asio::this_coro::executor);
@@ -181,7 +192,11 @@ boost::asio::awaitable<bool> KafkaProducer::deliverConfirmed(std::string key, st
         timer.expires_after(std::chrono::milliseconds(50));
         co_await timer.async_wait(boost::asio::use_awaitable);
     }
-    co_return state->status.load() == 1;
+    const auto elapsed_ms = std::chrono::duration<double, std::milli>(
+                                std::chrono::steady_clock::now() - started).count();
+    const bool ok = state->status.load() == 1;
+    ape::obs::RecordKafkaProduce(topicName, ok ? "ok" : "timeout", elapsed_ms);
+    co_return ok;
 }
 
 
